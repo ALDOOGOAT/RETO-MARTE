@@ -1,0 +1,677 @@
+<title>Atlas Marciano</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ink-0:#070A0E;
+  --ink-1:#0C1116;
+  --ink-2:#131B23;
+  --ink-3:#1B2530;
+  --rule:#28353F;
+  --rule-soft:#18222B;
+  --text:#E7ECF1;
+  --text-2:#A2B0BD;
+  --text-3:#6B7A88;
+  --dust:#C4562E;
+  --dust-hi:#E0723F;
+  --dust-lo:#7C3620;
+  --amber:#E0A244;
+  --cool:#5B9DC4;
+  --bio:#7BB075;
+  --serif:"Bodoni Moda",Didot,"Times New Roman",serif;
+  --sans:Archivo,"Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --rail:88px;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--ink-1);color:var(--text);
+  font-family:var(--sans);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(900px 620px at 78% -8%, rgba(196,86,46,.16), transparent 62%),
+    radial-gradient(700px 520px at 4% 106%, rgba(91,157,196,.09), transparent 64%);
+}
+.wrap{position:relative;z-index:1}
+
+/* ── rail ───────────────────────────────────────────── */
+.rail{
+  position:fixed;left:0;top:0;bottom:0;width:var(--rail);z-index:5;
+  border-right:1px solid var(--rule-soft);background:var(--ink-0);
+  display:flex;flex-direction:column;align-items:center;
+  padding:22px 0;gap:22px;
+}
+.rail__mark{
+  width:24px;height:24px;border-radius:50%;
+  background:radial-gradient(circle at 32% 30%, var(--dust-hi), var(--dust-lo) 68%, #3A180D);
+  box-shadow:0 0 16px -2px rgba(196,86,46,.75);flex:none;
+}
+.rail__idx{display:flex;flex-direction:column;gap:2px;width:100%;align-items:center}
+.rail__lnk{
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--text-3);
+  text-decoration:none;padding:9px 0;width:100%;text-align:center;
+  border-left:2px solid transparent;transition:color .18s,border-color .18s;
+}
+.rail__lnk:hover,.rail__lnk:focus-visible{color:var(--dust-hi);border-left-color:var(--dust)}
+.rail__spine{
+  margin-top:auto;font-family:var(--mono);font-size:10px;letter-spacing:.3em;
+  color:var(--text-3);writing-mode:vertical-rl;transform:rotate(180deg);
+}
+
+/* ── shell ──────────────────────────────────────────── */
+.shell{margin-left:var(--rail);padding:0 clamp(20px,4vw,64px)}
+.inner{max-width:1120px;margin:0 auto}
+
+/* ── hero ───────────────────────────────────────────── */
+.hero{
+  display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+  gap:clamp(28px,5vw,72px);align-items:center;
+  padding:clamp(56px,8vh,104px) 0 clamp(48px,7vh,84px);
+  border-bottom:1px solid var(--rule-soft);
+}
+.eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--dust-hi);
+  text-transform:uppercase;margin:0 0 20px;
+}
+.hero h1{
+  font-family:var(--serif);font-weight:500;font-size:clamp(46px,7.2vw,92px);
+  line-height:.96;letter-spacing:-.015em;margin:0 0 22px;text-wrap:balance;
+}
+.hero h1 em{font-style:italic;color:var(--dust-hi)}
+.lede{font-size:clamp(16px,1.5vw,19px);color:var(--text-2);max-width:48ch;margin:0 0 26px}
+.lede strong{color:var(--text);font-weight:600}
+.hero__meta{display:flex;flex-wrap:wrap;gap:8px}
+.tag{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;color:var(--text-2);
+  border:1px solid var(--rule);padding:6px 10px;background:var(--ink-2);
+}
+
+/* ── globe ──────────────────────────────────────────── */
+.globe-stage{position:relative;display:flex;justify-content:center;align-items:center;min-height:340px}
+.globe{
+  position:relative;width:clamp(230px,27vw,330px);aspect-ratio:1;border-radius:50%;
+  overflow:hidden;flex:none;
+  box-shadow:0 0 0 1px rgba(196,86,46,.28),0 0 110px -14px rgba(196,86,46,.55);
+}
+.globe__surf{position:absolute;top:-3%;bottom:-3%;left:0;width:200%;background-repeat:repeat-x;background-size:25% 100%;animation:drift 52s linear infinite}
+.globe__surf--a{
+  background-color:#933F22;
+  background-image:
+    radial-gradient(40% 32% at 11% 33%,rgba(52,22,12,.88),transparent 70%),
+    radial-gradient(27% 24% at 33% 68%,rgba(45,19,10,.8),transparent 72%),
+    radial-gradient(31% 27% at 57% 26%,rgba(64,27,14,.72),transparent 70%),
+    radial-gradient(23% 31% at 79% 60%,rgba(42,17,9,.85),transparent 72%),
+    radial-gradient(17% 15% at 45% 45%,rgba(219,133,82,.5),transparent 70%),
+    radial-gradient(15% 13% at 88% 28%,rgba(210,124,74,.46),transparent 70%);
+}
+.globe__surf--b{opacity:.34;animation-duration:88s;
+  background-image:
+    radial-gradient(34% 26% at 22% 52%,rgba(236,178,130,.42),transparent 72%),
+    radial-gradient(28% 20% at 66% 40%,rgba(228,164,116,.34),transparent 74%);
+}
+.globe__cap{
+  position:absolute;left:50%;top:-7%;width:56%;height:22%;transform:translateX(-50%);
+  border-radius:50%;background:radial-gradient(ellipse at 50% 72%,rgba(240,246,252,.92),rgba(214,228,240,.28) 62%,transparent 78%);
+  filter:blur(3px);
+}
+.globe__cap--s{top:auto;bottom:-11%;height:17%;opacity:.62}
+.globe__storm{
+  position:absolute;inset:0;opacity:0;transition:opacity .9s ease;
+  background:
+    radial-gradient(58% 44% at 34% 44%,rgba(226,168,108,.72),transparent 72%),
+    radial-gradient(46% 38% at 70% 62%,rgba(214,150,92,.62),transparent 74%),
+    radial-gradient(100% 100% at 50% 50%,rgba(200,138,84,.34),transparent 70%);
+  animation:drift 34s linear infinite;width:200%;background-repeat:repeat-x;background-size:25% 100%;
+}
+.globe.is-storm .globe__storm{opacity:1}
+.globe__shade{
+  position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  box-shadow:inset -36px -18px 82px 14px rgba(3,5,8,.95),inset 18px 12px 50px -22px rgba(255,198,158,.3);
+}
+.globe__ring{
+  position:absolute;inset:-9px;border-radius:50%;pointer-events:none;
+  border:1px solid rgba(196,86,46,.22);
+  box-shadow:inset 0 0 26px rgba(224,114,63,.16);
+}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+.callout{position:absolute;font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;color:var(--text-2);white-space:nowrap;pointer-events:none}
+.callout b{color:var(--dust-hi);font-weight:600}
+.callout::before{content:"";position:absolute;top:50%;height:1px;background:linear-gradient(90deg,var(--rule),rgba(196,86,46,.55))}
+.callout--l{right:calc(50% + 118px);text-align:right}
+.callout--l::before{left:100%;width:34px}
+.callout--r{left:calc(50% + 118px)}
+.callout--r::before{right:100%;width:34px;background:linear-gradient(270deg,var(--rule),rgba(196,86,46,.55))}
+.c1{top:20%}.c2{top:47%}.c3{top:74%}
+@media(max-width:1080px){.callout{display:none}}
+
+.storm-btn{
+  margin-top:26px;font-family:var(--mono);font-size:11px;letter-spacing:.13em;
+  background:var(--ink-2);color:var(--text-2);border:1px solid var(--rule);
+  padding:9px 16px;cursor:pointer;transition:color .18s,border-color .18s;
+}
+.storm-btn:hover,.storm-btn:focus-visible{color:var(--amber);border-color:var(--amber)}
+
+/* ── plates ─────────────────────────────────────────── */
+.plate{padding:clamp(56px,8vh,96px) 0;border-bottom:1px solid var(--rule-soft)}
+.plate__head{display:flex;gap:22px;align-items:baseline;margin-bottom:34px;flex-wrap:wrap}
+.plate__num{
+  font-family:var(--serif);font-size:34px;font-weight:400;font-style:italic;
+  color:var(--dust);line-height:1;flex:none;
+}
+.plate__title{font-family:var(--serif);font-weight:500;font-size:clamp(28px,3.6vw,44px);line-height:1.06;margin:0;letter-spacing:-.01em}
+.plate__sub{font-family:var(--mono);font-size:11px;letter-spacing:.15em;color:var(--text-3);text-transform:uppercase;width:100%;margin-top:2px}
+.plate__note{color:var(--text-2);max-width:62ch;margin:0 0 30px}
+
+/* ── gauges ─────────────────────────────────────────── */
+.gauges{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:1px;background:var(--rule-soft);border:1px solid var(--rule-soft)}
+.gauges__axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--text-3);margin-bottom:10px}
+.gauge{background:var(--ink-2);padding:20px 22px 22px}
+.gauge__top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px}
+.gauge__label{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--text-3);text-transform:uppercase}
+.gauge__val{font-family:var(--mono);font-size:21px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+.gauge__val small{font-size:11px;color:var(--text-3);font-weight:400;margin-left:3px}
+.gauge__track{height:5px;background:var(--ink-3);position:relative;overflow:hidden;margin:10px 0 9px}
+.gauge__fill{position:absolute;inset:0 auto 0 0;width:var(--v);background:var(--dust);animation:grow 1.1s cubic-bezier(.2,.8,.3,1) both}
+.gauge__fill.is-cool{background:var(--cool)}
+.gauge__fill.is-amber{background:var(--amber)}
+.gauge__cmp{font-size:12.5px;color:var(--text-3)}
+.gauge__cmp b{color:var(--text-2);font-weight:600}
+@keyframes grow{from{width:0}}
+
+/* ── comparison ─────────────────────────────────────── */
+.cmp{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:clamp(26px,4vw,56px);align-items:center}
+.cmp__discs{display:flex;align-items:flex-end;justify-content:center;gap:26px;padding:16px 0}
+.disc{border-radius:50%;flex:none;position:relative}
+.disc--earth{width:180px;height:180px;background:radial-gradient(circle at 34% 30%,#4E8FB8,#1D4A6B 62%,#0C2436);box-shadow:0 0 0 1px rgba(91,157,196,.3),0 0 46px -12px rgba(91,157,196,.6)}
+.disc--mars{width:96px;height:96px;background:radial-gradient(circle at 34% 30%,var(--dust-hi),var(--dust-lo) 66%,#38170C);box-shadow:0 0 0 1px rgba(196,86,46,.34),0 0 38px -10px rgba(196,86,46,.62)}
+.disc__cap{position:absolute;top:-14px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--text-3)}
+.deltas{border:1px solid var(--rule-soft);border-bottom:0}
+.delta{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;padding:13px 18px;border-bottom:1px solid var(--rule-soft);background:var(--ink-2)}
+.delta__k{font-size:13.5px;color:var(--text-2)}
+.delta__e,.delta__m{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;text-align:right;min-width:104px}
+.delta__e{color:var(--cool)}
+.delta__m{color:var(--dust-hi);font-weight:600}
+
+/* ── comms ──────────────────────────────────────────── */
+.comms{border:1px solid var(--rule-soft);background:var(--ink-2);padding:clamp(22px,3vw,36px)}
+.comms__read{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:26px}
+.comms__clock{font-family:var(--mono);font-size:clamp(38px,6vw,66px);font-weight:600;color:var(--amber);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.comms__dir{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--text-3)}
+.link{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center}
+.link__end{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--text-3);text-align:center}
+.link__dot{width:14px;height:14px;border-radius:50%;margin:0 auto 7px}
+.link__dot--e{background:radial-gradient(circle at 34% 30%,#4E8FB8,#1D4A6B);box-shadow:0 0 14px -2px rgba(91,157,196,.8)}
+.link__dot--m{background:radial-gradient(circle at 34% 30%,var(--dust-hi),var(--dust-lo));box-shadow:0 0 14px -2px rgba(196,86,46,.8)}
+.link__track{position:relative;height:2px;background:var(--ink-3)}
+.link__ticks{position:absolute;inset:0;display:flex;justify-content:space-between}
+.link__tick{width:1px;height:9px;background:var(--rule);margin-top:-3px}
+.pulse{position:absolute;top:50%;left:0;width:9px;height:9px;border-radius:50%;background:var(--amber);transform:translate(-50%,-50%);box-shadow:0 0 18px 3px rgba(224,162,68,.7)}
+.pulse.is-back{background:var(--cool);box-shadow:0 0 18px 3px rgba(91,157,196,.7)}
+.comms__scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--text-3);margin-top:12px;padding:0 4px}
+.comms__foot{margin:26px 0 0;color:var(--text-2);font-size:14.5px;max-width:70ch}
+.comms__foot b{color:var(--amber);font-weight:600}
+
+/* ── figure / svg ───────────────────────────────────── */
+figure{margin:0}
+.fig-scroll{overflow-x:auto;border:1px solid var(--rule-soft);background:var(--ink-2);padding:clamp(14px,2.4vw,26px)}
+.fig-scroll svg{display:block;width:100%;min-width:760px;height:auto}
+figcaption{font-size:13.5px;color:var(--text-3);margin-top:14px;max-width:76ch}
+.legend{display:flex;flex-wrap:wrap;gap:18px;margin:20px 0 0}
+.legend__i{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;color:var(--text-2)}
+.legend__sw{width:22px;height:2px;flex:none}
+.flow{stroke-dasharray:7 6;animation:march 1.4s linear infinite}
+@keyframes march{to{stroke-dashoffset:-13}}
+.svg-box{fill:var(--ink-3);stroke:var(--rule)}
+.svg-t{font-family:var(--mono);font-size:12px;fill:var(--text)}
+.svg-t--sm{font-size:10.5px;fill:var(--text-3)}
+.svg-t--lbl{font-size:10.5px;letter-spacing:.06em}
+
+/* ── shield ─────────────────────────────────────────── */
+.shield{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);gap:clamp(26px,4vw,52px);align-items:start}
+.stack{border:1px solid var(--rule-soft);background:var(--ink-2);padding:26px;position:relative;overflow:hidden}
+.stack__sky{height:52px;background:linear-gradient(180deg,rgba(196,86,46,.34),rgba(196,86,46,.06));position:relative;border-bottom:1px dashed rgba(224,114,63,.4)}
+.ray{position:absolute;top:0;width:1px;height:100%;background:linear-gradient(180deg,transparent,var(--amber));animation:fall 1.8s linear infinite}
+.stack__layer{background:repeating-linear-gradient(135deg,#6A3B26 0 7px,#5A3120 7px 14px);height:var(--h,80px);transition:height .3s cubic-bezier(.2,.8,.3,1);position:relative;border-bottom:1px solid #3A1F14}
+.stack__hab{height:74px;background:var(--ink-3);border:1px solid var(--rule);border-top:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--text-3)}
+.stack__tag{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:10.5px;color:#F0D3C2;letter-spacing:.08em;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+@keyframes fall{from{transform:translateY(-100%)}to{transform:translateY(100%)}}
+.ctrl{border:1px solid var(--rule-soft);background:var(--ink-2);padding:24px}
+.ctrl label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--text-3);text-transform:uppercase;margin-bottom:14px}
+input[type=range]{width:100%;accent-color:var(--dust);height:22px}
+input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:4px}
+.readout{margin-top:22px;display:flex;flex-direction:column;gap:16px}
+.ro{border-top:1px solid var(--rule-soft);padding-top:14px}
+.ro__k{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--text-3);text-transform:uppercase}
+.ro__v{font-family:var(--mono);font-size:26px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;line-height:1.25}
+.ro__v small{font-size:12px;color:var(--text-3);font-weight:400;margin-left:4px}
+.ro__v.is-good{color:var(--bio)}
+.ro__v.is-bad{color:var(--dust-hi)}
+.model-note{font-size:12px;color:var(--text-3);margin-top:20px;border-left:2px solid var(--rule);padding-left:12px}
+
+/* ── close ──────────────────────────────────────────── */
+.close{padding:clamp(56px,8vh,96px) 0 clamp(72px,10vh,120px)}
+.thesis{font-family:var(--serif);font-size:clamp(24px,3.2vw,38px);line-height:1.28;font-weight:400;margin:0 0 34px;max-width:26ch;text-wrap:balance}
+.thesis em{font-style:italic;color:var(--dust-hi)}
+.uses{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:1px;background:var(--rule-soft);border:1px solid var(--rule-soft)}
+.use{background:var(--ink-2);padding:20px 22px}
+.use__k{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--dust-hi);text-transform:uppercase;margin-bottom:8px}
+.use__t{font-size:14px;color:var(--text-2);margin:0}
+.colophon{margin-top:44px;padding-top:22px;border-top:1px solid var(--rule-soft);font-family:var(--mono);font-size:11px;color:var(--text-3);line-height:1.9}
+.colophon a{color:var(--text-2)}
+
+@media(max-width:900px){
+  :root{--rail:0px}
+  .rail{position:static;width:100%;height:auto;flex-direction:row;bottom:auto;border-right:0;border-bottom:1px solid var(--rule-soft);padding:12px 18px;gap:14px;align-items:center;overflow-x:auto}
+  .rail__idx{flex-direction:row;width:auto;gap:6px}
+  .rail__lnk{padding:6px 8px;border-left:0;border-bottom:2px solid transparent;width:auto}
+  .rail__lnk:hover,.rail__lnk:focus-visible{border-left-color:transparent;border-bottom-color:var(--dust)}
+  .rail__spine{margin-top:0;margin-left:auto;writing-mode:horizontal-tb;transform:none;white-space:nowrap}
+  .shell{margin-left:0}
+  .hero,.cmp,.shield{grid-template-columns:1fr}
+  .globe-stage{order:-1}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+
+<div class="wrap">
+
+<nav class="rail" aria-label="Índice de placas">
+  <span class="rail__mark" aria-hidden="true"></span>
+  <div class="rail__idx">
+    <a class="rail__lnk" href="#p1">I</a>
+    <a class="rail__lnk" href="#p2">II</a>
+    <a class="rail__lnk" href="#p3">III</a>
+    <a class="rail__lnk" href="#p4">IV</a>
+    <a class="rail__lnk" href="#p5">V</a>
+  </div>
+  <span class="rail__spine">ATLAS MARCIANO</span>
+</nav>
+
+<main class="shell">
+<div class="inner">
+
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Reto Marte UNACH 2026 · placas de referencia</p>
+      <h1>El peor lugar<br>para <em>cerrar</em><br>un ciclo</h1>
+      <p class="lede">Marte no perdona un sistema abierto. Cada gramo de agua que se fuga, cada molécula de CO₂ que no vuelve a ser oxígeno, hay que traerlo desde 225 millones de kilómetros. <strong>Por eso es el mejor laboratorio que tenemos para aprender a cerrar los ciclos de la Tierra.</strong></p>
+      <div class="hero__meta">
+        <span class="tag">NASA-STD-3001 V2 REV E</span>
+        <span class="tag">MISIÓN ≈ 1 000 SOLES</span>
+        <span class="tag">TRIPULACIÓN 4</span>
+      </div>
+    </div>
+    <div class="globe-stage">
+      <span class="callout callout--l c1">casquete polar de CO₂ y H₂O</span>
+      <span class="callout callout--r c2">atmósfera <b>6 mbar</b> · 95 % CO₂</span>
+      <span class="callout callout--l c3">regolito · <b>0,5–1 % percloratos</b></span>
+      <div>
+        <div class="globe" id="globe">
+          <div class="globe__surf globe__surf--a"></div>
+          <div class="globe__surf globe__surf--b"></div>
+          <div class="globe__storm"></div>
+          <div class="globe__cap"></div>
+          <div class="globe__cap globe__cap--s"></div>
+          <div class="globe__shade"></div>
+          <div class="globe__ring"></div>
+        </div>
+        <button class="storm-btn" id="stormBtn" type="button" aria-pressed="false">TORMENTA GLOBAL DE POLVO</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── PLACA I ─────────────────────────────────── -->
+  <section class="plate" id="p1">
+    <div class="plate__head">
+      <span class="plate__num">I</span>
+      <h2 class="plate__title">Marte en números</h2>
+      <span class="plate__sub">Lo que el entorno le hace al cuerpo humano</span>
+    </div>
+    <p class="plate__note">La barra no mide la magnitud: mide <em>cuánto se aleja de la Tierra</em>. Vacía significa idéntico a casa, llena significa irreconocible. Fíjense en la última — la duración del día marciano es casi la nuestra, y es lo único que un cuerpo humano reconocería sin traducción.</p>
+
+    <div class="gauges__axis"><span>IDÉNTICO A LA TIERRA</span><span>IRRECONOCIBLE</span></div>
+    <div class="gauges">
+      <div class="gauge">
+        <div class="gauge__top"><span class="gauge__label">Presión superficial</span><span class="gauge__val">6<small>mbar</small></span></div>
+        <div class="gauge__track"><span class="gauge__fill" style="--v:99%"></span></div>
+        <p class="gauge__cmp">El <b>0,6 %</b> de la presión terrestre. Sin traje, la sangre herviría a temperatura corporal.</p>
+      </div>
+      <div class="gauge">
+        <div class="gauge__top"><span class="gauge__label">Oxígeno atmosférico</span><span class="gauge__val">0,13<small>%</small></span></div>
+        <div class="gauge__track"><span class="gauge__fill is-cool" style="--v:99%"></span></div>
+        <p class="gauge__cmp">Frente al <b>21 %</b> terrestre. Absolutamente todo el O₂ hay que fabricarlo.</p>
+      </div>
+      <div class="gauge">
+        <div class="gauge__top"><span class="gauge__label">Radiación superficial</span><span class="gauge__val">0,7<small>mSv/día</small></span></div>
+        <div class="gauge__track"><span class="gauge__fill is-amber" style="--v:99%"></span></div>
+        <p class="gauge__cmp">≈ <b>250 mSv/año</b>: cien veces el fondo terrestre. No hay campo magnético que lo frene.</p>
+      </div>
+      <div class="gauge">
+        <div class="gauge__top"><span class="gauge__label">Polvo · límite de exposición</span><span class="gauge__val">0,1<small>mg/m³</small></span></div>
+        <div class="gauge__track"><span class="gauge__fill" style="--v:97%"></span></div>
+        <p class="gauge__cmp">Partícula media de <b>3 µm</b>: llega hasta el alvéolo. Treinta veces más estricto que el límite general de polvo.</p>
+      </div>
+      <div class="gauge">
+        <div class="gauge__top"><span class="gauge__label">Temperatura media</span><span class="gauge__val">−63<small>°C</small></span></div>
+        <div class="gauge__track"><span class="gauge__fill is-amber" style="--v:78%"></span></div>
+        <p class="gauge__cmp">Extremos de <b>−140 a +20 °C</b>. La cabina debe sostener 20–25 °C sin descanso.</p>
+      </div>
+      <div class="gauge">
+        <div class="gauge__top"><span class="gauge__label">Gravedad</span><span class="gauge__val">0,38<small>g</small></span></div>
+        <div class="gauge__track"><span class="gauge__fill" style="--v:62%"></span></div>
+        <p class="gauge__cmp">Ni microgravedad ni Tierra: <b>un régimen que ningún humano ha habitado</b>.</p>
+      </div>
+      <div class="gauge">
+        <div class="gauge__top"><span class="gauge__label">Duración del año</span><span class="gauge__val">687<small>días</small></span></div>
+        <div class="gauge__track"><span class="gauge__fill is-cool" style="--v:47%"></span></div>
+        <p class="gauge__cmp">Casi el doble. Las ventanas de viaje solo se abren cada <b>26 meses</b>.</p>
+      </div>
+      <div class="gauge">
+        <div class="gauge__top"><span class="gauge__label">Duración del día</span><span class="gauge__val">24:39<small>h</small></span></div>
+        <div class="gauge__track"><span class="gauge__fill is-cool" style="--v:3%"></span></div>
+        <p class="gauge__cmp">Treinta y nueve minutos más largo. <b>El ritmo circadiano casi no nota la diferencia.</b></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PLACA II ────────────────────────────────── -->
+  <section class="plate" id="p2">
+    <div class="plate__head">
+      <span class="plate__num">II</span>
+      <h2 class="plate__title">Tierra ↔ Marte</h2>
+      <span class="plate__sub">Los dos planetas a escala real de radio</span>
+    </div>
+    <p class="plate__note">Marte tiene poco más de la mitad del radio terrestre y una décima parte de su masa. Todo lo demás se sigue de ahí: gravedad baja, atmósfera que se escapó, sin tectónica que recicle carbono. La Tierra no es habitable por casualidad — es habitable porque la vida lleva 3 800 millones de años regulándola.</p>
+
+    <div class="cmp">
+      <div class="cmp__discs">
+        <div class="disc disc--earth"><span class="disc__cap">TIERRA · 6 371 km</span></div>
+        <div class="disc disc--mars"><span class="disc__cap">MARTE · 3 390 km</span></div>
+      </div>
+      <div class="deltas">
+        <div class="delta"><span class="delta__k">Gravedad superficial</span><span class="delta__e">1,00 g</span><span class="delta__m">0,38 g</span></div>
+        <div class="delta"><span class="delta__k">Presión atmosférica</span><span class="delta__e">1 013 mbar</span><span class="delta__m">6 mbar</span></div>
+        <div class="delta"><span class="delta__k">Oxígeno en la atmósfera</span><span class="delta__e">21 %</span><span class="delta__m">0,13 %</span></div>
+        <div class="delta"><span class="delta__k">Temperatura media</span><span class="delta__e">+15 °C</span><span class="delta__m">−63 °C</span></div>
+        <div class="delta"><span class="delta__k">Duración del día</span><span class="delta__e">24 h 00 m</span><span class="delta__m">24 h 39 m</span></div>
+        <div class="delta"><span class="delta__k">Duración del año</span><span class="delta__e">365 días</span><span class="delta__m">687 días</span></div>
+        <div class="delta"><span class="delta__k">Dosis de radiación</span><span class="delta__e">2,4 mSv/año</span><span class="delta__m">≈ 250 mSv/año</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PLACA III ───────────────────────────────── -->
+  <section class="plate" id="p3">
+    <div class="plate__head">
+      <span class="plate__num">III</span>
+      <h2 class="plate__title">Nadie va a contestar</h2>
+      <span class="plate__sub">El retardo de comunicación en su punto más lejano</span>
+    </div>
+    <p class="plate__note">En la Estación Espacial, un astronauta en crisis habla con Houston en tiempo real. En Marte, la señal tarda entre 3 y 22 minutos en llegar — y otro tanto en volver. Toda decisión médica, técnica o psicológica ocurre <em>antes</em> de que la Tierra sepa siquiera que hubo un problema. Ese hueco es el que su solución tiene que llenar.</p>
+
+    <div class="comms">
+      <div class="comms__read">
+        <span class="comms__clock" id="delayRead">00:00</span>
+        <span class="comms__dir" id="delayDir">TIERRA → MARTE</span>
+      </div>
+      <div class="link">
+        <span class="link__end"><span class="link__dot link__dot--e"></span>TIERRA</span>
+        <div class="link__track">
+          <div class="link__ticks" aria-hidden="true">
+            <i class="link__tick"></i><i class="link__tick"></i><i class="link__tick"></i><i class="link__tick"></i><i class="link__tick"></i><i class="link__tick"></i>
+          </div>
+          <span class="pulse" id="pulse"></span>
+        </div>
+        <span class="link__end"><span class="link__dot link__dot--m"></span>MARTE</span>
+      </div>
+      <div class="comms__scale"><span>0 min</span><span>11 min</span><span>22 min</span></div>
+      <p class="comms__foot">Una pregunta y su respuesta: <b>hasta 44 minutos</b>. Y durante la conjunción solar, cuando el Sol se interpone, el enlace se corta por completo durante semanas.</p>
+    </div>
+  </section>
+
+  <!-- ── PLACA IV ────────────────────────────────── -->
+  <section class="plate" id="p4">
+    <div class="plate__head">
+      <span class="plate__num">IV</span>
+      <h2 class="plate__title">El bucle que nunca cierra del todo</h2>
+      <span class="plate__sub">Soporte de vida como ecosistema en miniatura</span>
+    </div>
+    <p class="plate__note">Un hábitat es una Gaia hecha a mano: tres ciclos acoplados que devuelven al equipo lo que el equipo consume. La Estación Espacial recupera ya el 98 % de su agua, y NASA fija ese 98 % como el mínimo para Marte. El 2 % restante es lo único que hay que cargar desde la Tierra — y es exactamente la fracción que decide si la misión es sostenible.</p>
+
+    <figure>
+      <div class="fig-scroll">
+        <svg viewBox="0 0 980 580" role="img" aria-label="Diagrama del soporte de vida: entradas marcianas de CO2, hielo y regolito alimentan un fotobiorreactor, la recuperación de agua y el cultivo con fermentación, que entregan oxígeno, agua y alimento a la tripulación; los residuos de la tripulación vuelven al procesado de residuos y de ahí a los tres procesos, quedando solo un 2 % de pérdidas que hay que reponer desde la Tierra.">
+          <defs>
+            <marker id="ah-cool" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5B9DC4"/></marker>
+            <marker id="ah-bio" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7BB075"/></marker>
+            <marker id="ah-dust" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#C4562E"/></marker>
+            <marker id="ah-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#E0A244"/></marker>
+          </defs>
+
+          <!-- entradas ISRU -->
+          <text class="svg-t svg-t--sm svg-t--lbl" x="315" y="62" text-anchor="middle" fill="#C4562E">CO₂ ATMOSFÉRICO</text>
+          <line x1="315" y1="70" x2="315" y2="84" stroke="#C4562E" stroke-width="1.6" marker-end="url(#ah-dust)"/>
+          <text class="svg-t svg-t--sm svg-t--lbl" x="315" y="202" text-anchor="middle" fill="#C4562E">HIELO SUBSUPERFICIAL</text>
+          <line x1="315" y1="210" x2="315" y2="224" stroke="#C4562E" stroke-width="1.6" marker-end="url(#ah-dust)"/>
+          <text class="svg-t svg-t--sm svg-t--lbl" x="315" y="342" text-anchor="middle" fill="#C4562E">REGOLITO DETOXIFICADO</text>
+          <line x1="315" y1="350" x2="315" y2="364" stroke="#C4562E" stroke-width="1.6" marker-end="url(#ah-dust)"/>
+
+          <!-- procesos -->
+          <rect class="svg-box" x="200" y="88" width="230" height="70"/>
+          <text class="svg-t" x="315" y="118" text-anchor="middle">FOTOBIORREACTOR</text>
+          <text class="svg-t svg-t--sm" x="315" y="136" text-anchor="middle">cianobacteria · microalga</text>
+
+          <rect class="svg-box" x="200" y="228" width="230" height="70"/>
+          <text class="svg-t" x="315" y="258" text-anchor="middle">RECUPERACIÓN DE AGUA</text>
+          <text class="svg-t svg-t--sm" x="315" y="276" text-anchor="middle">destilación + salmuera · 98 %</text>
+
+          <rect class="svg-box" x="200" y="368" width="230" height="70"/>
+          <text class="svg-t" x="315" y="398" text-anchor="middle">CULTIVO + FERMENTACIÓN</text>
+          <text class="svg-t svg-t--sm" x="315" y="416" text-anchor="middle">leguminosa pionera · levadura</text>
+
+          <!-- tripulación -->
+          <rect x="650" y="180" width="170" height="200" fill="#1B2530" stroke="#C4562E" stroke-width="1.5"/>
+          <text class="svg-t" x="735" y="272" text-anchor="middle" fill="#E7ECF1" font-size="14">TRIPULACIÓN</text>
+          <text class="svg-t svg-t--sm" x="735" y="292" text-anchor="middle">4 personas · 1 000 soles</text>
+
+          <!-- productos hacia la tripulación -->
+          <path class="flow" d="M430 123 C 540 123, 560 210, 646 218" fill="none" stroke="#5B9DC4" stroke-width="1.8" marker-end="url(#ah-cool)"/>
+          <text class="svg-t svg-t--sm svg-t--lbl" x="536" y="150" text-anchor="middle" fill="#5B9DC4">O₂ RESPIRABLE</text>
+
+          <path class="flow" d="M430 263 L 646 272" fill="none" stroke="#5B9DC4" stroke-width="1.8" marker-end="url(#ah-cool)"/>
+          <text class="svg-t svg-t--sm svg-t--lbl" x="538" y="255" text-anchor="middle" fill="#5B9DC4">AGUA POTABLE · 2,5 L/DÍA</text>
+
+          <path class="flow" d="M430 403 C 540 403, 560 340, 646 330" fill="none" stroke="#7BB075" stroke-width="1.8" marker-end="url(#ah-bio)"/>
+          <text class="svg-t svg-t--sm svg-t--lbl" x="536" y="392" text-anchor="middle" fill="#7BB075">ALIMENTO</text>
+
+          <!-- residuos: tripulación -> procesado -->
+          <path class="flow" d="M735 380 L 735 502 L 438 502" fill="none" stroke="#7BB075" stroke-width="1.8" marker-end="url(#ah-bio)"/>
+          <text class="svg-t svg-t--sm svg-t--lbl" x="592" y="490" text-anchor="middle" fill="#7BB075">CO₂ EXHALADO · ORINA Y SUDOR · RESTOS VEGETALES</text>
+
+          <rect class="svg-box" x="200" y="470" width="230" height="64"/>
+          <text class="svg-t" x="315" y="497" text-anchor="middle">PROCESADO DE RESIDUOS</text>
+          <text class="svg-t svg-t--sm" x="315" y="515" text-anchor="middle">nada sale del sistema</text>
+
+          <!-- retorno: procesado -> procesos -->
+          <path class="flow" d="M198 502 L 150 502 L 150 123 L 194 123" fill="none" stroke="#7BB075" stroke-width="1.8" marker-end="url(#ah-bio)"/>
+          <path class="flow" d="M150 263 L 194 263" fill="none" stroke="#7BB075" stroke-width="1.8" marker-end="url(#ah-bio)"/>
+          <path class="flow" d="M150 403 L 194 403" fill="none" stroke="#7BB075" stroke-width="1.8" marker-end="url(#ah-bio)"/>
+          <text class="svg-t svg-t--sm svg-t--lbl" x="104" y="300" text-anchor="middle" fill="#7BB075" transform="rotate(-90 104 300)">NUTRIENTES Y AGUA RECUPERADOS</text>
+
+          <!-- pérdidas -->
+          <line class="flow" x1="820" y1="280" x2="930" y2="280" stroke="#E0A244" stroke-width="1.8" marker-end="url(#ah-amber)"/>
+          <text class="svg-t svg-t--sm svg-t--lbl" x="875" y="264" text-anchor="middle" fill="#E0A244">FUGAS ≈ 2 %</text>
+          <text class="svg-t svg-t--sm" x="875" y="302" text-anchor="middle">lo único que</text>
+          <text class="svg-t svg-t--sm" x="875" y="317" text-anchor="middle">llega de la Tierra</text>
+        </svg>
+      </div>
+      <figcaption>Cada flecha animada es materia moviéndose, no una relación abstracta. El único trazo que sale del sistema es el ámbar de la derecha: reducirlo es, literalmente, el problema de ingeniería de toda misión larga — y el mismo problema que tiene una ciudad que vierte lo que podría recircular.</figcaption>
+    </figure>
+
+    <div class="legend">
+      <span class="legend__i"><i class="legend__sw" style="background:#C4562E"></i>ENTRADA MARCIANA (ISRU)</span>
+      <span class="legend__i"><i class="legend__sw" style="background:#5B9DC4"></i>AGUA Y OXÍGENO</span>
+      <span class="legend__i"><i class="legend__sw" style="background:#7BB075"></i>BIOLOGÍA Y NUTRIENTES</span>
+      <span class="legend__i"><i class="legend__sw" style="background:#E0A244"></i>PÉRDIDA DEL SISTEMA</span>
+    </div>
+  </section>
+
+  <!-- ── PLACA V ─────────────────────────────────── -->
+  <section class="plate" id="p5">
+    <div class="plate__head">
+      <span class="plate__num">V</span>
+      <h2 class="plate__title">Cuánto hay que enterrarse</h2>
+      <span class="plate__sub">Blindaje de regolito y melanina · modelo ilustrativo</span>
+    </div>
+    <p class="plate__note">Un hongo melanizado cultivado en la Estación Espacial creció un 21 % <em>mejor</em> bajo radiación: usa la melanina para captar energía ionizante. Los autores estimaron que unos 9 cm de mezcla melanina + regolito bastarían para anular la dosis anual en la superficie de Marte. Mueva el control y vea lo que cambia.</p>
+
+    <div class="shield">
+      <div class="stack">
+        <div class="stack__sky" aria-hidden="true">
+          <i class="ray" style="left:12%;animation-delay:0s"></i>
+          <i class="ray" style="left:29%;animation-delay:.5s"></i>
+          <i class="ray" style="left:47%;animation-delay:1.1s"></i>
+          <i class="ray" style="left:66%;animation-delay:.3s"></i>
+          <i class="ray" style="left:84%;animation-delay:.8s"></i>
+        </div>
+        <div class="stack__layer" id="layer" style="--h:80px">
+          <span class="stack__tag" id="layerTag">9,0 cm</span>
+        </div>
+        <div class="stack__hab">HÁBITAT PRESURIZADO</div>
+      </div>
+
+      <div class="ctrl">
+        <label for="thick">Espesor de blindaje · <span id="thickVal">9,0</span> cm</label>
+        <input type="range" id="thick" min="0" max="24" step="0.5" value="9">
+        <div class="readout">
+          <div class="ro">
+            <div class="ro__k">Dosis dentro del hábitat</div>
+            <div class="ro__v" id="doseVal">2,4<small>mSv/año</small></div>
+          </div>
+          <div class="ro">
+            <div class="ro__k">Comparado con el fondo terrestre</div>
+            <div class="ro__v" id="ratioVal">1,0<small>×</small></div>
+          </div>
+          <div class="ro">
+            <div class="ro__k">Acumulado en 1 000 soles</div>
+            <div class="ro__v" id="missionVal">6,8<small>mSv</small></div>
+          </div>
+        </div>
+        <p class="model-note">Curva exponencial ajustada a los dos puntos citados (250 mSv/año sin blindaje, 2,4 mSv/año a 9 cm). Es una ilustración de la afirmación publicada, no un cálculo de blindaje: el frenado real de rayos cósmicos galácticos depende de la densidad de área y produce radiación secundaria.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── cierre ──────────────────────────────────── -->
+  <section class="close">
+    <p class="thesis">No están diseñando para Marte. Están usando Marte para aprender a <em>cerrar los ciclos</em> que en la Tierra se están abriendo.</p>
+
+    <div class="uses">
+      <div class="use">
+        <div class="use__k">Para las diapositivas</div>
+        <p class="use__t">Capturen cualquier placa a pantalla completa. La I y la II funcionan como apertura con dato duro; la III abre el problema de autonomía.</p>
+      </div>
+      <div class="use">
+        <div class="use__k">Para el video</div>
+        <p class="use__t">Graben la pantalla sobre la placa IV mientras narran: las flechas en movimiento sostienen la explicación del ciclo sin que tengan que señalar nada.</p>
+      </div>
+      <div class="use">
+        <div class="use__k">Para el jurado</div>
+        <p class="use__t">La placa V es interactiva. Si preguntan por viabilidad técnica, muevan el control en vivo y muestren la sensibilidad de la solución al espesor.</p>
+      </div>
+      <div class="use">
+        <div class="use__k">Para el Documento Concepto</div>
+        <p class="use__t">Toda cifra aquí está en la hoja de datos duros del kit impreso, con su fuente. Cítenlas con número, fuente e implicación.</p>
+      </div>
+    </div>
+
+    <p class="colophon">
+      Fuentes · NASA-STD-3001 Vol. 2 Rev. E (2025) · Ebert et al., límites de exposición al polvo marciano (2026) · Averesch et al., <i>Cultivation of Cladosporium sphaerospermum aboard the ISS</i> (2022) · NASA ISS Water Management &amp; Recovery, ICES 2023 · NASA Human Research Roadmap, riesgo BMed<br>
+      Atlas Marciano · Reto Marte UNACH 2026 · complementa el Kit de Campo imprimible
+    </p>
+  </section>
+
+</div>
+</main>
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* tormenta de polvo */
+  var globe = document.getElementById('globe'), btn = document.getElementById('stormBtn');
+  if (globe && btn) {
+    btn.addEventListener('click', function(){
+      var on = globe.classList.toggle('is-storm');
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      btn.textContent = on ? 'DESPEJAR ATMÓSFERA' : 'TORMENTA GLOBAL DE POLVO';
+    });
+  }
+
+  /* retardo de comunicación */
+  var pulse = document.getElementById('pulse'),
+      read  = document.getElementById('delayRead'),
+      dir   = document.getElementById('delayDir');
+  if (pulse && read && dir) {
+    var LEG = 9000, MAXMIN = 22, t0 = null;
+    function fmt(min){
+      var s = Math.round(min * 60);
+      return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+    }
+    if (reduce) {
+      pulse.style.left = '100%';
+      read.textContent = '22:00';
+    } else {
+      requestAnimationFrame(function step(ts){
+        if (t0 === null) t0 = ts;
+        var e = ((ts - t0) % (LEG * 2)) / LEG;      // 0 → 2
+        var out = e < 1;
+        var p = out ? e : 2 - e;                    // posición 0 → 1 → 0
+        pulse.style.left = (p * 100).toFixed(2) + '%';
+        pulse.classList.toggle('is-back', !out);
+        read.textContent = fmt(e * MAXMIN);        // tiempo total desde que salió el mensaje
+        dir.textContent = out ? 'TIERRA → MARTE · IDA' : 'MARTE → TIERRA · RESPUESTA';
+        requestAnimationFrame(step);
+      });
+    }
+  }
+
+  /* blindaje */
+  var thick = document.getElementById('thick');
+  if (thick) {
+    var D0 = 250, DE = 2.4, X0 = 9, LAM = X0 / Math.log(D0 / DE), SOLS = 2.81;
+    var els = {
+      val: document.getElementById('thickVal'),
+      layer: document.getElementById('layer'),
+      tag: document.getElementById('layerTag'),
+      dose: document.getElementById('doseVal'),
+      ratio: document.getElementById('ratioVal'),
+      mission: document.getElementById('missionVal')
+    };
+    function num(n, d){ return n.toLocaleString('es-MX', {minimumFractionDigits: d, maximumFractionDigits: d}); }
+    function update(){
+      var x = parseFloat(thick.value);
+      var dose = D0 * Math.exp(-x / LAM);
+      var ratio = dose / DE;
+      els.val.textContent = num(x, 1);
+      els.tag.textContent = num(x, 1) + ' cm';
+      els.layer.style.setProperty('--h', (x * 8.5 + 4) + 'px');
+      els.dose.innerHTML = num(dose, dose < 10 ? 1 : 0) + '<small>mSv/año</small>';
+      els.ratio.innerHTML = num(ratio, ratio < 10 ? 1 : 0) + '<small>× el fondo terrestre</small>';
+      els.mission.innerHTML = num(dose * SOLS, dose * SOLS < 10 ? 1 : 0) + '<small>mSv</small>';
+      var good = ratio <= 3;
+      els.dose.className = 'ro__v ' + (good ? 'is-good' : 'is-bad');
+      els.ratio.className = 'ro__v ' + (good ? 'is-good' : 'is-bad');
+    }
+    thick.addEventListener('input', update);
+    update();
+  }
+})();
+</script>

@@ -1,0 +1,36 @@
+{
+  "pages": [
+    { "id": "page-1", "name": "Plantillas para llenar" },
+    { "id": "page-2", "name": "Hojas de consulta" }
+  ],
+  "artboards": [
+    { "file": "TableroIdeas.dc.html", "title": "Fase 3 · Diálogo de Ideas", "page": "page-1", "x": 0, "y": 0, "w": 1056, "h": 816 },
+    { "file": "Main.dc.html", "title": "Fase 4 · Mapa de Empatía", "page": "page-1", "x": 1136, "y": 0, "w": 1056, "h": 816 },
+    { "file": "CincoPorQue.dc.html", "title": "Fase 5 · 5 Por Qué", "page": "page-1", "x": 2272, "y": 0, "w": 816, "h": 1056 },
+    { "file": "LienzoCanvas.dc.html", "title": "Fase 6 · Lienzo Canvas", "page": "page-1", "x": 0, "y": 1176, "w": 1056, "h": 816 },
+    { "file": "RetornoTierra.dc.html", "title": "Fase 8 · Retorno a la Tierra", "page": "page-1", "x": 1136, "y": 1176, "w": 1056, "h": 816 },
+    { "file": "Storyboard.dc.html", "title": "Fase 9 · Storyboard 5 min", "page": "page-1", "x": 2272, "y": 1176, "w": 1056, "h": 816 },
+    { "file": "DatosMarte.dc.html", "title": "Datos duros · Marte y ECLSS", "page": "page-2", "x": 0, "y": 0, "w": 816, "h": 1056 },
+    { "file": "Rubrica.dc.html", "title": "Rúbrica · 9 criterios", "page": "page-2", "x": 896, "y": 0, "w": 816, "h": 1056 },
+    { "file": "Roles.dc.html", "title": "Fase 2 · Roles del equipo", "page": "page-2", "x": 1792, "y": 0, "w": 816, "h": 1056 }
+  ],
+  "annotations": [
+    {
+      "id": "nota-plantillas",
+      "page": "page-1",
+      "x": 0,
+      "y": -152,
+      "w": 700,
+      "text": "PLANTILLAS PARA LLENAR A MANO — en orden de fase.\nImprimir en tamaño carta: las hojas anchas en horizontal, las altas en vertical.\nCada hoja tiene un interruptor \"guias\" arriba: apágalo para imprimir sin líneas de escritura."
+    },
+    {
+      "id": "nota-consulta",
+      "page": "page-2",
+      "x": 0,
+      "y": -152,
+      "w": 700,
+      "text": "HOJAS DE CONSULTA — estas no se llenan, se leen.\nLleven las tres impresas a la mesa. La de datos duros es la que más van a usar en la Fase 5 y cuando el jurado pregunte."
+    }
+  ],
+  "launch": { "view": "canvas", "page": "page-1" }
+}
