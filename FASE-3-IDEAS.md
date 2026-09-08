@@ -16,7 +16,7 @@ A continuación se presentan las ideas estructuradas por cada fase del reto, lis
 
 ### 💡 Ideas para la Parte 2: Convertir residuos a energía
 *   **Idea 4:** Implementar una **Celda de Combustible Microbiano (MFC)**. Utilizar los lixiviados (líquidos) que sobren del proceso de las moscas y de la tripulación. Los microorganismos dentro de la celda oxidan la materia orgánica, generando una corriente eléctrica (energía) y dejando agua rica en nutrientes como subproducto (abono líquido seguro).
-
+Implementar una **Celda de Combustible Microbiano (MFC)**. Utilizar los lixiviados (líquidos) que sobren del proceso de las moscas y de la tripulación. Los microorganismos dentro de la celda oxidan la materia orgánica, generando una corriente eléctrica (energía) y dejando agua rica en nutrientes como subproducto (abono líquido seguro).
 ### 💡 Ideas para la Parte 3: Cultivo Inteligente y Resistente
 *   **Idea 5:** Usar **Syntrichia caninervis**, un musgo extremófilo del desierto, como "cultivo pionero". Antes de sembrar comida, se planta este musgo sobre el regolito marciano desintoxicado. Actúa como una capa biológica intermedia que estabiliza el suelo, retiene la humedad y resiste la radiación marciana, preparando la cama para los cultivos comestibles.
 
