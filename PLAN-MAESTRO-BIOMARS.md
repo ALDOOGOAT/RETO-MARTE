@@ -174,7 +174,7 @@ Las bases lo dicen dos veces (`EL RETO .pdf` §1 y Guía del Participante, Anexo
 | R8 | Usar esa energía y abono en el cultivo | Biogás → colchón térmico del módulo; digestato → riego | ✔ |
 | R9 | **Sensores baratos** | Red de biosensores MFC autoalimentados (consumo cero) | ✔ |
 | R10 | **Mezclar cultivos resistentes** | Policultivo estratificado camote + leguminosa + rábano | ✔ |
-| R11 | **Riego eficiente** | Digestato dosificado + micorrizas (×10 absorción hídrica) + costra de musgo que retiene humedad | ✔ |
+| R11 | **Riego eficiente** | **Goteo de baja altura sobre pivote central**: el colector anular gira con el anillo, 2 goteros por bandeja tendidos sobre la cama. Nada de aspersión (límite de polvo 0.1 mg/m³). Digestato dosificado + micorrizas (×10 absorción hídrica) + costra de musgo que retiene humedad | ✔ |
 | R12 | Producción **estable** pese al clima extremo | Resiliencia por desfase: 12 bandejas en 12 etapas | ✔ |
 | R13 | Las 3 partes **encadenadas** | Dependencia circular documentada con tiempos (§7) | ✔ |
 | R14 | Explicación de falla en cascada | §7 | ✔ |

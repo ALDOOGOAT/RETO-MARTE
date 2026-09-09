@@ -37,6 +37,16 @@ en PDF y documentos de contexto/investigación.
     **Cada tubo es clicable** y abre su ficha (qué lleva, de dónde a dónde, cifras): las siete
     fichas `f_*` de `FICHAS`. El tubo real mide 2 cm, así que lleva un volumen de selección
     invisible más grueso; si se añade un conducto nuevo, pasarle su clave de ficha.
+  · **El riego es POR GOTEO sobre PIVOTE CENTRAL**, no una rampa fija. Con 12 bandejas avanzando
+    un paso cada 8 soles, una rampa fija regaría cada bandeja una vez cada 96 soles. El colector
+    anular gira con el anillo, con 2 goteros por bandeja tendidos sobre la cama (goteo de baja
+    altura, tipo LESA): nada de aspersión, el límite de polvo dentro del hábitat es 0.1 mg/m³.
+    Base documental: R11 «riego eficiente» del plan maestro + la lámina P-01 («goteo y sensores»).
+  · **Rendimiento — no usar `transmission`.** El material físico con `transmission` obliga a three
+    a renderizar la escena entera **dos veces**; en la Intel integrada del equipo bajaba a 13 fps.
+    Con un transparente + `clearcoat` el vidrio se ve igual y va a 55. Las mallas de planta se
+    fusionan por material con `fusionar()` (three no trae `BufferGeometryUtils` en la build UMD),
+    y las luces puntuales están limitadas a cuatro: cada una cuesta en todos los fragmentos.
   · **Las fichas llevan diagrama** (`viz`, construido con los helpers de `VIZ`): barra de
     proporción, cadena de pasos o rejilla de bandejas. Al añadir una ficha nueva, darle su `viz`.
   · **Las hojas usan textura en escala de gris y el color va en el material.** Es lo que permite

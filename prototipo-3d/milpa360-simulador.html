@@ -811,7 +811,7 @@ function texturaSolar(){
    ═══════════════════════════════════════════════════════════════ */
 const lienzo = $("lienzo");
 const renderer = new T.WebGLRenderer({ canvas: lienzo, antialias: true });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));   // 13 luces × 8 Mpx no cabe en el presupuesto
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = T.PCFSoftShadowMap;
 renderer.toneMapping = T.ACESFilmicToneMapping;
@@ -830,7 +830,7 @@ const gHabitat = new T.Group(); escena.add(gHabitat);
 const sol = new T.DirectionalLight(0xFFE2C2, 2.3);
 sol.position.set(46, 30, -14);   // rasante: terminador en el planeta, sombras largas en el suelo
 sol.castShadow = true;
-sol.shadow.mapSize.set(2560, 2560);
+sol.shadow.mapSize.set(2048, 2048);
 sol.shadow.camera.near = 1; sol.shadow.camera.far = 90;
 sol.shadow.camera.top = sol.shadow.camera.right = 11;
 sol.shadow.camera.bottom = sol.shadow.camera.left = -11;
@@ -1023,9 +1023,15 @@ const FICHAS = {
     txt:"Al salir del digestor, la materia ya está estabilizada: eso es el <b>digestato</b>. Aquí se le suma el <b>cóctel biológico</b> y se inyecta en la estación de descanso, justo antes de que la bandeja vuelva a sembrarse.<br><br>El cóctel no es adorno. Cada organismo hace una tarea que el regolito no puede hacer solo: fijar nitrógeno, multiplicar la absorción de agua, liberar el fósforo que el mineral tiene atrapado, aguantar la sal que quedó y frenar los hongos que aparecen en un lugar cerrado y húmedo.",
     d:[["Qué transporta","digestato + cóctel biológico"],["De dónde","cámara B"],["A dónde","S4 · descanso e inóculo"],["Rhizobium","fija nitrógeno en la leguminosa"],["Micorrizas","hasta ×10 de absorción de agua"],["Pseudomonas","libera fósforo y hierro del mineral"],["Bacillus · Trichoderma","tolera sal · frena hongos"]], f:"PLAN-MAESTRO-BIOMARS.md §4.4" },
 
-  f_riego: { sub:"CONDUCTO VERDE · CÁMARA B → ANILLO EXTERIOR", tit:"Riego del cultivo",
-    txt:"La línea de riego lleva digestato diluido y el agua recuperada del lavado hasta la <b>rampa de goteo</b> que cuelga sobre el anillo exterior.<br><br>La rampa está fija y las bandejas pasan debajo: cada una recibe su turno de riego según avanza. En cada punto donde el agua cambia de recipiente hay una <b>MFC</b> vigilando que no entre nada tóxico.",
-    d:[["Qué transporta","digestato diluido + agua recuperada"],["De dónde","cámara B"],["A dónde","rampa de goteo · anillo exterior"],["A cuántas bandejas","12"],["Vigilancia","una MFC por trasvase"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3–4.4" },
+  riego: { sub:"ANILLO EXTERIOR · CÓMO SE RIEGA", tit:"Goteo sobre pivote central",
+    txt:"Es <b>riego por goteo</b>, y va montado sobre el anillo que gira — exactamente como un <b>pivote central</b> de la Tierra, esos círculos verdes que se ven desde el avión.<br><br>Tenía que ser así por aritmética: con 12 bandejas avanzando una posición cada 8 soles, una rampa fija regaría cada bandeja <b>una vez cada 96 soles</b>. Con el colector girando junto a las bandejas, cada una lleva sus dos goteros encima todo el tiempo.<br><br>Y es goteo <b>de baja altura</b>, no aspersión: dentro del hábitat el polvo no puede pasar de 0.1 mg/m³, así que nada de agua volando. La gota sale a pocos centímetros del suelo, la raíz toma lo que necesita y la costra de musgo retiene el resto.",
+    viz: VIZ.cadena("EL AGUA, DE LA CÁMARA B A LA RAÍZ", [["digestato", "#7FBB72"], ["unión rotativa", "#A2B0BD"], ["colector anular", "#63A9D1"], ["gotero", "#63A9D1"], ["raíz", "#7FBB72"]]) + VIZ.nota("Sin el pivote, cada bandeja se regaría <b>una vez cada 96 soles</b>."),
+    d:[["Tipo","goteo de baja altura (LESA)"],["Por qué no aspersión","límite de polvo 0.1 mg/m³"],["Goteros","2 por bandeja · 24 en el anillo"],["Gira con","el anillo de cultivo"],["Retención","costra de musgo + micorrizas ×10"],["Vigilancia","una MFC en riego→bandeja"]],
+    f:"PLAN-MAESTRO-BIOMARS.md §4.4 (R11 · riego eficiente) · lámina P-01 del equipo" },
+
+  f_riego: { sub:"CONDUCTO VERDE · CÁMARA B → PIVOTE", tit:"Riego del cultivo",
+    txt:"Esta línea lleva digestato diluido y el agua recuperada del lavado hasta la <b>unión rotativa</b> del eje. De ahí baja al colector anular que gira con las bandejas y termina en los goteros.<br><br>En cada punto donde el agua cambia de recipiente hay una <b>MFC</b> vigilando que no entre nada tóxico — y avisa antes de que el daño se vea.",
+    d:[["Qué transporta","digestato diluido + agua recuperada"],["De dónde","cámara B"],["A dónde","unión rotativa del pivote"],["A cuántas bandejas","12 · 24 goteros"],["Vigilancia","una MFC por trasvase"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3–4.4" },
 
   f_biogas: { sub:"CONDUCTO ROJO · CÁMARA B → GASÓMETRO", tit:"Biogás",
     txt:"Metano al <b>60 %</b> saliendo de la cámara metanogénica. Sube a la <b>campana flotante</b> — ese domo verde que ves subir y bajar es el almacén: sube cuando el digestor produce y baja cuando el módulo consume.<br><br>Con 2 kg de sólidos volátiles al día salen unos <b>10 MJ ≈ 2.9 kWh</b>. No alimentan un hábitat entero. Alimentan este módulo, y sobre todo guardan calor para la noche marciana o para la tormenta que apague los paneles.<br><br>Lánzale una tormenta y mira bajar la campana: eso es el colchón térmico gastándose.",
@@ -1151,7 +1157,7 @@ let hojaCamote, hojaLegum, hojaRabano;
 const clicables = [];
 const anclas = [];                                    // etiquetas fijas del hábitat
 let anilloIn, anilloOut, aviario, antorcha, digestorA, digestorB, luzAntorcha;
-let gasometro, bandejaHuevos, bandejaLarvas;
+let gasometro, bandejaHuevos, bandejaLarvas, goteros;
 const codornices = [], flujos = [], focosCultivo = [];
 
 const M = {};                                         // materiales compartidos
@@ -1164,9 +1170,12 @@ function mats(){
   M.acero   = new T.MeshStandardMaterial({ color: 0xB6BEC5, roughness: 0.28, metalness: 0.88 });
   M.oscuro  = new T.MeshStandardMaterial({ color: 0x30363D, roughness: 0.5,  metalness: 0.55 });
   M.cubierta= new T.MeshStandardMaterial({ map: texCubierta, roughness: 0.58, metalness: 0.42 });
-  M.vidrio  = new T.MeshPhysicalMaterial({ color: 0xD3E2EC, roughness: 0.06, metalness: 0,
-                transmission: 0.86, thickness: 0.35, transparent: true, opacity: 0.42,
-                side: T.DoubleSide });
+  /* Sin `transmission`: ese modo obliga a three a renderizar la escena entera una segunda vez
+     en un render target, y en gráficos integrados eso solo cuesta la mitad de los fotogramas.
+     Un transparente con brillo especular da el mismo vidrio a ojo. */
+  M.vidrio  = new T.MeshPhysicalMaterial({ color: 0xCFE0EC, roughness: 0.08, metalness: 0,
+                transparent: true, opacity: 0.30, clearcoat: 0.9, clearcoatRoughness: 0.06,
+                side: T.DoubleSide, depthWrite: false });
   M.verde   = new T.MeshStandardMaterial({ color: 0x2C5E44, roughness: 0.38, metalness: 0.45 });
   M.verde2  = new T.MeshStandardMaterial({ color: 0x27523C, roughness: 0.38, metalness: 0.45 });
   M.azul    = new T.MeshStandardMaterial({ color: 0x3E7FA8, roughness: 0.3,  metalness: 0.5 });
@@ -1205,6 +1214,49 @@ function malla(geo, mat, pos, padre, sombra){
 const enAngulo = (r, k, n) => [Math.cos(k / n * TAU) * r, 0, Math.sin(k / n * TAU) * r];
 function clicable(o, clave){ o.userData.ficha = clave; clicables.push(o); return o; }
 function marcarSubarbol(o, clave){ o.traverse(h => { if (h.isMesh){ h.userData.ficha = clave; clicables.push(h); } }); }
+
+/* Fusiona todas las mallas de un grupo en una por material. Una mata tiene ~15 piezas y
+   hay 108 matas: sin esto son 1 600 llamadas de dibujo por fotograma y el simulador baja a
+   13 fps. three no trae BufferGeometryUtils en la build UMD, así que se hace a mano.      */
+function fusionar(grupo){
+  grupo.updateMatrixWorld(true);
+  const porMat = new Map();
+  grupo.traverse(o => {
+    if (!o.isMesh) return;
+    const l = porMat.get(o.material) || [];
+    l.push(o); porMat.set(o.material, l);
+  });
+  const fuera = new T.Group();
+  for (const [mat, lista] of porMat){
+    const partes = [];
+    let n = 0;
+    for (const o of lista){
+      const g = (o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone());
+      g.applyMatrix4(o.matrixWorld);            // el grupo está en identidad al fusionar
+      partes.push(g); n += g.attributes.position.count;
+    }
+    const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), uv = new Float32Array(n * 2);
+    let k = 0;
+    for (const g of partes){
+      const P = g.attributes.position, N = g.attributes.normal, U = g.attributes.uv;
+      for (let i = 0; i < P.count; i++){
+        const j = k + i;
+        pos[j*3] = P.getX(i); pos[j*3+1] = P.getY(i); pos[j*3+2] = P.getZ(i);
+        if (N){ nor[j*3] = N.getX(i); nor[j*3+1] = N.getY(i); nor[j*3+2] = N.getZ(i); }
+        if (U){ uv[j*2] = U.getX(i); uv[j*2+1] = U.getY(i); }
+      }
+      k += P.count; g.dispose();
+    }
+    const geo = new T.BufferGeometry();
+    geo.setAttribute("position", new T.BufferAttribute(pos, 3));
+    geo.setAttribute("normal", new T.BufferAttribute(nor, 3));
+    geo.setAttribute("uv", new T.BufferAttribute(uv, 2));
+    const m = new T.Mesh(geo, mat);
+    m.receiveShadow = true;
+    fuera.add(m);
+  }
+  return fuera;
+}
 
 /* ── hojas: silueta por especie, con UV normalizadas ── */
 function cerrarHoja(g){
@@ -1316,7 +1368,7 @@ function plantaRabano(){
   const raiz = malla(new T.SphereGeometry(0.05, 14, 12), M.rabano, [0, 0.014, 0], g, false);
   raiz.scale.set(1, 0.86, 1); raiz.castShadow = true;
   malla(new T.ConeGeometry(0.012, 0.07, 6), M.rabano, [0, -0.035, 0], g, false);   // raíz pivotante
-  return g;
+  return fusionar(g);
 }
 
 /* ── Leguminosa · hoja trifoliada (frijol / alfalfa) ──
@@ -1341,7 +1393,7 @@ function plantaLeguminosa(){
       fl.scale.set(1.5, 1, 0.8);
     }
   }
-  return g;
+  return fusionar(g);
 }
 
 /* ── Ipomoea batatas · camote ──
@@ -1350,9 +1402,9 @@ function plantaLeguminosa(){
 function plantaCamote(){
   const g = new T.Group();
   const mTallo = M.tallo;
-  for (let i = 0; i < 5; i++){
-    const a = i / 5 * TAU + 0.3;
-    const largo = 0.24 + (i % 2) * 0.07;
+  for (let i = 0; i < 4; i++){
+    const a = i / 4 * TAU + 0.3;
+    const largo = 0.25 + (i % 2) * 0.07;
     const curva = new T.CatmullRomCurve3([
       new T.Vector3(0, 0.035, 0),
       new T.Vector3(Math.cos(a) * largo * 0.35, 0.075, Math.sin(a) * largo * 0.35),
@@ -1371,7 +1423,7 @@ function plantaCamote(){
   }
   const lomo = malla(new T.SphereGeometry(0.058, 14, 10), M.tuber, [0.02, 0.006, -0.01], g, false);
   lomo.scale.set(1.6, 0.42, 0.95); lomo.rotation.y = 0.5; lomo.castShadow = true;
-  return g;
+  return fusionar(g);
 }
 
 function mataMusgo(){
@@ -1383,7 +1435,7 @@ function mataMusgo(){
     m.scale.set(1.2 + Math.random(), 0.6 + Math.random() * 0.6, 1.2 + Math.random());
     m.receiveShadow = true;
   }
-  return g;
+  return fusionar(g);
 }
 
 /* ── codorniz japonesa ── */
@@ -1546,6 +1598,7 @@ function construirHabitat(){
   /* antorcha de biogás sobre el eje */
   for (let i = 0; i < 3; i++){
     const a = i / 3 * TAU + 0.7;
+    const conLuz = i < 2;
     const g = new T.Group();
     g.position.set(Math.cos(a) * 1.55, 2.04, Math.sin(a) * 1.55);
     g.rotation.y = -a;
@@ -1555,8 +1608,10 @@ function construirHabitat(){
     malla(new T.BoxGeometry(0.11, 0.012, 0.40),
       new T.MeshStandardMaterial({ color: 0xFFF0DC, emissive: 0xFFE0BC, emissiveIntensity: 2.6 }),
       [0, -0.028, 0], g, false);
-    const pl = new T.PointLight(0xFFE9D2, 1.3, 6.5, 2);
-    pl.position.set(0, -0.10, 0); g.add(pl);
+    if (conLuz){
+      const pl = new T.PointLight(0xFFE9D2, 1.7, 7.0, 2);
+      pl.position.set(0, -0.10, 0); g.add(pl);
+    }
   }
   antorcha = malla(new T.ConeGeometry(0.10, 0.30, 14), M.llama, [0, 1.62, 0], null, false);
   clicable(antorcha, "digestor");
@@ -1658,20 +1713,27 @@ function construirHabitat(){
   poste(4, 0.66, 0x4E8A3C, "musgo");          // lámpara del musgo
   poste(6, 0.46, 0xE7ECF1, "mfc", 0.20);      // lector go/no-go
 
-  /* luminarias del anillo exterior */
-  for (let k = 0; k < 4; k++){
-    const p = enAngulo(R_OUT, k * 3 + 1.5, N_OUT);
+  /* luminarias del anillo exterior, EN VOLADIZO DESDE EL CASCO.
+     Un poste plantado en medio de una cama que gira es un obstáculo: el anillo tiene que
+     quedar despejado para que pasen las bandejas y los brazos de riego. */
+  const Y_LUZ = CUBIERTA + 0.98;
+  for (let k = 0; k < 6; k++){
+    const a = (k + 0.5) / 6 * TAU;
     const g = new T.Group();
-    g.position.set(p[0], CUBIERTA, p[2]);
-    g.rotation.y = -(k * 3 + 1.5) / N_OUT * TAU;
+    g.position.set(0, 0, 0); g.rotation.y = -a;
     gHabitat.add(g);
-    malla(new T.CylinderGeometry(0.022, 0.022, 0.84, 8), M.acero, [0, 0.42, 0], g);
-    malla(new T.BoxGeometry(0.085, 0.05, 0.9), M.costilla, [0, 0.85, 0], g);
-    const luz = malla(new T.BoxGeometry(0.07, 0.018, 0.86), M.led, [0, 0.822, 0], g, false);
+    malla(new T.BoxGeometry(0.055, 0.05, 0.06), M.costilla,
+      [R_CASCO - 0.10, Y_LUZ + 0.12, 0], g, false);                     // anclaje al casco
+    malla(new T.BoxGeometry(0.85, 0.035, 0.05), M.costilla,
+      [R_CASCO - 0.52, Y_LUZ + 0.10, 0], g, false);                     // ménsula
+    malla(new T.BoxGeometry(0.10, 0.055, 0.80), M.costilla, [R_OUT, Y_LUZ, 0], g, false);
+    const luz = malla(new T.BoxGeometry(0.08, 0.016, 0.76), M.led, [R_OUT, Y_LUZ - 0.032, 0], g, false);
     focosCultivo.push(luz);
-    const pl = new T.PointLight(0xFFB07A, 1.5, 1.9, 2);
-    pl.position.set(0, 0.72, 0); g.add(pl);
-    focosCultivo.push(pl);
+    if (k % 3 === 0){                              // solo dos luminarias aportan luz real
+      const pl = new T.PointLight(0xFFB07A, 2.4, 2.6, 2);
+      pl.position.set(R_OUT, Y_LUZ - 0.14, 0); g.add(pl);
+      focosCultivo.push(pl);
+    }
     marcarSubarbol(g, "cultivo");
   }
 
@@ -1709,13 +1771,24 @@ function construirHabitat(){
         /* la tríada se reparte a lo ancho del sector, como una milpa: el camote al fondo
            donde hay más tierra, la leguminosa en medio, el rábano al borde interior */
         plantas = new T.Group(); plantas.position.y = Y_SUELO; g.add(plantas);
-        const pon = (obj, rr, dz) => { obj.position.set(rr, 0, dz); plantas.add(obj); return obj; };
-        pon(plantaCamote(),      rm + (r1 - r0) * 0.26,  0);
-        pon(plantaCamote(),      rm + (r1 - r0) * 0.20, -0.20);
-        pon(plantaLeguminosa(),  rm,                     0.19);
-        pon(plantaLeguminosa(),  rm - (r1 - r0) * 0.10, -0.16);
-        pon(plantaRabano(),      rm - (r1 - r0) * 0.30,  0.10);
-        pon(plantaRabano(),      rm - (r1 - r0) * 0.32, -0.09);
+        const d = r1 - r0;
+        /* jitter propio de cada bandeja: doce camas idénticas se notan de inmediato */
+        const jt = () => (Math.random() - 0.5) * 0.055;
+        const pon = (obj, rr, dz) => {
+          obj.position.set(rr + jt(), 0, dz + jt());
+          obj.rotation.y = Math.random() * TAU;
+          obj.userData.base = 0.88 + Math.random() * 0.26;   // porte propio de cada mata
+          plantas.add(obj); return obj;
+        };
+        pon(plantaCamote(),     rm + d * 0.30,  0.02);       // al fondo, donde hay más tierra
+        pon(plantaCamote(),     rm + d * 0.24, -0.21);
+        pon(plantaCamote(),     rm + d * 0.27,  0.24);
+        pon(plantaLeguminosa(), rm + d * 0.02,  0.20);       // en medio, fijando nitrógeno
+        pon(plantaLeguminosa(), rm - d * 0.04, -0.17);
+        pon(plantaLeguminosa(), rm + d * 0.05, -0.01);
+        pon(plantaRabano(),     rm - d * 0.28,  0.13);       // al borde interior, cosecha rápida
+        pon(plantaRabano(),     rm - d * 0.31, -0.10);
+        pon(plantaRabano(),     rm - d * 0.26,  0.01);
         /* cada bandeja necesita sus propios materiales: la marchitez se interpola,
            no se cambia de golpe, y si compartieran material se marchitarían todas */
         matVeg = [];
@@ -1746,6 +1819,57 @@ function construirHabitat(){
   }
   anilloIn  = anillo(N_IN,  R0_IN,  R1_IN,  false);
   anilloOut = anillo(N_OUT, R0_OUT, R1_OUT, true);
+
+  /* ═══ RIEGO ═══ Es GOTEO, y va montado sobre el anillo que gira — igual que un pivote
+     central de la Tierra, esos círculos verdes que se ven desde el avión. Una rampa fija no
+     serviría: con 12 bandejas avanzando un paso cada 8 soles, cada bandeja pasaría por ella
+     una vez cada 96 soles. Así, en cambio, cada bandeja lleva sus goteros siempre encima.
+     No hay aspersión: el polvo marciano tiene un límite de 0.1 mg/m³ dentro del hábitat. */
+  const Y_RAMAL = CUBIERTA + 0.015;             // la cinta de goteo se tiende SOBRE la cama
+  goteros = [];
+  {
+    /* unión rotativa sobre el mástil */
+    malla(new T.CylinderGeometry(0.075, 0.075, 0.10, 16), M.acero, [0, CUBIERTA + 1.30, 0]);
+    malla(new T.CylinderGeometry(0.055, 0.055, 0.16, 12), M.cobre, [0, CUBIERTA + 1.22, 0]);
+
+    const gr = anilloOut.grupo;                  // todo esto gira con las bandejas
+    /* radio de bajada desde la unión hasta el colector anular */
+    const bajada = new T.CatmullRomCurve3([
+      new T.Vector3(0.06, CUBIERTA + 1.26, 0),
+      new T.Vector3(0.70, CUBIERTA + 1.20, 0),
+      new T.Vector3(1.22, CUBIERTA + 0.74, 0),
+      new T.Vector3(1.30, CUBIERTA + 0.22, 0),
+      new T.Vector3(1.33, Y_RAMAL + 0.03, 0),
+    ]);
+    malla(new T.TubeGeometry(bajada, 30, 0.017, 8, false), M.azul, null, gr, false).castShadow = true;
+
+    /* colector anular: recorre todo el anillo, así que ninguna bandeja se queda sin gotero */
+    for (const r of [R0_OUT + 0.20, R1_OUT - 0.20]){
+      const t = malla(new T.TorusGeometry(r, 0.014, 8, 120), M.azul, [0, Y_RAMAL, 0], gr, false);
+      t.rotation.x = Math.PI / 2; t.castShadow = true;
+    }
+    malla(new T.BoxGeometry(0.44, 0.022, 0.022), M.azul, [R_OUT, Y_RAMAL, 0], gr, false);
+
+    /* dos bajantes de goteo por bandeja, hasta la superficie del sustrato.
+       Es riego de baja altura (tipo LESA): la gota no vuela, así no levanta polvo
+       ni se evapora, y la costra de musgo retiene lo que no absorbe la raíz. */
+    const matGota = new T.MeshStandardMaterial({ color: 0x8FD4E8, emissive: 0x63A9D1,
+      emissiveIntensity: 1.1, roughness: 0.15, transparent: true, opacity: 0.9 });
+    const geoGota = new T.SphereGeometry(0.016, 8, 6);
+    for (let i = 0; i < N_OUT; i++){
+      for (const [rr, dz] of [[R0_OUT + 0.20, -0.13], [R1_OUT - 0.20, 0.13]]){
+        const g = new T.Group();
+        g.rotation.y = i / N_OUT * TAU;
+        gr.add(g);
+        const x = rr, z = dz;
+        const bo = malla(new T.CylinderGeometry(0.016, 0.012, 0.045, 8), M.acero,
+          [x, Y_RAMAL - 0.012, z], g, false);                     // gotero sobre la cama
+        clicable(bo, "riego");
+        const gota = malla(geoGota, matGota, [x, Y_RAMAL - 0.04, z], g, false);
+        goteros.push({ gota, y0: Y_RAMAL - 0.035, x, z, fase: Math.random() });
+      }
+    }
+  }
 
   /* ── la costra de musgo cubre todo el sector del anillo interior ── */
   for (const b of anilloIn.bandejas){
@@ -1822,11 +1946,11 @@ function construirHabitat(){
     enColector(aS4 - 1.1), enColector(aS4),
     V(pS4[0], CUBIERTA + 1.16, pS4[2]), V(pS4[0], CUBIERTA + 0.56, pS4[2])], 0.017, 0.22, "f_inoculo");
 
-  /* 4 · VERDE — digestato al riego del anillo exterior, hasta la rampa de goteo */
+  /* 4 · VERDE — digestato al riego: sube a la unión rotativa del pivote, en el eje */
   conducto(C_ABONO, [
     V(wB.x, wB.y + 0.34, wB.z + 0.30), V(wB.x, Y_COL - 0.10, wB.z + 0.36),
-    enColector(2.6), V(Math.cos(2.6) * 1.35, Y_COL - 0.02, Math.sin(2.6) * 1.35),
-    V(pRiego[0] * 0.98, CUBIERTA + 1.02, pRiego[2] * 0.98)], 0.017, 0.22, "f_riego");
+    enColector(2.6), enColector(3.4),
+    V(0.22, Y_COL - 0.02, 0.10), V(0.10, CUBIERTA + 1.34, 0)], 0.017, 0.22, "f_riego");
 
   /* 5 · ROJO — biogás de la cámara B al gasómetro y de ahí al colchón térmico */
   conducto(C_BIOGAS, [
@@ -2298,7 +2422,10 @@ function bucle(ahora){
       const caida = danada ? 0.62 : 1;
       b.escY = mezcla(b.escY === undefined ? caida : b.escY, caida, 0.06);
       /* cada planta se escala por separado: el grupo lleva sus posiciones dentro del sector */
-      for (const pl of b.plantas.children) pl.scale.set(esc, esc * b.escY, esc);
+      for (const pl of b.plantas.children){
+        const e = esc * (pl.userData.base || 1);
+        pl.scale.set(e, e * b.escY, e);
+      }
       /* la marchitez se interpola en el color, no se cambia de material de golpe */
       const marchito = danada ? 1 : 0;
       b.marchitez = mezcla(b.marchitez === undefined ? marchito : b.marchitez, marchito, 0.05);
@@ -2328,6 +2455,14 @@ function bucle(ahora){
     bandejaHuevos.userData.huevos.forEach((h, i) => {
       const e = sat(nHuevos - i);                     // cada huevo entra creciendo
       h.scale.set(e, e * 0.8, e * 0.8);
+    });
+
+    /* goteo: cada gota cae los últimos centímetros y entra al sustrato */
+    goteros.forEach((gt, i) => {
+      const u = (t * 0.55 + gt.fase) % 1;
+      gt.gota.visible = u < 0.42 && !enTormenta;
+      gt.gota.position.y = gt.y0 - u * 0.035;
+      gt.gota.scale.setScalar(1 - u * 0.6);
     });
 
     /* las larvas se mueven en el lecho de frass */
