@@ -1,0 +1,2013 @@
+<meta charset="utf-8">
+<title>MILPA-360 · Marte</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js" integrity="sha512-vnmn/Qqn6aG0POAc9mIGzjq0IybrvxJXYDafNvp9JSnDGxeF3pbkSqLvf+YGd5ku63pT7sa/jxHn7/d0mU8+tA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style>
+:root{
+  --void:#07090C; --glass:rgba(14,18,24,.78); --glass-2:rgba(20,26,33,.86);
+  --line:rgba(150,175,195,.20); --line-2:rgba(150,175,195,.10);
+  --text:#EEF2F6; --text-2:#9FB0BE; --text-3:#66788A;
+  --rust:#D2622F; --rust-hi:#F08348;
+  --amber:#E9AE52; --cool:#63A9D1; --bio:#7FBB72; --loam:#96633A;
+  --sans:Archivo,"Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --pad:18px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--void);color:var(--text);
+  font-family:var(--sans);font-size:14px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;overflow:hidden;
+}
+canvas{display:block;touch-action:none}
+#lienzo{position:fixed;inset:0;cursor:grab}
+#lienzo:active{cursor:grabbing}
+
+/* ───────── tipografía ───────── */
+.exp{font-stretch:118%;font-weight:700;letter-spacing:-.012em}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.eyebrow{
+  font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.19em;
+  text-transform:uppercase;color:var(--text-3);
+}
+
+/* ───────── cristal ───────── */
+.panel{
+  background:var(--glass);border:1px solid var(--line);
+  backdrop-filter:blur(18px) saturate(1.25);-webkit-backdrop-filter:blur(18px) saturate(1.25);
+  box-shadow:0 18px 50px -22px rgba(0,0,0,.95);
+}
+
+/* ───────── barra superior ───────── */
+#barra{
+  position:fixed;top:var(--pad);left:var(--pad);right:var(--pad);height:52px;z-index:20;
+  display:flex;align-items:center;gap:16px;padding:0 8px 0 16px;border-radius:2px;
+}
+#marca{display:flex;align-items:baseline;gap:11px;white-space:nowrap}
+#marca b{font-size:16.5px}
+#marca span{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--text-3)}
+#vistas{display:flex;gap:2px;margin-left:auto;padding:3px;background:rgba(0,0,0,.35);border-radius:2px}
+#vistas button{
+  font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.13em;
+  color:var(--text-3);background:none;border:none;padding:8px 15px;cursor:pointer;
+  transition:color .18s,background .18s;border-radius:1px;
+}
+#vistas button:hover{color:var(--text-2)}
+#vistas button[aria-selected="true"]{color:#150A05;background:var(--rust);font-weight:600}
+#vistas button:focus-visible{outline:2px solid var(--rust-hi);outline-offset:1px}
+
+/* ───────── riel lateral ───────── */
+#riel{
+  position:fixed;left:var(--pad);top:86px;width:310px;max-height:calc(100vh - 190px);z-index:15;
+  display:flex;flex-direction:column;border-radius:2px;overflow:hidden;
+  transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .22s;
+}
+#riel.oculto{transform:translateX(calc(-100% - var(--pad)));opacity:0;pointer-events:none}
+.riel-cab{
+  display:flex;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid var(--line-2);
+}
+.riel-cab .eyebrow{flex-grow:1}
+.riel-cuerpo{overflow-y:auto;padding:4px 15px 14px;scrollbar-width:thin}
+.riel-cuerpo::-webkit-scrollbar{width:5px}
+.riel-cuerpo::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+
+/* telemetría */
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;
+  font-variant-numeric:tabular-nums}
+th{text-align:left;font-weight:500;font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--text-3);padding:9px 0 6px;position:sticky;top:0;background:var(--glass)}
+td{padding:5px 0;border-top:1px solid var(--line-2);color:var(--text-2)}
+td:last-child,th:last-child{text-align:right}
+tr.hot td{color:var(--text)}
+tr.hot td:first-child{color:var(--rust-hi);font-weight:600}
+.pip{display:inline-block;width:7px;height:7px;margin-right:8px;vertical-align:1px;border-radius:50%}
+.rest.low{color:var(--rust-hi)}
+
+/* lista de datos del planeta */
+.dato{
+  width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--line-2);
+  padding:11px 0 10px;cursor:pointer;display:flex;gap:11px;align-items:baseline;
+  transition:padding-left .18s;
+}
+.dato:hover,.dato:focus-visible{padding-left:5px;outline:none}
+.dato:hover .dv,.dato:focus-visible .dv{color:var(--rust-hi)}
+.dato .dk{flex-grow:1;font-size:13px;color:var(--text-2)}
+.dato .dv{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--text);
+  white-space:nowrap;transition:color .18s}
+.dato[data-marca]::after{content:"◉";font-size:9px;color:var(--rust);margin-left:2px}
+
+/* ───────── transporte inferior ───────── */
+#transporte{
+  position:fixed;bottom:var(--pad);left:50%;transform:translateX(-50%);z-index:20;
+  display:flex;align-items:stretch;border-radius:2px;overflow:hidden;
+  transition:opacity .25s,transform .25s;
+}
+#transporte.oculto{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(14px)}
+.tr-bloque{display:flex;align-items:center;gap:13px;padding:12px 20px;border-right:1px solid var(--line-2)}
+.tr-bloque:last-child{border-right:none}
+#reloj{display:flex;align-items:baseline;gap:7px}
+#reloj .n{font-family:var(--mono);font-weight:600;font-size:27px;line-height:1;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;min-width:56px;text-align:right}
+#reloj .u{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--text-3)}
+#progreso{width:120px;height:2px;background:var(--line-2);position:relative}
+#progreso i{position:absolute;inset:0 auto 0 0;background:var(--rust);display:block}
+.btn{
+  font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.11em;
+  color:var(--text-2);background:rgba(255,255,255,.045);border:1px solid var(--line);
+  padding:9px 14px;cursor:pointer;transition:.16s;white-space:nowrap;border-radius:1px;
+}
+.btn:hover{color:var(--text);border-color:var(--text-3);background:rgba(255,255,255,.08)}
+.btn:focus-visible{outline:2px solid var(--rust-hi);outline-offset:2px}
+.btn.on{background:var(--rust);border-color:var(--rust);color:#150A05}
+.btn.tormenta{color:var(--amber);border-color:rgba(233,174,82,.35)}
+.btn.tormenta:hover{background:rgba(233,174,82,.12);color:var(--amber)}
+.btn.tormenta.on{background:var(--amber);border-color:var(--amber);color:#160E02}
+
+/* ───────── ficha ───────── */
+#ficha{
+  position:fixed;right:var(--pad);top:86px;width:352px;max-height:calc(100vh - 190px);z-index:18;
+  border-radius:2px;overflow:hidden;display:flex;flex-direction:column;
+  transition:transform .34s cubic-bezier(.4,0,.2,1),opacity .24s;
+}
+#ficha.oculto{transform:translateX(calc(100% + var(--pad)));opacity:0;pointer-events:none}
+#ficha .cab{padding:16px 18px 13px;border-bottom:1px solid var(--line-2);position:relative}
+#ficha h2{font-size:21px;margin:5px 0 0;line-height:1.16;padding-right:26px}
+#ficha .cuerpo{padding:15px 18px 18px;overflow-y:auto;scrollbar-width:thin}
+#ficha .cuerpo::-webkit-scrollbar{width:5px}
+#ficha .cuerpo::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+#ficha p{margin:0 0 14px;font-size:13.5px;line-height:1.62;color:var(--text-2)}
+#ficha p b{color:var(--text);font-weight:600}
+#ficha dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:7px 16px;
+  font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums}
+#ficha dt{color:var(--text-3)}
+#ficha dd{margin:0;color:var(--text);text-align:right}
+#ficha .fuente{margin:15px 0 0;padding-top:12px;border-top:1px solid var(--line-2);
+  font-family:var(--mono);font-size:10px;line-height:1.6;color:var(--text-3);letter-spacing:.03em}
+#cerrar{position:absolute;top:13px;right:13px;width:26px;height:26px;padding:0;
+  background:none;border:none;color:var(--text-3);font-size:18px;line-height:1;cursor:pointer}
+#cerrar:hover{color:var(--text)}
+
+/* ───────── etiquetas 3D ───────── */
+#etiquetas{position:fixed;inset:0;z-index:10;pointer-events:none;overflow:hidden}
+.eti{
+  position:absolute;transform:translate(-50%,-50%);white-space:nowrap;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-2);transition:opacity .25s;
+  padding:4px 9px;background:rgba(8,11,15,.72);border:1px solid var(--line-2);border-radius:2px;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.eti b{color:#fff;font-weight:600}
+.eti.punto{
+  pointer-events:auto;cursor:pointer;padding:5px 9px;
+  background:rgba(10,13,17,.6);border:1px solid var(--line);border-radius:2px;
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);transition:.2s;
+}
+.eti.punto:hover{border-color:var(--rust);color:#fff;background:rgba(210,98,47,.22)}
+.eti.punto::before{
+  content:"";display:inline-block;width:5px;height:5px;border-radius:50%;
+  background:var(--rust);margin-right:7px;vertical-align:1px;
+  box-shadow:0 0 0 3px rgba(210,98,47,.28);
+}
+.eti.sitio::before{background:var(--bio);box-shadow:0 0 0 3px rgba(127,187,114,.3)}
+.eti.sitio:hover{border-color:var(--bio);background:rgba(127,187,114,.2)}
+
+/* ───────── pistas y carga ───────── */
+#pista{
+  position:fixed;left:50%;bottom:104px;transform:translateX(-50%);z-index:14;
+  font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--text-3);pointer-events:none;transition:opacity .5s;text-align:center;
+}
+#carga{
+  position:fixed;inset:0;z-index:60;background:var(--void);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  transition:opacity .6s;
+}
+#carga.listo{opacity:0;pointer-events:none}
+#carga .t{font-size:24px}
+#carga .s{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--text-3)}
+#carga .barra{width:190px;height:2px;background:var(--line-2);overflow:hidden}
+#carga .barra i{display:block;height:100%;width:34%;background:var(--rust);
+  animation:desliza 1.15s ease-in-out infinite}
+@keyframes desliza{0%{transform:translateX(-100%)}100%{transform:translateX(390%)}}
+
+body.captura #barra,body.captura #riel,body.captura #transporte,
+body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
+
+@media (max-width:880px){
+  #riel{display:none}
+  #ficha{left:var(--pad);right:var(--pad);width:auto;top:auto;bottom:82px;max-height:52vh}
+  #ficha.oculto{transform:translateY(calc(100% + 90px))}
+  #transporte{left:var(--pad);right:var(--pad);transform:none;overflow-x:auto}
+  #transporte.oculto{transform:translateY(14px)}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+
+<canvas id="lienzo"></canvas>
+<div id="etiquetas"></div>
+
+<header id="barra" class="panel">
+  <div id="marca">
+    <b class="exp">MILPA&#8209;360</b>
+    <span>BIOMARS CHIAPAS · RETO MARTE UNACH 2026</span>
+  </div>
+  <div id="vistas" role="tablist">
+    <button role="tab" id="v-planeta" aria-selected="true">PLANETA</button>
+    <button role="tab" id="v-habitat" aria-selected="false">HÁBITAT</button>
+  </div>
+</header>
+
+<aside id="riel" class="panel">
+  <div class="riel-cab">
+    <span class="eyebrow" id="riel-titulo">MARTE · DATOS DUROS</span>
+    <button class="btn" id="riel-toggle" style="padding:5px 9px;font-size:9px">OCULTAR</button>
+  </div>
+  <div class="riel-cuerpo" id="riel-cuerpo"></div>
+</aside>
+
+<div id="transporte" class="panel oculto">
+  <div class="tr-bloque">
+    <div id="reloj"><span class="n" id="sol-n">0</span><span class="u">SOL / 730</span></div>
+    <div id="progreso"><i id="prog-i" style="width:0%"></i></div>
+  </div>
+  <div class="tr-bloque">
+    <button class="btn on" id="b-play">PAUSAR</button>
+    <button class="btn" id="b-vel">×4</button>
+  </div>
+  <div class="tr-bloque">
+    <button class="btn tormenta" id="b-tormenta">TORMENTA DE POLVO · 21 SOLES</button>
+  </div>
+</div>
+
+<section id="ficha" class="panel oculto">
+  <div class="cab">
+    <button id="cerrar" aria-label="Cerrar">×</button>
+    <span class="eyebrow" id="f-sub"></span>
+    <h2 class="exp" id="f-tit"></h2>
+  </div>
+  <div class="cuerpo">
+    <p id="f-txt"></p>
+    <dl id="f-dl"></dl>
+    <p class="fuente" id="f-fte"></p>
+    <div id="f-accion"></div>
+  </div>
+</section>
+
+<div id="pista">ARRASTRA PARA ORBITAR · RUEDA PARA ACERCAR · TOCA UN PUNTO</div>
+
+<div id="carga">
+  <div class="t exp">MILPA-360</div>
+  <div class="barra"><i></i></div>
+  <div class="s">GENERANDO SUPERFICIE MARCIANA…</div>
+</div>
+
+<script>
+(() => {
+"use strict";
+const T = THREE, TAU = Math.PI * 2, RAD = Math.PI / 180;
+const $ = id => document.getElementById(id);
+
+/* ═══════════════════════════════════════════════════════════════
+   PARÁMETROS DE URL — poses reproducibles (ver deck/LEEME.md)
+   ?vista=planeta|habitat · ui=0 · piso=0 · sol= · theta= · phi= · dist= · storm=1 · play=0
+   ═══════════════════════════════════════════════════════════════ */
+const Q = new URLSearchParams(location.search);
+const qn = (k, d) => Q.has(k) && !isNaN(parseFloat(Q.get(k))) ? parseFloat(Q.get(k)) : d;
+const limpio = Q.get("piso") === "0";
+if (Q.get("ui") === "0") document.body.classList.add("captura");
+
+/* ═══════════════════════════════════════════════════════════════
+   RUIDO — value noise con envoltura horizontal, para texturas equirectangulares
+   ═══════════════════════════════════════════════════════════════ */
+function hash(ix, iy, w){
+  const x = ((ix % w) + w) % w;
+  const n = Math.sin(x * 127.1 + iy * 311.7 + 74.7) * 43758.5453123;
+  return n - Math.floor(n);
+}
+const suave = t => t * t * (3 - 2 * t);
+function ruido(x, y, w){
+  const ix = Math.floor(x), iy = Math.floor(y), fx = suave(x - ix), fy = suave(y - iy);
+  const a = hash(ix, iy, w),     b = hash(ix + 1, iy, w);
+  const c = hash(ix, iy + 1, w), d = hash(ix + 1, iy + 1, w);
+  return (a * (1 - fx) + b * fx) * (1 - fy) + (c * (1 - fx) + d * fx) * fy;
+}
+function fbm(x, y, w, oct, gan){
+  let s = 0, a = 0.5, f = 1, norm = 0;
+  for (let i = 0; i < oct; i++){
+    s += a * ruido(x * f, y * f, Math.max(1, Math.round(w * f)));
+    norm += a; a *= (gan === undefined ? 0.5 : gan); f *= 2;
+  }
+  return s / norm;
+}
+const mezcla = (a, b, t) => a + (b - a) * t;
+const sat = v => v < 0 ? 0 : v > 1 ? 1 : v;
+
+/* ═══════════════════════════════════════════════════════════════
+   TEXTURAS PROCEDURALES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Superficie de Marte: albedo + relieve. Coordenadas equirectangulares (lon, lat). */
+function texturaMarte(W){
+  const H = W >> 1;
+  const cAlb = document.createElement("canvas"); cAlb.width = W; cAlb.height = H;
+  const cRel = document.createElement("canvas"); cRel.width = W; cRel.height = H;
+  const alb = cAlb.getContext("2d").createImageData(W, H);
+  const rel = cRel.getContext("2d").createImageData(W, H);
+  const LAT = 12;                                   // frecuencia base del retículo
+
+  /* rasgos reales situados por lon/lat, para que el planeta sea reconocible */
+  const rasgos = [
+    // [lonE, lat, radio°, tipo]  tipo: 1 oscuro/albedo bajo, 2 claro/polvo, 3 cañón, 4 volcán
+    [300, -14, 26, 3],   // Valles Marineris
+    [226,  18, 11, 4],   // Olympus Mons
+    [247,  -1, 15, 4],   // Tharsis Montes
+    [ 70, -42, 34, 2],   // Hellas Planitia
+    [342,  18, 24, 1],   // Syrtis Major
+    [ 25, -20, 20, 1],   // Terra Sabaea oscura
+    [190,  25, 18, 1],   // Acidalia
+    [120, -30, 16, 2],   // Argyre
+  ];
+
+  for (let y = 0; y < H; y++){
+    const lat = 90 - (y + 0.5) / H * 180;
+    const cosLat = Math.max(0.06, Math.cos(lat * RAD));
+    for (let x = 0; x < W; x++){
+      const lon = (x + 0.5) / W * 360;
+      const u = x / W * LAT, v = y / H * (LAT * 0.5);
+
+      let h = fbm(u, v, LAT, 6);                    // relieve continental
+      const grano = fbm(u * 9, v * 9, LAT * 9, 3);  // grano fino de polvo
+      let albedo = 0.5 + (h - 0.5) * 1.25 + (grano - 0.5) * 0.26;
+
+      for (const [rl, rt, rr, tipo] of rasgos){     // rasgos nombrados
+        let dl = Math.abs(lon - rl); if (dl > 180) dl = 360 - dl;
+        const d = Math.hypot(dl * cosLat, lat - rt) / rr;
+        if (d < 1){
+          const k = Math.pow(1 - d, 1.6);
+          if (tipo === 1) albedo -= 0.46 * k;
+          if (tipo === 2){ albedo += 0.30 * k; h += 0.10 * k; }
+          if (tipo === 3){ albedo -= 0.44 * k; h -= 0.50 * k; }   // cañón: hundido y oscuro
+          if (tipo === 4){ albedo += 0.16 * k; h += 0.55 * k; }   // volcán: alto y claro
+        }
+      }
+
+      /* cráteres: puntos dispersos con borde claro y suelo oscuro */
+      const cr = fbm(u * 21, v * 21, LAT * 21, 2);
+      if (cr > 0.72){ const k = (cr - 0.72) / 0.28; albedo -= 0.16 * k; h -= 0.12 * k; }
+      if (cr > 0.66 && cr < 0.72) albedo += 0.10;
+
+      /* casquetes polares: hielo con borde irregular */
+      const bordePolar = 78 - fbm(u * 1.6, v * 1.6, Math.max(1, Math.round(LAT * 1.6)), 2) * 4;
+      const hielo = sat((Math.abs(lat) - bordePolar) / 4.5) * (Math.abs(lat) > 62 ? 1 : 0);
+
+      albedo = sat(albedo);
+      /* rampa de color del regolito: óxido oscuro → butterscotch → polvo claro */
+      let r, g, b;
+      if (albedo < 0.5){ const t = albedo / 0.5;
+        r = mezcla(78, 152, t); g = mezcla(43, 88, t); b = mezcla(31, 58, t);
+      } else { const t = (albedo - 0.5) / 0.5;
+        r = mezcla(152, 198, t); g = mezcla(88, 139, t); b = mezcla(58, 96, t);
+      }
+      if (hielo > 0){ r = mezcla(r, 221, hielo); g = mezcla(g, 228, hielo); b = mezcla(b, 233, hielo); }
+
+      const i = (y * W + x) * 4;
+      alb.data[i] = r; alb.data[i+1] = g; alb.data[i+2] = b; alb.data[i+3] = 255;
+      const e = sat(h * 0.8 + (grano - 0.5) * 0.35 + hielo * 0.12) * 255;
+      rel.data[i] = rel.data[i+1] = rel.data[i+2] = e; rel.data[i+3] = 255;
+    }
+  }
+  cAlb.getContext("2d").putImageData(alb, 0, 0);
+  cRel.getContext("2d").putImageData(rel, 0, 0);
+  const tA = new T.CanvasTexture(cAlb), tR = new T.CanvasTexture(cRel);
+  tA.colorSpace = T.SRGBColorSpace;
+  tA.anisotropy = tR.anisotropy = 8;
+  return { albedo: tA, relieve: tR };
+}
+
+/* Regolito de superficie: granulado con guijarros, en mosaico repetible */
+function texturaRegolito(S){
+  const c = document.createElement("canvas"); c.width = c.height = S;
+  const g = c.getContext("2d"), im = g.createImageData(S, S), F = 8;
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++){
+    const n = fbm(x / S * F, y / S * F, F, 5);
+    const f = fbm(x / S * F * 11, y / S * F * 11, F * 11, 2);
+    const k = sat(n * 0.72 + f * 0.42);
+    const i = (y * S + x) * 4;
+    im.data[i]   = mezcla(92, 186, k);
+    im.data[i+1] = mezcla(48, 112, k);
+    im.data[i+2] = mezcla(33, 78, k);
+    im.data[i+3] = 255;
+  }
+  g.putImageData(im, 0, 0);
+  const t = new T.CanvasTexture(c);
+  t.colorSpace = T.SRGBColorSpace;
+  t.wrapS = t.wrapT = T.RepeatWrapping;
+  t.anisotropy = 8;
+  return t;
+}
+
+/* Plumaje moteado de la codorniz japonesa */
+function texturaCodorniz(){
+  const S = 128, c = document.createElement("canvas"); c.width = c.height = S;
+  const g = c.getContext("2d");
+  g.fillStyle = "#A8916F"; g.fillRect(0, 0, S, S);
+  for (let i = 0; i < 260; i++){
+    const x = Math.random() * S, y = Math.random() * S, r = 1.4 + Math.random() * 3.4;
+    g.fillStyle = Math.random() < 0.62 ? "rgba(74,55,36,.72)" : "rgba(236,226,206,.55)";
+    g.beginPath(); g.ellipse(x, y, r, r * 0.6, Math.random() * TAU, 0, TAU); g.fill();
+  }
+  const t = new T.CanvasTexture(c);
+  t.colorSpace = T.SRGBColorSpace; t.wrapS = t.wrapT = T.RepeatWrapping;
+  return t;
+}
+
+/* Lienzo de rótulo: la información va pintada sobre el equipo, no flotando en el aire */
+function lienzoTex(w, h, dibuja, repetir){
+  const c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  dibuja(c.getContext("2d"), w, h);
+  const t = new T.CanvasTexture(c);
+  t.colorSpace = T.SRGBColorSpace;
+  t.anisotropy = 8;
+  if (repetir){ t.wrapS = t.wrapT = T.RepeatWrapping; }
+  return t;
+}
+const MONO_TEX = "600 %dpx 'IBM Plex Mono', ui-monospace, monospace";
+const SANS_TEX = "700 %dpx Archivo, Helvetica, sans-serif";
+
+/* Chapa rotulada: fondo, filete y una o varias líneas de texto */
+function texturaPlaca(lineas, opt){
+  opt = opt || {};
+  const W = opt.w || 512, H = opt.h || 128;
+  return lienzoTex(W, H, (g) => {
+    g.fillStyle = opt.fondo || "#12181E"; g.fillRect(0, 0, W, H);
+    if (opt.filete !== false){
+      g.strokeStyle = opt.borde || "#5A6A76"; g.lineWidth = Math.max(2, H * 0.028);
+      g.strokeRect(g.lineWidth, g.lineWidth, W - g.lineWidth * 2, H - g.lineWidth * 2);
+    }
+    if (opt.barra){ g.fillStyle = opt.barra; g.fillRect(0, 0, W, H * 0.10); }
+    let y = H * (opt.y0 !== undefined ? opt.y0 : 0.5);
+    for (const L of lineas){
+      const px = Math.round(H * (L.s || 0.30));
+      g.font = (L.mono === false ? SANS_TEX : MONO_TEX).replace("%d", px);
+      g.fillStyle = L.c || "#E8EEF3";
+      g.textAlign = "center"; g.textBaseline = "middle";
+      if (L.esp){ /* letterspacing manual */
+        const txt = L.t, esp = px * L.esp;
+        let total = 0;
+        for (const ch of txt) total += g.measureText(ch).width + esp;
+        total -= esp;
+        let x = W / 2 - total / 2;
+        for (const ch of txt){ g.textAlign = "left"; g.fillText(ch, x, y); x += g.measureText(ch).width + esp; }
+        g.textAlign = "center";
+      } else {
+        g.fillText(L.t, W / 2, y);
+      }
+      y += px * (L.sig || 1.45);
+    }
+  });
+}
+
+/* Casco: chapas remachadas con polvo acumulado abajo */
+function texturaCasco(){
+  return lienzoTex(1024, 512, (g, W, H) => {
+    g.fillStyle = "#E9ECEF"; g.fillRect(0, 0, W, H);
+    for (let y = 0; y < H; y += H / 4){                  // juntas horizontales
+      g.fillStyle = "rgba(120,134,146,.34)"; g.fillRect(0, y, W, 3);
+      g.fillStyle = "rgba(255,255,255,.55)"; g.fillRect(0, y + 3, W, 2);
+    }
+    for (let x = 0; x < W; x += W / 12){                 // juntas verticales
+      g.fillStyle = "rgba(120,134,146,.22)"; g.fillRect(x, 0, 2, H);
+    }
+    for (let y = H / 8; y < H; y += H / 4)               // remaches
+      for (let x = W / 24; x < W; x += W / 12){
+        g.fillStyle = "rgba(105,118,130,.5)";
+        g.beginPath(); g.arc(x, y, 2.6, 0, TAU); g.fill();
+      }
+    const grad = g.createLinearGradient(0, H * 0.55, 0, H);   // polvo marciano en la falda
+    grad.addColorStop(0, "rgba(150,86,48,0)");
+    grad.addColorStop(1, "rgba(150,86,48,.45)");
+    g.fillStyle = grad; g.fillRect(0, H * 0.55, W, H * 0.45);
+    for (let i = 0; i < 260; i++){                        // salpicado
+      const x = Math.random() * W, y = H * (0.5 + Math.random() * 0.5);
+      g.fillStyle = "rgba(146,84,46," + (0.05 + Math.random() * 0.16).toFixed(2) + ")";
+      g.beginPath(); g.arc(x, y, 1 + Math.random() * 7, 0, TAU); g.fill();
+    }
+  }, true);
+}
+
+/* Cubierta: chapa antiderrapante */
+function texturaCubierta(){
+  return lienzoTex(256, 256, (g, W, H) => {
+    g.fillStyle = "#414A54"; g.fillRect(0, 0, W, H);
+    g.strokeStyle = "rgba(24,29,34,.55)"; g.lineWidth = 2;
+    for (let i = 0; i < 8; i++){                          // lágrimas en damero
+      for (let j = 0; j < 8; j++){
+        const x = i * 32 + (j % 2) * 16, y = j * 32;
+        g.save(); g.translate(x + 16, y + 16); g.rotate((i + j) % 2 ? 0.7 : -0.7);
+        g.fillStyle = "rgba(146,159,172,.42)"; g.fillRect(-9, -2.6, 18, 5.2);
+        g.strokeRect(-9, -2.6, 18, 5.2); g.restore();
+      }
+    }
+  }, true);
+}
+
+/* Costra de musgo: la superficie sellada de la bandeja, no una alfombra lisa */
+function texturaMusgo(){
+  return lienzoTex(256, 256, (g, W, H) => {
+    g.fillStyle = "#3A5C2A"; g.fillRect(0, 0, W, H);
+    for (let i = 0; i < 900; i++){
+      const x = Math.random() * W, y = Math.random() * H, r = 1 + Math.random() * 5;
+      const v = Math.random();
+      g.fillStyle = v < 0.5 ? "rgba(96,150,62,.55)" : v < 0.85 ? "rgba(52,88,38,.6)"
+                                                    : "rgba(140,178,96,.5)";
+      g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
+    }
+    for (let i = 0; i < 40; i++){                         // grietas de desecación
+      g.strokeStyle = "rgba(30,48,22,.5)"; g.lineWidth = 1 + Math.random();
+      g.beginPath(); g.moveTo(Math.random() * W, Math.random() * H);
+      for (let j = 0; j < 4; j++) g.lineTo(Math.random() * W, Math.random() * H);
+      g.stroke();
+    }
+  }, true);
+}
+
+/* Hoja con nervadura, para que no sea un polígono plano de color */
+function texturaHoja(base, nervio){
+  return lienzoTex(128, 256, (g, W, H) => {
+    g.fillStyle = base; g.fillRect(0, 0, W, H);
+    for (let i = 0; i < 160; i++){                        // moteado del limbo
+      g.fillStyle = "rgba(255,255,255,.05)";
+      g.beginPath(); g.arc(Math.random() * W, Math.random() * H, 2 + Math.random() * 8, 0, TAU); g.fill();
+    }
+    g.strokeStyle = nervio; g.lineWidth = 4;              // nervio central
+    g.beginPath(); g.moveTo(W / 2, H); g.lineTo(W / 2, 0); g.stroke();
+    g.lineWidth = 1.8;                                    // nervios laterales
+    for (let i = 1; i < 9; i++){
+      const y = H - i * H / 9.5, d = (H - y) * 0.42;
+      g.beginPath(); g.moveTo(W / 2, y); g.lineTo(W / 2 - d, y - H * 0.07); g.stroke();
+      g.beginPath(); g.moveTo(W / 2, y); g.lineTo(W / 2 + d, y - H * 0.07); g.stroke();
+    }
+  });
+}
+
+/* Flujo dentro de la tubería: banda que se desplaza, no bolas en el aire */
+function texturaFlujo(hex){
+  const c = new T.Color(hex);
+  const base = c.clone().multiplyScalar(0.46).getStyle();
+  const vivo = c.clone().lerp(new T.Color(0xffffff), 0.30).getStyle();
+  const t = lienzoTex(128, 8, (g, W, H) => {
+    g.fillStyle = base; g.fillRect(0, 0, W, H);
+    g.fillStyle = "rgba(255,255,255,.10)"; g.fillRect(0, 0, W, 2);   // brillo del tubo
+    for (let i = 0; i < 2; i++){                          // dos testigos que corren dentro
+      const gr = g.createLinearGradient(i * 64, 0, i * 64 + 26, 0);
+      gr.addColorStop(0, base); gr.addColorStop(0.5, vivo); gr.addColorStop(1, base);
+      g.fillStyle = gr; g.fillRect(i * 64, 2, 26, H - 2);
+    }
+  }, true);
+  return t;
+}
+
+/* Celdas del panel solar */
+function texturaSolar(){
+  return lienzoTex(256, 256, (g, W, H) => {
+    g.fillStyle = "#16233C"; g.fillRect(0, 0, W, H);
+    for (let i = 0; i < 6; i++) for (let j = 0; j < 6; j++){
+      const x = i * 42 + 4, y = j * 42 + 4;
+      const gr = g.createLinearGradient(x, y, x + 38, y + 38);
+      gr.addColorStop(0, "#22375C"); gr.addColorStop(1, "#152034");
+      g.fillStyle = gr; g.fillRect(x, y, 38, 38);
+      g.strokeStyle = "rgba(180,200,225,.30)"; g.lineWidth = 1;
+      for (let k = 1; k < 4; k++){ g.beginPath(); g.moveTo(x + k * 9.5, y); g.lineTo(x + k * 9.5, y + 38); g.stroke(); }
+    }
+  }, true);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOTOR
+   ═══════════════════════════════════════════════════════════════ */
+const lienzo = $("lienzo");
+const renderer = new T.WebGLRenderer({ canvas: lienzo, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = T.PCFSoftShadowMap;
+renderer.toneMapping = T.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.86;
+renderer.setClearColor(0x07090C, 1);
+
+const escena = new T.Scene();
+const camara = new T.PerspectiveCamera(38, 1, 0.05, 4000);
+const mira = new T.Vector3();
+const orbe = { theta: -0.62, phi: 1.02, dist: 8.4 };
+
+const gPlaneta = new T.Group(); escena.add(gPlaneta);
+const gHabitat = new T.Group(); escena.add(gHabitat);
+
+/* luces: una clave solar dura (atmósfera fina = sombras marcadas) + rebote del suelo */
+const sol = new T.DirectionalLight(0xFFE2C2, 2.3);
+sol.position.set(46, 30, -14);   // rasante: terminador en el planeta, sombras largas en el suelo
+sol.castShadow = true;
+sol.shadow.mapSize.set(2048, 2048);
+sol.shadow.camera.near = 1; sol.shadow.camera.far = 90;
+sol.shadow.camera.top = sol.shadow.camera.right = 11;
+sol.shadow.camera.bottom = sol.shadow.camera.left = -11;
+sol.shadow.bias = -0.0006; sol.shadow.normalBias = 0.022;
+escena.add(sol);
+const hemi = new T.HemisphereLight(0xC79A78, 0x2E1810, 0.72);
+escena.add(hemi);
+const relleno = new T.DirectionalLight(0x9FC6E4, 0.55);
+relleno.position.set(-24, 12, -20);
+escena.add(relleno);
+
+/* ═══════════════════════════════════════════════════════════════
+   MATERIAL DE CIELO — degradado marciano y espacio, con un solo shader
+   ═══════════════════════════════════════════════════════════════ */
+const cieloUnif = {
+  cenit:   { value: new T.Color(0x2A2A3C) },
+  horiz:   { value: new T.Color(0xC79468) },
+  suelo:   { value: new T.Color(0x3A1E14) },
+  mezclaEspacio: { value: 0 },
+};
+const cielo = new T.Mesh(
+  new T.SphereGeometry(900, 32, 24),
+  new T.ShaderMaterial({
+    side: T.BackSide, depthWrite: false, uniforms: cieloUnif,
+    vertexShader: `varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+    fragmentShader: `
+      uniform vec3 cenit, horiz, suelo; uniform float mezclaEspacio; varying vec3 vP;
+      void main(){
+        float h = normalize(vP).y;
+        vec3 c = h > 0.0 ? mix(horiz, cenit, pow(h, 0.62)) : mix(horiz, suelo, pow(-h, 0.75));
+        c = mix(c, vec3(0.012, 0.016, 0.026), mezclaEspacio);
+        gl_FragColor = vec4(c, 1.0);
+      }`
+  })
+);
+escena.add(cielo);
+
+/* estrellas: solo se ven en la vista de planeta */
+const estGeo = new T.BufferGeometry();
+const NE = 2600, pos = new Float32Array(NE * 3), tam = new Float32Array(NE);
+for (let i = 0; i < NE; i++){
+  const v = new T.Vector3().randomDirection().multiplyScalar(600 + Math.random() * 200);
+  pos[i*3] = v.x; pos[i*3+1] = v.y; pos[i*3+2] = v.z;
+  tam[i] = Math.random() < 0.06 ? 2.6 : 0.9 + Math.random();
+}
+estGeo.setAttribute("position", new T.BufferAttribute(pos, 3));
+estGeo.setAttribute("size", new T.BufferAttribute(tam, 1));
+const estrellas = new T.Points(estGeo, new T.ShaderMaterial({
+  transparent: true, depthWrite: false,
+  uniforms: { op: { value: 0 } },
+  vertexShader: `attribute float size; varying float vS; void main(){ vS = size;
+    vec4 mv = modelViewMatrix * vec4(position,1.0);
+    gl_PointSize = size * 1.7; gl_Position = projectionMatrix * mv; }`,
+  fragmentShader: `uniform float op; varying float vS;
+    void main(){ float d = length(gl_PointCoord - 0.5);
+      float a = smoothstep(0.5, 0.06, d); gl_FragColor = vec4(vec3(1.0, 0.97, 0.93), a * op); }`
+}));
+escena.add(estrellas);
+
+/* ═══════════════════════════════════════════════════════════════
+   FICHAS DE DATOS — todo sale de los .md del repositorio
+   ═══════════════════════════════════════════════════════════════ */
+const FUENTE_M = "INVESTIGACION-MARTE.md §2 · banco de datos duros";
+const FICHAS = {
+
+  /* ── planeta ── */
+  atmosfera: { sub:"MARTE · ATMÓSFERA", tit:"Casi vacío, y casi todo CO₂",
+    txt:"La atmósfera marciana es <b>95.3 % CO₂</b> a una presión de <b>~6 mbar</b>: el 0.6 % de la terrestre. Para el cuerpo humano es prácticamente vacío, y el agua líquida es inestable en la superficie. Pero ese CO₂ y ese nitrógeno son <b>recursos in situ</b>: alimentan la fijación biológica y la síntesis de metano. MILPA-360 no compite por ellos — los devuelve al ciclo desde el propio residuo.",
+    d:[["CO₂","95.3 %"],["N₂","2.7 %"],["Ar","1.6 %"],["O₂","0.13 %"],["Presión","~6 mbar"],["ppCO₂ habitable","≤3 mmHg [V2 6004]"]], f:FUENTE_M },
+
+  gravedad: { sub:"MARTE · GRAVEDAD", tit:"0.38 g, y nadie sabe qué le hace a una codorniz",
+    txt:"Un tercio de la gravedad terrestre. Afecta fluidos, hueso y el desarrollo de las plantas — y es <b>la incógnita más grande de nuestro diseño</b>: no está validada ni para el desarrollo de <i>Coturnix japonica</i> ni para la sedimentación dentro del biodigestor. Lo declaramos como límite, no lo escondemos.",
+    d:[["Gravedad","0.38 g"],["Día (sol)","24 h 39 min"],["Ventaja","ritmo circadiano casi terrestre"]], f:FUENTE_M + " · limitación declarada en PLAN-MAESTRO §13" },
+
+  radiacion: { sub:"MARTE · RADIACIÓN", tit:"0.7 mSv al día, sin campo magnético",
+    txt:"Sin magnetosfera global y con una atmósfera demasiado fina, la superficie recibe <b>~0.7 mSv/día</b> (230–300 mSv/año) entre rayos cósmicos galácticos y eventos solares. El límite de carrera de la NASA se alcanza rápido: el blindaje es prioridad. Por eso el módulo se rodea de un talud de regolito, y por eso elegimos un musgo que aguanta <b>5 000 Gy</b>.",
+    d:[["Dosis diaria","~0.7 mSv"],["Dosis anual","230–300 mSv"],["LD50 del musgo","≈5 000 Gy"],["Blindaje","talud de regolito"]], f:FUENTE_M },
+
+  regolito: { sub:"SITIO PHOENIX · 68° N", tit:"El suelo es veneno",
+    txt:"La sonda <b>Phoenix</b> confirmó en 2008 entre <b>0.5 y 1 % de percloratos</b> en el regolito: tóxicos para la tiroides humana y para casi todo cultivo. Hay además trazas de arsénico, cromo, berilio y cadmio, y bajo radiación UV los percloratos se vuelven bactericidas. Una bandeja de 20 kg contiene 100–200 g de perclorato. <b>Tratar ese sólido es inviable</b> — por eso lo lavamos y tratamos la salmuera.",
+    d:[["Percloratos","0.5 – 1 %"],["Por bandeja de 20 kg","100 – 200 g"],["Confirmado por","Phoenix, 2008"],["Sinergia UV + Fe","~10× mortalidad celular"]], f:FUENTE_M + " · Phoenix Lander 2008" },
+
+  polvo: { sub:"MARTE · POLVO Y TORMENTAS", tit:"3 micras que se meten en todo",
+    txt:"El polvo marciano tiene un diámetro medio de <b>~3 µm</b>, es electrostático y omnipresente: degrada sellos, paneles y filtros, y es un riesgo pulmonar tipo «efecto Apolo». Las tormentas son estacionales y ocasionalmente <b>globales, de semanas</b>: colapsan la energía solar. Nuestra respuesta no es una batería más grande, es el <b>desfase</b>: doce bandejas en doce etapas.",
+    d:[["Diámetro medio","~3 µm"],["Límite habitable","0.1 mg/m³ 24 h TWA"],["Filtro","HEPA ≥99.97 % @0.3 µm"],["Duración de tormenta","semanas"],["Pérdida con desfase","≈25 % vs 100 %"]], f:"Ebert et al. 2026 · NASA-STD-3001 V2 6053" },
+
+  agua: { sub:"CASQUETE POLAR NORTE", tit:"El recurso que sí está ahí",
+    txt:"Hay <b>hielo subsuperficial extenso</b> —cartografiado por el proyecto SWIM de la NASA— además de hidratos en el regolito y un pequeño porcentaje de H₂O en el suelo ecuatorial. Es el recurso más valioso del planeta: agua y CO₂ dan oxígeno, combustible y cultivo. En MILPA-360 el agua de lavado del regolito <b>no se descarta</b>: vuelve declorada desde la cámara anóxica.",
+    d:[["Hielo","subsuperficial extenso (SWIM)"],["Suelo ecuatorial","pocos % de H₂O"],["Agua potable mínima","2.5 L/tripulante/día"],["Temperatura media","~ −63 °C"]], f:FUENTE_M + " · swim.psi.edu" },
+
+  comms: { sub:"MARTE ↔ TIERRA", tit:"22 minutos de silencio",
+    txt:"El retardo de comunicación va de <b>3 a 22 minutos por trayecto</b> según la posición orbital, y hay apagón total durante la conjunción solar. No existe apoyo en tiempo real: la tripulación y sus sistemas son <b>autónomos por obligación</b>. Ese retardo es también la razón de que la red de biosensores MFC tenga que avisar <i>antes</i> de que el daño sea visible.",
+    d:[["Retardo","3 – 22 min por trayecto"],["Conjunción solar","apagón total"],["Misión ida y vuelta","~2–3 años"],["Reabastecimiento","ninguno"]], f:FUENTE_M },
+
+  valles: { sub:"VALLES MARINERIS", tit:"4 000 km de cañón",
+    txt:"El sistema de cañones más grande del sistema solar, casi un cuarto de la circunferencia del planeta. Está aquí como referencia de escala: cuando decimos que el hábitat entero cabe en <b>10 m² de bandeja</b>, conviene recordar contra qué se mide. La temperatura media del planeta es de −63 °C, con extremos de −140 a +20 °C.",
+    d:[["Longitud","~4 000 km"],["Temperatura media","~ −63 °C"],["Rango","−140 a +20 °C"]], f:FUENTE_M },
+
+  sitio: { sub:"SITIO DEL HÁBITAT", tit:"Aquí se posa MILPA-360",
+    txt:"Módulo presurizado de <b>Ø 3.5 m × 2.2 m</b> con ≈<b>10 m² de superficie de bandeja</b>, para una tripulación de seis durante <b>730 soles sin reabastecimiento</b>. Toca «HÁBITAT» arriba, o este punto, para entrar.",
+    d:[["Diámetro","3.5 m"],["Altura","2.2 m"],["Bandejas","8 interiores + 12 exteriores"],["Superficie","≈10 m²"],["Tripulación","6 · 730 soles"]], f:"PLAN-MAESTRO-BIOMARS.md §4.1", accion:"habitat" },
+
+  /* ── hábitat ── */
+  aviario: { sub:"ESTACIÓN S2 · PARTE 1 DEL RETO", tit:"Aviario de codornices",
+    txt:"24 <i>Coturnix japonica</i> en presión negativa sobre el anillo. La rejilla del piso deja caer el estiércol fresco <b>directamente sobre la bandeja en turno</b>: pastoreo intenso, corto, con descanso largo. Es <i>mob grazing</i> miniaturizado, sin pastor y sin cerca eléctrica. Y su canto es un mitigante documentado del riesgo BMed de la NASA.",
+    d:[["Primer huevo","40 días"],["Ración","23 g/ave/día"],["Tasa de postura","~68 %"],["Huevos en la misión","≈11 900"],["Filtro","HEPA 99.97 % @0.3 µm"],["Ruido en zona de sueño","NC-40 [V2]"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2 · NASA-STD-3001 Vol. 2 Rev. E" },
+
+  larvario: { sub:"ESTACIÓN S3 · EL BUCLE SE CIERRA", tit:"Larvario de mosca soldado",
+    txt:"<i>Hermetia illucens</i> no es el animal del reto: es el <b>puente</b>. Come el estiércol de codorniz y devuelve dos cosas — <b>frass</b> como abono y <b>larva</b> como proteína que vuelve al comedero. La única entrada externa es la fracción de grano de la ración; bajarla es bajar masa de lanzamiento.",
+    d:[["Reducción de materia seca","44 – 82 %"],["Salida 1","frass · NPK comercial"],["Salida 2","proteína + lípido"],["Destino","cámara B + inóculo S4"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2" },
+
+  digestor: { sub:"PARTE 2 · LA APORTACIÓN ORIGINAL", tit:"El digestor es el reactor de percloratos",
+    txt:"Las bacterias que reducen perclorato necesitan exactamente dos cosas: <b>ausencia de oxígeno</b> y <b>un donador de electrones orgánico</b>. Un biodigestor anaerobio alimentado con estiércol y frass <b>ya es las dos, gratis y de forma continua</b>. Nadie tuvo que construir un reactor de percloratos: lo construimos para hacer biogás. Dos residuos que se anulan.",
+    d:[["Cámara A","ClO₄⁻ → ClO₃⁻ → ClO₂⁻ → Cl⁻ + O₂"],["Cámara B","frass + estiércol → biogás"],["Carga a B","~2 kg SV/día"],["Rendimiento","0.24 m³/kg · CH₄ 60 %"],["Energía","≈2.9 kWh/día"],["El O₂","coproducto, no soporte vital"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3 · guía FAO de biodigestores" },
+
+  musgo: { sub:"ESTACIÓN S5 · COSTRA Y SEMÁFORO", tit:"Syntrichia caninervis",
+    txt:"El musgo del desierto documentado en 2024 como primer candidato a planta pionera extraterrestre probado con la <b>planta entera</b> sobre suelo marciano simulado. Sella la superficie para que el regolito no se resuspenda al girar el carrusel, y es más tolerante que cualquier cultivo alimenticio: <b>si el musgo verdea, la bandeja está desintoxicada.</b> Bandeja verde = bandeja apta.",
+    d:[["Regeneración","100 % en 30 días"],["Radiación","LD50 ≈5 000 Gy"],["Frío","−196 °C · 1 mes"],["Función","costra + semáforo go/no-go"]], f:"The Innovation, 2024 · PLAN-MAESTRO §4.4" },
+
+  cultivo: { sub:"ANILLO EXTERIOR · PARTE 3 DEL RETO", tit:"La Tríada Marciana",
+    txt:"La milpa mesoamericana en 0.5 m²: una planta que da estructura, una que fija nitrógeno y una que cubre el suelo. Doce bandejas avanzan una posición cada 8 soles, así que <b>en cualquier instante hay bandejas en las doce etapas</b>. El retorno a la Tierra no es una metáfora: el sistema le devuelve a Chiapas su propia agricultura, con los tiempos medidos.",
+    d:[["Camote","90 – 120 soles"],["Leguminosa","fija N₂ vía Rhizobium"],["Rábano","25 – 30 soles"],["Ciclo del anillo","96 soles"],["Cóctel","micorrizas · Trichoderma · PGPR"]], f:"PLAN-MAESTRO-BIOMARS.md §4.4" },
+
+  lavado: { sub:"ESTACIÓN S1 · ENTRADA DEL CICLO", tit:"Lavado del regolito",
+    txt:"Agua reciclada arrastra el perclorato fuera del sólido. Sale salmuera concentrada hacia la cámara anóxica y vuelve agua declorada al riego. <b>Tratar 20 kg de regolito en el sólido es inviable</b> en tiempo de misión y en volumen de hábitat; tratar un litro de salmuera no lo es. Ahí es donde se rompe la mayoría de las propuestas.",
+    d:[["Bandeja","20 kg de regolito"],["Perclorato por bandeja","100 – 200 g"],["Salida","salmuera → cámara A"],["Retorno","agua declorada al riego"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3" },
+
+  mfc: { sub:"EN CADA PUNTO DE TRASVASE", tit:"La MFC como sistema nervioso",
+    txt:"Como batería la celda de combustible microbiana es inútil: da microvatios. Como <b>biosensor autoalimentado</b> es excelente — su voltaje sigue la actividad metabólica del consorcio. Voltaje que cae con carga orgánica estable significa <b>tóxico entrando al bucle</b>; con carga baja, significa hambre. Cero vatios de la misión, cero reactivos, y avisa antes de que el daño se vea.",
+    d:[["Consumo","0 W de la misión"],["Puntos","S1→dig · dig→riego · riego→bandeja"],["Distingue","toxicidad de falta de carga"],["Retardo con la Tierra","22 min"]], f:"PLAN-MAESTRO-BIOMARS.md §4.4" },
+
+  carrusel: { sub:"EL MECANISMO", tit:"En Marte se mueve el suelo",
+    txt:"El pastoreo rotacional funciona en la Tierra porque el animal <i>se va</i> y el suelo descansa. En 10 m² no hay a dónde ir, así que <b>se fija el animal y se rota el suelo</b>. La bandeja que hoy recibe estiércol no vuelve a recibirlo en <b>56 soles</b>. Ese intervalo no es un procedimiento que alguien pueda olvidar: es <b>geometría</b>.",
+    d:[["Anillo interior","8 bandejas · ciclo 64 soles"],["Anillo exterior","12 bandejas · ciclo 96 soles"],["Paso","1 posición / 8 soles"],["Descanso garantizado","56 soles"],["Precedentes","MELiSSA · BIOS-3 · Lunar Palace 1"]], f:"PLAN-MAESTRO-BIOMARS.md §4.1–4.2" },
+
+  panel: { sub:"ENERGÍA", tit:"El biogás no compite: libera",
+    txt:"2.9 kWh/día no alimentan un hábitat marciano. Alimentan <b>el propio MILPA-360</b>: motor del carrusel, bombas de trasvase, iluminación de mantenimiento y —lo crítico— un <b>colchón térmico de emergencia</b> para sostener el punto de consigna durante una noche marciana o una tormenta global que deje los paneles inservibles.",
+    d:[["Biogás","≈2.9 kWh/día"],["Solar","colapsa en tormenta global"],["Función crítica","autonomía térmica"],["Consumo del módulo","carrusel, bombas, luz"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3" },
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   PLANETA
+   ═══════════════════════════════════════════════════════════════ */
+const R_MARTE = 5;
+let marte, nubePolvo;
+const marcas = [];      // puntos clicables sobre el globo
+
+function construirPlaneta(tex){
+  marte = new T.Mesh(
+    new T.SphereGeometry(R_MARTE, 96, 64),
+    new T.MeshStandardMaterial({
+      map: tex.albedo, bumpMap: tex.relieve, bumpScale: 0.055,
+      roughness: 0.94, metalness: 0.0,
+    })
+  );
+  marte.rotation.y = Math.PI;       // 0° de longitud hacia la cámara inicial
+  marte.castShadow = marte.receiveShadow = true;
+  gPlaneta.add(marte);
+
+  /* atmósfera: borde fresnel, muy fina, como la real */
+  const atm = new T.Mesh(
+    new T.SphereGeometry(R_MARTE * 1.028, 64, 48),
+    new T.ShaderMaterial({
+      side: T.BackSide, transparent: true, depthWrite: false, blending: T.AdditiveBlending,
+      uniforms: { c: { value: new T.Color(0xE0906A) } },
+      vertexShader: `varying vec3 vN; varying vec3 vP;
+        void main(){ vN = normalize(normalMatrix * normal);
+          vec4 mv = modelViewMatrix * vec4(position,1.0); vP = mv.xyz;
+          gl_Position = projectionMatrix * mv; }`,
+      fragmentShader: `uniform vec3 c; varying vec3 vN; varying vec3 vP;
+        void main(){ float f = pow(1.0 - abs(dot(normalize(vN), normalize(-vP))), 3.4);
+          gl_FragColor = vec4(c, f * 0.85); }`
+    })
+  );
+  gPlaneta.add(atm);
+
+  /* velo de polvo en suspensión, girando un poco más lento que el planeta */
+  nubePolvo = new T.Mesh(
+    new T.SphereGeometry(R_MARTE * 1.012, 64, 48),
+    new T.MeshBasicMaterial({
+      color: 0xD9A87E, transparent: true, opacity: 0.10,
+      depthWrite: false, blending: T.AdditiveBlending,
+    })
+  );
+  gPlaneta.add(nubePolvo);
+
+  /* marcas de interés, situadas por longitud/latitud reales */
+  const PUNTOS = [
+    ["regolito", "Percloratos · Phoenix",  234.3,  68.2],
+    ["agua",     "Hielo · casquete norte",  20.0,  84.0],
+    ["valles",   "Valles Marineris",       300.0, -14.0],
+    ["polvo",    "Tormentas · Hellas",      70.0, -42.0],
+    ["sitio",    "Sitio del hábitat",      137.0,  -4.5, true],
+  ];
+  for (const [clave, texto, lon, lat, esSitio] of PUNTOS){
+    const p = new T.Vector3().setFromSphericalCoords(
+      R_MARTE * 1.008, (90 - lat) * RAD, (lon - 180) * RAD);
+    const anillo = new T.Mesh(
+      new T.RingGeometry(0.10, 0.135, 24),
+      new T.MeshBasicMaterial({ color: esSitio ? 0x7FBB72 : 0xD2622F,
+        transparent: true, opacity: 0.95, side: T.DoubleSide, depthWrite: false })
+    );
+    anillo.position.copy(p);
+    anillo.lookAt(p.clone().multiplyScalar(2));
+    marte.add(anillo);
+    marcas.push({ clave, texto, p, anillo, esSitio, el: null });
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HÁBITAT — módulo presurizado Ø3.5 × 2.2 m sobre terreno marciano
+   ═══════════════════════════════════════════════════════════════ */
+const N_IN = 8, N_OUT = 12, SOLES_PASO = 8;
+const LADO = 0.70;                             // bandeja de 0.49 m² → 20 × 0.49 = 9.8 m²
+const R_IN = 0.96, R_OUT = 1.80, CUBIERTA = 0.62;
+const R_CASCO = 2.38, H_CASCO = 2.2;           // Ø4.76 m: el mínimo en que caben las 20 bandejas
+const A_PARED = 0.57, A_LARGO = TAU * 0.62;    // pared en MI convención (x=cos a, z=sin a)
+const A_FIN = A_PARED + A_LARGO;               // el hueco queda centrado en a ≈ -0.62 (la cámara)
+const CIL_INI  = Math.PI / 2 - A_FIN;          // CylinderGeometry: x=sin θ, z=cos θ
+const ESF_INI  = Math.PI - A_FIN;              // SphereGeometry:  x=-cos φ, z=sin φ
+
+const ESTACIONES = [
+  ["S1", "Lavado",        0x8E9298],
+  ["S2", "Aviario",       0x6B4E2E],
+  ["S3", "Larvario",      0x6A5330],
+  ["S4", "Descanso",      0x3E2C1E],
+  ["S5", "Musgo",         0x4E8A3C],
+  ["S6", "Consolidación", 0x599648],
+  ["S7", "Verificación",  0x74B25F],
+  ["S8", "Trasvase",      0x8A5334],
+];
+
+let texRego, texAve, texCasco, texCubierta, texMusgo, texHojaA, texHojaB, texSolar;
+const clicables = [];
+const anclas = [];                                    // etiquetas fijas del hábitat
+let anilloIn, anilloOut, aviario, antorcha, digestorA, digestorB, luzAntorcha;
+let gasometro, bandejaHuevos, bandejaLarvas;
+const codornices = [], flujos = [], focosCultivo = [];
+
+const M = {};                                         // materiales compartidos
+function mats(){
+  M.casco   = new T.MeshStandardMaterial({ map: texCasco, roughness: 0.46, metalness: 0.10,
+                                           side: T.DoubleSide });
+  M.cascoIn = new T.MeshStandardMaterial({ color: 0xAEB6BC, roughness: 0.55, metalness: 0.12,
+                                           side: T.DoubleSide });
+  M.costilla= new T.MeshStandardMaterial({ color: 0x9AA3AA, roughness: 0.34, metalness: 0.72 });
+  M.acero   = new T.MeshStandardMaterial({ color: 0xB6BEC5, roughness: 0.28, metalness: 0.88 });
+  M.oscuro  = new T.MeshStandardMaterial({ color: 0x30363D, roughness: 0.5,  metalness: 0.55 });
+  M.cubierta= new T.MeshStandardMaterial({ map: texCubierta, roughness: 0.58, metalness: 0.42 });
+  M.vidrio  = new T.MeshPhysicalMaterial({ color: 0xD3E2EC, roughness: 0.06, metalness: 0,
+                transmission: 0.86, thickness: 0.35, transparent: true, opacity: 0.42,
+                side: T.DoubleSide });
+  M.verde   = new T.MeshStandardMaterial({ color: 0x2C5E44, roughness: 0.38, metalness: 0.45 });
+  M.verde2  = new T.MeshStandardMaterial({ color: 0x27523C, roughness: 0.38, metalness: 0.45 });
+  M.azul    = new T.MeshStandardMaterial({ color: 0x3E7FA8, roughness: 0.3,  metalness: 0.5 });
+  M.cobre   = new T.MeshStandardMaterial({ color: 0xA56A3C, roughness: 0.34, metalness: 0.8 });
+  M.ave     = new T.MeshStandardMaterial({ map: texAve, roughness: 0.86, metalness: 0 });
+  M.huevo   = new T.MeshStandardMaterial({ color: 0xE8DFC8, roughness: 0.55 });
+  M.rego    = new T.MeshStandardMaterial({ map: texRego, roughness: 1.0, metalness: 0 });
+  M.sustrato= new T.MeshStandardMaterial({ color: 0x8A5334, roughness: 1.0, metalness: 0 });
+  M.hoja    = new T.MeshStandardMaterial({ map: texHojaA, roughness: 0.72, metalness: 0,
+                side: T.DoubleSide });
+  M.hoja2   = new T.MeshStandardMaterial({ map: texHojaB, roughness: 0.72, metalness: 0,
+                side: T.DoubleSide });
+  M.tallo   = new T.MeshStandardMaterial({ color: 0x4E6B33, roughness: 0.82 });
+  M.musgo   = new T.MeshStandardMaterial({ color: 0x4C8438, roughness: 0.94 });
+  M.costra  = new T.MeshStandardMaterial({ map: texMusgo, roughness: 0.97, metalness: 0 });
+  M.solar   = new T.MeshStandardMaterial({ map: texSolar, roughness: 0.18, metalness: 0.62 });
+  M.rabano  = new T.MeshStandardMaterial({ color: 0xC0455A, roughness: 0.55 });
+  M.tuber   = new T.MeshStandardMaterial({ color: 0xB2703F, roughness: 0.78 });
+  M.marchito= new T.MeshStandardMaterial({ color: 0x8A7139, roughness: 0.9, side: T.DoubleSide });
+  M.led     = new T.MeshStandardMaterial({ color: 0xFFD8B4, emissive: 0xFFB07A,
+                emissiveIntensity: 3.4, roughness: 0.3 });
+  M.llama   = new T.MeshStandardMaterial({ color: 0xFF7A3C, emissive: 0xFF6A28,
+                emissiveIntensity: 3.2, transparent: true, opacity: 0.8 });
+}
+
+function malla(geo, mat, pos, padre, sombra){
+  const m = new T.Mesh(geo, mat);
+  if (pos) m.position.set(pos[0], pos[1], pos[2]);
+  if (sombra !== false){ m.castShadow = true; m.receiveShadow = true; }
+  (padre || gHabitat).add(m);
+  return m;
+}
+const enAngulo = (r, k, n) => [Math.cos(k / n * TAU) * r, 0, Math.sin(k / n * TAU) * r];
+function clicable(o, clave){ o.userData.ficha = clave; clicables.push(o); return o; }
+function marcarSubarbol(o, clave){ o.traverse(h => { if (h.isMesh){ h.userData.ficha = clave; clicables.push(h); } }); }
+
+/* ── hoja: silueta real, no un cono ── */
+function geoHoja(largo, ancho, corazon){
+  const s = new T.Shape();
+  s.moveTo(0, 0);
+  if (corazon){
+    s.bezierCurveTo( ancho * 0.95, largo * 0.10,  ancho * 0.70, largo * 0.92,  0, largo);
+    s.bezierCurveTo(-ancho * 0.70, largo * 0.92, -ancho * 0.95, largo * 0.10,  0, 0);
+  } else {
+    s.bezierCurveTo( ancho * 0.72, largo * 0.22,  ancho * 0.52, largo * 0.80,  0, largo);
+    s.bezierCurveTo(-ancho * 0.52, largo * 0.80, -ancho * 0.72, largo * 0.22,  0, 0);
+  }
+  const g = new T.ShapeGeometry(s, 10);
+  g.rotateX(-Math.PI / 2);                       // tendida en el plano XZ
+  return g;
+}
+const GEO = {};
+function geometrias(){
+  GEO.hojaAncha  = geoHoja(0.20, 0.115, false);
+  GEO.hojaCorazon= geoHoja(0.16, 0.125, true);
+  GEO.foliolo    = geoHoja(0.075, 0.038, false);
+  GEO.tallo      = new T.CylinderGeometry(0.006, 0.009, 1, 5);
+  GEO.mota       = new T.IcosahedronGeometry(0.028, 0);
+  GEO.bandejaIn = GEO.bandejaOut = new T.BoxGeometry(LADO, 0.055, LADO);
+}
+
+/* ── los tres cultivos de la Tríada, con forma propia ── */
+function plantaRabano(){
+  const g = new T.Group();
+  for (let i = 0; i < 7; i++){
+    const a = i / 7 * TAU + 0.4;
+    const h = malla(GEO.hojaAncha, i % 2 ? M.hoja : M.hoja2, [0, 0.02, 0], g, false);
+    h.rotation.y = a; h.rotation.x = -0.62 - (i % 3) * 0.12;
+    h.position.set(Math.cos(a) * 0.02, 0.02, Math.sin(a) * 0.02);
+    h.scale.setScalar(0.85 + (i % 3) * 0.14);
+  }
+  const raiz = malla(new T.SphereGeometry(0.048, 12, 10), M.rabano, [0, 0.012, 0], g);
+  raiz.scale.set(1, 0.82, 1);
+  return g;
+}
+function plantaLeguminosa(){
+  const g = new T.Group();
+  for (let i = 0; i < 5; i++){
+    const a = i / 5 * TAU + 1.1, r = 0.055;
+    const alto = 0.17 + (i % 3) * 0.035;
+    const t = malla(GEO.tallo, M.tallo, [Math.cos(a) * r, alto / 2, Math.sin(a) * r], g, false);
+    t.scale.y = alto; t.rotation.z = Math.cos(a) * 0.16; t.rotation.x = -Math.sin(a) * 0.16;
+    for (let j = 0; j < 3; j++){                   // hoja trifoliada
+      const b = j / 3 * TAU;
+      const f = malla(GEO.foliolo, M.hoja, [Math.cos(a) * r, alto, Math.sin(a) * r], g, false);
+      f.rotation.y = b + a; f.rotation.x = -0.3;
+    }
+  }
+  return g;
+}
+function plantaCamote(){
+  const g = new T.Group();
+  for (let i = 0; i < 6; i++){
+    const a = i / 6 * TAU + 0.25;
+    for (let j = 1; j <= 3; j++){                  // guía rastrera
+      const r = 0.05 + j * 0.052, alto = 0.115 - j * 0.026;
+      const h = malla(GEO.hojaCorazon, j % 2 ? M.hoja : M.hoja2,
+        [Math.cos(a) * r, alto, Math.sin(a) * r], g, false);
+      h.rotation.y = a + 0.5; h.rotation.x = -0.22 - j * 0.1;
+      h.scale.setScalar(1.05 - j * 0.12);
+    }
+    if (i % 2 === 0){
+      const t = malla(GEO.tallo, M.tallo, [Math.cos(a) * 0.09, 0.055, Math.sin(a) * 0.09], g, false);
+      t.scale.y = 0.11; t.rotation.z = -Math.cos(a) * 0.9; t.rotation.x = Math.sin(a) * 0.9;
+    }
+  }
+  const tub = malla(new T.SphereGeometry(0.055, 12, 9), M.tuber, [0.03, 0.015, -0.02], g);
+  tub.scale.set(1.5, 0.6, 0.9);
+  return g;
+}
+function mataMusgo(){
+  const g = new T.Group();
+  for (let i = 0; i < 44; i++){
+    const a = Math.random() * TAU, r = Math.sqrt(Math.random()) * 0.27;
+    const m = malla(GEO.mota, M.musgo,
+      [Math.cos(a) * r, 0.006 + Math.random() * 0.012, Math.sin(a) * r], g, false);
+    m.scale.set(1.3 + Math.random() * 1.2, 0.6 + Math.random() * 0.7, 1.3 + Math.random() * 1.2);
+    m.receiveShadow = true;
+  }
+  return g;
+}
+
+/* ── codorniz japonesa ── */
+function codorniz(){
+  const g = new T.Group();
+  const cuerpo = malla(new T.SphereGeometry(0.062, 14, 11), M.ave, [0, 0.062, 0], g);
+  cuerpo.scale.set(1.42, 1, 0.92);
+  const cabeza = malla(new T.SphereGeometry(0.034, 12, 10), M.ave, [0.075, 0.108, 0], g);
+  cabeza.scale.set(1.1, 1, 1);
+  malla(new T.ConeGeometry(0.012, 0.032, 7), M.oscuro, [0.107, 0.101, 0], g).rotation.z = -Math.PI / 2;
+  const cola = malla(new T.ConeGeometry(0.03, 0.072, 7), M.ave, [-0.09, 0.072, 0], g);
+  cola.rotation.z = Math.PI / 2 + 0.3; cola.scale.set(1, 1, 0.45);
+  for (const s of [-1, 1]){
+    const p = malla(new T.CylinderGeometry(0.005, 0.005, 0.03, 5), M.oscuro,
+      [0.005, 0.015, s * 0.018], g, false);
+    p.castShadow = true;
+  }
+  return g;
+}
+
+function construirHabitat(){
+  /* ── terreno ── */
+  const geoT = new T.PlaneGeometry(150, 150, 190, 190);
+  const pT = geoT.attributes.position;
+  for (let i = 0; i < pT.count; i++){
+    const x = pT.getX(i), y = pT.getY(i), d = Math.hypot(x, y);
+    let h = (fbm(x * 0.035 + 40, y * 0.035 + 40, 64, 5) - 0.5) * 5.2
+          + (fbm(x * 0.16 + 9, y * 0.16 + 9, 64, 3) - 0.5) * 0.55;
+    h *= sat((d - 5.4) / 9);                       // explanada plana bajo el módulo
+    pT.setZ(i, h);
+  }
+  geoT.computeVertexNormals();
+  const texSuelo = texRego.clone(); texSuelo.needsUpdate = true;
+  texSuelo.repeat.set(13, 13);
+  const terreno = new T.Mesh(geoT, new T.MeshStandardMaterial({
+    map: texSuelo, roughness: 1, metalness: 0,
+  }));
+  texRego.repeat.set(3, 3);
+  terreno.rotation.x = -Math.PI / 2;
+  terreno.receiveShadow = true;
+  terreno.name = "terreno";
+  gHabitat.add(terreno);
+
+  /* rocas dispersas */
+  const geoR = new T.IcosahedronGeometry(1, 0);
+  const matR = new T.MeshStandardMaterial({ color: 0x6E3D28, roughness: 0.96, flatShading: true });
+  for (let i = 0; i < 90; i++){
+    const a = Math.random() * TAU, r = 5.8 + Math.pow(Math.random(), 0.55) * 40;
+    const s = 0.1 + Math.pow(Math.random(), 2.4) * 0.85;
+    const roca = malla(geoR, matR, [Math.cos(a) * r, s * 0.34, Math.sin(a) * r]);
+    roca.scale.set(s * (0.8 + Math.random() * 0.6), s * (0.5 + Math.random() * 0.5), s);
+    roca.rotation.set(Math.random(), Math.random() * TAU, Math.random());
+  }
+
+  /* ── talud de regolito: el blindaje contra radiación ── */
+  const talud = malla(new T.CylinderGeometry(R_CASCO + 0.95, R_CASCO + 1.55, 0.72, 64, 1, true),
+    new T.MeshStandardMaterial({ map: texRego, roughness: 1, side: T.DoubleSide }), [0, 0.36, 0]);
+  clicable(talud, "radiacion");
+  malla(new T.RingGeometry(R_CASCO + 0.08, R_CASCO + 0.95, 64), M.rego, [0, 0.716, 0])
+    .rotation.x = -Math.PI / 2;
+
+  /* ── casco presurizado, en corte ── */
+  const cascoGrp = new T.Group(); gHabitat.add(cascoGrp);
+  if (Q.get("casco") === "0") cascoGrp.visible = false;   // vista de mecanismo
+  const pared = malla(
+    new T.CylinderGeometry(R_CASCO, R_CASCO, H_CASCO, 72, 1, true, CIL_INI, A_LARGO),
+    M.casco, [0, H_CASCO / 2, 0], cascoGrp);
+  pared.receiveShadow = true;
+  /* forro interior, un tono más frío, para que el corte tenga espesor */
+  malla(new T.CylinderGeometry(R_CASCO - 0.07, R_CASCO - 0.07, H_CASCO, 72, 1, true, CIL_INI, A_LARGO),
+    M.cascoIn, [0, H_CASCO / 2, 0], cascoGrp);
+  /* cúpula superior */
+  const domoCasco = malla(new T.SphereGeometry(R_CASCO, 72, 26, ESF_INI, A_LARGO, 0, Math.PI * 0.5),
+    M.casco, [0, H_CASCO, 0], cascoGrp);
+  domoCasco.scale.y = 0.42;                      // casquete rebajado, no media esfera
+  /* costillas: el toro se pre-rota en la geometría para que el grupo solo gire en Y */
+  const geoCost = new T.TorusGeometry(R_CASCO + 0.04, 0.05, 8, 90, A_LARGO);
+  geoCost.rotateX(-Math.PI / 2);                 // pasa a barrer de +X hacia −Z
+  for (const y of [0.34, 1.08, 1.82]){
+    const gc = new T.Group(); gc.position.y = y; gc.rotation.y = -A_FIN;
+    cascoGrp.add(gc);
+    malla(geoCost, M.costilla, null, gc);
+  }
+  /* cantos del corte */
+  for (const a of [A_PARED, A_FIN]){
+    const c = malla(new T.BoxGeometry(0.075, H_CASCO, 0.10), M.costilla,
+      [Math.cos(a) * R_CASCO, H_CASCO / 2, Math.sin(a) * R_CASCO], cascoGrp);
+    c.rotation.y = -a;
+  }
+  /* portilla y escotilla, del lado cerrado */
+  const aEsc = A_PARED + 0.85;
+  const esc = malla(new T.CylinderGeometry(0.44, 0.44, 0.1, 28), M.costilla,
+    [Math.cos(aEsc) * R_CASCO, 0.86, Math.sin(aEsc) * R_CASCO], cascoGrp);
+  esc.rotation.set(0, 0, Math.PI / 2); esc.rotation.y = -aEsc;
+  const aPor = A_PARED + 2.1;
+  const por = malla(new T.CylinderGeometry(0.19, 0.19, 0.09, 22), M.vidrio,
+    [Math.cos(aPor) * R_CASCO, 1.5, Math.sin(aPor) * R_CASCO], cascoGrp);
+  por.rotation.set(0, 0, Math.PI / 2); por.rotation.y = -aPor;
+
+  /* patas */
+  for (let i = 0; i < 6; i++){
+    const a = i / 6 * TAU + 0.3;
+    malla(new T.CylinderGeometry(0.07, 0.09, 0.62, 10), M.acero,
+      [Math.cos(a) * (R_CASCO - 0.22), 0.31, Math.sin(a) * (R_CASCO - 0.22)]);
+  }
+
+  /* ── plataforma y eje ── */
+  malla(new T.CylinderGeometry(R_CASCO - 0.12, R_CASCO - 0.05, 0.6, 64), M.cubierta, [0, 0.3, 0]);
+  malla(new T.CylinderGeometry(R_CASCO - 0.08, R_CASCO - 0.08, 0.045, 64), M.acero, [0, 0.605, 0]);
+  clicable(malla(new T.CylinderGeometry(0.09, 0.13, 1.5, 18), M.acero, [0, 0.75, 0]), "carrusel");
+
+  /* ── biodigestor de dos cámaras, en el núcleo ── */
+  const dig = new T.Group(); dig.position.set(0, CUBIERTA, 0); gHabitat.add(dig);
+  digestorB = malla(new T.CylinderGeometry(0.40, 0.42, 0.72, 36), M.verde, [0, 0.36, 0], dig);
+  malla(new T.TorusGeometry(0.40, 0.03, 8, 36), M.acero, [0, 0.71, 0], dig).rotation.x = Math.PI / 2;
+  malla(new T.TorusGeometry(0.41, 0.026, 8, 36), M.acero, [0, 0.16, 0], dig).rotation.x = Math.PI / 2;
+  digestorA = malla(new T.CylinderGeometry(0.27, 0.27, 0.40, 30), M.verde2, [0, 0.93, 0], dig);
+  malla(new T.TorusGeometry(0.27, 0.026, 8, 30), M.acero, [0, 1.12, 0], dig).rotation.x = Math.PI / 2;
+  /* bajante de la cámara A a la B: A protege a B, la metanogénesis se inhibe con perclorato */
+  const baj = malla(new T.CylinderGeometry(0.032, 0.032, 0.46, 10), M.cobre, [0.36, 0.80, 0.16], dig);
+  baj.rotation.z = 0.36;
+  malla(new T.CylinderGeometry(0.05, 0.05, 0.08, 12), M.acero, [0, 1.14, 0], dig);
+  marcarSubarbol(dig, "digestor");
+
+  /* filtración de agua: cilindros azules del lado opuesto */
+  const aFilt = A_PARED + 1.45;
+  const filt = new T.Group();
+  filt.position.set(Math.cos(aFilt) * (R_CASCO - 0.16), CUBIERTA + 0.42, Math.sin(aFilt) * (R_CASCO - 0.16));
+  filt.rotation.y = -aFilt;
+  gHabitat.add(filt);
+  malla(new T.BoxGeometry(0.06, 0.72, 0.94), M.costilla, [0.04, 0.30, 0], filt);
+  for (let i = 0; i < 3; i++){
+    const z = -0.30 + i * 0.30;
+    malla(new T.CylinderGeometry(0.11, 0.11, 0.56, 20), M.azul, [-0.12, 0.30, z], filt);
+    malla(new T.TorusGeometry(0.11, 0.015, 6, 20), M.acero, [-0.12, 0.57, z], filt).rotation.x = Math.PI / 2;
+    malla(new T.TorusGeometry(0.11, 0.015, 6, 20), M.acero, [-0.12, 0.03, z], filt).rotation.x = Math.PI / 2;
+  }
+  marcarSubarbol(filt, "lavado");
+
+  /* tablero de control junto a la escotilla — como en la lámina del equipo */
+  const aCtrl = A_PARED + 0.35;
+  const ctrl = new T.Group();
+  ctrl.position.set(Math.cos(aCtrl) * (R_CASCO - 0.14), CUBIERTA + 0.62, Math.sin(aCtrl) * (R_CASCO - 0.14));
+  ctrl.rotation.y = -aCtrl;
+  gHabitat.add(ctrl);
+  malla(new T.BoxGeometry(0.09, 0.46, 0.62), M.oscuro, [0, 0, 0], ctrl);
+  malla(new T.BoxGeometry(0.015, 0.30, 0.46),
+    new T.MeshStandardMaterial({ color: 0x2E6B7A, emissive: 0x2E8FA8, emissiveIntensity: 1.5,
+      roughness: 0.25 }), [-0.05, 0.04, 0], ctrl, false);
+  marcarSubarbol(ctrl, "mfc");
+
+  /* antorcha de biogás sobre el eje */
+  for (let i = 0; i < 3; i++){
+    const a = i / 3 * TAU + 0.7;
+    const g = new T.Group();
+    g.position.set(Math.cos(a) * 1.55, 2.04, Math.sin(a) * 1.55);
+    g.rotation.y = -a;
+    gHabitat.add(g);
+    malla(new T.CylinderGeometry(0.014, 0.014, 0.22, 6), M.acero, [0, 0.11, 0], g, false);
+    malla(new T.BoxGeometry(0.14, 0.05, 0.44), M.costilla, [0, 0, 0], g, false);
+    malla(new T.BoxGeometry(0.11, 0.012, 0.40),
+      new T.MeshStandardMaterial({ color: 0xFFF0DC, emissive: 0xFFE0BC, emissiveIntensity: 2.6 }),
+      [0, -0.028, 0], g, false);
+    const pl = new T.PointLight(0xFFE9D2, 1.3, 6.5, 2);
+    pl.position.set(0, -0.10, 0); g.add(pl);
+  }
+  antorcha = malla(new T.ConeGeometry(0.10, 0.30, 14), M.llama, [0, 1.62, 0], null, false);
+  clicable(antorcha, "digestor");
+  luzAntorcha = new T.PointLight(0xFF7A3C, 2.2, 4.5, 2);
+  luzAntorcha.position.set(0, 1.62, 0);
+  gHabitat.add(luzAntorcha);
+
+  /* ── aviario fijo sobre S2 ── */
+  aviario = new T.Group();
+  const pAv = enAngulo(R_IN, 1, N_IN);
+  aviario.position.set(pAv[0], CUBIERTA, pAv[2]);
+  gHabitat.add(aviario);
+  const domo = malla(new T.SphereGeometry(0.40, 30, 20, 0, TAU, 0, Math.PI / 2), M.vidrio,
+    [0, 0.62, 0], aviario, false);
+  malla(new T.CylinderGeometry(0.40, 0.40, 0.028, 30), M.acero, [0, 0.625, 0], aviario);
+  malla(new T.TorusGeometry(0.40, 0.022, 6, 30), M.costilla, [0, 0.62, 0], aviario)
+    .rotation.x = Math.PI / 2;
+  for (let i = 0; i < 4; i++){
+    const a = i / 4 * TAU + 0.4;
+    malla(new T.CylinderGeometry(0.018, 0.018, 0.66, 8), M.acero,
+      [Math.cos(a) * 0.34, 0.31, Math.sin(a) * 0.34], aviario);
+  }
+  /* rejilla del piso: por ahí cae el estiércol a la bandeja */
+  for (let i = -3; i <= 3; i++)
+    malla(new T.BoxGeometry(0.78, 0.008, 0.012), M.acero, [0, 0.625, i * 0.055], aviario, false);
+  for (let i = 0; i < 7; i++){
+    const a = i / 7 * TAU + 0.9, r = 0.13 + (i % 3) * 0.085;
+    const q = codorniz();
+    q.position.set(Math.cos(a) * r, 0.635, Math.sin(a) * r);
+    q.rotation.y = a + 1.6;
+    q.userData.a = a;
+    aviario.add(q); codornices.push(q);
+  }
+  for (let i = 0; i < 5; i++){
+    const a = i / 5 * TAU + 2.1, r = 0.26;
+    const h = malla(new T.SphereGeometry(0.021, 10, 8), M.huevo,
+      [Math.cos(a) * r, 0.645, Math.sin(a) * r], aviario);
+    h.scale.set(1, 0.82, 0.82);
+  }
+  bandejaHuevos = new T.Group();
+  bandejaHuevos.position.set(0.46, 0.44, 0);
+  aviario.add(bandejaHuevos);
+  malla(new T.BoxGeometry(0.30, 0.018, 0.22), M.acero, [0, 0, 0], bandejaHuevos, false);
+  for (const dx of [-0.15, 0.15])
+    malla(new T.BoxGeometry(0.012, 0.05, 0.22), M.acero, [dx, 0.03, 0], bandejaHuevos, false);
+  malla(new T.CylinderGeometry(0.012, 0.012, 0.20, 6), M.acero, [-0.14, 0.12, 0], bandejaHuevos, false)
+    .rotation.z = -0.5;
+  bandejaHuevos.userData.huevos = [];
+  for (let i = 0; i < 12; i++){
+    const h = malla(new T.SphereGeometry(0.019, 10, 8), M.huevo,
+      [-0.11 + (i % 6) * 0.045, 0.026, (i < 6 ? -0.045 : 0.045)], bandejaHuevos, false);
+    h.scale.set(1, 0.8, 0.8); h.rotation.z = 0.4;
+    bandejaHuevos.userData.huevos.push(h);
+  }
+  placa(texturaPlaca([{ t: "RECOLECCIÓN DE HUEVO", s: 0.28, esp: 0.05 },
+                      { t: "~16/día · 68 % de postura · ≈11 900 en la misión", s: 0.17,
+                        c: "#E4D7B4", esp: 0.01 }],
+                     { w: 760, h: 150, fondo: "#0E1317", barra: "#E8DFC8", y0: 0.42 }),
+        0.42, 0.083, [0.46, 0.60, 0], 0, aviario, -0.35);
+  marcarSubarbol(aviario, "aviario");
+
+  /* ── equipo fijo de cada estación ── */
+  function poste(k, altura, color, ficha, ancho){
+    const g = new T.Group();
+    const p = enAngulo(R_IN, k, N_IN);
+    g.position.set(p[0], CUBIERTA, p[2]);
+    g.rotation.y = -k / N_IN * TAU;
+    gHabitat.add(g);
+    malla(new T.CylinderGeometry(0.026, 0.034, altura, 10), M.acero, [0, altura / 2, 0], g);
+    const mat = new T.MeshStandardMaterial({ color, roughness: 0.34, metalness: 0.4,
+      emissive: color, emissiveIntensity: 0.28 });
+    malla(new T.BoxGeometry((ancho || 0.32), 0.115, 0.30), mat, [0, altura, 0], g);
+    marcarSubarbol(g, ficha);
+    return g;
+  }
+  poste(0, 0.70, 0x63A9D1, "lavado");         // cabezal de lavado
+  const gLarv = poste(2, 0.52, 0xE9AE52, "larvario");
+  {
+    const cubeta = malla(new T.BoxGeometry(0.34, 0.09, 0.26), M.acero, [0, 0.60, 0], gLarv);
+    const lecho = malla(new T.BoxGeometry(0.31, 0.05, 0.23),
+      new T.MeshStandardMaterial({ color: 0x4A3520, roughness: 1 }), [0, 0.625, 0], gLarv, false);
+    lecho.receiveShadow = true;
+    const matLarva = new T.MeshStandardMaterial({ color: 0xD9BC7A, roughness: 0.55 });
+    const geoLarva = new T.CapsuleGeometry(0.011, 0.026, 4, 6);
+    bandejaLarvas = [];
+    for (let i = 0; i < 26; i++){
+      const l = malla(geoLarva, matLarva,
+        [(Math.random() - 0.5) * 0.27, 0.652, (Math.random() - 0.5) * 0.19], gLarv, false);
+      l.rotation.set(Math.PI / 2, 0, Math.random() * TAU);
+      l.userData.f = Math.random() * TAU;
+      bandejaLarvas.push(l);
+    }
+    placa(texturaPlaca([{ t: "LARVARIO · Hermetia illucens", s: 0.26, esp: 0.03 },
+                        { t: "reduce 44–82 % de materia seca", s: 0.17, c: "#F0D49A", esp: 0.01 }],
+                       { w: 760, h: 150, fondo: "#0E1317", barra: "#E9AE52", y0: 0.42 }),
+          0.40, 0.079, [0, 0.78, 0], 0, gLarv, -0.35);
+  }
+  poste(3, 0.60, 0x7FBB72, "mfc");            // inyector de inóculo
+  poste(4, 0.66, 0x4E8A3C, "musgo");          // lámpara del musgo
+  poste(6, 0.46, 0xE7ECF1, "mfc", 0.20);      // lector go/no-go
+
+  /* luminarias del anillo exterior */
+  for (let k = 0; k < 4; k++){
+    const p = enAngulo(R_OUT, k * 3 + 1.5, N_OUT);
+    const g = new T.Group();
+    g.position.set(p[0], CUBIERTA, p[2]);
+    g.rotation.y = -(k * 3 + 1.5) / N_OUT * TAU;
+    gHabitat.add(g);
+    malla(new T.CylinderGeometry(0.022, 0.022, 0.84, 8), M.acero, [0, 0.42, 0], g);
+    malla(new T.BoxGeometry(0.085, 0.05, 0.9), M.costilla, [0, 0.85, 0], g);
+    const luz = malla(new T.BoxGeometry(0.07, 0.018, 0.86), M.led, [0, 0.822, 0], g, false);
+    focosCultivo.push(luz);
+    const pl = new T.PointLight(0xFFB07A, 1.5, 1.9, 2);
+    pl.position.set(0, 0.72, 0); g.add(pl);
+    focosCultivo.push(pl);
+    marcarSubarbol(g, "cultivo");
+  }
+
+  /* paneles solares fuera del módulo */
+  const solar = new T.Group(); solar.position.set(-3.9, 0, 2.5); gHabitat.add(solar);
+  solar.rotation.y = 0.55;
+  malla(new T.CylinderGeometry(0.05, 0.07, 1.5, 10), M.acero, [0, 0.75, 0], solar);
+  for (const dx of [-0.95, 0.95]){
+    const p = malla(new T.BoxGeometry(1.75, 0.035, 1.05), M.oscuro, [dx, 1.42, 0], solar);
+    p.rotation.z = 0.28 * (dx > 0 ? -1 : 1);
+    const cel = malla(new T.BoxGeometry(1.68, 0.006, 0.98), M.solar, [dx, 1.44, 0], solar, false);
+    cel.rotation.z = p.rotation.z; cel.receiveShadow = true;
+  }
+  marcarSubarbol(solar, "panel");
+
+  /* ── anillos giratorios ── */
+  function anillo(n, radio, geo, exterior){
+    const grupo = new T.Group();
+    grupo.position.y = CUBIERTA;
+    gHabitat.add(grupo);
+    const bandejas = [];
+    for (let i = 0; i < n; i++){
+      const g = new T.Group();
+      const p = enAngulo(radio, i, n);
+      g.position.set(p[0], 0, p[2]);
+      g.rotation.y = -i / n * TAU;
+      grupo.add(g);
+      malla(geo, M.acero, [0, 0.028, 0], g);
+      const lado = LADO - 0.06;
+      const sustrato = malla(new T.BoxGeometry(lado, 0.075, lado), M.sustrato.clone(),
+        [0, 0.088, 0], g);
+      clicable(sustrato, exterior ? "cultivo" : "musgo");
+
+      let plantas = null, musgo = null;
+      if (exterior){
+        plantas = new T.Group(); plantas.position.y = 0.125; g.add(plantas);
+        plantas.add(plantaCamote()); plantas.add(plantaLeguminosa()); plantas.add(plantaRabano());
+        plantas.children[1].position.set(0.06, 0, 0.06);
+        plantas.children[2].position.set(-0.08, 0, -0.05);
+      } else {
+        musgo = mataMusgo(); musgo.position.y = 0.126; g.add(musgo);
+      }
+      bandejas.push({ g, sustrato, plantas, musgo });
+    }
+    return { grupo, bandejas };
+  }
+  anilloIn  = anillo(N_IN,  R_IN,  GEO.bandejaIn,  false);
+  anilloOut = anillo(N_OUT, R_OUT, GEO.bandejaOut, true);
+
+  /* ── la costra de musgo cubre el sustrato del anillo interior ── */
+  for (const b of anilloIn.bandejas){
+    const costra = malla(new T.BoxGeometry(LADO - 0.07, 0.012, LADO - 0.07), M.costra.clone(),
+      [0, 0.128, 0], b.g, false);
+    costra.receiveShadow = true;
+    b.costra = costra;
+  }
+
+  /* ═══ TUBERÍA ═══ el recurso viaja por conducto montado en estructura, no por el aire.
+     Colector en anillo sobre el núcleo · montantes desde cada estación · bajantes a los tanques.
+     El sentido del flujo se ve por el galón que corre dentro del tubo.                      */
+  const V = (x, y, z) => new T.Vector3(x, y, z);
+  const wA = digestorA.getWorldPosition(new T.Vector3());
+  const wB = digestorB.getWorldPosition(new T.Vector3());
+  const pS1 = enAngulo(R_IN, 0, N_IN), pS3 = enAngulo(R_IN, 2, N_IN), pS4 = enAngulo(R_IN, 3, N_IN);
+  const pRiego = enAngulo(R_OUT, 5.5, N_OUT);
+  const Y_COL = CUBIERTA + 1.46;                       // altura del colector
+  const R_COL = 0.60;                                  // radio del colector, dentro del anillo interior
+
+  const colector = malla(new T.TorusGeometry(R_COL, 0.026, 8, 56), M.acero, [0, Y_COL, 0]);
+  colector.rotation.x = Math.PI / 2;
+  for (let i = 0; i < 4; i++){                          // tirantes del colector al mástil
+    const a = i / 4 * TAU + 0.4;
+    const t = malla(new T.CylinderGeometry(0.012, 0.012, R_COL - 0.10, 6), M.acero,
+      [Math.cos(a) * (R_COL / 2 + 0.05), Y_COL, Math.sin(a) * (R_COL / 2 + 0.05)], null, false);
+    t.rotation.set(0, -a, Math.PI / 2);
+  }
+  const enColector = (ang, y) => V(Math.cos(ang) * R_COL, y === undefined ? Y_COL : y, Math.sin(ang) * R_COL);
+
+  function conducto(color, puntos, radio, velocidad){
+    const curva = new T.CatmullRomCurve3(puntos, false, "centripetal", 0.5);
+    const geo = new T.TubeGeometry(curva, Math.max(32, puntos.length * 16), radio || 0.019, 9, false);
+    const tex = texturaFlujo(color);
+    tex.repeat.set(Math.max(4, Math.round(curva.getLength() * 2.1)), 1);
+    const mat = new T.MeshStandardMaterial({ map: tex, roughness: 0.36, metalness: 0.55 });
+    const tubo = malla(geo, mat, null, null, false);
+    tubo.castShadow = true;
+    flujos.push({ tex, v: velocidad === undefined ? 0.22 : velocidad, mat });
+    return tubo;
+  }
+  function brida(p, r){ malla(new T.CylinderGeometry((r||0.03) + 0.016, (r||0.03) + 0.016, 0.03, 12), M.costilla, [p.x, p.y, p.z], null, false); }
+
+  const C_AGUA = 0x63A9D1, C_ABONO = 0x7FBB72, C_ESTIERCOL = 0x96633A,
+        C_BIOGAS = 0xD2622F, C_PROTEINA = 0xE9AE52;
+  const aS1 = 0, aS3 = 2 / N_IN * TAU, aS4 = 3 / N_IN * TAU;
+
+  /* 0 · AZUL — salmuera de lavado: S1 → colector → cámara A (anóxica) */
+  conducto(C_AGUA, [
+    V(pS1[0], CUBIERTA + 0.62, pS1[2]), V(pS1[0], CUBIERTA + 1.20, pS1[2]),
+    enColector(aS1), enColector(aS1 - 0.9), enColector(aS1 - 1.7),
+    V(wA.x + 0.30, Y_COL - 0.14, wA.z), V(wA.x + 0.30, wA.y + 0.34, wA.z),
+    V(wA.x + 0.06, wA.y + 0.30, wA.z)], 0.020);
+
+  /* 2 · VERDE — frass del larvario: S3 → colector → cámara B (metanogénica) */
+  conducto(C_ABONO, [
+    V(pS3[0], CUBIERTA + 0.48, pS3[2]), V(pS3[0], CUBIERTA + 1.24, pS3[2]),
+    enColector(aS3), enColector(aS3 + 0.8), enColector(aS3 + 1.6),
+    V(wB.x - 0.44, Y_COL - 0.22, wB.z), V(wB.x - 0.44, wB.y + 0.36, wB.z),
+    V(wB.x - 0.28, wB.y + 0.30, wB.z)], 0.021);
+
+  /* 3 · VERDE — digestato al inóculo de S4 */
+  conducto(C_ABONO, [
+    V(wB.x + 0.28, wB.y + 0.30, wB.z), V(wB.x + 0.46, Y_COL - 0.20, wB.z),
+    enColector(aS4 - 1.1), enColector(aS4),
+    V(pS4[0], CUBIERTA + 1.16, pS4[2]), V(pS4[0], CUBIERTA + 0.56, pS4[2])], 0.017);
+
+  /* 4 · VERDE — digestato al riego del anillo exterior, hasta la rampa de goteo */
+  conducto(C_ABONO, [
+    V(wB.x, wB.y + 0.34, wB.z + 0.30), V(wB.x, Y_COL - 0.10, wB.z + 0.36),
+    enColector(2.6), V(Math.cos(2.6) * 1.35, Y_COL - 0.02, Math.sin(2.6) * 1.35),
+    V(pRiego[0] * 0.98, CUBIERTA + 1.02, pRiego[2] * 0.98)], 0.017);
+
+  /* 5 · ROJO — biogás de la cámara B al gasómetro y de ahí al colchón térmico */
+  conducto(C_BIOGAS, [
+    V(wB.x - 0.20, wB.y + 0.40, wB.z + 0.18), V(wB.x - 0.34, Y_COL - 0.06, wB.z + 0.24),
+    enColector(3.6), enColector(4.5),
+    V(Math.cos(4.5) * 1.30, Y_COL - 0.08, Math.sin(4.5) * 1.30),
+    V(Math.cos(4.5) * 1.90, CUBIERTA + 1.44, Math.sin(4.5) * 1.90),
+    V(Math.cos(4.5) * (R_CASCO - 0.22), CUBIERTA + 1.36, Math.sin(4.5) * (R_CASCO - 0.22))], 0.018);
+
+  /* 6 · AMARILLO — la proteína cierra el anillo: larvario → comedero del aviario */
+  conducto(C_PROTEINA, [
+    V(pS3[0], CUBIERTA + 0.56, pS3[2]), V(pS3[0] * 1.06, CUBIERTA + 1.34, pS3[2] * 1.06),
+    V((pS3[0] + pAv[0]) * 0.56, CUBIERTA + 1.52, (pS3[2] + pAv[2]) * 0.56),
+    V(pAv[0] * 1.04, CUBIERTA + 1.20, pAv[2] * 1.04),
+    V(pAv[0], CUBIERTA + 0.80, pAv[2])], 0.016);
+
+  /* 1 · CAFÉ — el estiércol no va por tubo: cae por gravedad. Tolva bajo la rejilla. */
+  const tolva = malla(new T.CylinderGeometry(0.30, 0.20, 0.20, 20, 1, true),
+    new T.MeshStandardMaterial({ color: 0x8C949B, roughness: 0.42, metalness: 0.7,
+      side: T.DoubleSide }), [pAv[0], CUBIERTA + 0.44, pAv[2]], null, false);
+  tolva.castShadow = true;
+
+  /* ── gasómetro de campana flotante: sube con el biogás producido y baja al consumirse ── */
+  gasometro = new T.Group();
+  gasometro.position.set(wB.x, wB.y + 0.38, wB.z);
+  gasometro.userData.y0 = wB.y + 0.38;
+  gHabitat.add(gasometro);
+  malla(new T.CylinderGeometry(0.365, 0.365, 0.30, 32, 1, true), M.verde2, [0, 0.15, 0], gasometro);
+  malla(new T.SphereGeometry(0.365, 32, 12, 0, TAU, 0, Math.PI * 0.42), M.verde2, [0, 0.30, 0], gasometro);
+  malla(new T.TorusGeometry(0.365, 0.022, 6, 32), M.acero, [0, 0.02, 0], gasometro).rotation.x = Math.PI / 2;
+  marcarSubarbol(gasometro, "digestor");
+
+  /* ═══ ROTULADO — la información va pintada sobre el equipo ═══ */
+  function bandaRotulo(radio, alto, y, ang, arco, tex, padre){
+    const m = malla(new T.CylinderGeometry(radio, radio, alto, 48, 1, true,
+      Math.PI / 2 - ang - arco / 2, arco),
+      new T.MeshStandardMaterial({ map: tex, roughness: 0.5, metalness: 0.2,
+        side: T.DoubleSide, transparent: true }), [0, y, 0], padre, false);
+    m.receiveShadow = true;
+    return m;
+  }
+  function placa(tex, ancho, alto, pos, rotY, padre, inclina){
+    const m = malla(new T.PlaneGeometry(ancho, alto),
+      new T.MeshStandardMaterial({ map: tex, roughness: 0.55, metalness: 0.1,
+        side: T.DoubleSide }), pos, padre, false);
+    m.rotation.y = rotY || 0;
+    if (inclina) m.rotation.x = inclina;
+    m.receiveShadow = true;
+    return m;
+  }
+
+  /* tanques rotulados, como en la lámina del equipo */
+  bandaRotulo(0.423, 0.30, wB.y - 0.10, -0.62, 1.5,
+    texturaPlaca([{ t: "BIODIGESTOR", s: 0.30, esp: 0.10 },
+                  { t: "CÁMARA B · METANOGÉNICA", s: 0.15, c: "#9FE0B4", esp: 0.06 }],
+                 { w: 640, h: 200, fondo: "#1D3A2C", barra: "#7FBB72", y0: 0.40 }), null);
+  bandaRotulo(0.276, 0.22, wA.y + 0.06, -0.62, 1.7,
+    texturaPlaca([{ t: "CÁMARA A · ANÓXICA", s: 0.24, esp: 0.08 },
+                  { t: "ClO₄⁻ → Cl⁻ + O₂", s: 0.20, c: "#8FD4E8", esp: 0.04 }],
+                 { w: 640, h: 180, fondo: "#16323C", barra: "#63A9D1", y0: 0.40 }), null);
+
+  /* rótulo exterior del casco: identidad del módulo */
+  bandaRotulo(R_CASCO + 0.055, 0.46, 1.44, A_PARED + 1.05, 1.15,
+    texturaPlaca([{ t: "MILPA-360", s: 0.34, mono: false, esp: 0.06 },
+                  { t: "BIOMARS CHIAPAS · MÓDULO DE SOPORTE VITAL", s: 0.11, c: "#9FB0BE", esp: 0.07 }],
+                 { w: 900, h: 200, fondo: "#F2F4F6", borde: "#8A959E", barra: "#D2622F",
+                   y0: 0.44 }), cascoGrp);
+  bandaRotulo(R_CASCO + 0.055, 0.30, 0.62, A_PARED + 2.65, 0.85,
+    texturaPlaca([{ t: "TRIPULACIÓN 6 · 730 SOLES", s: 0.22, esp: 0.06 },
+                  { t: "Ø 4.76 m × 2.2 m · 10 m² DE BANDEJA", s: 0.15, c: "#9FB0BE", esp: 0.04 }],
+                 { w: 800, h: 170, fondo: "#12181E", barra: "#D2622F", y0: 0.42 }), cascoGrp);
+
+  /* placas de estación al borde de la cubierta: dicen qué pasa en cada una */
+  const TXT_EST = [
+    ["S1", "LAVADO DEL REGOLITO", "salmuera → cámara A", "#63A9D1"],
+    ["S2", "AVIARIO · CODORNIZ", "24 aves · estiércol dirigido", "#96633A"],
+    ["S3", "LARVARIO · H. illucens", "frass + proteína", "#E9AE52"],
+    ["S4", "DESCANSO + INÓCULO", "cóctel biológico", "#7FBB72"],
+    ["S5", "MUSGO · S. caninervis", "costra y semáforo", "#4E8A3C"],
+    ["S6", "CONSOLIDACIÓN", "sella la superficie", "#5A6A76"],
+    ["S7", "VERIFICACIÓN GO/NO-GO", "bandeja verde = apta", "#E8EEF3"],
+    ["S8", "TRASVASE AL EXTERIOR", "pasa al anillo de cultivo", "#8A5334"],
+  ];
+  for (let k = 0; k < N_IN; k++){
+    const [cod, nom, sub, col] = TXT_EST[k];
+    const tex = texturaPlaca(
+      [{ t: cod + " · " + nom, s: 0.26, esp: 0.05 }, { t: sub, s: 0.17, c: "#9FB0BE", esp: 0.02 }],
+      { w: 700, h: 160, fondo: "#0E1317", barra: col, y0: 0.42 });
+    const a = k / N_IN * TAU;
+    const r = R_CASCO - 0.09;
+    const g = new T.Group();
+    g.position.set(Math.cos(a) * r, CUBIERTA + 0.16, Math.sin(a) * r);
+    g.rotation.y = Math.PI / 2 - a;              // la cara del rótulo mira hacia afuera
+    gHabitat.add(g);
+    malla(new T.CylinderGeometry(0.012, 0.012, 0.34, 6), M.acero, [0, 0.17, 0], g, false);
+    placa(tex, 0.40, 0.092, [0, 0.35, 0.012], 0, g, -0.34);
+    marcarSubarbol(g, ["lavado","aviario","larvario","mfc","musgo","musgo","mfc","cultivo"][k]);
+  }
+
+  /* rótulo del anillo exterior, sobre la rampa de riego */
+  placa(texturaPlaca([{ t: "ANILLO EXTERIOR · TRÍADA MARCIANA", s: 0.24, esp: 0.05 },
+                      { t: "camote · leguminosa · rábano — 12 bandejas, 12 etapas", s: 0.15,
+                        c: "#9FB0BE", esp: 0.01 }],
+                     { w: 900, h: 170, fondo: "#0E1317", barra: "#3F7A2E", y0: 0.42 }),
+        0.78, 0.145, [Math.cos(2.6) * 1.62, CUBIERTA + 1.22, Math.sin(2.6) * 1.62], Math.PI / 2 - 2.6, null, -0.28);
+
+  /* rótulo de la filtración */
+  placa(texturaPlaca([{ t: "FILTRACIÓN DE AGUA", s: 0.26, esp: 0.06 },
+                      { t: "HEPA 99.97 % @0.3 µm + UV", s: 0.17, c: "#8FD4E8", esp: 0.02 }],
+                     { w: 700, h: 160, fondo: "#0E1317", barra: "#63A9D1", y0: 0.42 }),
+        0.60, 0.135, [-0.14, 0.80, 0], Math.PI / 2, filt);
+
+  /* ── polvo en suspensión durante la tormenta ── */
+  const gp = new T.BufferGeometry(), NP = 1400, pp = new Float32Array(NP * 3);
+  for (let i = 0; i < NP; i++){
+    pp[i*3] = (Math.random() - 0.5) * 26;
+    pp[i*3+1] = Math.random() * 7;
+    pp[i*3+2] = (Math.random() - 0.5) * 26;
+  }
+  gp.setAttribute("position", new T.BufferAttribute(pp, 3));
+  const polvo = new T.Points(gp, new T.PointsMaterial({ color: 0xD9A87E, size: 0.055,
+    transparent: true, opacity: 0, depthWrite: false }));
+  polvo.name = "polvo";
+  gHabitat.add(polvo);
+
+  if (limpio){ terreno.visible = false; cielo.visible = false; }
+  return { terreno, polvo };
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ESTADO
+   ═══════════════════════════════════════════════════════════════ */
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const S = {
+  vista: Q.get("vista") === "habitat" ? "habitat" : "planeta",
+  sol: Math.max(0, Math.min(729.9, qn("sol", 0))),
+  play: !reduce && Q.get("play") !== "0",
+  vel: 4,
+  tormenta: Q.get("storm") === "1" ? 21 : 0,
+  perdidas: 0,
+  gas: 0.45,          // carga del gasómetro (0–1)
+  transicion: 0,          // 0..1 mientras cambia de vista
+  destino: null,
+};
+const VELS = [1, 4, 12];
+let iVel = 1;
+
+const POSE = {
+  planeta: { theta: -0.62, phi: 1.30, dist: 20.0, mira: new T.Vector3(0, 0, 0) },
+  habitat: { theta: -0.62, phi: 1.00, dist: 11.4, mira: new T.Vector3(0, 1.00, 0) },
+};
+
+/* colores y alturas del sustrato interior por estación */
+const COL_IN = ESTACIONES.map(e => e[2]);
+const ALT_IN = [0.06, 0.115, 0.10, 0.082, 0.088, 0.096, 0.104, 0.078];
+
+/* ═══════════════════════════════════════════════════════════════
+   INTERFAZ
+   ═══════════════════════════════════════════════════════════════ */
+const capaEti = $("etiquetas"), ficha = $("ficha"), riel = $("riel");
+let fichaActual = null;
+
+function abrirFicha(clave){
+  const f = FICHAS[clave]; if (!f) return;
+  fichaActual = clave;
+  $("f-sub").textContent = f.sub;
+  $("f-tit").innerHTML = f.tit;
+  $("f-txt").innerHTML = f.txt;
+  $("f-dl").innerHTML = f.d.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
+  $("f-fte").textContent = f.f;
+  const acc = $("f-accion");
+  acc.innerHTML = "";
+  if (f.accion === "habitat"){
+    const b = document.createElement("button");
+    b.className = "btn"; b.style.cssText = "margin-top:16px;width:100%";
+    b.textContent = "ENTRAR AL HÁBITAT →";
+    b.onclick = () => cambiarVista("habitat");
+    acc.appendChild(b);
+  }
+  ficha.classList.remove("oculto");
+}
+$("cerrar").onclick = () => { ficha.classList.add("oculto"); fichaActual = null; };
+
+/* riel: telemetría del hábitat o datos del planeta */
+const filas = [];
+function rielHabitat(){
+  $("riel-titulo").textContent = "ANILLO INTERIOR · DESCANSO";
+  const c = $("riel-cuerpo");
+  c.innerHTML = `<table><thead><tr><th>Bandeja</th><th>Estación</th><th>Sin estiércol</th></tr></thead>
+    <tbody id="tele"></tbody></table>
+    <p style="font-size:11.5px;line-height:1.55;color:var(--text-3);margin:13px 0 0">
+    El reto pide fertilizar <b style="color:var(--text-2)">“sin agotar el terreno”</b>. Aquí el descanso
+    no es un procedimiento que alguien pueda olvidar: es geometría. Una bandeja no vuelve a recibir
+    estiércol hasta <b style="color:var(--text-2)">56 soles</b> después.</p>`;
+  const tb = $("tele"); filas.length = 0;
+  for (let i = 0; i < N_IN; i++){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td><span class="pip"></span>B${i+1}</td><td></td><td class="rest"></td>`;
+    tb.appendChild(tr);
+    filas.push({ tr, pip: tr.querySelector(".pip"), est: tr.children[1], rest: tr.children[2] });
+  }
+}
+const DATOS_PLANETA = [
+  ["atmosfera", "Atmósfera",        "95.3 % CO₂", true],
+  ["gravedad",  "Gravedad",         "0.38 g"],
+  ["radiacion", "Radiación",        "0.7 mSv/día"],
+  ["regolito",  "Percloratos",      "0.5 – 1 %", true],
+  ["polvo",     "Polvo y tormentas","~3 µm", true],
+  ["agua",      "Agua",             "hielo SWIM", true],
+  ["comms",     "Retardo a la Tierra","3 – 22 min"],
+  ["valles",    "Temperatura media","−63 °C", true],
+  ["sitio",     "Sitio del hábitat","10 m²", true],
+];
+function rielPlaneta(){
+  $("riel-titulo").textContent = "MARTE · DATOS DUROS";
+  $("riel-cuerpo").innerHTML =
+    `<p style="font-size:11.5px;line-height:1.55;color:var(--text-3);margin:12px 0 4px">
+     Todo sale de <b style="color:var(--text-2)">INVESTIGACION-MARTE.md §2</b> y de
+     <b style="color:var(--text-2)">CONTEXTO-RETO-MARTE.md §8</b>. Los puntos ◉ están sobre el globo.</p>` +
+    DATOS_PLANETA.map(([k, n, v, m]) =>
+      `<button class="dato" data-k="${k}"${m ? ' data-marca="1"' : ''}>
+         <span class="dk">${n}</span><span class="dv">${v}</span></button>`).join("");
+  $("riel-cuerpo").querySelectorAll(".dato").forEach(b => {
+    b.onclick = () => { abrirFicha(b.dataset.k); apuntarA(b.dataset.k); };
+  });
+}
+$("riel-toggle").onclick = e => {
+  riel.classList.toggle("oculto");
+  e.currentTarget.textContent = riel.classList.contains("oculto") ? "MOSTRAR" : "OCULTAR";
+};
+/* el botón de mostrar debe seguir accesible con el riel oculto */
+const mostrarRiel = document.createElement("button");
+mostrarRiel.className = "btn panel";
+mostrarRiel.style.cssText = "position:fixed;left:var(--pad);top:86px;z-index:16;display:none";
+mostrarRiel.textContent = "DATOS";
+mostrarRiel.onclick = () => { riel.classList.remove("oculto"); $("riel-toggle").textContent = "OCULTAR"; };
+document.body.appendChild(mostrarRiel);
+
+/* transporte */
+$("b-play").onclick = e => {
+  S.play = !S.play;
+  e.currentTarget.textContent = S.play ? "PAUSAR" : "REANUDAR";
+  e.currentTarget.classList.toggle("on", S.play);
+};
+$("b-vel").onclick = e => {
+  iVel = (iVel + 1) % VELS.length; S.vel = VELS[iVel];
+  e.currentTarget.textContent = "×" + S.vel;
+};
+$("b-tormenta").onclick = e => {
+  S.tormenta = S.tormenta > 0 ? 0 : 21;
+  e.currentTarget.classList.toggle("on", S.tormenta > 0);
+};
+
+/* cambio de vista, con fundido */
+function cambiarVista(v){
+  if (v === S.vista || S.transicion > 0) return;
+  S.destino = v;
+  S.transicion = 0.0001;
+  ficha.classList.add("oculto"); fichaActual = null;
+}
+$("v-planeta").onclick = () => cambiarVista("planeta");
+$("v-habitat").onclick = () => cambiarVista("habitat");
+
+function aplicarVista(v){
+  S.vista = v;
+  $("v-planeta").setAttribute("aria-selected", String(v === "planeta"));
+  $("v-habitat").setAttribute("aria-selected", String(v === "habitat"));
+  $("transporte").classList.toggle("oculto", v !== "habitat");
+  gPlaneta.visible = v === "planeta";
+  gHabitat.visible = v === "habitat";
+  if (v === "planeta") rielPlaneta(); else rielHabitat();
+  const p = POSE[v];
+  orbe.theta = qn("theta", p.theta); orbe.phi = qn("phi", p.phi); orbe.dist = qn("dist", p.dist);
+  mira.copy(p.mira);
+  escena.environment = v === "planeta" ? null : entornoMarte;
+  if (v === "planeta") sol.position.set(-38, 15, -30);   // rasante: da terminador
+  else                 sol.position.set(26, 30, -34);    // ilumina el corte, alarga sombras
+  $("pista").textContent = v === "planeta"
+    ? "ARRASTRA PARA GIRAR EL PLANETA · TOCA UN PUNTO PARA LOS DATOS"
+    : "ARRASTRA PARA ORBITAR · RUEDA PARA ACERCAR · TOCA UNA ESTACIÓN";
+  $("pista").style.opacity = "1";
+  clearTimeout(aplicarVista._t);
+  aplicarVista._t = setTimeout(() => { $("pista").style.opacity = "0"; }, 6000);
+}
+
+/* apuntar la cámara a la marca correspondiente a un dato */
+function apuntarA(clave){
+  const m = marcas.find(x => x.clave === clave);
+  if (!m || S.vista !== "planeta") return;
+  const dir = m.p.clone().applyQuaternion(marte.quaternion).normalize();
+  orbe.theta = Math.atan2(dir.z, dir.x);
+  orbe.phi = Math.acos(Math.max(-1, Math.min(1, dir.y)));
+  orbe.phi = Math.max(0.18, Math.min(2.96, orbe.phi));
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CÁMARA
+   ═══════════════════════════════════════════════════════════════ */
+let arrastre = null;
+lienzo.addEventListener("pointerdown", e => {
+  arrastre = { x: e.clientX, y: e.clientY, mov: 0 };
+  lienzo.setPointerCapture(e.pointerId);
+});
+lienzo.addEventListener("pointermove", e => {
+  if (!arrastre) return;
+  const dx = e.clientX - arrastre.x, dy = e.clientY - arrastre.y;
+  arrastre.mov += Math.abs(dx) + Math.abs(dy);
+  orbe.theta -= dx * 0.0055;
+  orbe.phi = Math.max(S.vista === "planeta" ? 0.16 : 0.22,
+             Math.min(S.vista === "planeta" ? 2.98 : 1.50, orbe.phi - dy * 0.0048));
+  arrastre.x = e.clientX; arrastre.y = e.clientY;
+});
+lienzo.addEventListener("pointerup", e => {
+  if (arrastre && arrastre.mov < 6) picar(e);
+  arrastre = null;
+});
+lienzo.addEventListener("wheel", e => {
+  e.preventDefault();
+  const lim = S.vista === "planeta" ? [7.4, 60] : [4.2, 34];
+  orbe.dist = Math.max(lim[0], Math.min(lim[1], orbe.dist * (1 + Math.sign(e.deltaY) * 0.1)));
+}, { passive: false });
+
+const rayo = new T.Raycaster(), pnt = new T.Vector2();
+function picar(e){
+  const r = lienzo.getBoundingClientRect();
+  pnt.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+  pnt.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+  rayo.setFromCamera(pnt, camara);
+  if (S.vista === "habitat"){
+    const h = rayo.intersectObjects(clicables, false)[0];
+    if (h) abrirFicha(h.object.userData.ficha);
+  } else {
+    const h = rayo.intersectObjects(marcas.map(m => m.anillo), false)[0];
+    if (h){
+      const m = marcas.find(x => x.anillo === h.object);
+      if (m) abrirFicha(m.clave);
+    }
+  }
+}
+
+function medir(){
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false);
+  camara.aspect = w / h;
+  camara.updateProjectionMatrix();
+}
+addEventListener("resize", medir);
+
+/* ═══════════════════════════════════════════════════════════════
+   ARRANQUE
+   ═══════════════════════════════════════════════════════════════ */
+let refsHab, entornoMarte;
+function iniciar(){
+  const tex = texturaMarte(1024);
+  texRego = texturaRegolito(512);
+  texAve = texturaCodorniz();
+  texCasco = texturaCasco();     texCasco.repeat.set(5, 1.6);
+  texCubierta = texturaCubierta(); texCubierta.repeat.set(9, 9);
+  texMusgo = texturaMusgo();     texMusgo.repeat.set(1.4, 1.4);
+  texHojaA = texturaHoja("#3E7A32", "rgba(206,232,178,.75)");
+  texHojaB = texturaHoja("#568E38", "rgba(216,238,190,.7)");
+  texSolar = texturaSolar();     texSolar.repeat.set(4, 2);
+  mats(); geometrias();
+  for (const k in M) if (M[k].envMapIntensity !== undefined) M[k].envMapIntensity = 0.42;
+  construirPlaneta(tex);
+  refsHab = construirHabitat();
+
+  /* iluminación por imagen: refleja el cielo marciano en metales y vidrios */
+  const pmrem = new T.PMREMGenerator(renderer);
+  const escCielo = new T.Scene();
+  escCielo.add(cielo.clone());
+  entornoMarte = pmrem.fromScene(escCielo, 0, 0.1, 1000).texture;
+  pmrem.dispose();
+
+  medir();
+  aplicarVista(S.vista);
+  $("carga").classList.add("listo");
+  setTimeout(() => $("carga").remove(), 800);
+  requestAnimationFrame(bucle);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BUCLE
+   ═══════════════════════════════════════════════════════════════ */
+const tmp = new T.Vector3();
+const CIELO_MARTE  = { cenit: new T.Color(0x3A3348), horiz: new T.Color(0xC79468), suelo: new T.Color(0x3A1E14) };
+const CIELO_TORM   = { cenit: new T.Color(0x2A1B12), horiz: new T.Color(0x7A4A26), suelo: new T.Color(0x241009) };
+const cAux = new T.Color();
+let anterior = performance.now();
+
+function bucle(ahora){
+  const dt = Math.min(0.05, Math.max(0, (ahora - anterior) / 1000));
+  anterior = ahora;
+  const t = ahora / 1000;
+
+  /* ── transición de vista ── */
+  if (S.transicion > 0){
+    S.transicion += dt * 1.8;
+    if (S.transicion >= 0.5 && S.destino){ aplicarVista(S.destino); S.destino = null; }
+    if (S.transicion >= 1) S.transicion = 0;
+  }
+  const fundido = S.transicion > 0 ? 1 - Math.abs(S.transicion - 0.5) * 2 : 0;
+
+  /* ── reloj de misión ── */
+  if (S.play && S.vista === "habitat"){
+    S.sol = (S.sol + dt * 2.2 * S.vel) % 730;
+    if (S.tormenta > 0) S.tormenta = Math.max(0, S.tormenta - dt * 2.2 * S.vel);
+  }
+  const enTormenta = S.tormenta > 0;
+
+  /* avance discreto con reposo: un paso cada 8 soles */
+  const bruto = S.sol / SOLES_PASO;
+  const paso = Math.floor(bruto);
+  const f = bruto - paso;
+  const suavizado = f < 0.72 ? 0 : (x => x * x * (3 - 2 * x))((f - 0.72) / 0.28);
+  const avance = paso + suavizado;
+
+  if (S.vista === "habitat"){
+    anilloIn.grupo.rotation.y  =  avance / N_IN  * TAU;
+    anilloOut.grupo.rotation.y = -avance / N_OUT * TAU;
+
+    /* anillo interior: estado del sustrato + telemetría */
+    for (let i = 0; i < N_IN; i++){
+      const p = (i + paso) % N_IN;
+      const b = anilloIn.bandejas[i];
+      b.sustrato.material.color.setHex(COL_IN[p]);
+      b.sustrato.scale.y = ALT_IN[p] / 0.075;
+      b.sustrato.position.y = 0.055 + ALT_IN[p] / 2;
+      /* el musgo solo prospera de S5 en adelante: es el semáforo */
+      const verdor = p >= 4 && p <= 7 ? sat((p - 3.4) / 2.2) : 0;
+      b.musgo.visible = verdor > 0.02;
+      b.musgo.scale.setScalar(0.45 + verdor * 0.75);
+      b.costra.visible = verdor > 0.10;              // la costra sella la superficie
+      b.costra.scale.set(1, 1, 1);
+      b.costra.material.opacity = verdor;
+      b.costra.material.transparent = verdor < 0.99;
+
+      const soles = p === 1 ? 0 : ((p - 2 + N_IN) % N_IN) * SOLES_PASO + f * SOLES_PASO;
+      const fl = filas[i];
+      if (fl){
+        fl.pip.style.background = "#" + COL_IN[p].toString(16).padStart(6, "0");
+        fl.est.textContent = ESTACIONES[p][0] + " " + ESTACIONES[p][1].toLowerCase();
+        fl.rest.textContent = soles.toFixed(0) + " sol";
+        fl.rest.className = "rest" + (soles < 8 ? " low" : "");
+        fl.tr.className = p === 1 ? "hot" : "";
+      }
+    }
+
+    /* anillo exterior: crecimiento por etapa y daño de tormenta */
+    let perdidas = 0;
+    for (let i = 0; i < N_OUT; i++){
+      const p = (i + paso) % N_OUT;
+      const b = anilloOut.bandejas[i];
+      const k = p / (N_OUT - 1);
+      const enRiesgo = p >= 9;
+      const danada = enTormenta && enRiesgo;
+      if (danada) perdidas++;
+      const esc = 0.55 + k * 1.55;
+      b.plantas.scale.set(esc, danada ? esc * 0.6 : esc, esc);
+      if (b.danada !== danada){
+        b.danada = danada;
+        b.plantas.traverse(h => {
+          if (!h.isMesh) return;
+          if (h.userData.orig === undefined) h.userData.orig = h.material;
+          h.material = danada && h.userData.orig !== M.tuber && h.userData.orig !== M.rabano
+            ? M.marchito : h.userData.orig;
+        });
+      }
+      b.plantas.visible = p > 0;
+      b.sustrato.material.color.setHex(p === 0 ? 0x4E8A3C : 0x8A5334);
+    }
+    S.perdidas = perdidas;
+
+    /* flujo dentro de la tubería: el galón corre en el sentido del recurso.
+       En tormenta el biogás corre más rápido — es el que sostiene el colchón térmico. */
+    flujos.forEach((fl, k) => {
+      const v = (k === 4 && enTormenta) ? fl.v * 2.4 : fl.v;
+      fl.tex.offset.x -= dt * v;
+    });
+
+    /* gasómetro de campana: sube con lo que produce el digestor, baja con lo que se consume */
+    const produccion = 0.055, consumo = enTormenta ? 0.16 : 0.035;
+    S.gas = Math.max(0.06, Math.min(1, S.gas + (produccion - consumo) * dt * S.vel));
+    gasometro.position.y = gasometro.userData.y0 + S.gas * 0.26;
+
+    /* huevo recogido: la bandeja se llena a lo largo del sol y se vacía al recogerse */
+    const nHuevos = Math.floor((S.sol % 1) * 12.99);
+    bandejaHuevos.userData.huevos.forEach((h, i) => { h.visible = i < nHuevos; });
+
+    /* las larvas se mueven en el lecho de frass */
+    bandejaLarvas.forEach((l, i) => {
+      l.rotation.z = l.userData.f + Math.sin(t * 2.6 + i) * 0.4;
+      l.position.y = 0.652 + Math.abs(Math.sin(t * 3.1 + i * 1.7)) * 0.006;
+    });
+
+    /* codornices: picoteo y giro */
+    codornices.forEach((q, i) => {
+      q.position.y = 0.635 + Math.sin(t * 2.1 + i) * 0.008;
+      q.rotation.y = q.userData.a + 1.6 + Math.sin(t * 0.7 + i) * 0.45;
+      q.children[1].position.y = 0.108 - Math.max(0, Math.sin(t * 1.7 + i * 2)) * 0.028;
+    });
+
+    /* antorcha de biogás */
+    antorcha.scale.y = 1 + Math.sin(t * 8) * 0.18;
+    antorcha.material.opacity = enTormenta ? 0.95 : 0.78;
+    luzAntorcha.intensity = 2.0 + Math.sin(t * 8) * 0.5;
+
+    /* luces de cultivo: se apagan sin sol */
+    focosCultivo.forEach(o => {
+      if (o.isPointLight) o.intensity = enTormenta ? 0.35 : 1.5;
+      else o.material.emissiveIntensity = enTormenta ? 0.8 : 3.4;
+    });
+
+    /* atmósfera de tormenta */
+    const pol = refsHab.polvo;
+    pol.material.opacity += ((enTormenta ? 0.6 : 0) - pol.material.opacity) * 0.05;
+    pol.rotation.y += dt * (enTormenta ? 0.5 : 0.05);
+    const dest = enTormenta ? CIELO_TORM : CIELO_MARTE;
+    cieloUnif.cenit.value.lerp(dest.cenit, 0.05);
+    cieloUnif.horiz.value.lerp(dest.horiz, 0.05);
+    cieloUnif.suelo.value.lerp(dest.suelo, 0.05);
+    cieloUnif.mezclaEspacio.value += (0 - cieloUnif.mezclaEspacio.value) * 0.07;
+    sol.intensity += ((enTormenta ? 0.32 : 2.3) - sol.intensity) * 0.05;
+    hemi.intensity += ((enTormenta ? 0.38 : 0.72) - hemi.intensity) * 0.05;
+    estrellas.material.uniforms.op.value += (0 - estrellas.material.uniforms.op.value) * 0.08;
+
+    /* riel */
+    $("sol-n").textContent = Math.floor(S.sol);
+    $("prog-i").style.width = (S.sol / 730 * 100).toFixed(1) + "%";
+    $("b-tormenta").textContent = enTormenta
+      ? "TORMENTA · " + Math.ceil(S.tormenta) + " SOLES · PIERDE " + Math.round(perdidas / N_OUT * 100) + "%"
+      : "TORMENTA DE POLVO · 21 SOLES";
+
+  } else {
+    /* ── planeta ── */
+    marte.rotation.y += dt * 0.058;
+    nubePolvo.rotation.y += dt * 0.034;
+    cieloUnif.mezclaEspacio.value += (1 - cieloUnif.mezclaEspacio.value) * 0.07;
+    estrellas.material.uniforms.op.value += (0.95 - estrellas.material.uniforms.op.value) * 0.05;
+    sol.intensity += (2.9 - sol.intensity) * 0.05;
+    hemi.intensity += (0.10 - hemi.intensity) * 0.05;
+    marcas.forEach(m => {
+      const pulso = 1 + Math.sin(t * 2.4 + m.p.x) * 0.14;
+      m.anillo.scale.setScalar(pulso);
+      m.anillo.material.opacity = 0.55 + Math.sin(t * 2.4 + m.p.x) * 0.35;
+    });
+  }
+
+  /* ── cámara ── */
+  const objetivo = new T.Vector3(
+    mira.x + orbe.dist * Math.sin(orbe.phi) * Math.cos(orbe.theta),
+    mira.y + orbe.dist * Math.cos(orbe.phi),
+    mira.z + orbe.dist * Math.sin(orbe.phi) * Math.sin(orbe.theta)
+  );
+  camara.position.lerp(objetivo, S.transicion > 0 ? 0.10 : 0.22);
+  camara.lookAt(mira);
+  sol.target.position.copy(mira); sol.target.updateMatrixWorld();
+
+  /* ── etiquetas proyectadas ── */
+  const w = innerWidth, h = innerHeight;
+  const dibujaEti = (lista, clase, alClic) => {
+    lista.forEach(a => {
+      if (!a.el){
+        a.el = document.createElement("div");
+        a.el.className = "eti " + clase;
+        a.el.innerHTML = a.t || a.texto;
+        if (alClic){ a.el.onclick = () => alClic(a); }
+        capaEti.appendChild(a.el);
+      }
+      const wp = a.mundo ? a.mundo(tmp) : tmp.copy(a.p);
+      wp.project(camara);
+      const dentro = wp.z < 1 && wp.x > -1.12 && wp.x < 1.12 && wp.y > -1.12 && wp.y < 1.12;
+      a.el.style.opacity = dentro ? "1" : "0";
+      a.el.style.pointerEvents = dentro ? "" : "none";
+      a.el.style.left = ((wp.x * 0.5 + 0.5) * w) + "px";
+      a.el.style.top = ((-wp.y * 0.5 + 0.5) * h) + "px";
+    });
+  };
+  if (S.vista === "habitat"){
+    marcas.forEach(m => { if (m.el) m.el.style.opacity = "0"; });
+    dibujaEti(anclas, "");
+  } else {
+    anclas.forEach(a => { if (a.el) a.el.style.opacity = "0"; });
+    marcas.forEach(m => {
+      if (!m.el){
+        m.el = document.createElement("div");
+        m.el.className = "eti punto" + (m.esSitio ? " sitio" : "");
+        m.el.innerHTML = m.texto;
+        m.el.onclick = () => abrirFicha(m.clave);
+        capaEti.appendChild(m.el);
+      }
+      m.anillo.getWorldPosition(tmp);
+      const visible = tmp.clone().sub(camara.position).normalize()
+        .dot(tmp.clone().normalize()) < -0.12;      // solo la cara vista del globo
+      tmp.project(camara);
+      m.el.style.opacity = visible && tmp.z < 1 ? "1" : "0";
+      m.el.style.pointerEvents = visible && tmp.z < 1 ? "auto" : "none";
+      m.el.style.left = ((tmp.x * 0.5 + 0.5) * w) + "px";
+      m.el.style.top = ((-tmp.y * 0.5 + 0.5) * h - 22) + "px";
+    });
+  }
+  mostrarRiel.style.display = riel.classList.contains("oculto") ? "" : "none";
+
+  renderer.toneMappingExposure = 1.05 * (1 - fundido * 0.96);
+  renderer.render(escena, camara);
+  requestAnimationFrame(bucle);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPROBACIÓN — la geometría debe garantizar el descanso de 56 soles
+   ═══════════════════════════════════════════════════════════════ */
+(function autotest(){
+  const descanso = (p, fr) => p === 1 ? 0 : ((p - 2 + N_IN) % N_IN) * SOLES_PASO + fr * SOLES_PASO;
+  let max = 0, min = 1e9;
+  for (let paso = 0; paso < N_IN * 3; paso++)
+    for (let i = 0; i < N_IN; i++){
+      const p = (i + paso) % N_IN;
+      for (const fr of [0, 0.999]){ const s = descanso(p, fr); max = Math.max(max, s); min = Math.min(min, s); }
+    }
+  console.assert(Math.round(max) === 56 && min === 0,
+    "MILPA-360: el descanso debe ir de 0 a 56 soles; se obtuvo " + min + "–" + max);
+  console.assert(N_OUT * SOLES_PASO === 96, "MILPA-360: el ciclo exterior debe ser 96 soles");
+  console.log("MILPA-360 · descanso " + min + "–" + Math.round(max) +
+              " soles · ciclo exterior " + N_OUT * SOLES_PASO + " soles");
+})();
+
+/* deja pintar la pantalla de carga antes de generar las texturas */
+requestAnimationFrame(() => setTimeout(iniciar, 30));
+})();
+</script>

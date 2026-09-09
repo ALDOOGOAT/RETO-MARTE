@@ -1,0 +1,23 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html",          "title": "01 · Portada",              "x": 0,    "y": 0,    "w": 1600, "h": 900 },
+    { "file": "Problema.dc.html",      "title": "02 · El problema",          "x": 1680, "y": 0,    "w": 1600, "h": 900 },
+    { "file": "CausaRaiz.dc.html",     "title": "03 · Causa raíz",           "x": 3360, "y": 0,    "w": 1600, "h": 900 },
+    { "file": "Mecanismo.dc.html",     "title": "04 · El mecanismo",         "x": 0,    "y": 1060, "w": 1600, "h": 900 },
+    { "file": "Diferenciador.dc.html", "title": "05 · El diferenciador",     "x": 1680, "y": 1060, "w": 1600, "h": 900 },
+    { "file": "Perclorato.dc.html",    "title": "06 · Reactor de percloratos","x": 3360, "y": 1060, "w": 1600, "h": 900 },
+    { "file": "Desfase.dc.html",       "title": "07 · Resiliencia por desfase","x": 0,  "y": 2120, "w": 1600, "h": 900 },
+    { "file": "Chiapas.dc.html",       "title": "08 · Retorno a Chiapas",    "x": 1680, "y": 2120, "w": 1600, "h": 900 },
+    { "file": "Limites.dc.html",       "title": "09 · Límites y cierre",     "x": 3360, "y": 2120, "w": 1600, "h": 900 }
+  ],
+  "annotations": [
+    {
+      "id": "orden",
+      "x": 0,
+      "y": -190,
+      "w": 900,
+      "text": "ORDEN DE PRESENTACIÓN — se lee de izquierda a derecha, fila por fila.\nLas diapositivas 01-04, 06-08 siguen el guion de 5 minutos de PLAN-MAESTRO-BIOMARS §11.\nLa 05 (El diferenciador) NO va en el video: es la que se enseña en la semifinal cuando el jurado o los otros equipos nombren las mismas especies.\nExportar PDF baja las nueve como un solo archivo, una diapositiva por página."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}

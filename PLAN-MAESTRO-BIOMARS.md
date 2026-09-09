@@ -20,18 +20,69 @@ plataforma en cada fase.
 
 | Si necesitas… | Ve a |
 |---|---|
+| **Saber qué nos diferencia de los otros equipos** | **§0.5** |
 | Saber qué exige exactamente el reto | §1 |
 | La lista de requerimientos técnicos (ECLSS) y de evaluación | §2 |
 | Entender el sistema | §4 |
 | Un dato duro para defender algo ante el jurado | §5 |
 | Texto listo para pegar en la plataforma | §6 |
-| Construir el prototipo | §9 |
+| Construir el prototipo (físico) | §9 |
+| El simulador 3D del carrusel | §0.5 |
 | El guion del pitch | §10 |
 | Qué falta por entregar | §13 |
 
 **Documentos de apoyo en el repositorio:** `SISTEMA-MILPA-360.md` (versión extendida del diseño),
 `IDEAS-ORIGINALES-EQUIPO.md` (fuente), `IDEA-DESCARTADA-MURO-CAPILAR.md` (registro de descarte),
 `CONTEXTO-RETO-MARTE.md`, `INVESTIGACION-MARTE.md`, `ANALISIS-ENTORNO-CHIAPAS.md`.
+
+---
+
+## 0.5 El diferenciador — léelo antes de presentar
+
+**Asume que no somos los únicos con codorniz, larva, musgo y bacterias.** Esa lista de especies
+es lo que cualquier equipo obtiene al investigar el reto: la codorniz es el vertebrado más
+pequeño con retorno útil, *Hermetia illucens* es el reciclador estándar, *Syntrichia caninervis*
+salió en la prensa científica en 2024 y *Bacillus subtilis* aparece en cualquier búsqueda de
+biorremediación. **Un catálogo de organismos no es un diseño, y no diferencia a nadie.**
+
+Si en la semifinal otros equipos nombran los mismos organismos, esto no nos resta — nos confirma
+la selección. Lo que nos separa es que nosotros no presentamos una lista: presentamos **un
+mecanismo que se puede describir en una frase, dibujar en un plano y hacer girar delante del
+jurado.**
+
+### Los cuatro diferenciadores, en orden de fuerza
+
+| # | Diferenciador | La pregunta que responde y nadie más responde |
+|---|---|---|
+| **1** | **La rotación invertida.** Las estaciones biológicas están fijas y **gira el sustrato**. Una bandeja no vuelve a recibir estiércol hasta **56 soles** después. | *"¿Cómo garantizan el descanso del suelo en 10 m² donde el animal no tiene a dónde irse?"* — El descanso no es un procedimiento que alguien pueda olvidar: **es geometría.** MELiSSA, BIOS-3 y Lunar Palace 1 mantienen compartimentos fijos conectados por bombas; ninguno mueve el sustrato. |
+| **2** | **El biodigestor es también el reactor de percloratos.** No tratamos el sólido: lavamos el regolito y tratamos **la salmuera**. | *"¿Cómo quitan 100–200 g de perclorato por bandeja en tiempo de misión?"* — Las bacterias reductoras de perclorato necesitan anoxia y un donador de electrones orgánico. Un digestor de estiércol **ya es las dos cosas, gratis.** Dos residuos que se anulan. Aquí es donde se rompe la mayoría de las propuestas. |
+| **3** | **La resiliencia por desfase.** 12 bandejas en 12 etapas distintas. | *"¿Y si hay una tormenta de polvo de tres semanas?"* — Se pierden las bandejas próximas a cosecha, **≈25 %**, no la producción entera. Redundancia obtenida de la geometría, **sin masa adicional** — la única que puedes permitirte en una misión sin reabastecimiento. |
+| **4** | **La MFC degradada de batería a sistema nervioso.** | *"¿Cómo saben que el ciclo se está intoxicando, a 22 minutos-luz de la Tierra?"* — Como batería da microvatios y es inútil; como **biosensor autoalimentado** distingue toxicidad de falta de carga orgánica con **consumo cero**. |
+
+### La prueba que ningún otro equipo va a poder enseñar
+
+Los diferenciadores 1 y 3 son **cinemáticos**: dependen del tiempo y del movimiento. Una lámina
+estática o una diapositiva generada con IA **no puede demostrarlos** — solo puede afirmarlos.
+Por eso el prototipo digital es un **simulador con reloj de misión**, no un render:
+
+📐 **[`prototipo-3d/milpa360-simulador.html`](prototipo-3d/milpa360-simulador.html)**
+· publicado en https://claude.ai/code/artifact/74ae65a1-055b-4443-869e-178c3a40d7e7
+
+- El carrusel **gira de verdad** contra un reloj de 730 soles y las bandejas cambian de estado al
+  pasar por cada estación.
+- La tabla de la izquierda muestra, bandeja por bandeja, **cuántos soles lleva sin recibir
+  estiércol** — el número que el reto exige, en vivo.
+- El botón **“Lanzar tormenta de polvo”** ejecuta 21 soles de tormenta y calcula la pérdida
+  real: **≈25 % frente al 100 % de un cultivo sincronizado.**
+
+> **Cómo usarlo en la semifinal:** no lo expliques. Gíralo, y luego lanza la tormenta. Son diez
+> segundos y contestan las dos preguntas que el jurado iba a hacer.
+
+### La frase que ordena todo el pitch
+
+> Las especies las tiene cualquiera. **La cinemática no.**
+> Nuestro aporte no es *qué* organismos elegimos — es **en qué orden, con qué tiempos y sobre qué
+> mecanismo los pusimos a girar.**
 
 ---
 
@@ -280,8 +331,24 @@ Narrativa y plataforma → María Fernanda · Coordinación y cierre → Aldo.
 ```
 
 **Dimensiones de referencia:** anillo interior 8 bandejas × 0.5 m² = 4 m²; anillo exterior
-12 × 0.5 m² = 6 m². Total ≈ **10 m² de superficie de bandeja** en un cilindro de ~3.5 m de
-diámetro × 2.2 m de alto, con el aviario como cúpula y el biodigestor en la base.
+12 × 0.5 m² = 6 m². Total ≈ **10 m² de superficie de bandeja**, en un cilindro de
+**Ø 4.76 m × 2.2 m de alto**, con el aviario como cúpula sobre S2 y el biodigestor en el núcleo.
+
+> ⚠️ **Corrección de una cifra propia (nos la va a encontrar un jurado técnico).** Versiones
+> anteriores de este documento decían «Ø ~3.5 m». **No cierra:** un círculo de 3.5 m de diámetro
+> tiene 9.6 m² de piso *total*, así que 10 m² de bandeja no caben en un solo plano — y menos
+> dejando pasillo. La geometría se verificó al construir el modelo 3D:
+>
+> | Comprobación | Valor |
+> |---|---|
+> | Bandeja cuadrada de 0.70 m de lado | 0.49 m² × 20 = **9.8 m²** |
+> | Anillo interior, R = 0.96 m | perímetro 6.03 m; 8 bandejas ocupan 5.60 m ✓ |
+> | Anillo exterior, R = 1.80 m | perímetro 11.31 m; 12 bandejas ocupan 8.40 m ✓ |
+> | Esquina exterior de bandeja | 2.18 m del eje |
+> | **Casco mínimo** | **Ø 4.76 m** (con 0.20 m de holgura al casco) |
+>
+> Decirlo así **suma** en el criterio de validez: la cifra sale de una comprobación, no de una
+> estimación. Si alguien pregunta por qué cambió, la respuesta es que se midió.
 
 ### 4.2 PARTE 1 — El suelo lo regeneran los animales, en rotación
 
@@ -452,6 +519,10 @@ producción entera.** Es redundancia obtenida de la geometría, no de piezas de 
 misión sin reabastecimiento, la redundancia que no pesa es la única que puedes permitirte.
 
 ### 4.5 Las cuatro originalidades (criterio 2 · Creatividad)
+
+> **Estas cuatro son nuestro diferenciador real frente a los demás equipos.** El argumento
+> completo —por qué la lista de especies no diferencia a nadie y estas cuatro sí— está en
+> **§0.5**, que es lo que hay que leer antes de presentar.
 
 1. **La rotación invertida.** MELiSSA, BIOS-3 y Lunar Palace 1 mantienen compartimentos fijos
    conectados por bombas. Aquí **el sustrato es la banda transportadora** y el descanso está
@@ -658,7 +729,7 @@ estambre de colores, etiquetas.
 > y el suelo descansa. En Marte no hay a dónde ir. Así que invertimos el problema: **fijamos al
 > animal y rotamos el suelo.**
 >
-> *(girar el prototipo)*
+> *(girar el prototipo físico — y, si hay pantalla, el simulador en la misma pose)*
 >
 > Ocho bandejas giran bajo un aviario de codornices. Cada bandeja recibe estiércol fresco y luego
 > no lo vuelve a recibir en **56 soles**: ese es el descanso. Larvas de mosca soldado negra
@@ -681,6 +752,10 @@ estambre de colores, etiquetas.
 > ¿Y si viene una tormenta de polvo de tres semanas? Doce bandejas en doce etapas distintas. Se
 > pierden las expuestas, no la cosecha. **Redundancia que no pesa** — la única que puedes
 > permitirte cuando no hay segunda nave."
+>
+> *(lanzar la tormenta en el simulador y dejar el número en pantalla: **25 % frente a 100 %**.
+> No lo expliques — el número lo explica. Son diez segundos y contesta la pregunta que el jurado
+> iba a hacer.)*
 
 **[3:30–4:00] Viabilidad**
 > "Tres razones. Una: cada organismo ya existe y está caracterizado — no inventamos biología.
