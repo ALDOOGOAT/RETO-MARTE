@@ -34,6 +34,9 @@ con otra pose, abre el simulador con estos parámetros, toma captura y reescala 
 | `theta` | acimut en radianes · `phi` inclinación (0.05 cenital → 1.50 casi a ras) · `dist` distancia |
 | `storm=1` | tormenta de polvo activa · `play=0` pausado |
 
+Dentro del hábitat, **tocar cualquier tubería abre su ficha**: qué recurso lleva, de qué
+estación a cuál y con qué cifras. También los tanques, el aviario, el larvario y las placas.
+
 > **Al capturar, espera ~2 s** después de cargar: la cámara entra suavizada y las texturas de
 > Marte se generan por código al arrancar.
 

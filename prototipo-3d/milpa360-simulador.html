@@ -142,6 +142,20 @@ tr.hot td:first-child{color:var(--rust-hi);font-weight:600}
   font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums}
 #ficha dt{color:var(--text-3)}
 #ficha dd{margin:0;color:var(--text);text-align:right}
+#f-viz{margin:0 0 16px;display:flex;flex-direction:column;gap:12px}
+.viz-cap{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:6px}
+.viz-barra{height:9px;background:rgba(255,255,255,.07);display:flex;overflow:hidden;border-radius:1px}
+.viz-barra i{display:block;height:100%}
+.viz-pie{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;
+  color:var(--text-2);margin-top:5px}
+.viz-cadena{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.viz-pill{font-family:var(--mono);font-size:11px;font-weight:600;padding:5px 8px;border-radius:2px;
+  background:rgba(255,255,255,.06);border:1px solid var(--line-2);white-space:nowrap}
+.viz-flecha{color:var(--text-3);font-size:11px}
+.viz-rej{display:grid;gap:3px}
+.viz-cel{aspect-ratio:1;border-radius:1px;background:rgba(255,255,255,.08)}
+.viz-nota{font-size:11.5px;color:var(--text-2);line-height:1.5}
 #ficha .fuente{margin:15px 0 0;padding-top:12px;border-top:1px solid var(--line-2);
   font-family:var(--mono);font-size:10px;line-height:1.6;color:var(--text-3);letter-spacing:.03em}
 #cerrar{position:absolute;top:13px;right:13px;width:26px;height:26px;padding:0;
@@ -247,7 +261,8 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
     <h2 class="exp" id="f-tit"></h2>
   </div>
   <div class="cuerpo">
-    <p id="f-txt"></p>
+    <div id="f-txt"></div>
+    <div id="f-viz"></div>
     <dl id="f-dl"></dl>
     <p class="fuente" id="f-fte"></p>
     <div id="f-accion"></div>
@@ -307,82 +322,235 @@ const sat = v => v < 0 ? 0 : v > 1 ? 1 : v;
    TEXTURAS PROCEDURALES
    ═══════════════════════════════════════════════════════════════ */
 
-/* Superficie de Marte: albedo + relieve. Coordenadas equirectangulares (lon, lat). */
-function texturaMarte(W){
-  const H = W >> 1;
-  const cAlb = document.createElement("canvas"); cAlb.width = W; cAlb.height = H;
-  const cRel = document.createElement("canvas"); cRel.width = W; cRel.height = H;
-  const alb = cAlb.getContext("2d").createImageData(W, H);
-  const rel = cRel.getContext("2d").createImageData(W, H);
-  const LAT = 12;                                   // frecuencia base del retículo
+/* ═══ SUPERFICIE DE MARTE ═══
+   Dos pasadas: el manto de albedo se calcula por píxel a media resolución (suave, no necesita
+   más) y encima se dibujan a resolución completa los rasgos que sí tienen borde duro —cráteres
+   con reborde y eyecta, colas de viento, el sistema de cañones, los escudos volcánicos y los
+   casquetes con sus surcos en espiral. Devuelve albedo, relieve y rugosidad.               */
+function texturaMarte(){
+  const BW = 1024, BH = 512;                 // manto base
+  const W = 2048, H = 1024;                  // salida
+  const LAT = 11;
 
-  /* rasgos reales situados por lon/lat, para que el planeta sea reconocible */
-  const rasgos = [
-    // [lonE, lat, radio°, tipo]  tipo: 1 oscuro/albedo bajo, 2 claro/polvo, 3 cañón, 4 volcán
-    [300, -14, 26, 3],   // Valles Marineris
-    [226,  18, 11, 4],   // Olympus Mons
-    [247,  -1, 15, 4],   // Tharsis Montes
-    [ 70, -42, 34, 2],   // Hellas Planitia
-    [342,  18, 24, 1],   // Syrtis Major
-    [ 25, -20, 20, 1],   // Terra Sabaea oscura
-    [190,  25, 18, 1],   // Acidalia
-    [120, -30, 16, 2],   // Argyre
-  ];
+  /* ── pasada 1: manto ───────────────────────────────────────────── */
+  const cb = document.createElement("canvas"); cb.width = BW; cb.height = BH;
+  const gb = cb.getContext("2d"); const im = gb.createImageData(BW, BH);
+  const cbr = document.createElement("canvas"); cbr.width = BW; cbr.height = BH;
+  const gbr = cbr.getContext("2d"); const imr = gbr.createImageData(BW, BH);
 
-  for (let y = 0; y < H; y++){
-    const lat = 90 - (y + 0.5) / H * 180;
-    const cosLat = Math.max(0.06, Math.cos(lat * RAD));
-    for (let x = 0; x < W; x++){
-      const lon = (x + 0.5) / W * 360;
-      const u = x / W * LAT, v = y / H * (LAT * 0.5);
-
-      let h = fbm(u, v, LAT, 6);                    // relieve continental
-      const grano = fbm(u * 9, v * 9, LAT * 9, 3);  // grano fino de polvo
-      let albedo = 0.5 + (h - 0.5) * 1.25 + (grano - 0.5) * 0.26;
-
-      for (const [rl, rt, rr, tipo] of rasgos){     // rasgos nombrados
-        let dl = Math.abs(lon - rl); if (dl > 180) dl = 360 - dl;
-        const d = Math.hypot(dl * cosLat, lat - rt) / rr;
-        if (d < 1){
-          const k = Math.pow(1 - d, 1.6);
-          if (tipo === 1) albedo -= 0.46 * k;
-          if (tipo === 2){ albedo += 0.30 * k; h += 0.10 * k; }
-          if (tipo === 3){ albedo -= 0.44 * k; h -= 0.50 * k; }   // cañón: hundido y oscuro
-          if (tipo === 4){ albedo += 0.16 * k; h += 0.55 * k; }   // volcán: alto y claro
-        }
-      }
-
-      /* cráteres: puntos dispersos con borde claro y suelo oscuro */
-      const cr = fbm(u * 21, v * 21, LAT * 21, 2);
-      if (cr > 0.72){ const k = (cr - 0.72) / 0.28; albedo -= 0.16 * k; h -= 0.12 * k; }
-      if (cr > 0.66 && cr < 0.72) albedo += 0.10;
-
-      /* casquetes polares: hielo con borde irregular */
-      const bordePolar = 78 - fbm(u * 1.6, v * 1.6, Math.max(1, Math.round(LAT * 1.6)), 2) * 4;
-      const hielo = sat((Math.abs(lat) - bordePolar) / 4.5) * (Math.abs(lat) > 62 ? 1 : 0);
-
-      albedo = sat(albedo);
-      /* rampa de color del regolito: óxido oscuro → butterscotch → polvo claro */
+  for (let y = 0; y < BH; y++){
+    const lat = 90 - (y + 0.5) / BH * 180;
+    for (let x = 0; x < BW; x++){
+      const u = x / BW * LAT, v = y / BH * (LAT * 0.5);
+      const h = fbm(u, v, LAT, 6);                       // relieve continental
+      const g2 = fbm(u * 7, v * 7, LAT * 7, 3);          // manchas de albedo
+      const g3 = fbm(u * 19, v * 19, LAT * 19, 2);       // grano de polvo
+      let alb = 0.5 + (h - 0.5) * 1.22 + (g2 - 0.5) * 0.50 + (g3 - 0.5) * 0.16;
+      alb = sat(alb);
+      /* rampa medida sobre imágenes reales: del basalto gris-pardo al polvo butterscotch */
       let r, g, b;
-      if (albedo < 0.5){ const t = albedo / 0.5;
-        r = mezcla(78, 152, t); g = mezcla(43, 88, t); b = mezcla(31, 58, t);
-      } else { const t = (albedo - 0.5) / 0.5;
-        r = mezcla(152, 198, t); g = mezcla(88, 139, t); b = mezcla(58, 96, t);
+      if (alb < 0.42){ const t = alb / 0.42;
+        r = mezcla(88, 130, t); g = mezcla(70, 96, t); b = mezcla(62, 74, t);
+      } else if (alb < 0.72){ const t = (alb - 0.42) / 0.30;
+        r = mezcla(130, 176, t); g = mezcla(96, 132, t); b = mezcla(74, 100, t);
+      } else { const t = (alb - 0.72) / 0.28;
+        r = mezcla(176, 202, t); g = mezcla(132, 160, t); b = mezcla(100, 122, t);
       }
-      if (hielo > 0){ r = mezcla(r, 221, hielo); g = mezcla(g, 228, hielo); b = mezcla(b, 233, hielo); }
-
-      const i = (y * W + x) * 4;
-      alb.data[i] = r; alb.data[i+1] = g; alb.data[i+2] = b; alb.data[i+3] = 255;
-      const e = sat(h * 0.8 + (grano - 0.5) * 0.35 + hielo * 0.12) * 255;
-      rel.data[i] = rel.data[i+1] = rel.data[i+2] = e; rel.data[i+3] = 255;
+      const i = (y * BW + x) * 4;
+      im.data[i] = r; im.data[i+1] = g; im.data[i+2] = b; im.data[i+3] = 255;
+      const e = sat(h * 0.86 + (g3 - 0.5) * 0.22) * 255;
+      imr.data[i] = imr.data[i+1] = imr.data[i+2] = e; imr.data[i+3] = 255;
     }
   }
-  cAlb.getContext("2d").putImageData(alb, 0, 0);
-  cRel.getContext("2d").putImageData(rel, 0, 0);
-  const tA = new T.CanvasTexture(cAlb), tR = new T.CanvasTexture(cRel);
+  gb.putImageData(im, 0, 0); gbr.putImageData(imr, 0, 0);
+
+  /* ── pasada 2: rasgos de borde duro ────────────────────────────── */
+  const cA = document.createElement("canvas"); cA.width = W; cA.height = H;
+  const cR = document.createElement("canvas"); cR.width = W; cR.height = H;
+  const cG = document.createElement("canvas"); cG.width = W; cG.height = H;   // rugosidad
+  const A = cA.getContext("2d"), R = cR.getContext("2d"), G = cG.getContext("2d");
+  A.imageSmoothingEnabled = R.imageSmoothingEnabled = true;
+  A.drawImage(cb, 0, 0, W, H);
+  R.drawImage(cbr, 0, 0, W, H);
+  G.fillStyle = "#D6D6D6"; G.fillRect(0, 0, W, H);       // regolito: muy rugoso por defecto
+
+  const PX = (lon, lat) => [((lon % 360) + 360) % 360 / 360 * W, (90 - lat) / 180 * H];
+  const GR = W / 360;                                     // píxeles por grado
+  /* dibuja en los tres lienzos con envoltura en el meridiano 0 */
+  function enSitio(lon, lat, rGrados, pinta){
+    const [x, y] = PX(lon, lat);
+    const rx = rGrados * GR / Math.max(0.52, Math.cos(lat * RAD));   // compensa la deformación, con tope
+    const ry = rGrados * GR;
+    for (const dx of [-W, 0, W]){
+      for (const [ctx, cual] of [[A, "a"], [R, "r"], [G, "g"]]){
+        ctx.save(); ctx.translate(x + dx, y); pinta(ctx, rx, ry, cual); ctx.restore();
+      }
+    }
+  }
+
+  /* — cráteres con reborde, suelo hundido y manto de eyecta — */
+  function crater(lon, lat, d){
+    enSitio(lon, lat, d, (c, rx, ry, cual) => {
+      c.scale(rx / ry, 1);
+      if (cual === "g") return;
+      const eye = c.createRadialGradient(0, 0, ry * 0.85, 0, 0, ry * 1.9);
+      eye.addColorStop(0, cual === "a" ? "rgba(226,196,158,.13)" : "rgba(150,150,150,.16)");
+      eye.addColorStop(1, "rgba(0,0,0,0)");
+      c.fillStyle = eye; c.beginPath(); c.arc(0, 0, ry * 1.9, 0, TAU); c.fill();
+      const bor = c.createRadialGradient(0, 0, ry * 0.72, 0, 0, ry);
+      bor.addColorStop(0, "rgba(0,0,0,0)");
+      bor.addColorStop(0.72, cual === "a" ? "rgba(236,208,170,.40)" : "rgba(215,215,215,.55)");
+      bor.addColorStop(1, "rgba(0,0,0,0)");
+      c.fillStyle = bor; c.beginPath(); c.arc(0, 0, ry, 0, TAU); c.fill();
+      const sue = c.createRadialGradient(0, -ry * 0.2, 0, 0, 0, ry * 0.78);
+      sue.addColorStop(0, cual === "a" ? "rgba(52,34,26,.50)" : "rgba(46,46,46,.62)");
+      sue.addColorStop(1, "rgba(0,0,0,0)");
+      c.fillStyle = sue; c.beginPath(); c.arc(0, 0, ry * 0.78, 0, TAU); c.fill();
+    });
+  }
+  /* — cola de viento tras el cráter: la firma más marciana que hay — */
+  function cola(lon, lat, largo, ancho, ang, claro){
+    enSitio(lon, lat, 1, (c, rx, ry, cual) => {
+      if (cual === "g") return;
+      c.rotate(ang);
+      const g2 = c.createLinearGradient(0, 0, largo * GR, 0);
+      const col = claro ? "232,206,170" : "72,48,36";
+      g2.addColorStop(0, "rgba(" + col + ",.34)");
+      g2.addColorStop(1, "rgba(" + col + ",0)");
+      c.fillStyle = cual === "a" ? g2 : "rgba(0,0,0,0)";
+      c.beginPath(); c.ellipse(largo * GR * 0.5, 0, largo * GR * 0.5, ancho * GR, 0, 0, TAU); c.fill();
+    });
+  }
+  /* — mancha de albedo suave (Syrtis Major, Acidalia…) — */
+  function mancha(lon, lat, d, tono, alfa, aplanar){
+    enSitio(lon, lat, d, (c, rx, ry, cual) => {
+      if (cual === "g") return;
+      c.scale(rx / ry, aplanar || 1);
+      const g2 = c.createRadialGradient(0, 0, 0, 0, 0, ry);
+      g2.addColorStop(0, "rgba(" + tono + "," + alfa + ")");
+      g2.addColorStop(0.6, "rgba(" + tono + "," + (alfa * 0.55) + ")");
+      g2.addColorStop(1, "rgba(" + tono + ",0)");
+      c.fillStyle = cual === "a" ? g2 : "rgba(0,0,0,0)";
+      c.beginPath(); c.arc(0, 0, ry, 0, TAU); c.fill();
+    });
+  }
+  /* — escudo volcánico con caldera — */
+  function volcan(lon, lat, d){
+    enSitio(lon, lat, d, (c, rx, ry, cual) => {
+      if (cual === "g") return;
+      c.scale(rx / ry, 1);
+      const esc = c.createRadialGradient(0, 0, 0, 0, 0, ry);
+      esc.addColorStop(0, cual === "a" ? "rgba(228,196,156,.55)" : "rgba(250,250,250,.85)");
+      esc.addColorStop(0.75, cual === "a" ? "rgba(196,150,110,.30)" : "rgba(180,180,180,.4)");
+      esc.addColorStop(1, "rgba(0,0,0,0)");
+      c.fillStyle = esc; c.beginPath(); c.arc(0, 0, ry, 0, TAU); c.fill();
+      c.fillStyle = cual === "a" ? "rgba(58,38,28,.62)" : "rgba(40,40,40,.75)";
+      c.beginPath(); c.arc(0, 0, ry * 0.22, 0, TAU); c.fill();      // caldera
+    });
+  }
+  /* — cañón: cadena de segmentos hundidos y oscuros — */
+  function canon(lon, lat, largo, ancho, ang){
+    const n = 26;
+    for (let i = 0; i < n; i++){
+      const t = i / (n - 1) - 0.5;
+      const dl = Math.cos(ang) * t * largo, dt = Math.sin(ang) * t * largo;
+      const w = ancho * (0.45 + 0.55 * Math.cos(t * Math.PI * 0.9));
+      enSitio(lon + dl / Math.max(0.3, Math.cos((lat + dt) * RAD)), lat + dt, w,
+        (c, rx, ry, cual) => {
+          if (cual === "g") return;
+          const g2 = c.createRadialGradient(0, 0, 0, 0, 0, ry);
+          g2.addColorStop(0, cual === "a" ? "rgba(40,26,22,.80)" : "rgba(20,20,20,.85)");
+          g2.addColorStop(1, "rgba(0,0,0,0)");
+          c.fillStyle = g2; c.beginPath(); c.arc(0, 0, ry, 0, TAU); c.fill();
+        });
+    }
+  }
+
+  /* campo de cráteres: más densos en el hemisferio sur, como en la realidad */
+  let semilla = 7;
+  const rnd = () => { semilla = (semilla * 1103515245 + 12345) % 2147483648; return semilla / 2147483648; };
+  for (let i = 0; i < 240; i++){
+    const lon = rnd() * 360;
+    const lat = (rnd() * 2 - 1) * 60;
+    if (lat > 0 && rnd() < 0.62) continue;            // dicotomía norte–sur
+    const d = 0.6 + Math.pow(rnd(), 3.2) * 7;
+    crater(lon, lat, d);
+    if (d > 2.2 && rnd() < 0.45)
+      cola(lon, lat, d * (2 + rnd() * 4), d * 0.55, (rnd() < 0.5 ? 0.1 : Math.PI - 0.1), rnd() < 0.4);
+  }
+
+  /* Las provincias de albedo son mantos de polvo y arena depositados ENCIMA del terreno
+     craterizado: por eso se pintan después, o los cráteres las lavarían. */
+  mancha(288,  6, 32, "214,176,132", 0.42, 0.80);    // Tharsis, meseta clara
+  mancha(342,  8, 22, "58,58,66", 0.88, 1.30);       // Syrtis Major — basalto expuesto, gris azulado
+  mancha(336, 18, 13, "64,64,72", 0.62, 1.00);       //   su prolongación norte
+  mancha(190, 42, 27, "72,72,82", 0.68, 0.85);       // Acidalia Planitia
+  mancha( 20,-14, 21, "84,72,66", 0.58, 1.00);       // Terra Sabaea
+  mancha(150,-24, 24, "78,64,58", 0.55, 1.00);       // Terra Cimmeria
+  mancha(215,-38, 20, "78,74,78", 0.54, 1.00);       // Terra Sirenum
+  mancha( 70,-42, 36, "236,208,172", 0.60, 0.88);    // Hellas Planitia — cuenca clara
+  mancha(317,-50, 21, "232,204,166", 0.50, 0.90);    // Argyre
+  mancha(250, 22, 28, "230,202,164", 0.42, 0.90);    // Amazonis, manto de polvo
+  mancha(110, 30, 26, "222,192,152", 0.34, 0.95);    // Elysium / Utopia claro
+
+  volcan(226, 18, 5.2);                              // Olympus Mons
+  volcan(247,  1, 3.4); volcan(248, 11, 3.0); volcan(249, -8, 3.2);   // Tharsis Montes
+  volcan(267, 32, 3.0);                              // Alba
+
+  canon(300, -11, 68, 5.4, 0.10);                    // Valles Marineris
+  canon(272,  -8, 16, 2.6, 0.9);                     // Noctis Labyrinthus
+  canon(325, -20, 20, 2.4, -0.5);                    // Eos / Capri Chasma
+
+  /* Las huellas de remolinos de polvo NO se dibujan: miden 1–10 km, o sea menos de un
+     píxel a esta escala. Pintarlas visibles serían rayones, no realismo. */
+
+  /* casquetes polares con surcos en espiral y depósitos estratificados */
+  for (const polo of [1, -1]){
+    const latB = polo > 0 ? 81 : -79;
+    const [, yB] = PX(0, latB);
+    const alto = Math.abs(yB - (polo > 0 ? 0 : H));
+    for (const [ctx, cual] of [[A, "a"], [R, "r"], [G, "g"]]){
+      ctx.save();
+      const g2 = ctx.createLinearGradient(0, polo > 0 ? 0 : H, 0, yB);
+      const c1 = cual === "a" ? "rgba(231,236,241,1)" : cual === "r" ? "rgba(226,226,226,1)" : "rgba(52,52,52,1)";
+      const c0 = cual === "a" ? "rgba(231,236,241,0)" : cual === "r" ? "rgba(226,226,226,0)" : "rgba(52,52,52,0)";
+      g2.addColorStop(0, c1); g2.addColorStop(0.62, c1); g2.addColorStop(1, c0);
+      ctx.fillStyle = g2;
+      ctx.beginPath();                                  // borde lobulado, como el real
+      ctx.moveTo(0, polo > 0 ? 0 : H);
+      for (let x = 0; x <= W; x += 8){
+        const f = x / W * TAU;
+        const lob = 1 + Math.sin(f * 3 + 0.7) * 0.11 + Math.sin(f * 7 + 2.1) * 0.055;
+        ctx.lineTo(x, (polo > 0 ? 0 : H) + (polo > 0 ? 1 : -1) * alto * lob);
+      }
+      ctx.lineTo(W, polo > 0 ? 0 : H);
+      ctx.closePath(); ctx.fill();
+      if (cual !== "g"){
+        /* Un surco espiral r = a + b·θ se dibuja aquí como una recta inclinada en x:
+           la latitud baja de forma continua con la longitud y el trazo envuelve el mapa. */
+        ctx.strokeStyle = cual === "a" ? "rgba(150,132,116,.24)" : "rgba(120,120,120,.30)";
+        ctx.lineWidth = Math.max(2, H * 0.003);
+        for (let k = 0; k < 4; k++){
+          for (const vuelta of [-1, 0, 1]){
+            ctx.beginPath();
+            for (let x = 0; x <= W; x += 10){
+              const f = x / W;
+              const rr = alto * (0.46 + k * 0.16 + f * 0.16 + vuelta * 0.64);
+              if (rr < alto * 0.42 || rr > alto * 1.00) { ctx.stroke(); ctx.beginPath(); continue; }
+              ctx.lineTo(x, (polo > 0 ? 0 : H) + (polo > 0 ? 1 : -1) * rr);
+            }
+            ctx.stroke();
+          }
+        }
+      }
+      ctx.restore();
+    }
+  }
+
+  const tA = new T.CanvasTexture(cA), tR = new T.CanvasTexture(cR), tG = new T.CanvasTexture(cG);
   tA.colorSpace = T.SRGBColorSpace;
-  tA.anisotropy = tR.anisotropy = 8;
-  return { albedo: tA, relieve: tR };
+  tA.anisotropy = tR.anisotropy = tG.anisotropy = 8;
+  return { albedo: tA, relieve: tR, rugosidad: tG };
 }
 
 /* Regolito de superficie: granulado con guijarros, en mosaico repetible */
@@ -533,21 +701,75 @@ function texturaMusgo(){
   }, true);
 }
 
-/* Hoja con nervadura, para que no sea un polígono plano de color */
-function texturaHoja(base, nervio){
-  return lienzoTex(128, 256, (g, W, H) => {
-    g.fillStyle = base; g.fillRect(0, 0, W, H);
-    for (let i = 0; i < 160; i++){                        // moteado del limbo
-      g.fillStyle = "rgba(255,255,255,.05)";
-      g.beginPath(); g.arc(Math.random() * W, Math.random() * H, 2 + Math.random() * 8, 0, TAU); g.fill();
+/* Hoja: limbo con degradado de base a ápice, nervadura de tres órdenes y borde más oscuro.
+   Devuelve también un mapa de relieve para que los nervios se noten con la luz.        */
+function texturaHoja(op){
+  const W = 256, H = 512;
+  const pinta = (g, relieve) => {
+    if (relieve){ g.fillStyle = "#8A8A8A"; g.fillRect(0, 0, W, H); }
+    else {
+      const base = g.createLinearGradient(0, H, 0, 0);    // más oscura en la base
+      base.addColorStop(0, "#8C8C8C"); base.addColorStop(0.55, "#B4B4B4"); base.addColorStop(1, "#D2D2D2");
+      g.fillStyle = base; g.fillRect(0, 0, W, H);
+      for (let i = 0; i < 240; i++){                      // moteado del limbo
+        const a = Math.random() < 0.5 ? "rgba(255,255,255,.10)" : "rgba(0,0,0,.07)";
+        g.fillStyle = a;
+        g.beginPath(); g.ellipse(Math.random() * W, Math.random() * H,
+          3 + Math.random() * 14, 2 + Math.random() * 9, Math.random() * TAU, 0, TAU); g.fill();
+      }
+      const borde = g.createRadialGradient(W / 2, H / 2, W * 0.28, W / 2, H / 2, W * 0.62);
+      borde.addColorStop(0, "rgba(0,0,0,0)"); borde.addColorStop(1, "rgba(0,0,0,.30)");
+      g.fillStyle = borde; g.fillRect(0, 0, W, H);
     }
-    g.strokeStyle = nervio; g.lineWidth = 4;              // nervio central
-    g.beginPath(); g.moveTo(W / 2, H); g.lineTo(W / 2, 0); g.stroke();
-    g.lineWidth = 1.8;                                    // nervios laterales
-    for (let i = 1; i < 9; i++){
-      const y = H - i * H / 9.5, d = (H - y) * 0.42;
-      g.beginPath(); g.moveTo(W / 2, y); g.lineTo(W / 2 - d, y - H * 0.07); g.stroke();
-      g.beginPath(); g.moveTo(W / 2, y); g.lineTo(W / 2 + d, y - H * 0.07); g.stroke();
+    const cN = relieve ? "#EDEDED" : "rgba(255,255,255,.62)";
+    const cN2 = relieve ? "#DCDCDC" : "rgba(255,255,255,.40)";
+    g.lineCap = "round";
+    g.strokeStyle = cN; g.lineWidth = relieve ? 7 : 5;    // nervio central
+    g.beginPath(); g.moveTo(W / 2, H); g.quadraticCurveTo(W / 2 + 4, H * 0.5, W / 2, H * 0.03); g.stroke();
+    for (let i = 1; i <= 11; i++){                        // secundarios, curvados hacia el ápice
+      const y = H - i * H / 11.6, d = (H - y) * 0.46 + 6;
+      g.lineWidth = relieve ? 4 : 2.6; g.strokeStyle = cN2;
+      for (const sgn of [-1, 1]){
+        g.beginPath(); g.moveTo(W / 2, y);
+        g.quadraticCurveTo(W / 2 + sgn * d * 0.7, y - H * 0.02, W / 2 + sgn * d, y - H * 0.075);
+        g.stroke();
+        g.lineWidth = relieve ? 2 : 1.2;                  // terciarios
+        for (let k = 1; k <= 2; k++){
+          const t = k / 3;
+          const bx = W / 2 + sgn * d * t, by = y - H * 0.075 * t * t;
+          g.beginPath(); g.moveTo(bx, by);
+          g.lineTo(bx + sgn * d * 0.16, by - H * 0.028); g.stroke();
+        }
+        g.lineWidth = relieve ? 4 : 2.6;
+      }
+    }
+  };
+  const mapa = lienzoTex(W, H, (g) => pinta(g, false));
+  const rel = lienzoTex(W, H, (g) => pinta(g, true));
+  return { mapa, rel };
+}
+
+/* Huevo de codorniz: crema con las manchas pardas irregulares que la especie tiene de verdad */
+function texturaHuevo(){
+  return lienzoTex(256, 128, (g, W, H) => {
+    const base = g.createLinearGradient(0, 0, 0, H);
+    base.addColorStop(0, "#F0E6CC"); base.addColorStop(0.5, "#E4D6B4"); base.addColorStop(1, "#D8C8A4");
+    g.fillStyle = base; g.fillRect(0, 0, W, H);
+    for (let i = 0; i < 130; i++){                        // manchas grandes
+      const x = Math.random() * W, y = Math.random() * H;
+      const r = 3 + Math.pow(Math.random(), 1.8) * 15;
+      g.fillStyle = Math.random() < 0.62 ? "rgba(66,44,26,.72)" : "rgba(112,78,44,.55)";
+      g.beginPath();
+      g.moveTo(x + r, y);
+      for (let a = 0; a < 9; a++){                        // contorno irregular
+        const ang = a / 9 * TAU, rr = r * (0.55 + Math.random() * 0.65);
+        g.lineTo(x + Math.cos(ang) * rr, y + Math.sin(ang) * rr * 0.8);
+      }
+      g.closePath(); g.fill();
+    }
+    for (let i = 0; i < 400; i++){                        // salpicado fino
+      g.fillStyle = "rgba(74,50,28,.38)";
+      g.beginPath(); g.arc(Math.random() * W, Math.random() * H, 0.7 + Math.random() * 2, 0, TAU); g.fill();
     }
   });
 }
@@ -608,17 +830,21 @@ const gHabitat = new T.Group(); escena.add(gHabitat);
 const sol = new T.DirectionalLight(0xFFE2C2, 2.3);
 sol.position.set(46, 30, -14);   // rasante: terminador en el planeta, sombras largas en el suelo
 sol.castShadow = true;
-sol.shadow.mapSize.set(2048, 2048);
+sol.shadow.mapSize.set(2560, 2560);
 sol.shadow.camera.near = 1; sol.shadow.camera.far = 90;
 sol.shadow.camera.top = sol.shadow.camera.right = 11;
 sol.shadow.camera.bottom = sol.shadow.camera.left = -11;
-sol.shadow.bias = -0.0006; sol.shadow.normalBias = 0.022;
+sol.shadow.bias = -0.00045; sol.shadow.normalBias = 0.016;
 escena.add(sol);
 const hemi = new T.HemisphereLight(0xC79A78, 0x2E1810, 0.72);
 escena.add(hemi);
 const relleno = new T.DirectionalLight(0x9FC6E4, 0.55);
 relleno.position.set(-24, 12, -20);
 escena.add(relleno);
+/* Marte recibe el 43 % de la irradiancia terrestre, pero su cielo con polvo rellena las
+   sombras: sin este relleno cálido el lado nocturno queda en negro absoluto, que no es real. */
+const dispersion = new T.DirectionalLight(0xC98B62, 0.0);
+escena.add(dispersion);
 
 /* ═══════════════════════════════════════════════════════════════
    MATERIAL DE CIELO — degradado marciano y espacio, con un solo shader
@@ -671,83 +897,151 @@ escena.add(estrellas);
 /* ═══════════════════════════════════════════════════════════════
    FICHAS DE DATOS — todo sale de los .md del repositorio
    ═══════════════════════════════════════════════════════════════ */
+/* ═══ diagramas de ficha ═══ pequeños, con datos reales, sin librerías */
+const VIZ = {
+  /* barra de proporción: tramos [ancho%, color, etiqueta] */
+  barra(titulo, tramos, izq, der){
+    return `<div><div class="viz-cap">${titulo}</div><div class="viz-barra">` +
+      tramos.map(([w, c]) => `<i style="width:${w}%;background:${c}"></i>`).join("") +
+      `</div><div class="viz-pie"><span>${izq}</span><span>${der}</span></div></div>`;
+  },
+  /* cadena de pasos con flechas */
+  cadena(titulo, pasos){
+    return `<div><div class="viz-cap">${titulo}</div><div class="viz-cadena">` +
+      pasos.map(([t, c], i) =>
+        (i ? `<span class="viz-flecha">&#8594;</span>` : "") +
+        `<span class="viz-pill" style="color:${c};border-color:${c}44">${t}</span>`).join("") +
+      `</div></div>`;
+  },
+  /* rejilla de n celdas, con las marcadas en otro color */
+  rejilla(titulo, n, cols, marcadas, colOK, colMal, pie){
+    let cel = "";
+    for (let i = 0; i < n; i++)
+      cel += `<div class="viz-cel" style="background:${marcadas.includes(i) ? colMal : colOK}"></div>`;
+    return `<div><div class="viz-cap">${titulo}</div>` +
+      `<div class="viz-rej" style="grid-template-columns:repeat(${cols},1fr)">${cel}</div>` +
+      (pie ? `<div class="viz-pie"><span>${pie}</span></div>` : "") + `</div>`;
+  },
+  nota(t){ return `<div class="viz-nota">${t}</div>`; },
+};
+
 const FUENTE_M = "INVESTIGACION-MARTE.md §2 · banco de datos duros";
 const FICHAS = {
 
   /* ── planeta ── */
   atmosfera: { sub:"MARTE · ATMÓSFERA", tit:"Casi vacío, y casi todo CO₂",
-    txt:"La atmósfera marciana es <b>95.3 % CO₂</b> a una presión de <b>~6 mbar</b>: el 0.6 % de la terrestre. Para el cuerpo humano es prácticamente vacío, y el agua líquida es inestable en la superficie. Pero ese CO₂ y ese nitrógeno son <b>recursos in situ</b>: alimentan la fijación biológica y la síntesis de metano. MILPA-360 no compite por ellos — los devuelve al ciclo desde el propio residuo.",
-    d:[["CO₂","95.3 %"],["N₂","2.7 %"],["Ar","1.6 %"],["O₂","0.13 %"],["Presión","~6 mbar"],["ppCO₂ habitable","≤3 mmHg [V2 6004]"]], f:FUENTE_M },
+    txt:"El aire de Marte es <b>95.3 % dióxido de carbono</b> y pesa muy poco: <b>6 mbar</b>, el 0.6 % de la presión terrestre. Para un cuerpo humano eso es prácticamente vacío, y el agua líquida no aguanta en la superficie.<br><br>La otra cara: ese CO₂ y ese nitrógeno están ahí, gratis, y son justo lo que necesitan las plantas y las bacterias fijadoras. MILPA-360 no los gasta — los devuelve al ciclo.",
+    d:[["CO₂","95.3 %"],["N₂","2.7 %"],["Ar","1.6 %"],["O₂","0.13 %"],["Presión","~6 mbar"],["Límite habitable de CO₂","≤3 mmHg [V2 6004]"]], f:FUENTE_M },
 
-  gravedad: { sub:"MARTE · GRAVEDAD", tit:"0.38 g, y nadie sabe qué le hace a una codorniz",
-    txt:"Un tercio de la gravedad terrestre. Afecta fluidos, hueso y el desarrollo de las plantas — y es <b>la incógnita más grande de nuestro diseño</b>: no está validada ni para el desarrollo de <i>Coturnix japonica</i> ni para la sedimentación dentro del biodigestor. Lo declaramos como límite, no lo escondemos.",
-    d:[["Gravedad","0.38 g"],["Día (sol)","24 h 39 min"],["Ventaja","ritmo circadiano casi terrestre"]], f:FUENTE_M + " · limitación declarada en PLAN-MAESTRO §13" },
+  gravedad: { sub:"MARTE · GRAVEDAD", tit:"0.38 g — y nadie sabe qué le hace a una codorniz",
+    txt:"Un tercio de la gravedad de la Tierra. Cambia cómo se mueven los líquidos del cuerpo, cómo se forma el hueso y cómo crecen las raíces.<br><br>Es <b>la incógnita más grande de nuestro diseño</b>: nadie ha comprobado cómo se desarrolla una codorniz ni cómo sedimenta un biodigestor con esta gravedad. Lo decimos nosotros antes de que lo pregunte el jurado.",
+    d:[["Gravedad","0.38 g"],["Duración del día","24 h 39 min"],["Ventaja","el ciclo de luz casi no cambia"]], f:FUENTE_M + " · limitación declarada en PLAN-MAESTRO §13" },
 
-  radiacion: { sub:"MARTE · RADIACIÓN", tit:"0.7 mSv al día, sin campo magnético",
-    txt:"Sin magnetosfera global y con una atmósfera demasiado fina, la superficie recibe <b>~0.7 mSv/día</b> (230–300 mSv/año) entre rayos cósmicos galácticos y eventos solares. El límite de carrera de la NASA se alcanza rápido: el blindaje es prioridad. Por eso el módulo se rodea de un talud de regolito, y por eso elegimos un musgo que aguanta <b>5 000 Gy</b>.",
-    d:[["Dosis diaria","~0.7 mSv"],["Dosis anual","230–300 mSv"],["LD50 del musgo","≈5 000 Gy"],["Blindaje","talud de regolito"]], f:FUENTE_M },
+  radiacion: { sub:"MARTE · RADIACIÓN", tit:"0.7 mSv al día, sin escudo magnético",
+    txt:"Marte no tiene campo magnético global y su atmósfera es demasiado fina para frenar los rayos cósmicos. La superficie recibe <b>0.7 mSv al día</b> — entre 230 y 300 al año. Un astronauta agota rápido su límite de carrera.<br><br>Por eso el módulo va rodeado de un <b>talud de regolito</b>, y por eso elegimos un musgo que aguanta 5 000 Gy.",
+    d:[["Dosis por día","~0.7 mSv"],["Dosis por año","230 – 300 mSv"],["Aguante del musgo","LD50 ≈ 5 000 Gy"],["Nuestro blindaje","talud de regolito"]], f:FUENTE_M },
 
   regolito: { sub:"SITIO PHOENIX · 68° N", tit:"El suelo es veneno",
-    txt:"La sonda <b>Phoenix</b> confirmó en 2008 entre <b>0.5 y 1 % de percloratos</b> en el regolito: tóxicos para la tiroides humana y para casi todo cultivo. Hay además trazas de arsénico, cromo, berilio y cadmio, y bajo radiación UV los percloratos se vuelven bactericidas. Una bandeja de 20 kg contiene 100–200 g de perclorato. <b>Tratar ese sólido es inviable</b> — por eso lo lavamos y tratamos la salmuera.",
-    d:[["Percloratos","0.5 – 1 %"],["Por bandeja de 20 kg","100 – 200 g"],["Confirmado por","Phoenix, 2008"],["Sinergia UV + Fe","~10× mortalidad celular"]], f:FUENTE_M + " · Phoenix Lander 2008" },
+    txt:"En 2008 la sonda <b>Phoenix</b> midió el suelo marciano y encontró entre <b>0.5 y 1 % de percloratos</b>: una sal tóxica para la tiroides humana y para casi cualquier cultivo. Hay además arsénico, cromo, berilio y cadmio, y con la luz ultravioleta los percloratos se vuelven bactericidas.<br><br>En números: una bandeja de 20 kg de regolito trae <b>100 a 200 gramos de veneno</b>. Limpiar eso dentro del sólido no se puede en el tiempo de una misión. Por eso lavamos el suelo y tratamos el agua.",
+    viz: VIZ.barra("QUÉ HAY EN UNA BANDEJA DE 20 KG", [[1, "#D2622F"], [99, "rgba(255,255,255,.10)"]], "100–200 g de perclorato", "0.5 – 1 %") + VIZ.cadena("LA SAL QUE NO SE VE", [["ClO₄⁻ veneno", "#D2622F"], ["tiroides", "#E9AE52"], ["cultivo", "#E9AE52"]]),
+    d:[["Percloratos","0.5 – 1 %"],["Por bandeja de 20 kg","100 – 200 g"],["Quién lo midió","Phoenix, 2008"],["Con UV y hierro","~10× más letal para células"]], f:FUENTE_M + " · Phoenix Lander 2008" },
 
-  polvo: { sub:"MARTE · POLVO Y TORMENTAS", tit:"3 micras que se meten en todo",
-    txt:"El polvo marciano tiene un diámetro medio de <b>~3 µm</b>, es electrostático y omnipresente: degrada sellos, paneles y filtros, y es un riesgo pulmonar tipo «efecto Apolo». Las tormentas son estacionales y ocasionalmente <b>globales, de semanas</b>: colapsan la energía solar. Nuestra respuesta no es una batería más grande, es el <b>desfase</b>: doce bandejas en doce etapas.",
-    d:[["Diámetro medio","~3 µm"],["Límite habitable","0.1 mg/m³ 24 h TWA"],["Filtro","HEPA ≥99.97 % @0.3 µm"],["Duración de tormenta","semanas"],["Pérdida con desfase","≈25 % vs 100 %"]], f:"Ebert et al. 2026 · NASA-STD-3001 V2 6053" },
+  polvo: { sub:"MARTE · POLVO Y TORMENTAS", tit:"Tres micras que se meten en todo",
+    txt:"El polvo marciano mide unas <b>3 micras</b>, está cargado de electricidad y se cuela por todos lados: arruina sellos, paneles solares y filtros, y en el pulmón hace el mismo daño que respiró la tripulación del Apolo.<br><br>Las tormentas son de temporada y a veces cubren el planeta entero durante <b>semanas</b>. Cuando eso pasa, la energía solar se cae. Nuestra respuesta no es una batería más grande: es tener las doce bandejas en doce etapas distintas.",
+    viz: VIZ.rejilla("TORMENTA DE 21 SOLES SOBRE EL ANILLO EXTERIOR", 12, 12, [9, 10, 11], "#7FBB72", "#E9AE52", "9 bandejas siguen · 3 se pierden = 25 %"),
+    d:[["Tamaño del grano","~3 µm"],["Límite dentro del hábitat","0.1 mg/m³ en 24 h"],["Filtro","HEPA ≥99.97 % @0.3 µm"],["Duración de una tormenta","semanas"],["Lo que perdemos","≈25 %, no el 100 %"]], f:"Ebert et al. 2026 · NASA-STD-3001 V2 6053" },
 
   agua: { sub:"CASQUETE POLAR NORTE", tit:"El recurso que sí está ahí",
-    txt:"Hay <b>hielo subsuperficial extenso</b> —cartografiado por el proyecto SWIM de la NASA— además de hidratos en el regolito y un pequeño porcentaje de H₂O en el suelo ecuatorial. Es el recurso más valioso del planeta: agua y CO₂ dan oxígeno, combustible y cultivo. En MILPA-360 el agua de lavado del regolito <b>no se descarta</b>: vuelve declorada desde la cámara anóxica.",
-    d:[["Hielo","subsuperficial extenso (SWIM)"],["Suelo ecuatorial","pocos % de H₂O"],["Agua potable mínima","2.5 L/tripulante/día"],["Temperatura media","~ −63 °C"]], f:FUENTE_M + " · swim.psi.edu" },
+    txt:"Hay <b>hielo bajo la superficie</b> en buena parte del planeta — la NASA lo cartografió en el proyecto SWIM — más agua atrapada en el regolito y un pequeño porcentaje en el suelo del ecuador.<br><br>Es el recurso más valioso de Marte: con agua y CO₂ se hace oxígeno, combustible y cultivo. En MILPA-360 el agua con la que lavamos el regolito <b>no se tira</b>: vuelve limpia desde la cámara anóxica.",
+    d:[["Hielo","extenso bajo la superficie (SWIM)"],["Suelo del ecuador","unos pocos % de H₂O"],["Agua potable mínima","2.5 L por persona y día"],["Temperatura media","~ −63 °C"]], f:FUENTE_M + " · swim.psi.edu" },
 
-  comms: { sub:"MARTE ↔ TIERRA", tit:"22 minutos de silencio",
-    txt:"El retardo de comunicación va de <b>3 a 22 minutos por trayecto</b> según la posición orbital, y hay apagón total durante la conjunción solar. No existe apoyo en tiempo real: la tripulación y sus sistemas son <b>autónomos por obligación</b>. Ese retardo es también la razón de que la red de biosensores MFC tenga que avisar <i>antes</i> de que el daño sea visible.",
-    d:[["Retardo","3 – 22 min por trayecto"],["Conjunción solar","apagón total"],["Misión ida y vuelta","~2–3 años"],["Reabastecimiento","ninguno"]], f:FUENTE_M },
+  comms: { sub:"MARTE ↔ TIERRA", tit:"Entre 3 y 22 minutos de silencio",
+    txt:"Una señal tarda de <b>3 a 22 minutos</b> en llegar, según dónde estén los dos planetas. Y durante la conjunción solar no llega nada.<br><br>Eso significa que <b>no hay ayuda en tiempo real</b>: la tripulación y sus máquinas están solas. Es también la razón de que nuestros biosensores tengan que avisar del problema <i>antes</i> de que se vea.",
+    d:[["Retardo","3 – 22 min por trayecto"],["Conjunción solar","sin señal"],["Misión ida y vuelta","~2–3 años"],["Reabastecimiento","ninguno"]], f:FUENTE_M },
 
-  valles: { sub:"VALLES MARINERIS", tit:"4 000 km de cañón",
-    txt:"El sistema de cañones más grande del sistema solar, casi un cuarto de la circunferencia del planeta. Está aquí como referencia de escala: cuando decimos que el hábitat entero cabe en <b>10 m² de bandeja</b>, conviene recordar contra qué se mide. La temperatura media del planeta es de −63 °C, con extremos de −140 a +20 °C.",
-    d:[["Longitud","~4 000 km"],["Temperatura media","~ −63 °C"],["Rango","−140 a +20 °C"]], f:FUENTE_M },
+  valles: { sub:"VALLES MARINERIS", tit:"Cuatro mil kilómetros de cañón",
+    txt:"El sistema de cañones más grande del sistema solar: recorre casi un cuarto de la circunferencia del planeta.<br><br>Está aquí como referencia de tamaño. Cuando decimos que el hábitat entero cabe en <b>10 m² de bandeja</b>, conviene recordar contra qué se está midiendo.",
+    d:[["Longitud","~4 000 km"],["Temperatura media","~ −63 °C"],["Extremos","−140 a +20 °C"]], f:FUENTE_M },
 
   sitio: { sub:"SITIO DEL HÁBITAT", tit:"Aquí se posa MILPA-360",
-    txt:"Módulo presurizado de <b>Ø 3.5 m × 2.2 m</b> con ≈<b>10 m² de superficie de bandeja</b>, para una tripulación de seis durante <b>730 soles sin reabastecimiento</b>. Toca «HÁBITAT» arriba, o este punto, para entrar.",
-    d:[["Diámetro","3.5 m"],["Altura","2.2 m"],["Bandejas","8 interiores + 12 exteriores"],["Superficie","≈10 m²"],["Tripulación","6 · 730 soles"]], f:"PLAN-MAESTRO-BIOMARS.md §4.1", accion:"habitat" },
+    txt:"Un módulo presurizado de <b>4.76 m de diámetro por 2.2 m de alto</b>, con unos <b>10 m² de bandeja</b> adentro, para seis personas durante <b>730 soles sin una sola nave de reabastecimiento</b>.<br><br>Toca «HÁBITAT» arriba, o este punto, para entrar.",
+    d:[["Diámetro","4.76 m"],["Altura","2.2 m"],["Bandejas","8 interiores + 12 exteriores"],["Superficie de cultivo","≈10 m²"],["Tripulación","6 personas · 730 soles"]], f:"PLAN-MAESTRO-BIOMARS.md §4.1", accion:"habitat" },
 
-  /* ── hábitat ── */
+  /* ── hábitat · equipo ── */
   aviario: { sub:"ESTACIÓN S2 · PARTE 1 DEL RETO", tit:"Aviario de codornices",
-    txt:"24 <i>Coturnix japonica</i> en presión negativa sobre el anillo. La rejilla del piso deja caer el estiércol fresco <b>directamente sobre la bandeja en turno</b>: pastoreo intenso, corto, con descanso largo. Es <i>mob grazing</i> miniaturizado, sin pastor y sin cerca eléctrica. Y su canto es un mitigante documentado del riesgo BMed de la NASA.",
-    d:[["Primer huevo","40 días"],["Ración","23 g/ave/día"],["Tasa de postura","~68 %"],["Huevos en la misión","≈11 900"],["Filtro","HEPA 99.97 % @0.3 µm"],["Ruido en zona de sueño","NC-40 [V2]"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2 · NASA-STD-3001 Vol. 2 Rev. E" },
+    txt:"<b>24 codornices japonesas</b> viven aquí arriba, en una cámara con presión más baja que el resto del módulo para que nada salga de ella. El piso es una rejilla: el estiércol cae directo sobre la bandeja que está pasando debajo.<br><br>Mucho estiércol, poco tiempo, y luego 56 soles de descanso. Es el pastoreo rotacional de Chiapas hecho en miniatura — sin pastor y sin cerca eléctrica.<br><br>Y hay un extra: su canto es uno de los pocos sonidos vivos a 22 minutos-luz de casa. La NASA lo cuenta como mitigante del riesgo de salud mental.",
+    viz: VIZ.barra("CICLO DE LA CODORNIZ EN 730 SOLES", [[5.5, "#E9AE52"], [94.5, "#7FBB72"]], "primer huevo · 40 días", "resto: postura ~68 %"),
+    d:[["Primer huevo","a los 40 días"],["Comida","23 g por ave y día"],["Ponen","~68 % de los días"],["Huevos en la misión","≈11 900"],["Filtro de aire","HEPA 99.97 % @0.3 µm"],["Ruido en zona de sueño","NC-40 [V2]"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2 · NASA-STD-3001 Vol. 2 Rev. E" },
 
-  larvario: { sub:"ESTACIÓN S3 · EL BUCLE SE CIERRA", tit:"Larvario de mosca soldado",
-    txt:"<i>Hermetia illucens</i> no es el animal del reto: es el <b>puente</b>. Come el estiércol de codorniz y devuelve dos cosas — <b>frass</b> como abono y <b>larva</b> como proteína que vuelve al comedero. La única entrada externa es la fracción de grano de la ración; bajarla es bajar masa de lanzamiento.",
-    d:[["Reducción de materia seca","44 – 82 %"],["Salida 1","frass · NPK comercial"],["Salida 2","proteína + lípido"],["Destino","cámara B + inóculo S4"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2" },
+  larvario: { sub:"ESTACIÓN S3 · AQUÍ SE CIERRA EL BUCLE", tit:"Larvario de mosca soldado",
+    txt:"La <i>Hermetia illucens</i> no es el animal que pide el reto: es el <b>puente</b> que hace que todo encaje.<br><br>Come el estiércol de las codornices y devuelve dos cosas: <b>frass</b>, que es abono, y <b>larva</b>, que es proteína y vuelve al comedero de las codornices.<br><br>Lo único que entra de fuera es el grano de la ración. Bajar esa fracción es bajar toneladas de lanzamiento.",
+    d:[["Reduce el residuo","44 – 82 % de materia seca"],["Salida 1","frass · abono con NPK real"],["Salida 2","proteína + grasa"],["A dónde va","cámara B e inóculo de S4"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2" },
 
-  digestor: { sub:"PARTE 2 · LA APORTACIÓN ORIGINAL", tit:"El digestor es el reactor de percloratos",
-    txt:"Las bacterias que reducen perclorato necesitan exactamente dos cosas: <b>ausencia de oxígeno</b> y <b>un donador de electrones orgánico</b>. Un biodigestor anaerobio alimentado con estiércol y frass <b>ya es las dos, gratis y de forma continua</b>. Nadie tuvo que construir un reactor de percloratos: lo construimos para hacer biogás. Dos residuos que se anulan.",
-    d:[["Cámara A","ClO₄⁻ → ClO₃⁻ → ClO₂⁻ → Cl⁻ + O₂"],["Cámara B","frass + estiércol → biogás"],["Carga a B","~2 kg SV/día"],["Rendimiento","0.24 m³/kg · CH₄ 60 %"],["Energía","≈2.9 kWh/día"],["El O₂","coproducto, no soporte vital"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3 · guía FAO de biodigestores" },
+  digestor: { sub:"PARTE 2 · NUESTRA APORTACIÓN ORIGINAL", tit:"El digestor es, además, el reactor de percloratos",
+    txt:"Las bacterias que destruyen el perclorato necesitan exactamente dos cosas: <b>que no haya oxígeno</b> y <b>algo orgánico que comer</b>.<br><br>Un biodigestor de estiércol <b>ya es las dos cosas</b>, todo el tiempo y sin costo. Nadie tuvo que construir un reactor de percloratos: lo construimos para hacer biogás y resultó que servía para las dos cosas.<br><br>Dos residuos que se anulan entre sí.",
+    viz: VIZ.cadena("EL ORDEN IMPORTA: A PROTEGE A B", [["salmuera ClO₄⁻", "#63A9D1"], ["A · anóxica", "#63A9D1"], ["Cl⁻ + O₂", "#7FBB72"], ["B · metanogénica", "#D2622F"], ["biogás", "#D2622F"]]),
+    d:[["Cámara A · anóxica","ClO₄⁻ → ClO₃⁻ → ClO₂⁻ → Cl⁻ + O₂"],["Cámara B · metanogénica","frass + estiércol → biogás"],["Carga a la cámara B","~2 kg de sólidos volátiles/día"],["Rendimiento","0.24 m³/kg · 60 % metano"],["Energía","≈2.9 kWh/día"],["Ojo","el O₂ es coproducto, no soporte vital"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3 · guía FAO de biodigestores" },
 
   musgo: { sub:"ESTACIÓN S5 · COSTRA Y SEMÁFORO", tit:"Syntrichia caninervis",
-    txt:"El musgo del desierto documentado en 2024 como primer candidato a planta pionera extraterrestre probado con la <b>planta entera</b> sobre suelo marciano simulado. Sella la superficie para que el regolito no se resuspenda al girar el carrusel, y es más tolerante que cualquier cultivo alimenticio: <b>si el musgo verdea, la bandeja está desintoxicada.</b> Bandeja verde = bandeja apta.",
-    d:[["Regeneración","100 % en 30 días"],["Radiación","LD50 ≈5 000 Gy"],["Frío","−196 °C · 1 mes"],["Función","costra + semáforo go/no-go"]], f:"The Innovation, 2024 · PLAN-MAESTRO §4.4" },
+    txt:"Un musgo de desierto. En 2024 fue el primer candidato a planta pionera extraterrestre probado <b>con la planta entera</b> sobre suelo marciano simulado, y volvió al 100 % en 30 días.<br><br>Hace dos trabajos. Uno: sella la superficie de la bandeja para que el polvo no se levante cuando el carrusel gira. Dos, el importante: aguanta mucho más que cualquier cultivo de comer, así que <b>si el musgo verdea, la bandeja ya está limpia</b>.<br><br>Bandeja verde = bandeja lista para sembrar. Un análisis de suelo que lee cualquiera de un vistazo.",
+    viz: VIZ.cadena("EL SEMÁFORO DE LA BANDEJA", [["S4 descanso", "#3E2C1E"], ["S5 musgo", "#4E8A3C"], ["S6 consolida", "#599648"], ["S7 verde = apta", "#74B25F"]]),
+    d:[["Se recupera","100 % en 30 días"],["Radiación","LD50 ≈5 000 Gy"],["Frío","−196 °C durante un mes"],["Para qué sirve","sella el polvo y avisa si el suelo está limpio"]], f:"The Innovation, 2024 · PLAN-MAESTRO §4.4" },
 
   cultivo: { sub:"ANILLO EXTERIOR · PARTE 3 DEL RETO", tit:"La Tríada Marciana",
-    txt:"La milpa mesoamericana en 0.5 m²: una planta que da estructura, una que fija nitrógeno y una que cubre el suelo. Doce bandejas avanzan una posición cada 8 soles, así que <b>en cualquier instante hay bandejas en las doce etapas</b>. El retorno a la Tierra no es una metáfora: el sistema le devuelve a Chiapas su propia agricultura, con los tiempos medidos.",
-    d:[["Camote","90 – 120 soles"],["Leguminosa","fija N₂ vía Rhizobium"],["Rábano","25 – 30 soles"],["Ciclo del anillo","96 soles"],["Cóctel","micorrizas · Trichoderma · PGPR"]], f:"PLAN-MAESTRO-BIOMARS.md §4.4" },
+    txt:"La milpa mesoamericana metida en medio metro cuadrado: una planta que da estructura (<b>camote</b>), una que fija nitrógeno (<b>leguminosa</b>) y una que cubre el suelo y se cosecha rápido (<b>rábano</b>).<br><br>Las doce bandejas avanzan una posición cada 8 soles. Eso significa que <b>en cualquier momento hay bandejas en las doce etapas a la vez</b>: unas sembrando, otras a media, otras a punto de cosecha.<br><br>El retorno a la Tierra no es una frase bonita: el sistema le devuelve a Chiapas su propia agricultura, con los tiempos medidos.",
+    viz: VIZ.barra("CAMOTE · 90–120 SOLES", [[100, "#39702C"]], "siembra", "cosecha") + VIZ.barra("LEGUMINOSA · fija N₂ en continuo", [[100, "#5A9636"]], "siembra", "rastrojo al digestor") + VIZ.barra("RÁBANO · 25–30 SOLES", [[27, "#6BA33C"], [73, "rgba(255,255,255,.07)"]], "siembra", "cosecha rápida"),
+    d:[["Camote","90 – 120 soles"],["Leguminosa","fija nitrógeno con Rhizobium"],["Rábano","25 – 30 soles"],["Vuelta completa","96 soles"],["Cóctel del suelo","micorrizas · Trichoderma · PGPR"]], f:"PLAN-MAESTRO-BIOMARS.md §4.4" },
 
-  lavado: { sub:"ESTACIÓN S1 · ENTRADA DEL CICLO", tit:"Lavado del regolito",
-    txt:"Agua reciclada arrastra el perclorato fuera del sólido. Sale salmuera concentrada hacia la cámara anóxica y vuelve agua declorada al riego. <b>Tratar 20 kg de regolito en el sólido es inviable</b> en tiempo de misión y en volumen de hábitat; tratar un litro de salmuera no lo es. Ahí es donde se rompe la mayoría de las propuestas.",
-    d:[["Bandeja","20 kg de regolito"],["Perclorato por bandeja","100 – 200 g"],["Salida","salmuera → cámara A"],["Retorno","agua declorada al riego"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3" },
+  lavado: { sub:"ESTACIÓN S1 · POR AQUÍ EMPIEZA TODO", tit:"Lavado del regolito",
+    txt:"Agua reciclada arrastra el perclorato fuera del suelo. Sale <b>salmuera</b> concentrada hacia la cámara anóxica, y regresa agua limpia al riego.<br><br>Aquí está la jugada: tratar 20 kg de tierra tóxica es imposible en el tiempo y el espacio de una misión. Tratar <b>un litro de agua sucia</b> sí se puede. Ese cambio de problema es donde se rompen casi todas las demás propuestas.",
+    d:[["Cada bandeja","20 kg de regolito"],["Veneno por bandeja","100 – 200 g"],["Sale","salmuera → cámara A"],["Regresa","agua sin cloro al riego"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3" },
 
-  mfc: { sub:"EN CADA PUNTO DE TRASVASE", tit:"La MFC como sistema nervioso",
-    txt:"Como batería la celda de combustible microbiana es inútil: da microvatios. Como <b>biosensor autoalimentado</b> es excelente — su voltaje sigue la actividad metabólica del consorcio. Voltaje que cae con carga orgánica estable significa <b>tóxico entrando al bucle</b>; con carga baja, significa hambre. Cero vatios de la misión, cero reactivos, y avisa antes de que el daño se vea.",
-    d:[["Consumo","0 W de la misión"],["Puntos","S1→dig · dig→riego · riego→bandeja"],["Distingue","toxicidad de falta de carga"],["Retardo con la Tierra","22 min"]], f:"PLAN-MAESTRO-BIOMARS.md §4.4" },
+  mfc: { sub:"EN CADA PUNTO DE TRASVASE", tit:"La MFC: el sistema nervioso",
+    txt:"Como batería, una celda de combustible microbiana es inútil: da microvatios.<br><br>Como <b>sensor</b> es excelente. Su voltaje sigue lo que están haciendo los microbios. Si el voltaje cae y la comida sigue entrando igual, es que <b>algo tóxico entró al ciclo</b>. Si cae y la comida bajó, es que hay hambre. Son dos avisos distintos y se distinguen.<br><br>Cero vatios de la misión, cero reactivos, y avisa antes de que el daño se vea. Que es justo lo que hace falta cuando la Tierra tarda 22 minutos en contestar.",
+    d:[["Consumo","0 W de la misión"],["Dónde van","S1→digestor · digestor→riego · riego→bandeja"],["Qué distingue","tóxico entrando vs. falta de comida"],["Retardo con la Tierra","22 min"]], f:"PLAN-MAESTRO-BIOMARS.md §4.4" },
 
   carrusel: { sub:"EL MECANISMO", tit:"En Marte se mueve el suelo",
-    txt:"El pastoreo rotacional funciona en la Tierra porque el animal <i>se va</i> y el suelo descansa. En 10 m² no hay a dónde ir, así que <b>se fija el animal y se rota el suelo</b>. La bandeja que hoy recibe estiércol no vuelve a recibirlo en <b>56 soles</b>. Ese intervalo no es un procedimiento que alguien pueda olvidar: es <b>geometría</b>.",
-    d:[["Anillo interior","8 bandejas · ciclo 64 soles"],["Anillo exterior","12 bandejas · ciclo 96 soles"],["Paso","1 posición / 8 soles"],["Descanso garantizado","56 soles"],["Precedentes","MELiSSA · BIOS-3 · Lunar Palace 1"]], f:"PLAN-MAESTRO-BIOMARS.md §4.1–4.2" },
+    txt:"En la Tierra el pastoreo rotacional funciona porque el animal <i>se va</i> y el suelo descansa. En 10 m² no hay a dónde irse.<br><br>Así que invertimos el problema: <b>se fija el animal y se rota el suelo</b>. La bandeja que hoy recibe estiércol no vuelve a recibirlo hasta <b>56 soles</b> después.<br><br>Ese descanso no es una regla que alguien pueda olvidar en el sol 400. Es <b>geometría</b>: no puede pasar de otra manera.",
+    viz: VIZ.rejilla("LAS 8 POSICIONES DEL ANILLO INTERIOR", 8, 8, [1], "rgba(255,255,255,.12)", "#96633A", "solo una recibe estiércol · las otras 7 descansan = 56 soles"),
+    d:[["Anillo interior","8 bandejas · vuelta de 64 soles"],["Anillo exterior","12 bandejas · vuelta de 96 soles"],["Avanza","una posición cada 8 soles"],["Descanso garantizado","56 soles"],["Precedentes","MELiSSA · BIOS-3 · Lunar Palace 1"]], f:"PLAN-MAESTRO-BIOMARS.md §4.1–4.2" },
 
   panel: { sub:"ENERGÍA", tit:"El biogás no compite: libera",
-    txt:"2.9 kWh/día no alimentan un hábitat marciano. Alimentan <b>el propio MILPA-360</b>: motor del carrusel, bombas de trasvase, iluminación de mantenimiento y —lo crítico— un <b>colchón térmico de emergencia</b> para sostener el punto de consigna durante una noche marciana o una tormenta global que deje los paneles inservibles.",
-    d:[["Biogás","≈2.9 kWh/día"],["Solar","colapsa en tormenta global"],["Función crítica","autonomía térmica"],["Consumo del módulo","carrusel, bombas, luz"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3" },
+    txt:"2.9 kWh al día no alimentan un hábitat marciano, y no vamos a decir que sí.<br><br>Alimentan <b>al propio MILPA-360</b>: el motor del carrusel, las bombas, la luz de mantenimiento y —lo importante— un <b>colchón térmico de emergencia</b> que mantiene la temperatura del cultivo durante una noche marciana o una tormenta que deje los paneles inservibles.<br><br>Dicho de otro modo: es el único subsistema del hábitat que se mueve con su propia basura. No pide energía a la misión: se la devuelve.",
+    d:[["Biogás","≈2.9 kWh/día"],["Solar en tormenta global","se cae"],["Para qué es crítico","autonomía térmica"],["Qué mueve","carrusel, bombas y luz"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3" },
+
+  /* ── hábitat · lo que corre por las tuberías ── */
+  f_salmuera: { sub:"CONDUCTO AZUL · S1 → CÁMARA A", tit:"Salmuera de lavado",
+    txt:"Por aquí va el <b>agua con la que se lavó el regolito</b>, cargada del perclorato que traía el suelo.<br><br>Sale de la estación S1, sube al colector y baja a la cámara anóxica. Ahí las bacterias rompen la sal: <b>ClO₄⁻ → Cl⁻ + O₂</b>. Lo que regresa es agua sin cloro que vuelve al riego.<br><br>Nada de esta agua se descarta. En una misión sin reabastecimiento, tirar agua no es una opción.",
+    viz: VIZ.cadena("LO QUE PASA DENTRO DE LA CÁMARA A", [["ClO₄⁻", "#D2622F"], ["ClO₃⁻", "#A2B0BD"], ["ClO₂⁻", "#A2B0BD"], ["Cl⁻ + O₂", "#7FBB72"]]) + VIZ.nota("El agua entra con veneno y sale limpia. <b>Ninguna gota se descarta.</b>"),
+    d:[["Qué transporta","agua de lavado + perclorato disuelto"],["De dónde","S1 · lavado del regolito"],["A dónde","cámara A · anóxica"],["Por bandeja","20 kg de regolito → ~1 L de salmuera"],["Veneno arrastrado","100 – 200 g"],["Qué vuelve","agua declorada al riego"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3" },
+
+  f_frass: { sub:"CONDUCTO VERDE · S3 → CÁMARA B", tit:"Frass y estiércol sobrante",
+    txt:"El <b>frass</b> es lo que dejan las larvas después de comerse el estiércol: un abono con nitrógeno, fósforo y potasio comparables a un fertilizante orgánico de tienda.<br><br>Lo que las larvas no alcanzan a procesar viaja por este mismo tubo, junto con el rastrojo del anillo de cultivo y las aguas negras de la tripulación. Todo eso es la comida de la cámara metanogénica.",
+    d:[["Qué transporta","frass + estiércol excedente + rastrojo"],["De dónde","S3 · larvario"],["A dónde","cámara B · metanogénica"],["Reducción previa","44 – 82 % de materia seca"],["Carga a la cámara B","~2 kg de sólidos volátiles/día"],["Calidad del frass","NPK comparable al comercial"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2–4.3" },
+
+  f_inoculo: { sub:"CONDUCTO VERDE · CÁMARA B → S4", tit:"Digestato e inóculo",
+    txt:"Al salir del digestor, la materia ya está estabilizada: eso es el <b>digestato</b>. Aquí se le suma el <b>cóctel biológico</b> y se inyecta en la estación de descanso, justo antes de que la bandeja vuelva a sembrarse.<br><br>El cóctel no es adorno. Cada organismo hace una tarea que el regolito no puede hacer solo: fijar nitrógeno, multiplicar la absorción de agua, liberar el fósforo que el mineral tiene atrapado, aguantar la sal que quedó y frenar los hongos que aparecen en un lugar cerrado y húmedo.",
+    d:[["Qué transporta","digestato + cóctel biológico"],["De dónde","cámara B"],["A dónde","S4 · descanso e inóculo"],["Rhizobium","fija nitrógeno en la leguminosa"],["Micorrizas","hasta ×10 de absorción de agua"],["Pseudomonas","libera fósforo y hierro del mineral"],["Bacillus · Trichoderma","tolera sal · frena hongos"]], f:"PLAN-MAESTRO-BIOMARS.md §4.4" },
+
+  f_riego: { sub:"CONDUCTO VERDE · CÁMARA B → ANILLO EXTERIOR", tit:"Riego del cultivo",
+    txt:"La línea de riego lleva digestato diluido y el agua recuperada del lavado hasta la <b>rampa de goteo</b> que cuelga sobre el anillo exterior.<br><br>La rampa está fija y las bandejas pasan debajo: cada una recibe su turno de riego según avanza. En cada punto donde el agua cambia de recipiente hay una <b>MFC</b> vigilando que no entre nada tóxico.",
+    d:[["Qué transporta","digestato diluido + agua recuperada"],["De dónde","cámara B"],["A dónde","rampa de goteo · anillo exterior"],["A cuántas bandejas","12"],["Vigilancia","una MFC por trasvase"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3–4.4" },
+
+  f_biogas: { sub:"CONDUCTO ROJO · CÁMARA B → GASÓMETRO", tit:"Biogás",
+    txt:"Metano al <b>60 %</b> saliendo de la cámara metanogénica. Sube a la <b>campana flotante</b> — ese domo verde que ves subir y bajar es el almacén: sube cuando el digestor produce y baja cuando el módulo consume.<br><br>Con 2 kg de sólidos volátiles al día salen unos <b>10 MJ ≈ 2.9 kWh</b>. No alimentan un hábitat entero. Alimentan este módulo, y sobre todo guardan calor para la noche marciana o para la tormenta que apague los paneles.<br><br>Lánzale una tormenta y mira bajar la campana: eso es el colchón térmico gastándose.",
+    viz: VIZ.barra("A DÓNDE VAN LOS 2.9 kWh/DÍA", [[34, "#D2622F"], [26, "#E9AE52"], [40, "#63A9D1"]], "carrusel y bombas · luz", "colchón térmico"),
+    d:[["Qué transporta","biogás · ~60 % metano"],["De dónde","cámara B · metanogénica"],["A dónde","campana flotante → colchón térmico"],["Rendimiento","0.24 m³ por kg seco"],["Poder calorífico","~35.8 MJ/m³"],["Total","≈10 MJ/día ≈ 2.9 kWh"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3 · guía FAO de biodigestores" },
+
+  f_proteina: { sub:"CONDUCTO AMARILLO · S3 → AVIARIO", tit:"Proteína — aquí se cierra el anillo",
+    txt:"Este es <b>el tubo que cierra el círculo</b>, y conviene señalarlo con el dedo cuando se explique.<br><br>Lleva larva viva del larvario al comedero de las codornices. Es decir: <b>la codorniz produce el residuo que alimenta a la larva, y la larva se convierte en la proteína que alimenta a la codorniz.</b><br><br>Lo único que entra de fuera de este bucle es la fracción de grano de la ración. Cada punto porcentual que le bajemos a esa fracción son kilos que no hay que lanzar desde la Tierra.",
+    viz: VIZ.cadena("EL BUCLE CERRADO", [["codorniz", "#96633A"], ["estiércol", "#96633A"], ["larva", "#E9AE52"], ["proteína", "#E9AE52"], ["codorniz", "#96633A"]]) + VIZ.nota("Lo único que entra de fuera del anillo es <b>la fracción de grano</b>."),
+    d:[["Qué transporta","larva viva · proteína y grasa"],["De dónde","S3 · larvario"],["A dónde","comedero del aviario"],["Qué cierra","residuo animal → proteína animal"],["Entrada externa","solo la fracción de grano"],["Por qué importa","menos grano = menos masa de lanzamiento"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2" },
+
+  f_estiercol: { sub:"TOLVA CAFÉ · AVIARIO → BANDEJA", tit:"Estiércol dirigido",
+    txt:"Esto no es una tubería: es una <b>tolva</b>. El estiércol cae por gravedad desde la rejilla del aviario directamente sobre la bandeja que está pasando debajo.<br><br>No hay bomba, no hay motor y no hay nada que se pueda tapar. La bandeja recibe una carga fuerte y corta, y después no vuelve a ver estiércol en <b>56 soles</b>.<br><br>Alta intensidad, corta duración, descanso largo: es la definición de manual del pastoreo rotacional, y aquí la cumple la geometría sola.",
+    d:[["Qué transporta","estiércol fresco de codorniz"],["De dónde","rejilla del aviario · S2"],["A dónde","la bandeja en turno"],["Cómo","gravedad · sin bomba"],["Aves","24"],["Descanso después","56 soles"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2" },
 };
+
 
 /* ═══════════════════════════════════════════════════════════════
    PLANETA
@@ -760,8 +1054,8 @@ function construirPlaneta(tex){
   marte = new T.Mesh(
     new T.SphereGeometry(R_MARTE, 96, 64),
     new T.MeshStandardMaterial({
-      map: tex.albedo, bumpMap: tex.relieve, bumpScale: 0.055,
-      roughness: 0.94, metalness: 0.0,
+      map: tex.albedo, bumpMap: tex.relieve, bumpScale: 0.075,
+      roughnessMap: tex.rugosidad, roughness: 1.0, metalness: 0.0,
     })
   );
   marte.rotation.y = Math.PI;       // 0° de longitud hacia la cámara inicial
@@ -773,14 +1067,17 @@ function construirPlaneta(tex){
     new T.SphereGeometry(R_MARTE * 1.028, 64, 48),
     new T.ShaderMaterial({
       side: T.BackSide, transparent: true, depthWrite: false, blending: T.AdditiveBlending,
-      uniforms: { c: { value: new T.Color(0xE0906A) } },
+      uniforms: { c: { value: new T.Color(0xE0906A) }, c2: { value: new T.Color(0x8FB6D8) } },
       vertexShader: `varying vec3 vN; varying vec3 vP;
         void main(){ vN = normalize(normalMatrix * normal);
           vec4 mv = modelViewMatrix * vec4(position,1.0); vP = mv.xyz;
           gl_Position = projectionMatrix * mv; }`,
-      fragmentShader: `uniform vec3 c; varying vec3 vN; varying vec3 vP;
-        void main(){ float f = pow(1.0 - abs(dot(normalize(vN), normalize(-vP))), 3.4);
-          gl_FragColor = vec4(c, f * 0.85); }`
+      fragmentShader: `uniform vec3 c; uniform vec3 c2; varying vec3 vN; varying vec3 vP;
+        void main(){
+          float d = 1.0 - abs(dot(normalize(vN), normalize(-vP)));
+          float f = pow(d, 3.2);
+          float bruma = pow(d, 9.0);                 // el limbo alto se ve azul-blanco
+          gl_FragColor = vec4(mix(c, c2, bruma * 0.75), f * 0.75 + bruma * 0.5); }`
     })
   );
   gPlaneta.add(atm);
@@ -822,9 +1119,17 @@ function construirPlaneta(tex){
    HÁBITAT — módulo presurizado Ø3.5 × 2.2 m sobre terreno marciano
    ═══════════════════════════════════════════════════════════════ */
 const N_IN = 8, N_OUT = 12, SOLES_PASO = 8;
-const LADO = 0.70;                             // bandeja de 0.49 m² → 20 × 0.49 = 9.8 m²
-const R_IN = 0.96, R_OUT = 1.80, CUBIERTA = 0.62;
-const R_CASCO = 2.38, H_CASCO = 2.2;           // Ø4.76 m: el mínimo en que caben las 20 bandejas
+/* Las bandejas son SECTORES ANULARES, no cajas: en un carrusel de anillos concéntricos es la
+   única forma que tesela sin dejar huecos, y sin esquinas que sobresalgan el casco encoge.
+   Radios elegidos para que cada sector dé 0.5 m²  →  20 × 0.5 ≈ 10 m² (ver §4.1).            */
+const HOLGURA = 0.94;                          // el sector útil ocupa el 94 % del paso angular
+const R0_IN = 0.52, R1_IN = 1.278;             // anillo interior · 8 sectores de 42.3°
+const R0_OUT = 1.34, R1_OUT = 1.979;           // anillo exterior · 12 sectores de 28.2°
+const R_IN = (R0_IN + R1_IN) / 2;              // radio medio, donde van los equipos de estación
+const R_OUT = (R0_OUT + R1_OUT) / 2;
+const HONDO = 0.22;                            // 22 cm de sustrato: la profundidad que pide el camote
+const CUBIERTA = 0.62;
+const R_CASCO = 2.28, H_CASCO = 2.2;           // Ø4.56 m — con sectores no hay esquinas que sobresalgan
 const A_PARED = 0.57, A_LARGO = TAU * 0.62;    // pared en MI convención (x=cos a, z=sin a)
 const A_FIN = A_PARED + A_LARGO;               // el hueco queda centrado en a ≈ -0.62 (la cámara)
 const CIL_INI  = Math.PI / 2 - A_FIN;          // CylinderGeometry: x=sin θ, z=cos θ
@@ -841,7 +1146,8 @@ const ESTACIONES = [
   ["S8", "Trasvase",      0x8A5334],
 ];
 
-let texRego, texAve, texCasco, texCubierta, texMusgo, texHojaA, texHojaB, texSolar;
+let texRego, texAve, texCasco, texCubierta, texMusgo, texSolar, texHuevo;
+let hojaCamote, hojaLegum, hojaRabano;
 const clicables = [];
 const anclas = [];                                    // etiquetas fijas del hábitat
 let anilloIn, anilloOut, aviario, antorcha, digestorA, digestorB, luzAntorcha;
@@ -866,18 +1172,21 @@ function mats(){
   M.azul    = new T.MeshStandardMaterial({ color: 0x3E7FA8, roughness: 0.3,  metalness: 0.5 });
   M.cobre   = new T.MeshStandardMaterial({ color: 0xA56A3C, roughness: 0.34, metalness: 0.8 });
   M.ave     = new T.MeshStandardMaterial({ map: texAve, roughness: 0.86, metalness: 0 });
-  M.huevo   = new T.MeshStandardMaterial({ color: 0xE8DFC8, roughness: 0.55 });
+  M.huevo   = new T.MeshStandardMaterial({ map: texHuevo, roughness: 0.42, metalness: 0 });
   M.rego    = new T.MeshStandardMaterial({ map: texRego, roughness: 1.0, metalness: 0 });
   M.sustrato= new T.MeshStandardMaterial({ color: 0x8A5334, roughness: 1.0, metalness: 0 });
-  M.hoja    = new T.MeshStandardMaterial({ map: texHojaA, roughness: 0.72, metalness: 0,
+  const hojaMat = (h, col) => new T.MeshStandardMaterial({ color: col, map: h.mapa,
+                bumpMap: h.rel, bumpScale: 0.010, roughness: 0.66, metalness: 0,
                 side: T.DoubleSide });
-  M.hoja2   = new T.MeshStandardMaterial({ map: texHojaB, roughness: 0.72, metalness: 0,
-                side: T.DoubleSide });
+  M.hoja    = hojaMat(hojaCamote, 0x39702C);   // camote, verde profundo
+  M.hoja2   = hojaMat(hojaLegum,  0x5A9636);   // leguminosa, verde vivo
+  M.hojaR   = hojaMat(hojaRabano, 0x6BA33C);   // rábano, verde claro
   M.tallo   = new T.MeshStandardMaterial({ color: 0x4E6B33, roughness: 0.82 });
   M.musgo   = new T.MeshStandardMaterial({ color: 0x4C8438, roughness: 0.94 });
   M.costra  = new T.MeshStandardMaterial({ map: texMusgo, roughness: 0.97, metalness: 0 });
   M.solar   = new T.MeshStandardMaterial({ map: texSolar, roughness: 0.18, metalness: 0.62 });
-  M.rabano  = new T.MeshStandardMaterial({ color: 0xC0455A, roughness: 0.55 });
+  M.rabano  = new T.MeshStandardMaterial({ color: 0xC23E52, roughness: 0.42, metalness: 0 });
+  M.flor    = new T.MeshStandardMaterial({ color: 0xE8DCF0, roughness: 0.7 });
   M.tuber   = new T.MeshStandardMaterial({ color: 0xB2703F, roughness: 0.78 });
   M.marchito= new T.MeshStandardMaterial({ color: 0x8A7139, roughness: 0.9, side: T.DoubleSide });
   M.led     = new T.MeshStandardMaterial({ color: 0xFFD8B4, emissive: 0xFFB07A,
@@ -897,87 +1206,181 @@ const enAngulo = (r, k, n) => [Math.cos(k / n * TAU) * r, 0, Math.sin(k / n * TA
 function clicable(o, clave){ o.userData.ficha = clave; clicables.push(o); return o; }
 function marcarSubarbol(o, clave){ o.traverse(h => { if (h.isMesh){ h.userData.ficha = clave; clicables.push(h); } }); }
 
-/* ── hoja: silueta real, no un cono ── */
+/* ── hojas: silueta por especie, con UV normalizadas ── */
+function cerrarHoja(g){
+  /* ShapeGeometry escribe como UV las coordenadas CRUDAS del contorno: sin normalizar,
+     la hoja muestrea una esquina diminuta de la textura y sale negra. */
+  g.computeBoundingBox();
+  const bb = g.boundingBox, uv = g.attributes.uv;
+  const dx = bb.max.x - bb.min.x || 1, dy = bb.max.y - bb.min.y || 1;
+  for (let i = 0; i < uv.count; i++)
+    uv.setXY(i, (uv.getX(i) - bb.min.x) / dx, (uv.getY(i) - bb.min.y) / dy);
+  uv.needsUpdate = true;
+  g.rotateX(-Math.PI / 2);                       // tendida en el plano XZ
+  return g;
+}
+
+/* Hoja entera. `corazon` da la lámina acorazonada de la batata (Ipomoea batatas). */
 function geoHoja(largo, ancho, corazon){
   const s = new T.Shape();
   s.moveTo(0, 0);
   if (corazon){
-    s.bezierCurveTo( ancho * 0.95, largo * 0.10,  ancho * 0.70, largo * 0.92,  0, largo);
-    s.bezierCurveTo(-ancho * 0.70, largo * 0.92, -ancho * 0.95, largo * 0.10,  0, 0);
+    s.bezierCurveTo( ancho * 0.98, largo * 0.06,  ancho * 0.74, largo * 0.94,  0, largo);
+    s.bezierCurveTo(-ancho * 0.74, largo * 0.94, -ancho * 0.98, largo * 0.06,  0, 0);
   } else {
     s.bezierCurveTo( ancho * 0.72, largo * 0.22,  ancho * 0.52, largo * 0.80,  0, largo);
     s.bezierCurveTo(-ancho * 0.52, largo * 0.80, -ancho * 0.72, largo * 0.22,  0, 0);
   }
-  const g = new T.ShapeGeometry(s, 10);
-  g.rotateX(-Math.PI / 2);                       // tendida en el plano XZ
-  return g;
-}
-const GEO = {};
-function geometrias(){
-  GEO.hojaAncha  = geoHoja(0.20, 0.115, false);
-  GEO.hojaCorazon= geoHoja(0.16, 0.125, true);
-  GEO.foliolo    = geoHoja(0.075, 0.038, false);
-  GEO.tallo      = new T.CylinderGeometry(0.006, 0.009, 1, 5);
-  GEO.mota       = new T.IcosahedronGeometry(0.028, 0);
-  GEO.bandejaIn = GEO.bandejaOut = new T.BoxGeometry(LADO, 0.055, LADO);
+  return cerrarHoja(new T.ShapeGeometry(s, 12));
 }
 
-/* ── los tres cultivos de la Tríada, con forma propia ── */
+/* Hoja pinnatipartida del rábano: lóbulos crecientes hacia el ápice, como la real. */
+function geoHojaLobulada(largo, ancho){
+  const N = 5, pts = [];
+  for (let i = 0; i <= N * 2; i++){
+    const t = i / (N * 2);
+    const env = Math.sin(Math.pow(t, 0.72) * Math.PI * 0.95);   // envolvente del limbo
+    const lob = (i % 2 === 0) ? 0.42 : 1.0;                     // seno / lóbulo
+    pts.push([ancho * env * lob, largo * t]);
+  }
+  const s = new T.Shape();
+  s.moveTo(0, 0);
+  for (const [x, y] of pts) s.lineTo(x, y);
+  s.lineTo(0, largo * 1.03);
+  for (let i = pts.length - 1; i >= 0; i--) s.lineTo(-pts[i][0], pts[i][1]);
+  s.lineTo(0, 0);
+  return cerrarHoja(new T.ShapeGeometry(s, 1));
+}
+
+/* sector anular extruido: base en y=0, altura hacia +Y, centrado en el eje X */
+function geoSector(r0, r1, ang, alto){
+  const f = new T.Shape();
+  f.absarc(0, 0, r1, -ang / 2, ang / 2, false);
+  f.absarc(0, 0, r0, ang / 2, -ang / 2, true);
+  const g = new T.ExtrudeGeometry(f, { depth: alto, bevelEnabled: false, curveSegments: 28 });
+  g.rotateX(-Math.PI / 2);
+  g.translate(0, alto, 0);
+  g.computeVertexNormals();
+  return g;
+}
+
+/* marco de sector: el mismo sector con un hueco dentro, para que se vea el sustrato */
+function geoMarco(r0, r1, ang, alto, grosor){
+  const f = new T.Shape();
+  f.absarc(0, 0, r1, -ang / 2, ang / 2, false);
+  f.absarc(0, 0, r0, ang / 2, -ang / 2, true);
+  const rm = (r0 + r1) / 2, a2 = ang - 2 * grosor / rm;
+  const h = new T.Path();
+  h.absarc(0, 0, r1 - grosor, -a2 / 2, a2 / 2, false);
+  h.absarc(0, 0, r0 + grosor, a2 / 2, -a2 / 2, true);
+  f.holes.push(h);
+  const g = new T.ExtrudeGeometry(f, { depth: alto, bevelEnabled: false, curveSegments: 28 });
+  g.rotateX(-Math.PI / 2);
+  g.translate(0, alto, 0);
+  g.computeVertexNormals();
+  return g;
+}
+
+const GEO = {};
+function geometrias(){
+  GEO.hojaCorazon  = geoHoja(0.17, 0.145, true);
+  GEO.foliolo      = geoHoja(0.085, 0.046, false);
+  GEO.hojaLobulada = geoHojaLobulada(0.20, 0.13);
+  GEO.tallo        = new T.CylinderGeometry(0.006, 0.009, 1, 5);
+  GEO.mota         = new T.IcosahedronGeometry(0.028, 0);
+  const angIn = TAU / N_IN * HOLGURA, angOut = TAU / N_OUT * HOLGURA;
+  const REB = 0.035;                             // reborde de la cubeta
+  GEO.marcoIn    = geoMarco(R0_IN,  R1_IN,  angIn,  0.07, REB);
+  GEO.marcoOut   = geoMarco(R0_OUT, R1_OUT, angOut, 0.07, REB);
+  const aIn2  = angIn  - 2 * REB / ((R0_IN + R1_IN) / 2);
+  const aOut2 = angOut - 2 * REB / ((R0_OUT + R1_OUT) / 2);
+  GEO.sueloIn    = geoSector(R0_IN + REB,  R1_IN - REB,  aIn2,  HONDO - 0.05);
+  GEO.sueloOut   = geoSector(R0_OUT + REB, R1_OUT - REB, aOut2, HONDO - 0.05);
+  GEO.costraIn   = geoSector(R0_IN + REB + 0.005, R1_IN - REB - 0.005, aIn2 * 0.99, 0.012);
+}
+
+/* ── Raphanus sativus · rábano ──
+   Roseta baja de hojas lobuladas y la raíz globosa asomando: el rábano empuja hacia
+   fuera del suelo al engrosar, y por eso se ve si está listo sin arrancarlo.        */
 function plantaRabano(){
   const g = new T.Group();
   for (let i = 0; i < 7; i++){
-    const a = i / 7 * TAU + 0.4;
-    const h = malla(GEO.hojaAncha, i % 2 ? M.hoja : M.hoja2, [0, 0.02, 0], g, false);
-    h.rotation.y = a; h.rotation.x = -0.62 - (i % 3) * 0.12;
-    h.position.set(Math.cos(a) * 0.02, 0.02, Math.sin(a) * 0.02);
-    h.scale.setScalar(0.85 + (i % 3) * 0.14);
+    const a = i / 7 * TAU + 0.35;
+    const h = malla(GEO.hojaLobulada, M.hojaR, [Math.cos(a) * 0.025, 0.02, Math.sin(a) * 0.025], g, false);
+    h.rotation.y = a;
+    h.rotation.x = -0.75 - (i % 3) * 0.16;       // roseta abierta, casi tendida
+    h.scale.setScalar(0.82 + (i % 3) * 0.16);
+    const p = malla(GEO.tallo, M.tallo, [Math.cos(a) * 0.02, 0.02, Math.sin(a) * 0.02], g, false);
+    p.scale.y = 0.05; p.rotation.z = Math.cos(a) * 0.7; p.rotation.x = -Math.sin(a) * 0.7;
   }
-  const raiz = malla(new T.SphereGeometry(0.048, 12, 10), M.rabano, [0, 0.012, 0], g);
-  raiz.scale.set(1, 0.82, 1);
+  const raiz = malla(new T.SphereGeometry(0.05, 14, 12), M.rabano, [0, 0.014, 0], g, false);
+  raiz.scale.set(1, 0.86, 1); raiz.castShadow = true;
+  malla(new T.ConeGeometry(0.012, 0.07, 6), M.rabano, [0, -0.035, 0], g, false);   // raíz pivotante
   return g;
 }
+
+/* ── Leguminosa · hoja trifoliada (frijol / alfalfa) ──
+   Tallos erectos con hojas de tres foliolos: uno terminal y dos laterales.         */
 function plantaLeguminosa(){
   const g = new T.Group();
-  for (let i = 0; i < 5; i++){
-    const a = i / 5 * TAU + 1.1, r = 0.055;
-    const alto = 0.17 + (i % 3) * 0.035;
+  for (let i = 0; i < 4; i++){
+    const a = i / 4 * TAU + 1.0, r = 0.045;
+    const alto = 0.20 + (i % 3) * 0.045;
     const t = malla(GEO.tallo, M.tallo, [Math.cos(a) * r, alto / 2, Math.sin(a) * r], g, false);
-    t.scale.y = alto; t.rotation.z = Math.cos(a) * 0.16; t.rotation.x = -Math.sin(a) * 0.16;
-    for (let j = 0; j < 3; j++){                   // hoja trifoliada
-      const b = j / 3 * TAU;
-      const f = malla(GEO.foliolo, M.hoja, [Math.cos(a) * r, alto, Math.sin(a) * r], g, false);
-      f.rotation.y = b + a; f.rotation.x = -0.3;
+    t.scale.y = alto; t.rotation.z = Math.cos(a) * 0.13; t.rotation.x = -Math.sin(a) * 0.13;
+    for (const nivel of [0.62, 1.0]){            // dos nudos por tallo
+      const y = alto * nivel;
+      for (const [gir, incl, esc] of [[0, -0.42, 1.0], [2.2, -0.28, 0.82], [-2.2, -0.28, 0.82]]){
+        const f = malla(GEO.foliolo, M.hoja2, [Math.cos(a) * r, y, Math.sin(a) * r], g, false);
+        f.rotation.y = a + gir; f.rotation.x = incl; f.scale.setScalar(esc * (0.8 + nivel * 0.35));
+      }
+    }
+    if (i === 0){                                 // una flor: la leguminosa florece antes de fijar
+      const fl = malla(new T.SphereGeometry(0.012, 8, 6), M.flor,
+        [Math.cos(a) * r, alto + 0.02, Math.sin(a) * r], g, false);
+      fl.scale.set(1.5, 1, 0.8);
     }
   }
   return g;
 }
+
+/* ── Ipomoea batatas · camote ──
+   Guías rastreras que salen de la corona y se tienden sobre el sustrato, con hoja
+   acorazonada alterna. El tubérculo engrosa enterrado; solo se ve el lomo y la grieta. */
 function plantaCamote(){
   const g = new T.Group();
-  for (let i = 0; i < 6; i++){
-    const a = i / 6 * TAU + 0.25;
-    for (let j = 1; j <= 3; j++){                  // guía rastrera
-      const r = 0.05 + j * 0.052, alto = 0.115 - j * 0.026;
-      const h = malla(GEO.hojaCorazon, j % 2 ? M.hoja : M.hoja2,
-        [Math.cos(a) * r, alto, Math.sin(a) * r], g, false);
-      h.rotation.y = a + 0.5; h.rotation.x = -0.22 - j * 0.1;
-      h.scale.setScalar(1.05 - j * 0.12);
-    }
-    if (i % 2 === 0){
-      const t = malla(GEO.tallo, M.tallo, [Math.cos(a) * 0.09, 0.055, Math.sin(a) * 0.09], g, false);
-      t.scale.y = 0.11; t.rotation.z = -Math.cos(a) * 0.9; t.rotation.x = Math.sin(a) * 0.9;
+  const mTallo = M.tallo;
+  for (let i = 0; i < 5; i++){
+    const a = i / 5 * TAU + 0.3;
+    const largo = 0.24 + (i % 2) * 0.07;
+    const curva = new T.CatmullRomCurve3([
+      new T.Vector3(0, 0.035, 0),
+      new T.Vector3(Math.cos(a) * largo * 0.35, 0.075, Math.sin(a) * largo * 0.35),
+      new T.Vector3(Math.cos(a) * largo * 0.72, 0.055, Math.sin(a) * largo * 0.72),
+      new T.Vector3(Math.cos(a) * largo, 0.022, Math.sin(a) * largo),
+    ]);
+    malla(new T.TubeGeometry(curva, 10, 0.0055, 5, false), mTallo, null, g, false);
+    for (let j = 1; j <= 3; j++){                 // hojas alternas a lo largo de la guía
+      const u = 0.28 + j * 0.22;
+      const p = curva.getPointAt(Math.min(0.99, u));
+      const h = malla(GEO.hojaCorazon, j % 2 ? M.hoja : M.hoja2, [p.x, p.y + 0.012, p.z], g, false);
+      h.rotation.y = a + (j % 2 ? 0.7 : -0.7);
+      h.rotation.x = -0.22 - j * 0.06;
+      h.scale.setScalar(1.05 - j * 0.13);
     }
   }
-  const tub = malla(new T.SphereGeometry(0.055, 12, 9), M.tuber, [0.03, 0.015, -0.02], g);
-  tub.scale.set(1.5, 0.6, 0.9);
+  const lomo = malla(new T.SphereGeometry(0.058, 14, 10), M.tuber, [0.02, 0.006, -0.01], g, false);
+  lomo.scale.set(1.6, 0.42, 0.95); lomo.rotation.y = 0.5; lomo.castShadow = true;
   return g;
 }
+
 function mataMusgo(){
   const g = new T.Group();
-  for (let i = 0; i < 44; i++){
-    const a = Math.random() * TAU, r = Math.sqrt(Math.random()) * 0.27;
+  for (let i = 0; i < 14; i++){
+    const a = Math.random() * TAU, r = Math.sqrt(Math.random()) * 0.13;
     const m = malla(GEO.mota, M.musgo,
       [Math.cos(a) * r, 0.006 + Math.random() * 0.012, Math.sin(a) * r], g, false);
-    m.scale.set(1.3 + Math.random() * 1.2, 0.6 + Math.random() * 0.7, 1.3 + Math.random() * 1.2);
+    m.scale.set(1.2 + Math.random(), 0.6 + Math.random() * 0.6, 1.2 + Math.random());
     m.receiveShadow = true;
   }
   return g;
@@ -1089,7 +1492,15 @@ function construirHabitat(){
 
   /* ── plataforma y eje ── */
   malla(new T.CylinderGeometry(R_CASCO - 0.12, R_CASCO - 0.05, 0.6, 64), M.cubierta, [0, 0.3, 0]);
-  malla(new T.CylinderGeometry(R_CASCO - 0.08, R_CASCO - 0.08, 0.045, 64), M.acero, [0, 0.605, 0]);
+  /* Las cubetas van hundidas en el piso, como en cualquier banda de cultivo real: solo asoma
+     el borde. El piso se arma en tres coronas y las ranuras de los anillos quedan abiertas. */
+  for (const [ra, rb] of [[0.10, R0_IN - 0.02], [R1_IN + 0.02, R0_OUT - 0.02],
+                          [R1_OUT + 0.02, R_CASCO - 0.08]]){
+    const c = malla(new T.RingGeometry(ra, rb, 72), M.cubierta, [0, CUBIERTA, 0]);
+    c.rotation.x = -Math.PI / 2;
+    malla(new T.TorusGeometry(rb, 0.012, 6, 72), M.acero, [0, CUBIERTA, 0]).rotation.x = Math.PI / 2;
+    malla(new T.TorusGeometry(ra, 0.012, 6, 72), M.acero, [0, CUBIERTA, 0]).rotation.x = Math.PI / 2;
+  }
   clicable(malla(new T.CylinderGeometry(0.09, 0.13, 1.5, 18), M.acero, [0, 0.75, 0]), "carrusel");
 
   /* ── biodigestor de dos cámaras, en el núcleo ── */
@@ -1276,44 +1687,69 @@ function construirHabitat(){
   }
   marcarSubarbol(solar, "panel");
 
-  /* ── anillos giratorios ── */
-  function anillo(n, radio, geo, exterior){
+  /* ── anillos giratorios: cada bandeja es un sector, hundido en el piso ── */
+  const Y_MARCO = CUBIERTA - 0.05;                 // el reborde asoma 2 cm sobre el piso
+  const Y_SUELO = CUBIERTA - 0.03;                 // superficie de la tierra, bajo el reborde
+  function anillo(n, r0, r1, exterior){
     const grupo = new T.Group();
-    grupo.position.y = CUBIERTA;
     gHabitat.add(grupo);
     const bandejas = [];
+    const rm = (r0 + r1) / 2;
     for (let i = 0; i < n; i++){
       const g = new T.Group();
-      const p = enAngulo(radio, i, n);
-      g.position.set(p[0], 0, p[2]);
-      g.rotation.y = -i / n * TAU;
+      g.rotation.y = i / n * TAU;                  // el sector ya nace centrado en el eje X
       grupo.add(g);
-      malla(geo, M.acero, [0, 0.028, 0], g);
-      const lado = LADO - 0.06;
-      const sustrato = malla(new T.BoxGeometry(lado, 0.075, lado), M.sustrato.clone(),
-        [0, 0.088, 0], g);
+      malla(exterior ? GEO.marcoOut : GEO.marcoIn, M.acero, [0, Y_MARCO, 0], g);
+      const sustrato = malla(exterior ? GEO.sueloOut : GEO.sueloIn, M.sustrato.clone(),
+        [0, Y_SUELO - (HONDO - 0.05), 0], g);
       clicable(sustrato, exterior ? "cultivo" : "musgo");
 
-      let plantas = null, musgo = null;
+      let plantas = null, musgo = null, matVeg = null;
       if (exterior){
-        plantas = new T.Group(); plantas.position.y = 0.125; g.add(plantas);
-        plantas.add(plantaCamote()); plantas.add(plantaLeguminosa()); plantas.add(plantaRabano());
-        plantas.children[1].position.set(0.06, 0, 0.06);
-        plantas.children[2].position.set(-0.08, 0, -0.05);
+        /* la tríada se reparte a lo ancho del sector, como una milpa: el camote al fondo
+           donde hay más tierra, la leguminosa en medio, el rábano al borde interior */
+        plantas = new T.Group(); plantas.position.y = Y_SUELO; g.add(plantas);
+        const pon = (obj, rr, dz) => { obj.position.set(rr, 0, dz); plantas.add(obj); return obj; };
+        pon(plantaCamote(),      rm + (r1 - r0) * 0.26,  0);
+        pon(plantaCamote(),      rm + (r1 - r0) * 0.20, -0.20);
+        pon(plantaLeguminosa(),  rm,                     0.19);
+        pon(plantaLeguminosa(),  rm - (r1 - r0) * 0.10, -0.16);
+        pon(plantaRabano(),      rm - (r1 - r0) * 0.30,  0.10);
+        pon(plantaRabano(),      rm - (r1 - r0) * 0.32, -0.09);
+        /* cada bandeja necesita sus propios materiales: la marchitez se interpola,
+           no se cambia de golpe, y si compartieran material se marchitarían todas */
+        matVeg = [];
+        const copia = new Map();
+        plantas.traverse(h => {
+          if (!h.isMesh) return;
+          if (h.material === M.tuber || h.material === M.rabano) return;
+          let c = copia.get(h.material);
+          if (!c){
+            c = h.material.clone();
+            c.userData = { vivo: c.color.clone() };
+            copia.set(h.material, c); matVeg.push(c);
+          }
+          h.material = c;
+        });
       } else {
-        musgo = mataMusgo(); musgo.position.y = 0.126; g.add(musgo);
+        musgo = new T.Group(); musgo.position.y = Y_SUELO; g.add(musgo);
+        for (let k = 0; k < 5; k++){
+          const m = mataMusgo();
+          m.position.set(r0 + (r1 - r0) * (0.2 + k * 0.15), 0,
+                         (k % 2 ? 1 : -1) * (0.06 + k * 0.045));
+          musgo.add(m);
+        }
       }
-      bandejas.push({ g, sustrato, plantas, musgo });
+      bandejas.push({ g, sustrato, plantas, musgo, matVeg, rm });
     }
     return { grupo, bandejas };
   }
-  anilloIn  = anillo(N_IN,  R_IN,  GEO.bandejaIn,  false);
-  anilloOut = anillo(N_OUT, R_OUT, GEO.bandejaOut, true);
+  anilloIn  = anillo(N_IN,  R0_IN,  R1_IN,  false);
+  anilloOut = anillo(N_OUT, R0_OUT, R1_OUT, true);
 
-  /* ── la costra de musgo cubre el sustrato del anillo interior ── */
+  /* ── la costra de musgo cubre todo el sector del anillo interior ── */
   for (const b of anilloIn.bandejas){
-    const costra = malla(new T.BoxGeometry(LADO - 0.07, 0.012, LADO - 0.07), M.costra.clone(),
-      [0, 0.128, 0], b.g, false);
+    const costra = malla(GEO.costraIn, M.costra.clone(), [0, Y_SUELO - 0.004, 0], b.g, false);
     costra.receiveShadow = true;
     b.costra = costra;
   }
@@ -1339,15 +1775,25 @@ function construirHabitat(){
   }
   const enColector = (ang, y) => V(Math.cos(ang) * R_COL, y === undefined ? Y_COL : y, Math.sin(ang) * R_COL);
 
-  function conducto(color, puntos, radio, velocidad){
+  function conducto(color, puntos, radio, velocidad, ficha){
     const curva = new T.CatmullRomCurve3(puntos, false, "centripetal", 0.5);
-    const geo = new T.TubeGeometry(curva, Math.max(32, puntos.length * 16), radio || 0.019, 9, false);
+    const r = radio || 0.019;
+    const geo = new T.TubeGeometry(curva, Math.max(32, puntos.length * 16), r, 9, false);
     const tex = texturaFlujo(color);
     tex.repeat.set(Math.max(4, Math.round(curva.getLength() * 2.1)), 1);
     const mat = new T.MeshStandardMaterial({ map: tex, roughness: 0.36, metalness: 0.55 });
     const tubo = malla(geo, mat, null, null, false);
     tubo.castShadow = true;
-    flujos.push({ tex, v: velocidad === undefined ? 0.22 : velocidad, mat });
+    flujos.push({ tex, v: velocidad === undefined ? 0.22 : velocidad, mat, tubo, ficha });
+    if (ficha){
+      clicable(tubo, ficha);
+      /* un tubo de 2 cm es casi imposible de atinar con el dedo: se le añade un volumen
+         de selección más grueso, con el material apagado para que no se dibuje */
+      const zona = new T.Mesh(new T.TubeGeometry(curva, 28, r + 0.05, 6, false),
+        new T.MeshBasicMaterial({ visible: false }));
+      gHabitat.add(zona);
+      clicable(zona, ficha);
+    }
     return tubo;
   }
   function brida(p, r){ malla(new T.CylinderGeometry((r||0.03) + 0.016, (r||0.03) + 0.016, 0.03, 12), M.costilla, [p.x, p.y, p.z], null, false); }
@@ -1361,26 +1807,26 @@ function construirHabitat(){
     V(pS1[0], CUBIERTA + 0.62, pS1[2]), V(pS1[0], CUBIERTA + 1.20, pS1[2]),
     enColector(aS1), enColector(aS1 - 0.9), enColector(aS1 - 1.7),
     V(wA.x + 0.30, Y_COL - 0.14, wA.z), V(wA.x + 0.30, wA.y + 0.34, wA.z),
-    V(wA.x + 0.06, wA.y + 0.30, wA.z)], 0.020);
+    V(wA.x + 0.06, wA.y + 0.30, wA.z)], 0.020, 0.22, "f_salmuera");
 
   /* 2 · VERDE — frass del larvario: S3 → colector → cámara B (metanogénica) */
   conducto(C_ABONO, [
     V(pS3[0], CUBIERTA + 0.48, pS3[2]), V(pS3[0], CUBIERTA + 1.24, pS3[2]),
     enColector(aS3), enColector(aS3 + 0.8), enColector(aS3 + 1.6),
     V(wB.x - 0.44, Y_COL - 0.22, wB.z), V(wB.x - 0.44, wB.y + 0.36, wB.z),
-    V(wB.x - 0.28, wB.y + 0.30, wB.z)], 0.021);
+    V(wB.x - 0.28, wB.y + 0.30, wB.z)], 0.021, 0.22, "f_frass");
 
   /* 3 · VERDE — digestato al inóculo de S4 */
   conducto(C_ABONO, [
     V(wB.x + 0.28, wB.y + 0.30, wB.z), V(wB.x + 0.46, Y_COL - 0.20, wB.z),
     enColector(aS4 - 1.1), enColector(aS4),
-    V(pS4[0], CUBIERTA + 1.16, pS4[2]), V(pS4[0], CUBIERTA + 0.56, pS4[2])], 0.017);
+    V(pS4[0], CUBIERTA + 1.16, pS4[2]), V(pS4[0], CUBIERTA + 0.56, pS4[2])], 0.017, 0.22, "f_inoculo");
 
   /* 4 · VERDE — digestato al riego del anillo exterior, hasta la rampa de goteo */
   conducto(C_ABONO, [
     V(wB.x, wB.y + 0.34, wB.z + 0.30), V(wB.x, Y_COL - 0.10, wB.z + 0.36),
     enColector(2.6), V(Math.cos(2.6) * 1.35, Y_COL - 0.02, Math.sin(2.6) * 1.35),
-    V(pRiego[0] * 0.98, CUBIERTA + 1.02, pRiego[2] * 0.98)], 0.017);
+    V(pRiego[0] * 0.98, CUBIERTA + 1.02, pRiego[2] * 0.98)], 0.017, 0.22, "f_riego");
 
   /* 5 · ROJO — biogás de la cámara B al gasómetro y de ahí al colchón térmico */
   conducto(C_BIOGAS, [
@@ -1388,20 +1834,21 @@ function construirHabitat(){
     enColector(3.6), enColector(4.5),
     V(Math.cos(4.5) * 1.30, Y_COL - 0.08, Math.sin(4.5) * 1.30),
     V(Math.cos(4.5) * 1.90, CUBIERTA + 1.44, Math.sin(4.5) * 1.90),
-    V(Math.cos(4.5) * (R_CASCO - 0.22), CUBIERTA + 1.36, Math.sin(4.5) * (R_CASCO - 0.22))], 0.018);
+    V(Math.cos(4.5) * (R_CASCO - 0.22), CUBIERTA + 1.36, Math.sin(4.5) * (R_CASCO - 0.22))], 0.018, 0.22, "f_biogas");
 
   /* 6 · AMARILLO — la proteína cierra el anillo: larvario → comedero del aviario */
   conducto(C_PROTEINA, [
     V(pS3[0], CUBIERTA + 0.56, pS3[2]), V(pS3[0] * 1.06, CUBIERTA + 1.34, pS3[2] * 1.06),
     V((pS3[0] + pAv[0]) * 0.56, CUBIERTA + 1.52, (pS3[2] + pAv[2]) * 0.56),
     V(pAv[0] * 1.04, CUBIERTA + 1.20, pAv[2] * 1.04),
-    V(pAv[0], CUBIERTA + 0.80, pAv[2])], 0.016);
+    V(pAv[0], CUBIERTA + 0.80, pAv[2])], 0.016, 0.22, "f_proteina");
 
   /* 1 · CAFÉ — el estiércol no va por tubo: cae por gravedad. Tolva bajo la rejilla. */
   const tolva = malla(new T.CylinderGeometry(0.30, 0.20, 0.20, 20, 1, true),
     new T.MeshStandardMaterial({ color: 0x8C949B, roughness: 0.42, metalness: 0.7,
       side: T.DoubleSide }), [pAv[0], CUBIERTA + 0.44, pAv[2]], null, false);
   tolva.castShadow = true;
+  clicable(tolva, "f_estiercol");
 
   /* ── gasómetro de campana flotante: sube con el biogás producido y baja al consumirse ── */
   gasometro = new T.Group();
@@ -1548,7 +1995,8 @@ function abrirFicha(clave){
   fichaActual = clave;
   $("f-sub").textContent = f.sub;
   $("f-tit").innerHTML = f.tit;
-  $("f-txt").innerHTML = f.txt;
+  $("f-txt").innerHTML = "<p>" + f.txt.split("<br><br>").join("</p><p>") + "</p>";
+  $("f-viz").innerHTML = f.viz || "";
   $("f-dl").innerHTML = f.d.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
   $("f-fte").textContent = f.f;
   const acc = $("f-accion");
@@ -1734,14 +2182,16 @@ addEventListener("resize", medir);
    ═══════════════════════════════════════════════════════════════ */
 let refsHab, entornoMarte;
 function iniciar(){
-  const tex = texturaMarte(1024);
+  const tex = texturaMarte();
   texRego = texturaRegolito(512);
   texAve = texturaCodorniz();
   texCasco = texturaCasco();     texCasco.repeat.set(5, 1.6);
   texCubierta = texturaCubierta(); texCubierta.repeat.set(9, 9);
   texMusgo = texturaMusgo();     texMusgo.repeat.set(1.4, 1.4);
-  texHojaA = texturaHoja("#3E7A32", "rgba(206,232,178,.75)");
-  texHojaB = texturaHoja("#568E38", "rgba(216,238,190,.7)");
+  hojaCamote = texturaHoja({});
+  hojaLegum  = texturaHoja({});
+  hojaRabano = texturaHoja({});
+  texHuevo = texturaHuevo();
   texSolar = texturaSolar();     texSolar.repeat.set(4, 2);
   mats(); geometrias();
   for (const k in M) if (M[k].envMapIntensity !== undefined) M[k].envMapIntensity = 0.42;
@@ -1768,7 +2218,8 @@ function iniciar(){
 const tmp = new T.Vector3();
 const CIELO_MARTE  = { cenit: new T.Color(0x3A3348), horiz: new T.Color(0xC79468), suelo: new T.Color(0x3A1E14) };
 const CIELO_TORM   = { cenit: new T.Color(0x2A1B12), horiz: new T.Color(0x7A4A26), suelo: new T.Color(0x241009) };
-const cAux = new T.Color();
+const cAux = new T.Color(), cAuxB = new T.Color();
+const C_MARCHITO = new T.Color(0x8A7139);
 let anterior = performance.now();
 
 function bucle(ahora){
@@ -1802,21 +2253,22 @@ function bucle(ahora){
     anilloIn.grupo.rotation.y  =  avance / N_IN  * TAU;
     anilloOut.grupo.rotation.y = -avance / N_OUT * TAU;
 
-    /* anillo interior: estado del sustrato + telemetría */
+    /* anillo interior: el estado se INTERPOLA entre estación y estación — nada aparece
+       ni desaparece de golpe cuando el carrusel avanza un paso */
     for (let i = 0; i < N_IN; i++){
-      const p = (i + paso) % N_IN;
+      const pc = (i + avance) % N_IN;                 // posición continua sobre el anillo
+      const p0 = Math.floor(pc) % N_IN, p1 = (p0 + 1) % N_IN, ft = pc - Math.floor(pc);
+      const p = Math.round(pc) % N_IN;                // estación para el rótulo
       const b = anilloIn.bandejas[i];
-      b.sustrato.material.color.setHex(COL_IN[p]);
-      b.sustrato.scale.y = ALT_IN[p] / 0.075;
-      b.sustrato.position.y = 0.055 + ALT_IN[p] / 2;
+      cAux.setHex(COL_IN[p0]).lerp(cAuxB.setHex(COL_IN[p1]), ft);
+      b.sustrato.material.color.copy(cAux);
+      b.sustrato.scale.y = mezcla(ALT_IN[p0], ALT_IN[p1], ft) / 0.09;
       /* el musgo solo prospera de S5 en adelante: es el semáforo */
-      const verdor = p >= 4 && p <= 7 ? sat((p - 3.4) / 2.2) : 0;
-      b.musgo.visible = verdor > 0.02;
-      b.musgo.scale.setScalar(0.45 + verdor * 0.75);
-      b.costra.visible = verdor > 0.10;              // la costra sella la superficie
-      b.costra.scale.set(1, 1, 1);
+      const vd = q => q >= 4 && q <= 7 ? sat((q - 3.4) / 2.2) : 0;
+      const verdor = mezcla(vd(p0), vd(p1), ft);
+      for (const m of b.musgo.children) m.scale.setScalar(verdor * 1.25);  // a 0 desaparece sin salto
       b.costra.material.opacity = verdor;
-      b.costra.material.transparent = verdor < 0.99;
+      b.costra.material.transparent = true;
 
       const soles = p === 1 ? 0 : ((p - 2 + N_IN) % N_IN) * SOLES_PASO + f * SOLES_PASO;
       const fl = filas[i];
@@ -1832,32 +2284,37 @@ function bucle(ahora){
     /* anillo exterior: crecimiento por etapa y daño de tormenta */
     let perdidas = 0;
     for (let i = 0; i < N_OUT; i++){
-      const p = (i + paso) % N_OUT;
+      const pc = (i + avance) % N_OUT;
       const b = anilloOut.bandejas[i];
-      const k = p / (N_OUT - 1);
-      const enRiesgo = p >= 9;
-      const danada = enTormenta && enRiesgo;
+      const p = Math.round(pc) % N_OUT;
+      /* crecimiento continuo hasta la posición 10 y ventana de cosecha en las dos últimas:
+         la planta se recoge encogiendo, no desaparece de un fotograma al siguiente */
+      const ESC_MIN = 0.07, ESC_MAX = 2.05;
+      const esc = pc <= 10
+        ? ESC_MIN + (pc / 10) * (ESC_MAX - ESC_MIN)
+        : mezcla(ESC_MAX, ESC_MIN, suave(Math.min(1, (pc - 10) / 2)));
+      const danada = enTormenta && pc >= 8.6;
       if (danada) perdidas++;
-      const esc = 0.55 + k * 1.55;
-      b.plantas.scale.set(esc, danada ? esc * 0.6 : esc, esc);
-      if (b.danada !== danada){
-        b.danada = danada;
-        b.plantas.traverse(h => {
-          if (!h.isMesh) return;
-          if (h.userData.orig === undefined) h.userData.orig = h.material;
-          h.material = danada && h.userData.orig !== M.tuber && h.userData.orig !== M.rabano
-            ? M.marchito : h.userData.orig;
-        });
-      }
-      b.plantas.visible = p > 0;
-      b.sustrato.material.color.setHex(p === 0 ? 0x4E8A3C : 0x8A5334);
+      const caida = danada ? 0.62 : 1;
+      b.escY = mezcla(b.escY === undefined ? caida : b.escY, caida, 0.06);
+      /* cada planta se escala por separado: el grupo lleva sus posiciones dentro del sector */
+      for (const pl of b.plantas.children) pl.scale.set(esc, esc * b.escY, esc);
+      /* la marchitez se interpola en el color, no se cambia de material de golpe */
+      const marchito = danada ? 1 : 0;
+      b.marchitez = mezcla(b.marchitez === undefined ? marchito : b.marchitez, marchito, 0.05);
+      if (b.matVeg) for (const m of b.matVeg)
+        m.color.copy(m.userData.vivo).lerp(C_MARCHITO, b.marchitez);
+      /* distancia ENVUELTA a la posición 0: sin esto el color pega un tirón al pasar de 11 a 0 */
+      const d0 = Math.min(pc, N_OUT - pc);
+      cAux.setHex(0x8A5334).lerp(cAuxB.setHex(0x4E8A3C), sat(1 - d0 / 1.2));
+      b.sustrato.material.color.copy(cAux);
     }
     S.perdidas = perdidas;
 
     /* flujo dentro de la tubería: el galón corre en el sentido del recurso.
        En tormenta el biogás corre más rápido — es el que sostiene el colchón térmico. */
     flujos.forEach((fl, k) => {
-      const v = (k === 4 && enTormenta) ? fl.v * 2.4 : fl.v;
+      const v = (fl.ficha === "f_biogas" && enTormenta) ? fl.v * 2.4 : fl.v;
       fl.tex.offset.x -= dt * v;
     });
 
@@ -1867,8 +2324,11 @@ function bucle(ahora){
     gasometro.position.y = gasometro.userData.y0 + S.gas * 0.26;
 
     /* huevo recogido: la bandeja se llena a lo largo del sol y se vacía al recogerse */
-    const nHuevos = Math.floor((S.sol % 1) * 12.99);
-    bandejaHuevos.userData.huevos.forEach((h, i) => { h.visible = i < nHuevos; });
+    const nHuevos = (S.sol % 1) * 12.6;
+    bandejaHuevos.userData.huevos.forEach((h, i) => {
+      const e = sat(nHuevos - i);                     // cada huevo entra creciendo
+      h.scale.set(e, e * 0.8, e * 0.8);
+    });
 
     /* las larvas se mueven en el lecho de frass */
     bandejaLarvas.forEach((l, i) => {
@@ -1905,6 +2365,7 @@ function bucle(ahora){
     cieloUnif.mezclaEspacio.value += (0 - cieloUnif.mezclaEspacio.value) * 0.07;
     sol.intensity += ((enTormenta ? 0.32 : 2.3) - sol.intensity) * 0.05;
     hemi.intensity += ((enTormenta ? 0.38 : 0.72) - hemi.intensity) * 0.05;
+    dispersion.intensity += (0 - dispersion.intensity) * 0.08;
     estrellas.material.uniforms.op.value += (0 - estrellas.material.uniforms.op.value) * 0.08;
 
     /* riel */
@@ -1920,8 +2381,11 @@ function bucle(ahora){
     nubePolvo.rotation.y += dt * 0.034;
     cieloUnif.mezclaEspacio.value += (1 - cieloUnif.mezclaEspacio.value) * 0.07;
     estrellas.material.uniforms.op.value += (0.95 - estrellas.material.uniforms.op.value) * 0.05;
-    sol.intensity += (2.9 - sol.intensity) * 0.05;
-    hemi.intensity += (0.10 - hemi.intensity) * 0.05;
+    sol.intensity += (2.6 - sol.intensity) * 0.05;
+    hemi.intensity += (0.09 - hemi.intensity) * 0.05;
+    /* la dispersión sigue al Sol por el lado opuesto: suaviza el terminador sin aplanarlo */
+    dispersion.position.copy(sol.position).multiplyScalar(-1);
+    dispersion.intensity += (0.16 - dispersion.intensity) * 0.05;
     marcas.forEach(m => {
       const pulso = 1 + Math.sin(t * 2.4 + m.p.x) * 0.14;
       m.anillo.scale.setScalar(pulso);

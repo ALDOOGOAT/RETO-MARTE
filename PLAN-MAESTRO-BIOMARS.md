@@ -332,23 +332,32 @@ Narrativa y plataforma → María Fernanda · Coordinación y cierre → Aldo.
 
 **Dimensiones de referencia:** anillo interior 8 bandejas × 0.5 m² = 4 m²; anillo exterior
 12 × 0.5 m² = 6 m². Total ≈ **10 m² de superficie de bandeja**, en un cilindro de
-**Ø 4.76 m × 2.2 m de alto**, con el aviario como cúpula sobre S2 y el biodigestor en el núcleo.
+**Ø 4.56 m × 2.2 m de alto**, con el aviario como cúpula sobre S2 y el biodigestor en el núcleo.
 
-> ⚠️ **Corrección de una cifra propia (nos la va a encontrar un jurado técnico).** Versiones
-> anteriores de este documento decían «Ø ~3.5 m». **No cierra:** un círculo de 3.5 m de diámetro
-> tiene 9.6 m² de piso *total*, así que 10 m² de bandeja no caben en un solo plano — y menos
-> dejando pasillo. La geometría se verificó al construir el modelo 3D:
+> **Las bandejas son sectores anulares, no cajas cuadradas.** En un carrusel de anillos
+> concéntricos es la única forma que **tesela el anillo sin dejar huecos**: no hay esquinas que
+> sobresalgan, no hay triángulos muertos entre bandeja y bandeja, y la geometría garantiza por
+> construcción que ninguna choque al girar. La guía de la maqueta física (§10) ya decía
+> «8 sectores» y «12 sectores» — el sector es la forma correcta y la que hay que enseñar.
 >
 > | Comprobación | Valor |
 > |---|---|
-> | Bandeja cuadrada de 0.70 m de lado | 0.49 m² × 20 = **9.8 m²** |
-> | Anillo interior, R = 0.96 m | perímetro 6.03 m; 8 bandejas ocupan 5.60 m ✓ |
-> | Anillo exterior, R = 1.80 m | perímetro 11.31 m; 12 bandejas ocupan 8.40 m ✓ |
-> | Esquina exterior de bandeja | 2.18 m del eje |
-> | **Casco mínimo** | **Ø 4.76 m** (con 0.20 m de holgura al casco) |
+> | Anillo interior · 8 sectores de 42.3° | r 0.52 → 1.278 m · **0.50 m² cada uno** |
+> | Anillo exterior · 12 sectores de 28.2° | r 1.34 → 1.979 m · **0.52 m² cada uno** |
+> | Total de bandeja | **10.3 m²** |
+> | Hueco central libre | r = 0.52 m — ahí va el biodigestor |
+> | **Casco** | **Ø 4.56 m** · el piso son 16.3 m², la bandeja ocupa el 63 % |
 >
-> Decirlo así **suma** en el criterio de validez: la cifra sale de una comprobación, no de una
-> estimación. Si alguien pregunta por qué cambió, la respuesta es que se midió.
+> **Corrección de dos cifras propias.** (1) El documento decía «Ø ~3.5 m»: **no cierra**, porque
+> un círculo de 3.5 m tiene 9.6 m² de piso *total*. Con bandejas cuadradas hacían falta Ø 4.76 m;
+> con sectores bastan **Ø 4.56 m**, porque la esquina de una bandeja cuadrada era justo lo que
+> obligaba a agrandar el casco. (2) Los **20 kg de regolito por bandeja** no son la bandeja
+> entera: a 1 500 kg/m³ eso es una **capa de 2.5 cm** — que es exactamente la que se lava en cada
+> ciclo. La cubeta es de **22 cm**, la profundidad que pide el camote, así que contiene ~165 kg.
+> **En total el sistema mueve ~3.3 t de regolito, todo obtenido in situ: cero masa de lanzamiento.**
+>
+> Decirlo así **suma** en el criterio de validez: las cifras salen de una comprobación, no de una
+> estimación. Si alguien pregunta por qué cambiaron, la respuesta es que se midieron.
 
 ### 4.2 PARTE 1 — El suelo lo regeneran los animales, en rotación
 

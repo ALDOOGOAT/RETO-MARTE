@@ -34,6 +34,15 @@ en PDF y documentos de contexto/investigación.
     No añadir etiquetas HTML flotantes en la vista de hábitat.
   · **Los flujos son tubería montada en estructura** (colector en anillo + montantes + bajantes), y
     el sentido se ve por el testigo que corre dentro del tubo — no por partículas en el aire.
+    **Cada tubo es clicable** y abre su ficha (qué lleva, de dónde a dónde, cifras): las siete
+    fichas `f_*` de `FICHAS`. El tubo real mide 2 cm, así que lleva un volumen de selección
+    invisible más grueso; si se añade un conducto nuevo, pasarle su clave de ficha.
+  · **Las fichas llevan diagrama** (`viz`, construido con los helpers de `VIZ`): barra de
+    proporción, cadena de pasos o rejilla de bandejas. Al añadir una ficha nueva, darle su `viz`.
+  · **Las hojas usan textura en escala de gris y el color va en el material.** Es lo que permite
+    marchitar interpolando de verde a pajizo: multiplicar una textura verde por un tinte marrón
+    da casi negro. Y `geoHoja()` **normaliza las UV** — `ShapeGeometry` las escribe con las
+    coordenadas crudas del contorno y sin normalizar la hoja sale negra.
   Poses de captura y parámetros de URL (`ui`, `piso`, `casco`, `sol`, `theta`, `phi`, `dist`,
   `storm`, `play`, `vista`): ver **`deck/LEEME.md`**.
   Publicado en https://claude.ai/code/artifact/74ae65a1-055b-4443-869e-178c3a40d7e7
@@ -66,6 +75,10 @@ en PDF y documentos de contexto/investigación.
 - **Convención visual:** piezas de pantalla (simulador, atlas, deck) en oscuro; kit de campo
   impreso en claro. Deck y atlas: Bodoni Moda + Archivo + IBM Plex Mono. **El simulador usa
   Archivo variable (eje de ancho) + IBM Plex Mono, sin serif** — es una interfaz, no una revista.
-- **El diámetro del módulo es Ø 4.76 m, no 3.5 m.** Las 20 bandejas de 0.5 m² no caben en Ø 3.5 m
-  (ese círculo tiene 9.6 m² de piso *total*). La comprobación está en §4.1 del plan maestro y la
-  geometría verificada vive en el simulador. No revertir la cifra.
+- **Las bandejas son SECTORES ANULARES, no cuadradas, y el módulo mide Ø 4.56 m.** El sector es
+  la única forma que tesela un anillo sin huecos ni esquinas que sobresalgan; la guía de la maqueta
+  física (§10) ya decía «8 sectores / 12 sectores». Con cuadradas hacían falta Ø 4.76 m; el
+  documento original decía Ø 3.5 m, que no cierra (ese círculo tiene 9.6 m² de piso *total*).
+  Comprobación completa en §4.1 del plan maestro. No revertir la cifra ni volver a cajas.
+- **Los 20 kg de regolito por bandeja son la capa lavada de 2.5 cm, no la cubeta.** La cubeta
+  tiene 22 cm (lo que pide el camote) ≈ 165 kg; el sistema mueve ~3.3 t de regolito in situ.
