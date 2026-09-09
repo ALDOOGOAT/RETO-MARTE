@@ -1,3 +1,16 @@
+> ⚠️ **VERSIÓN SUPERADA — no usar como documento oficial ante el jurado.**
+> Este texto es la propuesta **anterior al análisis de las bases del Reto Unificado UNACH**.
+> No cumple tres exigencias literales del reto: no incluye **animales movidos de forma rotativa**
+> (Parte 1), propone **MFC en lugar de biogás** (Parte 2), y no tiene **rotación ni descanso del
+> sustrato**. Su contenido válido —el cóctel microbiano y la Tríada Marciana— ya está integrado
+> en el diseño final.
+>
+> **Documento oficial vigente:** 📕 [`PLAN-MAESTRO-BIOMARS.pdf`](PLAN-MAESTRO-BIOMARS.pdf)
+> · Diseño técnico: [`SISTEMA-MILPA-360.md`](SISTEMA-MILPA-360.md)
+> · Se conserva como registro del proceso para el Documento Concepto.
+
+---
+
 # Propuesta de Sistema Biológico para la Recuperación del Suelo Marciano
 *(Documento Técnico Oficial del Equipo BioMars Chiapas)*
 

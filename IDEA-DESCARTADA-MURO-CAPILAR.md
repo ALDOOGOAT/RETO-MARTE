@@ -1,4 +1,26 @@
-# Propuesta Innovadora: Sistema M.I.L.P.A.
+# ❌ IDEA DESCARTADA — "Muro Vivo Capilar" (M.I.L.P.A. v1)
+
+> **Estado: DESCARTADA en Fase 3.** Se conserva sin editar porque la Guía del Participante pide
+> explícitamente registrar *"ideas que descartaron y por qué"* en el **Documento Concepto**
+> (cuenta para el criterio 4 · Culminación y el criterio 5 · Aprendizaje).
+>
+> **Por qué se descartó — no cumple el Reto Unificado UNACH:**
+> 1. **No tiene animales.** La Parte 1 exige animales que recuperen el suelo, movidos de forma
+>    rotativa. El muro solo tiene cianobacterias y plantas.
+> 2. **No produce biogás.** La Parte 2 exige convertir el 100% del residuo en **energía (biogás)**
+>    y abono. El muro usa MFC, que el propio equipo reconoció como fuente de energía marginal.
+> 3. **No hay rotación ni descanso del sustrato.** Es un sistema estático.
+> 4. **Sobrevende sin respaldo:** "escudo activo contra radiación cósmica" y "cero mantenimiento"
+>    son afirmaciones que un jurado técnico desarma en la ronda de preguntas.
+>
+> **Qué sobrevivió de esta idea y pasó al diseño final:** el nombre *MILPA* (la milpa
+> mesoamericana como policultivo estratificado), el marco de "no una máquina sino un órgano vivo",
+> y el análisis de estado del arte de la §1, que se reutiliza íntegro.
+>
+> **Propuesta vigente:** [`SISTEMA-MILPA-360.md`](SISTEMA-MILPA-360.md) ·
+> **Plan maestro:** [`PLAN-MAESTRO-BIOMARS.md`](PLAN-MAESTRO-BIOMARS.md)
+
+---
 
 > **Objetivo:** Superar los límites actuales de la tecnología espacial y rural, presentando una solución **nunca antes vista** para asegurar la victoria en el Reto Marte UNACH 2026.
 

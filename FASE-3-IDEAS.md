@@ -1,28 +1,87 @@
 # FASE 3: Diálogo de Ideas y Selección del Enfoque
 
-## ⚠️ Aclaración Crítica sobre el Reto
-El **Reto Unificado** dicta que **NO** se puede elegir solo una parte (ej. solo el suelo). Las bases oficiales dicen textualmente: *"Las tres partes deben estar conectadas — no puedes resolver solo una"*. La excelente noticia es que **las ideas que propusieron ya resuelven las tres partes de forma magistral y encadenada**.
+> **Versión actualizada** tras el análisis completo de las bases oficiales.
+> Idea ganadora desarrollada en [`SISTEMA-MILPA-360.md`](SISTEMA-MILPA-360.md) ·
+> Plan completo en [`PLAN-MAESTRO-BIOMARS.md`](PLAN-MAESTRO-BIOMARS.md)
+
+## ⚠️ Aclaración crítica sobre el reto
+
+El **Reto Unificado** de UNACH sustituye a los 7 desafíos del reto general. **NO** se puede
+resolver una sola parte. Textualmente: *"Las tres partes están conectadas como una cadena:
+la Parte 1 alimenta a la Parte 2, y la Parte 2 alimenta a la Parte 3. No se aceptan proyectos
+que resuelvan solo una parte sin conectarla con las otras dos."*
+
+Y dos exigencias literales que condicionan todo el diseño:
+
+- Parte 1: animales *"en un espacio pequeño y controlado"*, **movidos de forma rotativa**
+  *"para que su estiércol fertilice sin agotar el terreno"*.
+- Parte 2: un mecanismo que tome el **100%** de esos residuos y produzca **energía (biogás)**
+  y abono.
 
 ---
 
-## 🧠 Lluvia de Ideas Generadas (Para copiar y pegar en plataforma)
+## 🧠 Lluvia de ideas (registro completo del proceso)
 
-A continuación se presentan las ideas estructuradas por cada fase del reto, listas para que el *Especialista en Comunicaciones* las suba a la plataforma.
+### 💡 Parte 1 · Recuperar el suelo con animales
 
-### 💡 Ideas para la Parte 1: Recuperar el suelo (Animales)
-*   **Idea 1:** Llevar animales de granja (gallinas, patos, cerdos) para que escarben, limpien y abonen la zona de cultivo de forma natural. Aprovechar el 100% del animal tras su muerte: usar plumas/pelos mezclados con estiércol para crear canales de aire en el polvo marciano (regolito), usar la sangre para regar la siembra y triturar los huesos para crear "harina de huesos" (aporta fósforo y calcio para fortalecer raíces).
-*   **Idea 2 (Ganadora por eficiencia espacial):** Usar la **Mosca Soldado-Negra (Hermetia illucens)**. Cientos de miles caben en bandejas pequeñas. Sus larvas descomponen los residuos de la tripulación y restos de plantas a una velocidad increíble, produciendo "frass" (excremento de alta calidad) como abono.
-*   **Idea 3:** Inocular el suelo marciano con la bacteria ***Bacillus subtilis***. Esta bacteria ayudará a degradar los compuestos complejos de las heces de las moscas y tiene el potencial de neutralizar las sales tóxicas (percloratos) que existen de forma natural en Marte.
+- **Idea 1 — Granja tradicional.** Gallinas, patos o cerdos que escarben y abonen; aprovechar el
+  100% del animal tras su muerte (plumas y pelo para airear el regolito, harina de hueso para
+  fósforo y calcio). *Descartada por volumen, ración y masa de lanzamiento.*
+- **Idea 2 — Mosca soldado negra (*Hermetia illucens*).** Cientos de miles caben en bandejas
+  pequeñas; sus larvas descomponen residuos a gran velocidad y producen frass. *Conservada,
+  pero **no como el animal de la Parte 1** — una larva no se pastorea ni se rota.*
+- **Idea 3 — *Bacillus subtilis*** para degradar compuestos complejos y tolerar sales.
+  *Conservada, dentro del cóctel microbiano.*
+- **Idea 4 ⭐ GANADORA — Codorniz japonesa (*Coturnix japonica*) + carrusel rotativo.**
+  El vertebrado más pequeño con retorno útil: primer huevo a los **40 días**, ~23 g de ración/día,
+  postura ~68%. Y la solución al verbo del reto: **como en un hábitat no hay a dónde mover al
+  animal, se fija el animal y se rota el suelo** — un carrusel de 8 bandejas que garantiza
+  56 soles de descanso entre deposiciones.
+- **Idea 5 — Tándem codorniz ↔ larva.** La codorniz produce el estiércol que come la larva;
+  la larva se convierte en la proteína que come la codorniz. *Conservada: es el bucle central.*
 
-### 💡 Ideas para la Parte 2: Convertir residuos a energía
-*   **Idea 4:** Implementar una **Celda de Combustible Microbiano (MFC)**. Utilizar los lixiviados (líquidos) que sobren del proceso de las moscas y de la tripulación. Los microorganismos dentro de la celda oxidan la materia orgánica, generando una corriente eléctrica (energía) y dejando agua rica en nutrientes como subproducto (abono líquido seguro).
-Implementar una **Celda de Combustible Microbiano (MFC)**. Utilizar los lixiviados (líquidos) que sobren del proceso de las moscas y de la tripulación. Los microorganismos dentro de la celda oxidan la materia orgánica, generando una corriente eléctrica (energía) y dejando agua rica en nutrientes como subproducto (abono líquido seguro).
-### 💡 Ideas para la Parte 3: Cultivo Inteligente y Resistente
-*   **Idea 5:** Usar **Syntrichia caninervis**, un musgo extremófilo del desierto, como "cultivo pionero". Antes de sembrar comida, se planta este musgo sobre el regolito marciano desintoxicado. Actúa como una capa biológica intermedia que estabiliza el suelo, retiene la humedad y resiste la radiación marciana, preparando la cama para los cultivos comestibles.
+### 💡 Parte 2 · Convertir el 100% del residuo en energía y abono
+
+- **Idea 6 — Celda de Combustible Microbiano (MFC) como fuente de energía.** *Descartada como
+  generador:* produce microvatios y el reto pide biogás. **Reutilizada como biosensor
+  autoalimentado** (detecta toxicidad y carga orgánica sin consumir energía).
+- **Idea 7 ⭐ — Biodigestor anaerobio de dos cámaras.** Produce el biogás que pide el reto y el
+  digestato como abono líquido.
+- **Idea 8 ⭐ APORTACIÓN ORIGINAL — El biodigestor como reactor de percloratos.** No se
+  biorremedia el regolito sólido (inviable: 100–200 g de perclorato por bandeja de 20 kg).
+  Se **lava** el regolito y la salmuera entra a la cámara anóxica: las bacterias reductoras de
+  perclorato necesitan exactamente cero oxígeno y un donador de electrones orgánico, y el
+  digestor ya es las dos cosas. `ClO₄⁻ → Cl⁻ + O₂`.
+
+### 💡 Parte 3 · Cultivo inteligente y resistente
+
+- **Idea 9 — *Syntrichia caninervis*** como planta pionera y **semáforo biológico**: si el musgo
+  verdea, la bandeja es apta para siembra. *Conservada.*
+- **Idea 10 — "Tríada Marciana": camote + leguminosa + rábano.** La milpa mesoamericana leída
+  por estratificación radicular. *Conservada íntegra.*
+- **Idea 11 — Cóctel biológico de siembra:** *Rhizobium*, micorrizas, *Trichoderma harzianum*,
+  *Pseudomonas fluorescens*, *Bacillus amyloliquefaciens*, *B. subtilis*. *Conservada íntegra.*
+- **Idea 12 ⭐ — Resiliencia por desfase.** 12 bandejas en 12 etapas distintas: una tormenta de
+  polvo daña las expuestas, no la cosecha. Redundancia que no pesa.
+
+### 🗑 Idea descartada mayor
+**"Muro Vivo Capilar"** — ver [`IDEA-DESCARTADA-MURO-CAPILAR.md`](IDEA-DESCARTADA-MURO-CAPILAR.md)
+y las cuatro razones del descarte.
 
 ---
 
-## 🎯 LA IDEA GANADORA (El Enfoque Final)
-*Para la casilla final de la plataforma "Describan la idea ganadora que quieren desarrollar":*
+## 🎯 LA IDEA GANADORA
 
-**"Un ecosistema cerrado donde larvas de Mosca Soldado-Negra (Hermetia illucens) y bacterias (Bacillus subtilis) desintoxican y abonan el suelo marciano; sus residuos líquidos alimentan una Celda de Combustible Microbiano que genera electricidad y biofertilizante, los cuales se utilizan para cultivar musgo extremófilo (Syntrichia caninervis) que acondiciona el terreno para la siembra segura de alimentos."**
+*Para la casilla "Describan la idea ganadora que quieren desarrollar":*
+
+> **MILPA-360.** Un carrusel de bandejas de regolito que gira bajo estaciones biológicas fijas:
+> las codornices depositan estiércol sobre cada bandeja en turno y no vuelven a hacerlo en
+> 56 soles —ese es el descanso—; larvas de mosca soldado negra convierten ese estiércol en abono
+> y en la proteína que regresa al comedero de las codornices; el resto va a un biodigestor de dos
+> cámaras que produce biogás y abono líquido, y que en su cámara anóxica destruye los percloratos
+> del agua de lavado del regolito; esa energía y ese abono sostienen un policultivo escalonado
+> —camote, leguminosa y rábano— protegido por un musgo extremófilo que además funciona como
+> indicador visual de seguridad del sustrato.
+
+**En una oración, para que todo el equipo la diga igual:**
+> *"En Marte no puedes mover el rebaño, así que mueves el suelo."*

@@ -15,6 +15,23 @@ El diseño **DEBE** resolver estas 3 partes en cadena (si una falla, todo falla)
 
 ---
 
+## 📌 Documento maestro — EMPIEZA AQUÍ
+
+### 📕 **[`PLAN-MAESTRO-BIOMARS.pdf`](PLAN-MAESTRO-BIOMARS.pdf)** — 23 páginas, todo en uno
+Reto exacto · requerimientos (checklist R1–R17 + NASA-STD-3001 ECLSS) · equipo y roles ·
+sistema MILPA-360 completo · 17 datos duros con fuente · 5 Por Qué · cadena de falla ·
+Canvas · retorno a Chiapas con ODS · guía de prototipo · guion de 5 min · 4 preguntas de
+Fase 10 · limitaciones · checklist de entregables y agenda Día 2.
+*(fuente editable: [`PLAN-MAESTRO-BIOMARS.md`](PLAN-MAESTRO-BIOMARS.md))*
+
+**Apoyo:**
+- [`SISTEMA-MILPA-360.md`](SISTEMA-MILPA-360.md) / `.pdf` — versión extendida del diseño técnico
+- [`FASE-3-IDEAS.md`](FASE-3-IDEAS.md) / `.pdf` — lluvia de ideas y idea ganadora (para plataforma)
+- [`IDEAS-ORIGINALES-EQUIPO.md`](IDEAS-ORIGINALES-EQUIPO.md) — aportación original del equipo (documento fuente)
+- [`IDEA-DESCARTADA-MURO-CAPILAR.md`](IDEA-DESCARTADA-MURO-CAPILAR.md) — idea descartada y por qué (para el Documento Concepto)
+
+---
+
 ## 👥 Roles del Equipo (6 integrantes)
 *Nota: Las reglas oficiales sugieren equipos de máximo 5, pero como somos 6, dividiremos la carga de trabajo estratégicamente.*
 
