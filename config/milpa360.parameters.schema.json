@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "milpa360.parameters.schema.json",
+  "title": "Parámetros MILPA-360",
+  "type": "object",
+  "required": ["meta", "parametros"],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version", "fecha", "convencion_escenarios"],
+      "properties": {
+        "version": {"type": "string"},
+        "fecha": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "convencion_escenarios": {"type": "string"}
+      }
+    },
+    "parametros": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "minProperties": 1,
+        "additionalProperties": {"$ref": "#/$defs/parametro"}
+      }
+    }
+  },
+  "$defs": {
+    "numero_o_nulo": {"type": ["number", "null"]},
+    "parametro": {
+      "type": "object",
+      "required": ["valor", "unidad", "evidencia", "fuente"],
+      "additionalProperties": false,
+      "properties": {
+        "valor": {"type": ["number", "boolean", "object", "null"]},
+        "unidad": {"type": "string", "minLength": 1},
+        "evidencia": {
+          "enum": ["requisito", "dato_publicado", "dato_publicado_indirecto", "constante",
+                   "geometria_digital", "decision_equipo", "supuesto", "pendiente", "medido"]
+        },
+        "fuente": {"type": "string", "minLength": 3},
+        "escenarios": {
+          "type": "object",
+          "required": ["conservador", "nominal", "favorable"],
+          "additionalProperties": false,
+          "properties": {
+            "conservador": {"$ref": "#/$defs/numero_o_nulo"},
+            "nominal": {"$ref": "#/$defs/numero_o_nulo"},
+            "favorable": {"$ref": "#/$defs/numero_o_nulo"}
+          }
+        },
+        "rango": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+        "nota": {"type": "string"}
+      },
+      "allOf": [
+        {"if": {"properties": {"evidencia": {"const": "pendiente"}}},
+         "then": {"properties": {"valor": {"type": "null"}}}},
+        {"if": {"properties": {"valor": {"type": "null"}}},
+         "then": {"properties": {"evidencia": {"const": "pendiente"}}}}
+      ]
+    }
+  }
+}
