@@ -242,7 +242,7 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
 
 <div id="transporte" class="panel oculto">
   <div class="tr-bloque">
-    <div id="reloj"><span class="n" id="sol-n">0</span><span class="u">SOL / 730</span></div>
+    <div id="reloj"><span class="n" id="sol-n">0</span><span class="u">SOL / <span id="sol-tot">—</span></span></div>
     <div id="progreso"><i id="prog-i" style="width:0%"></i></div>
   </div>
   <div class="tr-bloque">
@@ -278,6 +278,13 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
 </div>
 
 <script>
+/* GEOMETRÍA GENERADA por analysis/milpa360_p2.py desde config/milpa360.parameters.json.
+   No editar entre los marcadores: se sobrescribe. Ese script es la única fuente de
+   radios, áreas, masas y del reloj de misión; aquí no se escribe ninguna cifra a mano. */
+/*←P2:GEOM*/
+const GEOM = {"casco":{"radio":2.28,"diametro":4.56,"altura":2.2,"cubierta":0.62},"anillo":{"r0":1.58,"r1":2.18,"n":20,"holgura_angular":0.94,"paso_grados":18.0,"sector_grados":16.92,"soles_por_paso":8},"cartucho":{"area":0.33311,"profundidad_sustrato":0.22,"cuerda_exterior":0.6414,"ancho_radial":0.6},"areas":{"cultivo":3.9973,"regeneracion":2.6649,"total":6.6622},"pasillo":{"ancho":0.9,"r_equipos_max":0.68},"mision":{"soles_horizonte":525},"ciclo":{"n_regeneracion":8,"n_cultivo":12}};
+/*P2:GEOM→*/
+
 (() => {
 "use strict";
 const T = THREE, TAU = Math.PI * 2, RAD = Math.PI / 180;
@@ -964,13 +971,13 @@ const FICHAS = {
     d:[["Longitud","~4 000 km"],["Temperatura media","~ −63 °C"],["Extremos","−140 a +20 °C"]], f:FUENTE_M },
 
   sitio: { sub:"SITIO DEL HÁBITAT", tit:"Aquí se posa MILPA-360",
-    txt:"Un módulo presurizado de <b>4.76 m de diámetro por 2.2 m de alto</b>, con unos <b>10 m² de bandeja</b> adentro, para seis personas durante <b>730 soles sin una sola nave de reabastecimiento</b>.<br><br>Toca «HÁBITAT» arriba, o este punto, para entrar.",
-    d:[["Diámetro","4.76 m"],["Altura","2.2 m"],["Bandejas","8 interiores + 12 exteriores"],["Superficie de cultivo","≈10 m²"],["Tripulación","6 personas · 730 soles"]], f:"PLAN-MAESTRO-BIOMARS.md §4.1", accion:"habitat" },
+    txt:`Un módulo presurizado de <b>${(GEOM.casco.radio*2).toFixed(2)} m de diámetro por ${GEOM.casco.altura} m de alto</b>, con <b>${GEOM.areas.total.toFixed(2)} m² de cartucho</b> adentro, para seis personas durante <b>${GEOM.mision.soles_horizonte} soles sin una sola nave de reabastecimiento</b>.<br><br>Toca «HÁBITAT» arriba, o este punto, para entrar.`,
+    d:[["Diámetro",(GEOM.casco.radio*2).toFixed(2)+" m"],["Altura",GEOM.casco.altura+" m"],["Cartuchos",GEOM.anillo.n+" idénticos · "+GEOM.ciclo.n_regeneracion+" regeneración + "+GEOM.ciclo.n_cultivo+" cultivo"],["Superficie de cultivo",GEOM.areas.cultivo.toFixed(2)+" m²"],["Tripulación","6 personas · "+GEOM.mision.soles_horizonte+" soles"]], f:"docs/madrid/P2-GEOMETRIA.md", accion:"habitat" },
 
   /* ── hábitat · equipo ── */
   aviario: { sub:"ESTACIÓN S2 · PARTE 1 DEL RETO", tit:"Aviario de codornices",
-    txt:"<b>24 codornices japonesas</b> viven aquí arriba, en una cámara con presión más baja que el resto del módulo para que nada salga de ella. El piso es una rejilla: el estiércol cae directo sobre la bandeja que está pasando debajo.<br><br>Mucho estiércol, poco tiempo, y luego 56 soles de descanso. Es el pastoreo rotacional de Chiapas hecho en miniatura — sin pastor y sin cerca eléctrica.<br><br>Y hay un extra: su canto es uno de los pocos sonidos vivos a 22 minutos-luz de casa. La NASA lo cuenta como mitigante del riesgo de salud mental.",
-    viz: VIZ.barra("CICLO DE LA CODORNIZ EN 730 SOLES", [[5.5, "#E9AE52"], [94.5, "#7FBB72"]], "primer huevo · 40 días", "resto: postura ~68 %"),
+    txt:"<b>24 codornices japonesas</b> viven aquí arriba, en una cámara con presión más baja que el resto del módulo para que nada salga de ella. El piso es una rejilla: el estiércol cae directo sobre la bandeja que está pasando debajo.<br><br>Mucho estiércol, poco tiempo, y luego ${(GEOM.anillo.n-1)*GEOM.anillo.soles_por_paso} soles de descanso. Es el pastoreo rotacional de Chiapas hecho en miniatura — sin pastor y sin cerca eléctrica.<br><br>Y hay un extra: su canto es uno de los pocos sonidos vivos a 22 minutos-luz de casa. La NASA lo cuenta como mitigante del riesgo de salud mental.",
+    viz: VIZ.barra("CICLO DE LA CODORNIZ EN " + GEOM.mision.soles_horizonte + " SOLES", [[5.5, "#E9AE52"], [94.5, "#7FBB72"]], "primer huevo · 40 días", "resto: postura ~68 %"),
     d:[["Primer huevo","a los 40 días"],["Comida","23 g por ave y día"],["Ponen","~68 % de los días"],["Huevos en la misión","≈11 900"],["Filtro de aire","HEPA 99.97 % @0.3 µm"],["Ruido en zona de sueño","NC-40 [V2]"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2 · NASA-STD-3001 Vol. 2 Rev. E" },
 
   larvario: { sub:"ESTACIÓN S3 · AQUÍ SE CIERRA EL BUCLE", tit:"Larvario de mosca soldado",
@@ -1122,41 +1129,55 @@ function construirPlaneta(tex){
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   HÁBITAT — módulo presurizado Ø3.5 × 2.2 m sobre terreno marciano
+   HÁBITAT — arquitectura B: UN anillo de 20 cartuchos idénticos
+   bajo estaciones fijas, con pasillo central de acceso.
    ═══════════════════════════════════════════════════════════════ */
-const N_IN = 8, N_OUT = 12, SOLES_PASO = 8;
-/* Las bandejas son SECTORES ANULARES, no cajas: en un carrusel de anillos concéntricos es la
-   única forma que tesela sin dejar huecos, y sin esquinas que sobresalgan el casco encoge.
-   Radios elegidos para que cada sector dé 0.5 m²  →  20 × 0.5 ≈ 10 m² (ver §4.1).            */
-const HOLGURA = 0.94;                          // el sector útil ocupa el 94 % del paso angular
-const R0_IN = 0.52, R1_IN = 1.278;             // anillo interior · 8 sectores de 42.3°
-const R0_OUT = 1.34, R1_OUT = 1.979;           // anillo exterior · 12 sectores de 28.2°
-const R_IN = (R0_IN + R1_IN) / 2;              // radio medio, donde van los equipos de estación
-const R_OUT = (R0_OUT + R1_OUT) / 2;
-const HONDO = 0.22;                            // 22 cm de sustrato: la profundidad que pide el camote
-const CUBIERTA = 0.62;
-const R_CASCO = 2.28, H_CASCO = 2.2;           // Ø4.56 m — con sectores no hay esquinas que sobresalgan
+/* GEOMETRÍA GENERADA por analysis/milpa360_p2.py desde config/milpa360.parameters.json.
+   No editar entre los marcadores: se sobrescribe. Ese script es la única fuente de radios,
+   áreas, masas y del reloj de misión; aquí no se escribe ninguna cifra a mano.              */
+
+/* Los cartuchos son SECTORES ANULARES, no cajas: es la única forma que tesela un anillo sin
+   huecos ni esquinas que sobresalgan. Los 20 son idénticos, y ESO es lo que resuelve el
+   trasvase: un lote no se palea de un anillo a otro, avanza de posición siendo el mismo.    */
+const N_POS = GEOM.anillo.n;                   // 20 posiciones: 8 de regeneración + 12 de cultivo
+const N_REG = GEOM.ciclo.n_regeneracion;
+const N_CUL = GEOM.ciclo.n_cultivo;
+const SOLES_PASO = GEOM.anillo.soles_por_paso;
+const SOLES_MISION = GEOM.mision.soles_horizonte;
+const HOLGURA = GEOM.anillo.holgura_angular;   // el sector útil ocupa el 94 % del paso angular
+const R0 = GEOM.anillo.r0, R1 = GEOM.anillo.r1;
+const R_MED = (R0 + R1) / 2;                   // radio medio: ahí se cuelgan los equipos fijos
+const R_EQ = GEOM.pasillo.r_equipos_max;       // envolvente de los equipos centrales
+const HONDO = GEOM.cartucho.profundidad_sustrato;
+const CUBIERTA = GEOM.casco.cubierta;
+const R_CASCO = GEOM.casco.radio, H_CASCO = GEOM.casco.altura;
+const esCultivo = p => p >= N_REG;             // posiciones 8–19; 0–7 son S1–S8
+/* el reloj sale del horizonte de diseño (539 d ≈ 525 soles, DRA 5.0), no de un 730 fijo */
+document.getElementById("sol-tot").textContent = SOLES_MISION;
 const A_PARED = 0.57, A_LARGO = TAU * 0.62;    // pared en MI convención (x=cos a, z=sin a)
 const A_FIN = A_PARED + A_LARGO;               // el hueco queda centrado en a ≈ -0.62 (la cámara)
 const CIL_INI  = Math.PI / 2 - A_FIN;          // CylinderGeometry: x=sin θ, z=cos θ
 const ESF_INI  = Math.PI - A_FIN;              // SphereGeometry:  x=-cos φ, z=sin φ
 
+/* Las 20 posiciones del anillo: 8 de regeneración y 12 de cultivo. El color es el del
+   sustrato en esa etapa, y se interpola entre posiciones vecinas al avanzar.              */
 const ESTACIONES = [
-  ["S1", "Lavado",        0x8E9298],
-  ["S2", "Aviario",       0x6B4E2E],
-  ["S3", "Larvario",      0x6A5330],
-  ["S4", "Descanso",      0x3E2C1E],
-  ["S5", "Musgo",         0x4E8A3C],
-  ["S6", "Consolidación", 0x599648],
-  ["S7", "Verificación",  0x74B25F],
-  ["S8", "Trasvase",      0x8A5334],
+  ["S1", "Reacondicionamiento", 0x8E9298],
+  ["S2", "Aviario",             0x6B4E2E],
+  ["S3", "Larvario",            0x6A5330],
+  ["S4", "Descanso e inóculo",  0x3E2C1E],
+  ["S5", "Musgo",               0x4E8A3C],
+  ["S6", "Consolidación",       0x599648],
+  ["S7", "Muestreo",            0x74B25F],
+  ["S8", "Compuerta",           0x8A5334],
 ];
+for (let i = 1; i <= 12; i++) ESTACIONES.push(["C" + i, "Cultivo", 0x7A5436]);
 
 let texRego, texAve, texCasco, texCubierta, texMusgo, texSolar, texHuevo;
 let hojaCamote, hojaLegum, hojaRabano;
 const clicables = [];
 const anclas = [];                                    // etiquetas fijas del hábitat
-let anilloIn, anilloOut, aviario, antorcha, digestorA, digestorB, luzAntorcha;
+let carrusel, aviario, antorcha, digestorA, digestorB, luzAntorcha;
 let gasometro, bandejaHuevos, bandejaLarvas, goteros;
 const codornices = [], flujos = [], focosCultivo = [];
 
@@ -1340,15 +1361,14 @@ function geometrias(){
   GEO.hojaLobulada = geoHojaLobulada(0.20, 0.13);
   GEO.tallo        = new T.CylinderGeometry(0.006, 0.009, 1, 5);
   GEO.mota         = new T.IcosahedronGeometry(0.028, 0);
-  const angIn = TAU / N_IN * HOLGURA, angOut = TAU / N_OUT * HOLGURA;
+  /* Un solo juego de geometrías: los 20 cartuchos son idénticos. Eso es la arquitectura B,
+     no una economía de código — un lote avanza de posición sin cambiar de forma.           */
+  const ang = TAU / N_POS * HOLGURA;
   const REB = 0.035;                             // reborde de la cubeta
-  GEO.marcoIn    = geoMarco(R0_IN,  R1_IN,  angIn,  0.07, REB);
-  GEO.marcoOut   = geoMarco(R0_OUT, R1_OUT, angOut, 0.07, REB);
-  const aIn2  = angIn  - 2 * REB / ((R0_IN + R1_IN) / 2);
-  const aOut2 = angOut - 2 * REB / ((R0_OUT + R1_OUT) / 2);
-  GEO.sueloIn    = geoSector(R0_IN + REB,  R1_IN - REB,  aIn2,  HONDO - 0.05);
-  GEO.sueloOut   = geoSector(R0_OUT + REB, R1_OUT - REB, aOut2, HONDO - 0.05);
-  GEO.costraIn   = geoSector(R0_IN + REB + 0.005, R1_IN - REB - 0.005, aIn2 * 0.99, 0.012);
+  GEO.marco  = geoMarco(R0, R1, ang, 0.07, REB);
+  const ang2 = ang - 2 * REB / R_MED;
+  GEO.suelo  = geoSector(R0 + REB, R1 - REB, ang2, HONDO - 0.05);
+  GEO.costra = geoSector(R0 + REB + 0.005, R1 - REB - 0.005, ang2 * 0.99, 0.012);
 }
 
 /* ── Raphanus sativus · rábano ──
@@ -1546,8 +1566,9 @@ function construirHabitat(){
   malla(new T.CylinderGeometry(R_CASCO - 0.12, R_CASCO - 0.05, 0.6, 64), M.cubierta, [0, 0.3, 0]);
   /* Las cubetas van hundidas en el piso, como en cualquier banda de cultivo real: solo asoma
      el borde. El piso se arma en tres coronas y las ranuras de los anillos quedan abiertas. */
-  for (const [ra, rb] of [[0.10, R0_IN - 0.02], [R1_IN + 0.02, R0_OUT - 0.02],
-                          [R1_OUT + 0.02, R_CASCO - 0.08]]){
+  /* Dos coronas de piso: el pasillo central hasta el anillo, y la faja que queda al casco.
+     La ranura por donde corre el anillo queda abierta entre ambas.                         */
+  for (const [ra, rb] of [[0.10, R0 - 0.02], [R1 + 0.02, R_CASCO - 0.08]]){
     const c = malla(new T.RingGeometry(ra, rb, 72), M.cubierta, [0, CUBIERTA, 0]);
     c.rotation.x = -Math.PI / 2;
     malla(new T.TorusGeometry(rb, 0.012, 6, 72), M.acero, [0, CUBIERTA, 0]).rotation.x = Math.PI / 2;
@@ -1621,8 +1642,12 @@ function construirHabitat(){
 
   /* ── aviario fijo sobre S2 ── */
   aviario = new T.Group();
-  const pAv = enAngulo(R_IN, 1, N_IN);
+  const pAv = enAngulo(R_MED, 1, N_POS);
   aviario.position.set(pAv[0], CUBIERTA, pAv[2]);
+  aviario.rotation.y = -1 / N_POS * TAU;
+  /* El cartucho de B mide 0.64 × 0.60 m: el domo de 0.40 m de radio ya no cabe encima.
+     Se escala el conjunto en vez de retocar veinte cotas a mano.                           */
+  aviario.scale.setScalar(0.75);
   gHabitat.add(aviario);
   const domo = malla(new T.SphereGeometry(0.40, 30, 20, 0, TAU, 0, Math.PI / 2), M.vidrio,
     [0, 0.62, 0], aviario, false);
@@ -1676,9 +1701,9 @@ function construirHabitat(){
   /* ── equipo fijo de cada estación ── */
   function poste(k, altura, color, ficha, ancho){
     const g = new T.Group();
-    const p = enAngulo(R_IN, k, N_IN);
+    const p = enAngulo(R_MED, k, N_POS);
     g.position.set(p[0], CUBIERTA, p[2]);
-    g.rotation.y = -k / N_IN * TAU;
+    g.rotation.y = -k / N_POS * TAU;
     gHabitat.add(g);
     malla(new T.CylinderGeometry(0.026, 0.034, altura, 10), M.acero, [0, altura / 2, 0], g);
     const mat = new T.MeshStandardMaterial({ color, roughness: 0.34, metalness: 0.4,
@@ -1716,22 +1741,24 @@ function construirHabitat(){
   /* luminarias del anillo exterior, EN VOLADIZO DESDE EL CASCO.
      Un poste plantado en medio de una cama que gira es un obstáculo: el anillo tiene que
      quedar despejado para que pasen las bandejas y los brazos de riego. */
+  /* Las luminarias son FIJAS y cubren solo el arco de cultivo (posiciones 8–19). Bajo las
+     ocho de regeneración no se ilumina: ahí el cartucho no lleva planta.                   */
   const Y_LUZ = CUBIERTA + 0.98;
   for (let k = 0; k < 6; k++){
-    const a = (k + 0.5) / 6 * TAU;
+    const a = (N_REG + 0.5 + k * (N_CUL - 1) / 5) / N_POS * TAU;
     const g = new T.Group();
     g.position.set(0, 0, 0); g.rotation.y = -a;
     gHabitat.add(g);
     malla(new T.BoxGeometry(0.055, 0.05, 0.06), M.costilla,
       [R_CASCO - 0.10, Y_LUZ + 0.12, 0], g, false);                     // anclaje al casco
-    malla(new T.BoxGeometry(0.85, 0.035, 0.05), M.costilla,
-      [R_CASCO - 0.52, Y_LUZ + 0.10, 0], g, false);                     // ménsula
-    malla(new T.BoxGeometry(0.10, 0.055, 0.80), M.costilla, [R_OUT, Y_LUZ, 0], g, false);
-    const luz = malla(new T.BoxGeometry(0.08, 0.016, 0.76), M.led, [R_OUT, Y_LUZ - 0.032, 0], g, false);
+    malla(new T.BoxGeometry(0.34, 0.035, 0.05), M.costilla,
+      [R_CASCO - 0.22, Y_LUZ + 0.10, 0], g, false);                     // ménsula
+    malla(new T.BoxGeometry(0.10, 0.055, 0.62), M.costilla, [R_MED, Y_LUZ, 0], g, false);
+    const luz = malla(new T.BoxGeometry(0.08, 0.016, 0.58), M.led, [R_MED, Y_LUZ - 0.032, 0], g, false);
     focosCultivo.push(luz);
     if (k % 3 === 0){                              // solo dos luminarias aportan luz real
       const pl = new T.PointLight(0xFFB07A, 2.4, 2.6, 2);
-      pl.position.set(R_OUT, Y_LUZ - 0.14, 0); g.add(pl);
+      pl.position.set(R_MED, Y_LUZ - 0.14, 0); g.add(pl);
       focosCultivo.push(pl);
     }
     marcarSubarbol(g, "cultivo");
@@ -1752,7 +1779,11 @@ function construirHabitat(){
   /* ── anillos giratorios: cada bandeja es un sector, hundido en el piso ── */
   const Y_MARCO = CUBIERTA - 0.05;                 // el reborde asoma 2 cm sobre el piso
   const Y_SUELO = CUBIERTA - 0.03;                 // superficie de la tierra, bajo el reborde
-  function anillo(n, r0, r1, exterior){
+  /* UN anillo de cartuchos idénticos. Cada uno lleva SU planta y SU musgo desde el principio
+     y se enseña lo que toca según la posición en la que esté: al avanzar de S8 a C1 el mismo
+     cartucho deja de ser regeneración y pasa a ser cultivo. Ahí está el trasvase resuelto —
+     no hay que palear sustrato de un anillo a otro porque no hay dos anillos.              */
+  function anillo(n, r0, r1){
     const grupo = new T.Group();
     gHabitat.add(grupo);
     const bandejas = [];
@@ -1761,13 +1792,13 @@ function construirHabitat(){
       const g = new T.Group();
       g.rotation.y = i / n * TAU;                  // el sector ya nace centrado en el eje X
       grupo.add(g);
-      malla(exterior ? GEO.marcoOut : GEO.marcoIn, M.acero, [0, Y_MARCO, 0], g);
-      const sustrato = malla(exterior ? GEO.sueloOut : GEO.sueloIn, M.sustrato.clone(),
+      malla(GEO.marco, M.acero, [0, Y_MARCO, 0], g);
+      const sustrato = malla(GEO.suelo, M.sustrato.clone(),
         [0, Y_SUELO - (HONDO - 0.05), 0], g);
-      clicable(sustrato, exterior ? "cultivo" : "musgo");
+      clicable(sustrato, "cultivo");
 
       let plantas = null, musgo = null, matVeg = null;
-      if (exterior){
+      {
         /* la tríada se reparte a lo ancho del sector, como una milpa: el camote al fondo
            donde hay más tierra, la leguminosa en medio, el rábano al borde interior */
         plantas = new T.Group(); plantas.position.y = Y_SUELO; g.add(plantas);
@@ -1780,15 +1811,15 @@ function construirHabitat(){
           obj.userData.base = 0.88 + Math.random() * 0.26;   // porte propio de cada mata
           plantas.add(obj); return obj;
         };
-        pon(plantaCamote(),     rm + d * 0.30,  0.02);       // al fondo, donde hay más tierra
-        pon(plantaCamote(),     rm + d * 0.24, -0.21);
-        pon(plantaCamote(),     rm + d * 0.27,  0.24);
-        pon(plantaLeguminosa(), rm + d * 0.02,  0.20);       // en medio, fijando nitrógeno
-        pon(plantaLeguminosa(), rm - d * 0.04, -0.17);
-        pon(plantaLeguminosa(), rm + d * 0.05, -0.01);
-        pon(plantaRabano(),     rm - d * 0.28,  0.13);       // al borde interior, cosecha rápida
-        pon(plantaRabano(),     rm - d * 0.31, -0.10);
-        pon(plantaRabano(),     rm - d * 0.26,  0.01);
+        /* Dos matas por especie, no tres: el cartucho de B mide 0.64 × 0.60 m, un 30 % menos
+           de cuerda que el sector del anillo exterior anterior. Y son 20 cartuchos con planta
+           en vez de 12 — con nueve matas cada uno la escena pasaba de 180 grupos vegetales. */
+        pon(plantaCamote(),     rm + d * 0.29,  0.03);       // al fondo, donde hay más tierra
+        pon(plantaCamote(),     rm + d * 0.25, -0.17);
+        pon(plantaLeguminosa(), rm + d * 0.02,  0.16);       // en medio, fijando nitrógeno
+        pon(plantaLeguminosa(), rm - d * 0.04, -0.13);
+        pon(plantaRabano(),     rm - d * 0.28,  0.11);       // al borde interior, cosecha rápida
+        pon(plantaRabano(),     rm - d * 0.30, -0.06);
         /* cada bandeja necesita sus propios materiales: la marchitez se interpola,
            no se cambia de golpe, y si compartieran material se marchitarían todas */
         matVeg = [];
@@ -1804,7 +1835,8 @@ function construirHabitat(){
           }
           h.material = c;
         });
-      } else {
+      }
+      {
         musgo = new T.Group(); musgo.position.y = Y_SUELO; g.add(musgo);
         for (let k = 0; k < 5; k++){
           const m = mataMusgo();
@@ -1817,8 +1849,9 @@ function construirHabitat(){
     }
     return { grupo, bandejas };
   }
-  anilloIn  = anillo(N_IN,  R0_IN,  R1_IN,  false);
-  anilloOut = anillo(N_OUT, R0_OUT, R1_OUT, true);
+  carrusel = anillo(N_POS, R0, R1);
+  console.assert(carrusel.bandejas.length === N_POS,
+    "MILPA-360: deben construirse " + N_POS + " cartuchos");
 
   /* ═══ RIEGO ═══ Es GOTEO, y va montado sobre el anillo que gira — igual que un pivote
      central de la Tierra, esos círculos verdes que se ven desde el avión. Una rampa fija no
@@ -1832,23 +1865,26 @@ function construirHabitat(){
     malla(new T.CylinderGeometry(0.075, 0.075, 0.10, 16), M.acero, [0, CUBIERTA + 1.30, 0]);
     malla(new T.CylinderGeometry(0.055, 0.055, 0.16, 12), M.cobre, [0, CUBIERTA + 1.22, 0]);
 
-    const gr = anilloOut.grupo;                  // todo esto gira con las bandejas
+    const gr = carrusel.grupo;                  // todo esto gira con las bandejas
     /* radio de bajada desde la unión hasta el colector anular */
+    /* el anillo se alejó del eje al pasar a B: la bajada se traza contra R0, no contra una
+       cifra fija, o el tubo termina colgando sobre el pasillo sin llegar al colector */
+    const R_COL0 = R0 + 0.16;
     const bajada = new T.CatmullRomCurve3([
       new T.Vector3(0.06, CUBIERTA + 1.26, 0),
-      new T.Vector3(0.70, CUBIERTA + 1.20, 0),
-      new T.Vector3(1.22, CUBIERTA + 0.74, 0),
-      new T.Vector3(1.30, CUBIERTA + 0.22, 0),
-      new T.Vector3(1.33, Y_RAMAL + 0.03, 0),
+      new T.Vector3(R_COL0 * 0.44, CUBIERTA + 1.20, 0),
+      new T.Vector3(R_COL0 * 0.78, CUBIERTA + 0.74, 0),
+      new T.Vector3(R_COL0 - 0.06, CUBIERTA + 0.22, 0),
+      new T.Vector3(R_COL0, Y_RAMAL + 0.03, 0),
     ]);
     malla(new T.TubeGeometry(bajada, 30, 0.017, 8, false), M.azul, null, gr, false).castShadow = true;
 
     /* colector anular: recorre todo el anillo, así que ninguna bandeja se queda sin gotero */
-    for (const r of [R0_OUT + 0.20, R1_OUT - 0.20]){
+    for (const r of [R0 + 0.16, R1 - 0.16]){
       const t = malla(new T.TorusGeometry(r, 0.014, 8, 120), M.azul, [0, Y_RAMAL, 0], gr, false);
       t.rotation.x = Math.PI / 2; t.castShadow = true;
     }
-    malla(new T.BoxGeometry(0.44, 0.022, 0.022), M.azul, [R_OUT, Y_RAMAL, 0], gr, false);
+    malla(new T.BoxGeometry(0.44, 0.022, 0.022), M.azul, [R_MED, Y_RAMAL, 0], gr, false);
 
     /* dos bajantes de goteo por bandeja, hasta la superficie del sustrato.
        Es riego de baja altura (tipo LESA): la gota no vuela, así no levanta polvo
@@ -1856,10 +1892,10 @@ function construirHabitat(){
     const matGota = new T.MeshStandardMaterial({ color: 0x8FD4E8, emissive: 0x63A9D1,
       emissiveIntensity: 1.1, roughness: 0.15, transparent: true, opacity: 0.9 });
     const geoGota = new T.SphereGeometry(0.016, 8, 6);
-    for (let i = 0; i < N_OUT; i++){
-      for (const [rr, dz] of [[R0_OUT + 0.20, -0.13], [R1_OUT - 0.20, 0.13]]){
+    for (let i = 0; i < N_POS; i++){
+      for (const [rr, dz] of [[R0 + 0.16, -0.13], [R1 - 0.16, 0.13]]){
         const g = new T.Group();
-        g.rotation.y = i / N_OUT * TAU;
+        g.rotation.y = i / N_POS * TAU;
         gr.add(g);
         const x = rr, z = dz;
         const bo = malla(new T.CylinderGeometry(0.016, 0.012, 0.045, 8), M.acero,
@@ -1872,8 +1908,8 @@ function construirHabitat(){
   }
 
   /* ── la costra de musgo cubre todo el sector del anillo interior ── */
-  for (const b of anilloIn.bandejas){
-    const costra = malla(GEO.costraIn, M.costra.clone(), [0, Y_SUELO - 0.004, 0], b.g, false);
+  for (const b of carrusel.bandejas){
+    const costra = malla(GEO.costra, M.costra.clone(), [0, Y_SUELO - 0.004, 0], b.g, false);
     costra.receiveShadow = true;
     b.costra = costra;
   }
@@ -1884,8 +1920,8 @@ function construirHabitat(){
   const V = (x, y, z) => new T.Vector3(x, y, z);
   const wA = digestorA.getWorldPosition(new T.Vector3());
   const wB = digestorB.getWorldPosition(new T.Vector3());
-  const pS1 = enAngulo(R_IN, 0, N_IN), pS3 = enAngulo(R_IN, 2, N_IN), pS4 = enAngulo(R_IN, 3, N_IN);
-  const pRiego = enAngulo(R_OUT, 5.5, N_OUT);
+  const pS1 = enAngulo(R_MED, 0, N_POS), pS3 = enAngulo(R_MED, 2, N_POS), pS4 = enAngulo(R_MED, 3, N_POS);
+  const pRiego = enAngulo(R_MED, 13, N_POS);
   const Y_COL = CUBIERTA + 1.46;                       // altura del colector
   const R_COL = 0.60;                                  // radio del colector, dentro del anillo interior
 
@@ -1924,7 +1960,7 @@ function construirHabitat(){
 
   const C_AGUA = 0x63A9D1, C_ABONO = 0x7FBB72, C_ESTIERCOL = 0x96633A,
         C_BIOGAS = 0xD2622F, C_PROTEINA = 0xE9AE52;
-  const aS1 = 0, aS3 = 2 / N_IN * TAU, aS4 = 3 / N_IN * TAU;
+  const aS1 = 0, aS3 = 2 / N_POS * TAU, aS4 = 3 / N_POS * TAU;
 
   /* 0 · AZUL — salmuera de lavado: S1 → colector → cámara A (anóxica) */
   conducto(C_AGUA, [
@@ -2020,8 +2056,8 @@ function construirHabitat(){
                  { w: 900, h: 200, fondo: "#F2F4F6", borde: "#8A959E", barra: "#D2622F",
                    y0: 0.44 }), cascoGrp);
   bandaRotulo(R_CASCO + 0.055, 0.30, 0.62, A_PARED + 2.65, 0.85,
-    texturaPlaca([{ t: "TRIPULACIÓN 6 · 730 SOLES", s: 0.22, esp: 0.06 },
-                  { t: "Ø 4.76 m × 2.2 m · 10 m² DE BANDEJA", s: 0.15, c: "#9FB0BE", esp: 0.04 }],
+    texturaPlaca([{ t: "TRIPULACIÓN 6 · " + SOLES_MISION + " SOLES", s: 0.22, esp: 0.06 },
+                  { t: "Ø " + (R_CASCO * 2).toFixed(2) + " m × " + H_CASCO + " m · " + GEOM.areas.total.toFixed(2) + " m² DE CARTUCHO", s: 0.15, c: "#9FB0BE", esp: 0.04 }],
                  { w: 800, h: 170, fondo: "#12181E", barra: "#D2622F", y0: 0.42 }), cascoGrp);
 
   /* placas de estación al borde de la cubierta: dicen qué pasa en cada una */
@@ -2032,15 +2068,15 @@ function construirHabitat(){
     ["S4", "DESCANSO + INÓCULO", "cóctel biológico", "#7FBB72"],
     ["S5", "MUSGO · S. caninervis", "costra y semáforo", "#4E8A3C"],
     ["S6", "CONSOLIDACIÓN", "sella la superficie", "#5A6A76"],
-    ["S7", "VERIFICACIÓN GO/NO-GO", "bandeja verde = apta", "#E8EEF3"],
-    ["S8", "TRASVASE AL EXTERIOR", "pasa al anillo de cultivo", "#8A5334"],
+    ["S7", "MUESTREO", "ClO₄⁻, conductividad, patógenos", "#E8EEF3"],
+    ["S8", "COMPUERTA DE LIBERACIÓN", "a cultivo sólo con análisis", "#8A5334"],
   ];
-  for (let k = 0; k < N_IN; k++){
+  for (let k = 0; k < N_REG; k++){
     const [cod, nom, sub, col] = TXT_EST[k];
     const tex = texturaPlaca(
       [{ t: cod + " · " + nom, s: 0.26, esp: 0.05 }, { t: sub, s: 0.17, c: "#9FB0BE", esp: 0.02 }],
       { w: 700, h: 160, fondo: "#0E1317", barra: col, y0: 0.42 });
-    const a = k / N_IN * TAU;
+    const a = k / N_POS * TAU;
     const r = R_CASCO - 0.09;
     const g = new T.Group();
     g.position.set(Math.cos(a) * r, CUBIERTA + 0.16, Math.sin(a) * r);
@@ -2106,7 +2142,8 @@ const POSE = {
 
 /* colores y alturas del sustrato interior por estación */
 const COL_IN = ESTACIONES.map(e => e[2]);
-const ALT_IN = [0.06, 0.115, 0.10, 0.082, 0.088, 0.096, 0.104, 0.078];
+const ALT_IN = [0.06, 0.115, 0.10, 0.082, 0.088, 0.096, 0.104, 0.078,
+                ...Array(12).fill(0.094)];        // en cultivo la cama va llena y pareja
 
 /* ═══════════════════════════════════════════════════════════════
    INTERFAZ
@@ -2146,9 +2183,9 @@ function rielHabitat(){
     <p style="font-size:11.5px;line-height:1.55;color:var(--text-3);margin:13px 0 0">
     El reto pide fertilizar <b style="color:var(--text-2)">“sin agotar el terreno”</b>. Aquí el descanso
     no es un procedimiento que alguien pueda olvidar: es geometría. Una bandeja no vuelve a recibir
-    estiércol hasta <b style="color:var(--text-2)">56 soles</b> después.</p>`;
+    estiércol hasta <b style="color:var(--text-2)">${(N_POS - 1) * SOLES_PASO} soles</b> después.</p>`;
   const tb = $("tele"); filas.length = 0;
-  for (let i = 0; i < N_IN; i++){
+  for (let i = 0; i < N_POS; i++){
     const tr = document.createElement("tr");
     tr.innerHTML = `<td><span class="pip"></span>B${i+1}</td><td></td><td class="rest"></td>`;
     tb.appendChild(tr);
@@ -2361,7 +2398,7 @@ function bucle(ahora){
 
   /* ── reloj de misión ── */
   if (S.play && S.vista === "habitat"){
-    S.sol = (S.sol + dt * 2.2 * S.vel) % 730;
+    S.sol = (S.sol + dt * 2.2 * S.vel) % SOLES_MISION;
     if (S.tormenta > 0) S.tormenta = Math.max(0, S.tormenta - dt * 2.2 * S.vel);
   }
   const enTormenta = S.tormenta > 0;
@@ -2374,51 +2411,43 @@ function bucle(ahora){
   const avance = paso + suavizado;
 
   if (S.vista === "habitat"){
-    anilloIn.grupo.rotation.y  =  avance / N_IN  * TAU;
-    anilloOut.grupo.rotation.y = -avance / N_OUT * TAU;
+    carrusel.grupo.rotation.y = avance / N_POS * TAU;
 
-    /* anillo interior: el estado se INTERPOLA entre estación y estación — nada aparece
-       ni desaparece de golpe cuando el carrusel avanza un paso */
-    for (let i = 0; i < N_IN; i++){
-      const pc = (i + avance) % N_IN;                 // posición continua sobre el anillo
-      const p0 = Math.floor(pc) % N_IN, p1 = (p0 + 1) % N_IN, ft = pc - Math.floor(pc);
-      const p = Math.round(pc) % N_IN;                // estación para el rótulo
-      const b = anilloIn.bandejas[i];
+    /* UN solo recorrido sobre las 20 posiciones. El estado se INTERPOLA entre posición y
+       posición — nada aparece ni desaparece de golpe cuando el carrusel avanza un paso.
+       Que el mismo cartucho pase de S8 a C1 sin cambiar de pieza ES el trasvase resuelto. */
+    let perdidas = 0;
+    for (let i = 0; i < N_POS; i++){
+      const pc = (i + avance) % N_POS;                // posición continua sobre el anillo
+      const p0 = Math.floor(pc) % N_POS, p1 = (p0 + 1) % N_POS, ft = pc - Math.floor(pc);
+      const p = Math.round(pc) % N_POS;               // posición para el rótulo
+      const b = carrusel.bandejas[i];
       cAux.setHex(COL_IN[p0]).lerp(cAuxB.setHex(COL_IN[p1]), ft);
       b.sustrato.material.color.copy(cAux);
       b.sustrato.scale.y = mezcla(ALT_IN[p0], ALT_IN[p1], ft) / 0.09;
-      /* el musgo solo prospera de S5 en adelante: es el semáforo */
+
+      /* el musgo solo prospera de S5 a S8, y se retira al entrar en cultivo: es el semáforo,
+         no una prueba — ningún lote pasa a cultivo sin análisis (P1 D5) */
       const vd = q => q >= 4 && q <= 7 ? sat((q - 3.4) / 2.2) : 0;
       const verdor = mezcla(vd(p0), vd(p1), ft);
       for (const m of b.musgo.children) m.scale.setScalar(verdor * 1.25);  // a 0 desaparece sin salto
       b.costra.material.opacity = verdor;
       b.costra.material.transparent = true;
 
-      const soles = p === 1 ? 0 : ((p - 2 + N_IN) % N_IN) * SOLES_PASO + f * SOLES_PASO;
-      const fl = filas[i];
-      if (fl){
-        fl.pip.style.background = "#" + COL_IN[p].toString(16).padStart(6, "0");
-        fl.est.textContent = ESTACIONES[p][0] + " " + ESTACIONES[p][1].toLowerCase();
-        fl.rest.textContent = soles.toFixed(0) + " sol";
-        fl.rest.className = "rest" + (soles < 8 ? " low" : "");
-        fl.tr.className = p === 1 ? "hot" : "";
+      /* tramo de cultivo: posiciones 8–19. La planta crece a lo largo de los 12 pasos y se
+         cosecha encogiendo en los dos últimos; fuera del tramo su escala es cero.          */
+      const t = pc - N_REG;                           // 0 … 12 dentro del cultivo
+      const enCultivo = t >= 0;
+      /* el tope de escala baja con la cuerda del cartucho: con 2.05 la mata se salía del sector */
+      const ESC_MIN = 0.07, ESC_MAX = 1.45;
+      let esc = 0, danada = false;
+      if (enCultivo){
+        const tc = N_CUL - 2;                         // maduración hasta dos pasos del final
+        esc = t <= tc ? ESC_MIN + (t / tc) * (ESC_MAX - ESC_MIN)
+                      : mezcla(ESC_MAX, ESC_MIN, suave(Math.min(1, (t - tc) / 2)));
+        danada = enTormenta && t >= tc - 1.4;         // se pierde lo próximo a cosecha
+        if (danada) perdidas++;
       }
-    }
-
-    /* anillo exterior: crecimiento por etapa y daño de tormenta */
-    let perdidas = 0;
-    for (let i = 0; i < N_OUT; i++){
-      const pc = (i + avance) % N_OUT;
-      const b = anilloOut.bandejas[i];
-      const p = Math.round(pc) % N_OUT;
-      /* crecimiento continuo hasta la posición 10 y ventana de cosecha en las dos últimas:
-         la planta se recoge encogiendo, no desaparece de un fotograma al siguiente */
-      const ESC_MIN = 0.07, ESC_MAX = 2.05;
-      const esc = pc <= 10
-        ? ESC_MIN + (pc / 10) * (ESC_MAX - ESC_MIN)
-        : mezcla(ESC_MAX, ESC_MIN, suave(Math.min(1, (pc - 10) / 2)));
-      const danada = enTormenta && pc >= 8.6;
-      if (danada) perdidas++;
       const caida = danada ? 0.62 : 1;
       b.escY = mezcla(b.escY === undefined ? caida : b.escY, caida, 0.06);
       /* cada planta se escala por separado: el grupo lleva sus posiciones dentro del sector */
@@ -2431,10 +2460,18 @@ function bucle(ahora){
       b.marchitez = mezcla(b.marchitez === undefined ? marchito : b.marchitez, marchito, 0.05);
       if (b.matVeg) for (const m of b.matVeg)
         m.color.copy(m.userData.vivo).lerp(C_MARCHITO, b.marchitez);
-      /* distancia ENVUELTA a la posición 0: sin esto el color pega un tirón al pasar de 11 a 0 */
-      const d0 = Math.min(pc, N_OUT - pc);
-      cAux.setHex(0x8A5334).lerp(cAuxB.setHex(0x4E8A3C), sat(1 - d0 / 1.2));
-      b.sustrato.material.color.copy(cAux);
+
+      /* soles desde la última deposición: S2 es la posición 1, y el cartucho no vuelve a
+         recibir estiércol hasta dar la vuelta entera */
+      const soles = p === 1 ? 0 : ((p - 2 + N_POS) % N_POS) * SOLES_PASO + f * SOLES_PASO;
+      const fl = filas[i];
+      if (fl){
+        fl.pip.style.background = "#" + COL_IN[p].toString(16).padStart(6, "0");
+        fl.est.textContent = ESTACIONES[p][0] + " " + ESTACIONES[p][1].toLowerCase();
+        fl.rest.textContent = soles.toFixed(0) + " sol";
+        fl.rest.className = "rest" + (soles < 8 ? " low" : "");
+        fl.tr.className = p === 1 ? "hot" : "";
+      }
     }
     S.perdidas = perdidas;
 
@@ -2505,9 +2542,9 @@ function bucle(ahora){
 
     /* riel */
     $("sol-n").textContent = Math.floor(S.sol);
-    $("prog-i").style.width = (S.sol / 730 * 100).toFixed(1) + "%";
+    $("prog-i").style.width = (S.sol / SOLES_MISION * 100).toFixed(1) + "%";
     $("b-tormenta").textContent = enTormenta
-      ? "TORMENTA · " + Math.ceil(S.tormenta) + " SOLES · PIERDE " + Math.round(perdidas / N_OUT * 100) + "%"
+      ? "TORMENTA · " + Math.ceil(S.tormenta) + " SOLES · PIERDE " + Math.round(perdidas / N_CUL * 100) + "%"
       : "TORMENTA DE POLVO · 21 SOLES";
 
   } else {
@@ -2589,21 +2626,33 @@ function bucle(ahora){
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   COMPROBACIÓN — la geometría debe garantizar el descanso de 56 soles
+   COMPROBACIÓN — la escena debe coincidir con la geometría generada
    ═══════════════════════════════════════════════════════════════ */
 (function autotest(){
-  const descanso = (p, fr) => p === 1 ? 0 : ((p - 2 + N_IN) % N_IN) * SOLES_PASO + fr * SOLES_PASO;
+  const ok = (c, m) => { console.assert(c, "MILPA-360: " + m); return c; };
+  /* el descanso no es un procedimiento: es la vuelta entera del anillo menos un paso */
+  const descanso = (p, fr) => p === 1 ? 0 : ((p - 2 + N_POS) % N_POS) * SOLES_PASO + fr * SOLES_PASO;
   let max = 0, min = 1e9;
-  for (let paso = 0; paso < N_IN * 3; paso++)
-    for (let i = 0; i < N_IN; i++){
-      const p = (i + paso) % N_IN;
+  for (let paso = 0; paso < N_POS * 3; paso++)
+    for (let i = 0; i < N_POS; i++){
+      const p = (i + paso) % N_POS;
       for (const fr of [0, 0.999]){ const s = descanso(p, fr); max = Math.max(max, s); min = Math.min(min, s); }
     }
-  console.assert(Math.round(max) === 56 && min === 0,
-    "MILPA-360: el descanso debe ir de 0 a 56 soles; se obtuvo " + min + "–" + max);
-  console.assert(N_OUT * SOLES_PASO === 96, "MILPA-360: el ciclo exterior debe ser 96 soles");
-  console.log("MILPA-360 · descanso " + min + "–" + Math.round(max) +
-              " soles · ciclo exterior " + N_OUT * SOLES_PASO + " soles");
+  const esperado = (N_POS - 1) * SOLES_PASO;
+  ok(Math.round(max) === esperado && min === 0,
+     "el descanso debe ir de 0 a " + esperado + " soles; se obtuvo " + min + "–" + Math.round(max));
+  ok(N_REG + N_CUL === N_POS, "regeneración + cultivo deben sumar el anillo");
+  /* el área de la escena tiene que dar la del generador: si alguien toca un radio, salta */
+  const areaEscena = N_POS * 0.5 * (TAU / N_POS * HOLGURA) * (R1 * R1 - R0 * R0);
+  ok(Math.abs(areaEscena - GEOM.areas.total) < 1e-3,
+     "el área del anillo en escena (" + areaEscena.toFixed(4) + ") no cuadra con la generada (" +
+     GEOM.areas.total + ")");
+  /* nada de sustrato puede invadir el pasillo ni tocar el casco */
+  ok(R1 <= R_CASCO - 0.0999, "el cartucho invade la holgura al casco");
+  ok(R0 - R_EQ >= GEOM.pasillo.ancho - 1e-9, "el pasillo central baja de " + GEOM.pasillo.ancho + " m");
+  console.log("MILPA-360 · " + N_POS + " cartuchos · descanso " + min + "–" + Math.round(max) +
+              " soles · cultivo " + N_CUL * SOLES_PASO + " soles · " +
+              GEOM.areas.total.toFixed(2) + " m² (" + GEOM.areas.cultivo.toFixed(2) + " de cultivo)");
 })();
 
 /* deja pintar la pantalla de carga antes de generar las texturas */

@@ -1,103 +1,122 @@
 # ESTADO · preparación para Madrid
 
-**Paquete cerrado:** P1 · ingeniería (documental y de cálculo; no valida el sistema físico)
-**Fecha:** 15 sep 2026 · **Rama:** `preparacion-madrid-p1`, local y sin push
-**Commits:** P0 en `7ea6b3f`; P1 en el commit que acompaña a este archivo
+**Paquete cerrado:** P2 · geometría (documental y de cálculo; no valida el sistema físico)
+**Fecha:** 19 sep 2026 · **Rama:** `preparacion-madrid-p1`, local y sin push
+**Commits:** P0 en `7ea6b3f`; P1 en `508f30a`; P2 en el commit que acompaña a este archivo
 **Final:** 3–5 nov 2026, Getafe. La fecha de entrega está sin confirmar.
 
-## Archivos de P1
+## Archivos de P2
 
 | Archivo | Contenido |
 |---|---|
-| `config/milpa360.parameters.json` | Fuente única: 83 parámetros con valor, unidad, evidencia, fuente y escenarios |
-| `config/milpa360.parameters.schema.json` | Esquema JSON 2020-12. Obliga a que un valor nulo sea «pendiente» y viceversa |
-| `analysis/milpa360_p1.py` | Escenario temporal, geometría de 5 opciones, balances diarios, provisiones y perclorato |
-| `docs/madrid/P1-INGENIERIA.md` | Decisiones, tabla dimensional, ciclo de cartucho, balances, riesgos y frases a retirar |
-| `docs/madrid/matriz-requisitos.md` | Estados actualizados |
-| `docs/madrid/registro-afirmaciones.csv` | 76 afirmaciones: 19 nuevas y 12 anotadas con resultados de P1 |
+| `config/milpa360.parameters.json` | v`P2-2026-09-19`: D1 y D2 registradas, más 6 parámetros nuevos (4 pendientes declarados) |
+| `analysis/milpa360_p2.py` | Geometría paramétrica, barrido de interferencias, láminas y bloque `GEOM` |
+| `config/milpa360.geometria.json` | **Generado.** Geometría resuelta que consumen láminas y simulador |
+| `docs/madrid/P2-GEOMETRIA.md` | Decisiones, tabla dimensional, interferencias, acceso y pendientes |
+| `prototipo/planos/P02-corte-transversal.html` | **Regenerada** desde el JSON |
+| `prototipo/planos/P03-planta-carrusel.html` | **Regenerada** desde el JSON |
+| `prototipo/planos/P04-balance-flujos.html` | Corregida a mano: «10 m²» → 6.66 m² |
+| `prototipo-3d/milpa360-simulador.html` | Un anillo de 20 cartuchos; geometría inyectada |
+| `prototipo/fotos-para-subir/P0*.png` | PNG regenerados de las cuatro láminas |
 
-Sin cambios en simulador, planos, deck ni documentos del plan. Los presupuestos del usuario siguen sin commit e intactos.
+Sin cambios en deck, atlas, kit de campo ni documentos del plan. Los presupuestos del usuario
+siguen sin commit e intactos.
+
+## Decisiones tomadas en P2
+
+- **D1 · Arquitectura B.** Un anillo de 20 cartuchos idénticos en Ø 4.56 m, con pasillo
+  central de 0.90 m. Es la única opción evaluada que resuelve acceso **y** trasvase sin
+  agrandar el módulo. A cambio: −36 % de área de cultivo (6.26 → 4.00 m²), que baja la
+  cobertura de 3.0 % a 2.6 % de las kcal — dentro del ruido de sus propios supuestos.
+  A queda descartada (dominada: +76 % de huella y el trasvase sigue abierto), B′ también
+  (duplica la huella por 64 kcal/d) y **C queda como respaldo** para el demostrador.
+- **D2 · Horizonte de 539 d** para dimensionar y **≈355 d** como caso nominal del concurso.
+  Los 730 soles del plan se retiran: daban 3.1 años contra los «aprox. 2 años» de las bases.
+
+Ambas se tomaron por delegación del usuario sobre la recomendación de P1. **El equipo puede
+revocarlas** (B10). D3–D7 de P1 siguen vigentes.
 
 ## Pruebas ejecutadas
 
-- `python3 analysis/milpa360_p1.py`
-  - Valida el JSON contra el esquema y comprueba que cada valor coincide con su escenario nominal.
-  - Aserciones: masas y energías no negativas, reparto de cultivos igual a 1, energía del huevo menor que la de la ración, y horizonte mayor o igual a la estancia de las bases.
-- El CSV sigue teniendo 16 columnas en todas sus filas.
-- P0 sigue pasando: `python3 analysis/p0_verificacion.py`.
+- `python3 analysis/milpa360_p2.py` — valida el JSON contra el esquema y reproduce **todas**
+  las cifras de P1 §3 (0.3331 m²/cartucho, 4.00 y 2.66 m², 110 kg, Ø 1.36 m). Aserciones:
+  regeneración + cultivo = anillo, las tres especies caben en el tramo de cultivo, y los dos
+  parámetros verticales siguen nulos (si alguien les pone valor, la comprobación falla y
+  obliga a rehacer el análisis vertical).
+- `python3 analysis/milpa360_p1.py` sigue pasando sin cambios.
+- `python3 analysis/p0_verificacion.py` **se repuntó al commit auditado** `c3e0ad3`: leía del
+  simulador las constantes de dos anillos, que P2 eliminó. Ahora las lee con `git show`, así
+  que el acta de P0 vuelve a ser reproducible y lo seguirá siendo aunque el diseño cambie.
+  Su sección 7 sí recorre el árbol actual: encuentra Ø 4.56 m en los artefactos P2, y también
+  diámetros anteriores en documentos históricos o todavía sin actualizar. No interpreta esas
+  coincidencias textuales como geometría activa del simulador.
+- Simulador en navegador (headless, WebGL por software): **consola sin errores**, y las
+  aserciones nuevas dan `20 cartuchos · descanso 0–152 soles · cultivo 96 soles · 6.66 m²
+  (4.00 de cultivo)`.
+- Las cuatro láminas se renderizaron y se revisaron a la vista: sin recortes ni solapamientos.
 
-## Cobertura de requisitos
+## Resultados principales
 
-Denominador: **27 obligatorios**.
-
-| Estado | P1 | P0 |
-|---|---:|---:|
-| Cumplido (documental) | 1 | 1 |
-| Parcial | 21 | 18 |
-| Pendiente | 4 | 7 |
-| Por confirmar | 1 | 1 |
-
-Pasaron a parcial RU-03 (aporte alimentario), RU-P2-01 (flujo de residuos) y MG-02 (duración). No es una probabilidad de ganar.
-
-## Resultados principales (nominal, con rango de escenarios)
-
-1. **Duración.** Las bases dan ≈355 días de superficie. Se propone diseñar para **539 días** (DRA 5.0). Los 730 soles del plan más los tránsitos suman 3.1 años.
-2. **Arquitectura B.** Un anillo de 20 cartuchos idénticos (0.333 m², 110 kg) en el mismo Ø 4.56 m, con pasillo central.
-   - **A cambio: −36 % de área de cultivo** (6.26 → 4.00 m²).
-   - A cambio de la pérdida resuelve el acceso, elimina el trasvase y permite poner un lote en cuarentena.
-   - La opción A, con dos anillos accesibles, necesita Ø 6.05 m y no resuelve el trasvase.
-3. **Alimento.** Cubre el **2.6 %** de las kcal (2.0–3.3 %) y aporta ≈5 g de proteína de huevo por persona al día.
-4. **Masa.** La ración importada (415 kg en 539 días) supera el alimento ahorrado: **+214 kg netos**.
-5. **Energía.**
-   - Biogás: **0.24 kWh/d químicos** (0.12–0.46), frente a los 2.864 que decía el plan.
-   - Iluminación: **13.6 kWh/d**. El biogás eléctrico equivale al 0.3–1.5 % de ese consumo.
-   - El módulo es consumidor neto y necesita refrigeración.
-6. **Perclorato.** La salmuera sale a **20–40 mM**, en el rango inhibitorio de los metanógenos (10–20 mM), así que va a un reactor separado. El lavado inicial pide 1.8–13 m³ de agua (ISRU fuera del módulo).
-7. **Agua.** Hay que condensar 8.2 L/d de transpiración.
-
-## Decisiones vigentes
-
-- **Propuestas pendientes de aprobación del equipo:**
-  - D1: arquitectura B.
-  - D2: horizonte de 539 días.
-- **Propuestas técnicas:**
-  - D3: reactor de salmuera separado.
-  - D4: desintoxicación inicial fuera del módulo.
-  - D5: liberación de lotes por análisis, no por musgo.
-- **Discurso:**
-  - D6: el biogás es un producto demostrativo.
-  - D7: la cobertura alimentaria se comunica como 2–3 %.
-
-La tabla de frases a retirar está en `P1-INGENIERIA.md` §8.
+1. **El trasvase queda resuelto por construcción.** Con un anillo de cartuchos idénticos, un
+   lote pasa de S8 a C1 sin cambiar de pieza: la operación de palear sustrato desaparece
+   porque desaparece su motivo. Era el bloqueo que ninguna otra opción cerraba.
+2. **Sin solapamiento nominal entre cartuchos, casco y núcleo durante el giro.** Barrido de
+   160 pasos: hueco entre cartuchos 41 mm, holgura al casco 100 mm, pasillo 900 mm, los tres
+   constantes. Falta modelar la huella de los equipos fijos.
+3. **La holgura vertical NO está verificada** y no puede estarlo: faltan la altura de dosel y
+   la cara inferior del equipo de estación. Presupuesto a repartir: 1.58 m.
+4. **Dos márgenes muy justos.** El ancho del cartucho (0.60 m) es exactamente el alcance
+   supuesto, sin holgura; y girar un cartucho en el pasillo deja 22 mm.
+5. **La masa del cartucho no está validada**: 110 kg (408 N en Marte) sin fuente del límite
+   de manipulación en 0.38 g. En la Tierra son 1 078 N y el demostrador exigirá polipasto.
+6. **El envolvente central de Ø 1.36 m pasa a ser requisito** del digestor y del reactor de
+   salmuera, ninguno dimensionado todavía.
+7. **Los cinco diámetros están retirados.** 3.5, 4.76, 5.40 y 6.00 m han desaparecido; el
+   4.56 m ya no se escribe a mano en ningún sitio: el generador lo inyecta en el simulador
+   entre marcadores y dibuja las láminas. El reloj pasa de 730 fijo a 525 soles.
 
 ## Bloqueos
 
-Siguen abiertos B1–B9 de P0: reglamento de Madrid, reto evaluado, delegación, retroalimentación del jurado, interpretación del 100 %, presupuesto, medición del sustrato, fuentes y visibilidad del repo.
+Siguen abiertos **B1–B9** de P0 (reglamento de Madrid, reto evaluado, delegación,
+retroalimentación del jurado, interpretación del 100 %, presupuesto, medición del sustrato,
+fuentes y visibilidad del repo) y **B11–B14** de P1.
+
+**B10 baja a ratificación:** D1 y D2 están tomadas y todo el paquete está construido sobre
+ellas; el equipo puede revocarlas, pero ya no bloquean el trabajo.
 
 Nuevos:
 
 | # | Qué falta |
 |---|---|
-| B10 | Aprobación de D1–D2 por el equipo |
-| B11 | Excreción específica de codorniz |
-| B12 | Umbrales de liberación de ClO₄⁻ |
-| B13 | Antropometría en 0.38 g |
-| B14 | Consumos auxiliares y envolvente térmica |
+| B15 | Altura de dosel de camote, frijol y rábano (sin fuente) |
+| B16 | Altura libre bajo el equipo de cada estación (sin diseño mecánico) |
+| B17 | Dimensionado del digestor y del reactor contra el envolvente de Ø 1.36 m |
+| B18 | Cálculo estructural del deck giratorio, par de arranque y bloqueo |
 
 ## Siguiente acción exacta
 
-1. **El equipo** decide D1 (B, A o C) y D2 (539 o 355 días). Sin eso, P2 no puede fijar la geometría.
-2. **P2**, con la decisión tomada:
-   - Generar desde el JSON la geometría del simulador (rótulos, radios, reloj) y los planos P02/P03.
-   - Retirar los cinco diámetros activos.
-   - Modelar el cambio de cartucho en S8 y la ruta de acceso con una figura humana.
-   - Comprobar interferencias a lo largo del giro.
-3. **En paralelo**, completar B11, B12 y los micronutrientes antes de redactar el pitch.
+1. **P3 · simulación y relato visual**, que es el paquete que toca:
+   - Conectar las animaciones al estado del modelo y mostrar unidades y tipo de evidencia.
+   - Recuperar el pulido visual que P2 dejó a medias: la densidad de planta en el cartucho
+     nuevo se ve escasa, y las fichas siguen diciendo «40 días» y «23 g» de codorniz cuando
+     P1 midió 50.8 d y 32.1 g.
+   - Comparar escenarios sin programar el resultado favorable; probar fallos, reinicio y uso
+     sin Internet.
+2. **En paralelo**, cerrar B15 y B16: sin ellos no hay comprobación vertical y la lámina P-02
+   seguirá marcando esa holgura con «¿?».
+3. **Recapturar las imágenes del deck.** `deck/hero.jpg`, `nucleo.jpg`, `planta.jpg` y
+   `tormenta.jpg` son fotogramas del simulador **de dos anillos**: hoy contradicen al
+   simulador, a las láminas y a la memoria. Las poses por URL están en `deck/LEEME.md` y
+   siguen siendo válidas; hay que volver a dispararlas y republicar el deck.
+4. **Decisión del equipo** sobre los JPG superados de `prototipo/fotos-para-subir/`
+   (P02 y P03 de sep 8 contradicen las láminas nuevas y siguen sin borrar).
 
 ## Reproducir
 
 ```bash
 git switch preparacion-madrid-p1
+python3 analysis/milpa360_p2.py
 python3 analysis/milpa360_p1.py
 python3 analysis/p0_verificacion.py
+cd prototipo/planos && ./render.sh
 ```

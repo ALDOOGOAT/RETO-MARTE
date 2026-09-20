@@ -23,8 +23,9 @@ en PDF y documentos de contexto/investigación.
   solo archivo, sin build (three.js 0.160 por CDN, texturas y geometría generadas por código):
   · **PLANETA** — Marte con textura procedural (rasgos reales situados por lon/lat), atmósfera,
     estrellas y **puntos clicables** que sacan los datos duros de `INVESTIGACION-MARTE.md §2`.
-  · **HÁBITAT** — el módulo presurizado **en corte** (Ø 4.76 m × 2.2 m) sobre terreno marciano:
-    carrusel de dos anillos con reloj de 730 soles, aviario con recolección de huevo, larvario con
+  · **HÁBITAT** — el módulo presurizado **en corte** (Ø 4.56 m × 2.2 m) sobre terreno marciano:
+    carrusel de **un solo anillo de 20 cartuchos idénticos** (arquitectura B) con pasillo central
+    y reloj de 525 soles, aviario con recolección de huevo, larvario con
     lecho de frass, biodigestor de dos cámaras con **gasómetro de campana flotante** que sube y baja
     según se produce o se consume el biogás, filtración HEPA en pared, tríada marciana con hoja
     nervada, costra de musgo como semáforo, y **tormenta de polvo** que marchita en vivo las
@@ -86,9 +87,19 @@ en PDF y documentos de contexto/investigación.
   impreso en claro. Deck y atlas: Bodoni Moda + Archivo + IBM Plex Mono. **El simulador usa
   Archivo variable (eje de ancho) + IBM Plex Mono, sin serif** — es una interfaz, no una revista.
 - **Las bandejas son SECTORES ANULARES, no cuadradas, y el módulo mide Ø 4.56 m.** El sector es
-  la única forma que tesela un anillo sin huecos ni esquinas que sobresalgan; la guía de la maqueta
-  física (§10) ya decía «8 sectores / 12 sectores». Con cuadradas hacían falta Ø 4.76 m; el
-  documento original decía Ø 3.5 m, que no cierra (ese círculo tiene 9.6 m² de piso *total*).
-  Comprobación completa en §4.1 del plan maestro. No revertir la cifra ni volver a cajas.
+  la única forma que tesela un anillo sin huecos ni esquinas que sobresalgan. Con cuadradas
+  hacían falta Ø 4.76 m; el documento original decía Ø 3.5 m, que no cierra (ese círculo tiene
+  9.6 m² de piso *total*). No revertir la cifra ni volver a cajas.
+- **NINGUNA cifra de geometría se escribe a mano.** Desde P2 la fuente es
+  `config/milpa360.parameters.json` → `analysis/milpa360_p2.py`, que emite
+  `config/milpa360.geometria.json`, **dibuja** las láminas P-02 y P-03 e **inyecta** el bloque
+  `GEOM` del simulador entre `/*←P2:GEOM*/` y `/*P2:GEOM→*/`. Si cambias un radio, ejecuta el
+  script; no edites el HTML. Esto es lo que impidió que volvieran los cinco diámetros (P0 encontró
+  3.5, 4.56, 4.76, 5.40 y 6.00 m circulando a la vez).
+- **Arquitectura B, decidida en P2:** UN anillo de 20 cartuchos idénticos (8 de regeneración +
+  12 de cultivo), no dos anillos contrarrotantes. Eso resuelve el trasvase —el mismo cartucho
+  avanza de S8 a C1 sin palear sustrato— y deja un pasillo central de 0.90 m. Cuesta −36 % de
+  área de cultivo. El descanso entre deposiciones es de **152 soles**, no 56. Razonamiento
+  completo en `docs/madrid/P2-GEOMETRIA.md §0`.
 - **Los 20 kg de regolito por bandeja son la capa lavada de 2.5 cm, no la cubeta.** La cubeta
   tiene 22 cm (lo que pide el camote) ≈ 165 kg; el sistema mueve ~3.3 t de regolito in situ.

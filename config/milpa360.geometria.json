@@ -1,0 +1,226 @@
+{
+  "_generado_por": "analysis/milpa360_p2.py",
+  "_fuente": "config/milpa360.parameters.json vP2-2026-09-19",
+  "_aviso": "ARCHIVO GENERADO. No editar a mano: se sobrescribe en cada ejecución.",
+  "arquitectura": "B",
+  "casco": {
+    "radio": 2.28,
+    "diametro": 4.56,
+    "altura": 2.2,
+    "cubierta": 0.62
+  },
+  "anillo": {
+    "r0": 1.58,
+    "r1": 2.18,
+    "n": 20,
+    "holgura_angular": 0.94,
+    "paso_grados": 18.0,
+    "sector_grados": 16.92,
+    "soles_por_paso": 8
+  },
+  "cartucho": {
+    "area": 0.33311,
+    "profundidad_sustrato": 0.22,
+    "altura_caja": 0.28,
+    "cuerda_exterior": 0.6414,
+    "ancho_radial": 0.6,
+    "masa_kg": {
+      "conservador": 131.9,
+      "nominal": 109.9,
+      "favorable": 87.9
+    },
+    "repuestos": 2
+  },
+  "areas": {
+    "cultivo": 3.9973,
+    "regeneracion": 2.6649,
+    "total": 6.6622
+  },
+  "pasillo": {
+    "ancho": 0.9,
+    "r_equipos_max": 0.68,
+    "diametro_equipos_max": 1.36,
+    "altura_libre_sobre_cartucho": 1.58
+  },
+  "estaciones": [
+    {
+      "codigo": "S1",
+      "nombre": "Reacondicionamiento",
+      "detalle": "lavado de verificación; salmuera al reactor separado",
+      "color": "#8E9298",
+      "posicion": 0,
+      "grados": 0.0
+    },
+    {
+      "codigo": "S2",
+      "nombre": "Aviario",
+      "detalle": "deposición de estiércol de codorniz",
+      "color": "#C98A3C",
+      "posicion": 1,
+      "grados": 18.0
+    },
+    {
+      "codigo": "S3",
+      "nombre": "Larvario",
+      "detalle": "Hermetia illucens; sale frass y larva cosechada",
+      "color": "#9C7B4A",
+      "posicion": 2,
+      "grados": 36.0
+    },
+    {
+      "codigo": "S4",
+      "nombre": "Descanso + inóculo",
+      "detalle": "cóctel microbiano",
+      "color": "#7A6E5D",
+      "posicion": 3,
+      "grados": 54.0
+    },
+    {
+      "codigo": "S5",
+      "nombre": "Cobertura de musgo",
+      "detalle": "hipótesis antipolvo",
+      "color": "#5C8A4A",
+      "posicion": 4,
+      "grados": 72.0
+    },
+    {
+      "codigo": "S6",
+      "nombre": "Consolidación",
+      "detalle": "sin intervención",
+      "color": "#6B6B70",
+      "posicion": 5,
+      "grados": 90.0
+    },
+    {
+      "codigo": "S7",
+      "nombre": "Muestreo",
+      "detalle": "ClO₄⁻, conductividad y patógenos",
+      "color": "#B5502A",
+      "posicion": 6,
+      "grados": 108.0
+    },
+    {
+      "codigo": "S8",
+      "nombre": "Compuerta de liberación",
+      "detalle": "pasa a cultivo o sale a cuarentena",
+      "color": "#1D3F28",
+      "posicion": 7,
+      "grados": 126.0
+    },
+    {
+      "codigo": "C1",
+      "nombre": "Cultivo",
+      "detalle": "luz fija y goteo sobre pivote",
+      "color": "#3F7A2E",
+      "posicion": 8,
+      "grados": 144.0
+    },
+    {
+      "codigo": "C2",
+      "nombre": "Cultivo",
+      "detalle": "luz fija y goteo sobre pivote",
+      "color": "#3F7A2E",
+      "posicion": 9,
+      "grados": 162.0
+    },
+    {
+      "codigo": "C3",
+      "nombre": "Cultivo",
+      "detalle": "luz fija y goteo sobre pivote",
+      "color": "#3F7A2E",
+      "posicion": 10,
+      "grados": 180.0
+    },
+    {
+      "codigo": "C4",
+      "nombre": "Cultivo",
+      "detalle": "luz fija y goteo sobre pivote",
+      "color": "#3F7A2E",
+      "posicion": 11,
+      "grados": 198.0
+    },
+    {
+      "codigo": "C5",
+      "nombre": "Cultivo",
+      "detalle": "luz fija y goteo sobre pivote",
+      "color": "#3F7A2E",
+      "posicion": 12,
+      "grados": 216.0
+    },
+    {
+      "codigo": "C6",
+      "nombre": "Cultivo",
+      "detalle": "luz fija y goteo sobre pivote",
+      "color": "#3F7A2E",
+      "posicion": 13,
+      "grados": 234.0
+    },
+    {
+      "codigo": "C7",
+      "nombre": "Cultivo",
+      "detalle": "luz fija y goteo sobre pivote",
+      "color": "#3F7A2E",
+      "posicion": 14,
+      "grados": 252.0
+    },
+    {
+      "codigo": "C8",
+      "nombre": "Cultivo",
+      "detalle": "luz fija y goteo sobre pivote",
+      "color": "#3F7A2E",
+      "posicion": 15,
+      "grados": 270.0
+    },
+    {
+      "codigo": "C9",
+      "nombre": "Cultivo",
+      "detalle": "luz fija y goteo sobre pivote",
+      "color": "#3F7A2E",
+      "posicion": 16,
+      "grados": 288.0
+    },
+    {
+      "codigo": "C10",
+      "nombre": "Cultivo",
+      "detalle": "luz fija y goteo sobre pivote",
+      "color": "#3F7A2E",
+      "posicion": 17,
+      "grados": 306.0
+    },
+    {
+      "codigo": "C11",
+      "nombre": "Cultivo",
+      "detalle": "luz fija y goteo sobre pivote",
+      "color": "#3F7A2E",
+      "posicion": 18,
+      "grados": 324.0
+    },
+    {
+      "codigo": "C12",
+      "nombre": "Cultivo",
+      "detalle": "luz fija y goteo sobre pivote",
+      "color": "#3F7A2E",
+      "posicion": 19,
+      "grados": 342.0
+    }
+  ],
+  "ciclo": {
+    "soles_total": 160,
+    "soles_cultivo": 96,
+    "dias_total": 164.4,
+    "n_regeneracion": 8,
+    "n_cultivo": 12,
+    "descanso_soles": 152
+  },
+  "mision": {
+    "horizonte_diseno_d": 539,
+    "soles_horizonte": 525,
+    "estancia_bases_d": 355
+  },
+  "sin_verificar": [
+    "estaciones.altura_dosel_maxima",
+    "estaciones.altura_libre_bajo_equipo",
+    "acceso.masa_max_manipulable",
+    "digestor.diametro_envolvente"
+  ]
+}

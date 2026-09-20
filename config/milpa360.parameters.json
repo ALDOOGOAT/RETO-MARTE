@@ -1,7 +1,7 @@
 {
   "meta": {
-    "version": "P1-2026-09-15",
-    "fecha": "2026-09-15",
+    "version": "P2-2026-09-19",
+    "fecha": "2026-09-19",
     "rama": "preparacion-madrid-p1",
     "descripcion": "Fuente única de parámetros de MILPA-360. Simulador, planos, tablas y cálculos deben leer de aquí.",
     "convencion_escenarios": "conservador = peor para el beneficio que afirma el sistema (menos alimento o biogás, más masa, más perclorato); favorable = lo contrario. Son escenarios, no probabilidades.",
@@ -16,7 +16,7 @@
       "transito_vuelta": {"valor": 201, "unidad": "d", "evidencia": "dato_publicado", "fuente": "NASA-SP-2009-566 (DRA 5.0) §4, perfil 2037"},
       "estancia_superficie_dra5": {"valor": 539, "unidad": "d", "evidencia": "dato_publicado", "fuente": "NASA-SP-2009-566 (DRA 5.0) §4, perfil 2037 (total 914 d)"},
       "estancia_superficie_oposicion": {"valor": 30, "unidad": "d", "evidencia": "dato_publicado", "fuente": "NASA-SP-2009-566 §6 (30–90 d); NASA-STD-3001 V2 Rev.F [V2 6253] p.63", "rango": [30, 90]},
-      "horizonte_diseno_superficie": {"valor": 539, "unidad": "d", "evidencia": "decision_equipo", "fuente": "Propuesta P1 (docs/madrid/P1-INGENIERIA.md §2)", "nota": "Envolvente conservadora; pendiente de aprobación del equipo"},
+      "horizonte_diseno_superficie": {"valor": 539, "unidad": "d", "evidencia": "decision_equipo", "fuente": "Decisión D2, P2 (19 sep 2026), sobre la propuesta de P1 §2", "nota": "Envolvente de dimensionado. El caso nominal del concurso son los ~355 d que se derivan de las bases (730 − 174 − 201) y el script los calcula. Pendiente de ratificación del equipo (B10) y de confirmación del organizador (B1)"},
       "dias_por_sol": {"valor": 1.0275, "unidad": "d/sol", "evidencia": "constante", "fuente": "Duración del sol marciano ≈ 24 h 39 min 35 s", "nota": "Pendiente de cita a una ficha NASA leída"},
       "gravedad_marte": {"valor": 3.71, "unidad": "m/s2", "evidencia": "constante", "fuente": "Valor de referencia de la gravedad superficial de Marte", "nota": "Pendiente de cita a una ficha NASA leída"}
     },
@@ -44,13 +44,23 @@
     "acceso": {
       "ancho_pasillo": {"valor": 0.9, "unidad": "m", "evidencia": "supuesto", "fuente": "Referencia: NASA/SP-2010-3407/REV1 (HIDH) — trayectoria mínima de emergencia ISS 81 × 114 cm", "rango": [0.81, 1.14], "nota": "El dato HIDH es para microgravedad; en 0.38 g falta un análisis de tareas [V2 8013]"},
       "alcance_desde_un_lado": {"valor": 0.6, "unidad": "m", "evidencia": "supuesto", "fuente": "Pendiente: antropometría OCHMO-TB-049 / NASA-STD-3001 V2 Apéndice E", "rango": [0.5, 0.7], "nota": "Profundidad máxima de bandeja trabajable desde un solo lado a 0.62 m de altura"},
-      "holgura_pared": {"valor": 0.1, "unidad": "m", "evidencia": "supuesto", "fuente": "Estructura, aislamiento y tubería perimetral (sin diseño)"}
+      "holgura_pared": {"valor": 0.1, "unidad": "m", "evidencia": "supuesto", "fuente": "Estructura, aislamiento y tubería perimetral (sin diseño)"},
+      "altura_libre_cabeza": {"valor": null, "unidad": "m", "evidencia": "pendiente", "fuente": "OCHMO-TB-049 / NASA-STD-3001 V2 Apéndice E: no leído. P2 informa la altura disponible bajo el casco"},
+      "masa_max_manipulable": {"valor": null, "unidad": "kg", "evidencia": "pendiente", "fuente": "Límite de manipulación manual de un tripulante en 0.38 g: sin fuente leída. Condiciona el cambio de cartucho en S8"}
+    },
+    "arquitectura": {
+      "seleccionada": {"valor": {"opcion": "B"}, "unidad": "opción", "evidencia": "decision_equipo", "fuente": "Decisión D1, P2 (19 sep 2026), sobre la recomendación de P1 §3.1", "nota": "Un anillo de 20 cartuchos idénticos en el Ø actual, con pasillo central. Pendiente de ratificación del equipo (B10); revocable. Las opciones A, B' y C siguen calculadas en milpa360_p1.py"}
     },
     "arquitectura_b": {
       "n_cartuchos": {"valor": 20, "unidad": "cartuchos", "evidencia": "decision_equipo", "fuente": "Propuesta P1: conserva las 20 bandejas del diseño clasificado"},
       "n_regeneracion": {"valor": 8, "unidad": "posiciones", "evidencia": "decision_equipo", "fuente": "Propuesta P1: S1–S8 del diseño clasificado"},
       "n_cultivo": {"valor": 12, "unidad": "posiciones", "evidencia": "decision_equipo", "fuente": "Propuesta P1: 12 etapas de cultivo del diseño clasificado"},
-      "cartuchos_repuesto": {"valor": 2, "unidad": "cartuchos", "evidencia": "supuesto", "fuente": "Propuesta P1: permite retirar a cuarentena un lote fallido sin detener el giro"}
+      "cartuchos_repuesto": {"valor": 2, "unidad": "cartuchos", "evidencia": "supuesto", "fuente": "Propuesta P1: permite retirar a cuarentena un lote fallido sin detener el giro"},
+      "altura_caja_cartucho": {"valor": 0.28, "unidad": "m", "evidencia": "supuesto", "fuente": "P2: 0.22 m de sustrato más 0.06 m de fondo, pared y guías. Sin diseño mecánico ni cálculo estructural"}
+    },
+    "estaciones": {
+      "altura_libre_bajo_equipo": {"valor": null, "unidad": "m", "evidencia": "pendiente", "fuente": "Sin diseño mecánico de las estaciones fijas (aviario, larvario, muestreo). P2 informa la altura disponible sobre el cartucho"},
+      "altura_dosel_maxima": {"valor": null, "unidad": "m", "evidencia": "pendiente", "fuente": "BVAD Rev2 Tablas 4-89 a 4-91 no dan altura de dosel; pendiente de fuente agronómica para camote, frijol y rábano"}
     },
     "sustrato": {
       "densidad_aparente": {"valor": 1500, "unidad": "kg/m3", "evidencia": "supuesto", "fuente": "PLAN-MAESTRO §4.1 (sin fuente)", "escenarios": {"conservador": 1800, "nominal": 1500, "favorable": 1200}, "nota": "Pendiente de medición (bloqueo B7)"},
@@ -80,6 +90,7 @@
       "rendimiento_ch4_rastrojo": {"valor": 0.4, "unidad": "m3 CH4/kg MS", "evidencia": "dato_publicado", "fuente": "FAO 2019 ca5082es Cuadro 14 p.63 (hojas de papa 0.40; remolacha 0.39; maíz 0.41)", "escenarios": {"conservador": 0.39, "nominal": 0.4, "favorable": 0.41}},
       "pci_metano": {"valor": 35.8, "unidad": "MJ/m3", "evidencia": "supuesto", "fuente": "Valor usado por el plan", "nota": "Condiciones de P, T y base PCI/PCS no declaradas; pendiente de fuente"},
       "eficiencia_electrica": {"valor": 0.4, "unidad": "fracción", "evidencia": "dato_publicado", "fuente": "FAO 2019 ca5082es p.63 (grupo electrógeno ≈40 %)", "nota": "Lectura parcial del párrafo"},
+      "diametro_envolvente": {"valor": null, "unidad": "m", "evidencia": "pendiente", "fuente": "Sin dimensionado del digestor ni del reactor de salmuera. P2 entrega el envolvente central disponible como requisito de diseño"},
       "incluir_heces_tripulacion": {"valor": false, "unidad": "booleano", "evidencia": "decision_equipo", "fuente": "Reto UNACH p.1 exige el 100 % de los residuos de la Parte 1 (animales); lo humano es opcional", "nota": "El script informa ese flujo aparte"}
     },
     "perclorato": {

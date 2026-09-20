@@ -1,17 +1,36 @@
 #!/usr/bin/env python3
 """P0 · Verificación reproducible de geometría, masa, energía y reglas del simulador MILPA-360.
 
-Lee las constantes DEL SIMULADOR ACTUAL (no las copia a mano), recalcula y compara con lo que
-dicen los documentos. Solo biblioteca estándar.
+ESTE SCRIPT ES UN ACTA, NO UNA PRUEBA DEL DISEÑO VIGENTE.
+
+Reproduce la auditoría del estado que había en el commit `c3e0ad3`: dos anillos contrarrotantes,
+10.288 m² de bandeja y descanso de 56 soles. P2 sustituyó esa arquitectura por la B (un anillo de
+20 cartuchos), así que las constantes que lee aquí ya no existen en el simulador de trabajo: por
+eso se leen del commit auditado con `git show`, y no del archivo actual. Si se apuntara al
+archivo actual, el acta dejaría de poder reproducirse y se perdería la cadena de evidencia.
+
+Para verificar el diseño VIGENTE: `python3 analysis/milpa360_p2.py`.
 
     python3 analysis/p0_verificacion.py
 
 Todo lo que imprime es CÁLCULO sobre constantes digitales o supuestos del equipo; nada es medición.
+La sección 7 sí recorre el árbol de trabajo actual: es el rastreo vivo de diámetros sueltos.
 """
 import hashlib, math, pathlib, re, subprocess
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 SIM = RAIZ / "prototipo-3d" / "milpa360-simulador.html"
+COMMIT_AUDITADO = "c3e0ad3"          # estado sobre el que se levantó AUDITORIA.md
+
+
+def simulador_auditado():
+    """El simulador tal como estaba en el commit auditado."""
+    r = subprocess.run(["git", "-C", str(RAIZ), "show",
+                        f"{COMMIT_AUDITADO}:prototipo-3d/milpa360-simulador.html"],
+                       capture_output=True, text=True)
+    if r.returncode != 0:
+        raise SystemExit(f"No pude leer el simulador en {COMMIT_AUDITADO}: {r.stderr.strip()}")
+    return r.stdout
 
 
 def constante(nombre, texto):
@@ -27,13 +46,15 @@ def sector(r0, r1, n, holgura):
 
 
 def main():
-    html = SIM.read_text(encoding="utf-8")
+    html = simulador_auditado()
     c = {k: constante(k, html) for k in
          ("N_IN", "N_OUT", "SOLES_PASO", "HOLGURA", "R0_IN", "R1_IN", "R0_OUT", "R1_OUT",
           "HONDO", "CUBIERTA", "R_CASCO", "H_CASCO")}
     commit = subprocess.run(["git", "-C", str(RAIZ), "rev-parse", "--short", "HEAD"],
                             capture_output=True, text=True).stdout.strip()
-    print(f"# P0 · commit {commit} · simulador sha256 {hashlib.sha256(SIM.read_bytes()).hexdigest()[:16]}")
+    print(f"# P0 · ACTA del commit auditado {COMMIT_AUDITADO} (HEAD actual: {commit})")
+    print(f"#      simulador auditado sha256 {hashlib.sha256(html.encode()).hexdigest()[:16]}")
+    print("#      El diseño vigente es la arquitectura B; verifícalo con analysis/milpa360_p2.py")
     print("constantes:", c)
 
     # ── 1. Geometría nominal digital ──
