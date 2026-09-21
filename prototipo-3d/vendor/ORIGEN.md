@@ -13,3 +13,7 @@ Fuentes Google Fonts descargadas el 20 sep 2026, licencias OFL adjuntas:
 - mono-semibold.ttf: https://raw.githubusercontent.com/google/fonts/main/ofl/ibmplexmono/IBMPlexMono-SemiBold.ttf
 
 Las texturas de escena son procedurales del proyecto; no representan topografía medida.
+
+S5, 21 sep 2026 UTC: Bodoni Moda para el deck (OFL adjunta).
+- bodoni-moda.ttf: https://raw.githubusercontent.com/google/fonts/main/ofl/bodonimoda/BodoniModa%5Bopsz%2Cwght%5D.ttf
+- bodoni-OFL.txt: https://raw.githubusercontent.com/google/fonts/main/ofl/bodonimoda/OFL.txt

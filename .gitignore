@@ -3,3 +3,7 @@ node_modules/
 __pycache__/
 entregas/
 outputs/**/*.inspect.ndjson
+tmp/
+outputs/madrid-s5/escena-three.json
+outputs/madrid-s5/tex-*.png
+outputs/madrid-s5/*.blend1

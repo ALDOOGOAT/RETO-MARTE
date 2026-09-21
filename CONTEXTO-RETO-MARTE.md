@@ -305,3 +305,23 @@ las tres partes del Reto Unificado ni operación marciana.
 (95.5%). Se leyó la lámina original. Es contexto estatal, no línea base del piloto de Tuxtla
 ni prueba de ahorro por goteo. Las fuentes de precios y la tasa fiscal empleada están
 registradas con sus condiciones en S4; no se convierten cifras públicas en cotizaciones.
+
+## Actualización S5 · defensa y visualización, 21 sep 2026 UTC
+
+La memoria vigente para revisión es [P5-DEFENSA.md](docs/madrid/P5-DEFENSA.md): incluye
+Documento Concepto, guion provisional de cinco minutos, preguntas del jurado y trazabilidad.
+El [paquete S5](outputs/madrid-s5/LEEME.md) reúne PDF, deck editable, respaldo audiovisual,
+Blender/GLB, planos y demo. El deck del hackathon conserva su carácter histórico.
+
+La transformación visual utiliza las dimensiones S3: corte de casco y terreno para
+inspección, cartuchos rotulados, guías/rodillos ilustrativos y ménsulas desde el casco.
+La selección de lote y el despiece no cambian inventarios ni demuestran mecánica.
+Blender importa la malla real de Three y se comprueban cotas tras reexportar GLB.
+La comparación S3/S5 conserva las mismas poses en
+[COMPARACION-S3-S5.html](docs/madrid/COMPARACION-S3-S5.html).
+
+**B19 permanece abierto.** La candidata de sector desmontable daría 0.976 m de cuerda
+interior antes de descontar estructura, al retirar dos posiciones. Falta depósito de
+cartuchos, guía desmontable, esclusa, enclavamientos y revisión de evacuación. No se
+adopta como acceso validado. B15–B18 siguen condicionando dosel, equipos y cargas.
+No se ha realizado ensayo físico; S6 y prueba en equipo/proyector del evento pendientes.

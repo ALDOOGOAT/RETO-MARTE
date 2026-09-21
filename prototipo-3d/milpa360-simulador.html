@@ -592,9 +592,9 @@ function texturaRegolito(S){
     const f = fbm(x / S * F * 11, y / S * F * 11, F * 11, 2);
     const k = sat(n * 0.72 + f * 0.42);
     const i = (y * S + x) * 4;
-    im.data[i]   = mezcla(92, 186, k);
-    im.data[i+1] = mezcla(48, 112, k);
-    im.data[i+2] = mezcla(33, 78, k);
+    im.data[i]   = mezcla(103, 164, k);
+    im.data[i+1] = mezcla(76, 125, k);
+    im.data[i+2] = mezcla(59, 99, k);
     im.data[i+3] = 255;
   }
   g.putImageData(im, 0, 0);
@@ -868,7 +868,7 @@ sol.shadow.camera.top = sol.shadow.camera.right = 11;
 sol.shadow.camera.bottom = sol.shadow.camera.left = -11;
 sol.shadow.bias = -0.00045; sol.shadow.normalBias = 0.016;
 escena.add(sol);
-const hemi = new T.HemisphereLight(0xC79A78, 0x2E1810, 0.72);
+const hemi = new T.HemisphereLight(0xD6E4EA, 0x554439, 0.72);
 escena.add(hemi);
 const relleno = new T.DirectionalLight(0x9FC6E4, 0.55);
 relleno.position.set(-24, 12, -20);
@@ -1312,7 +1312,7 @@ const M = {};                                         // materiales compartidos
 function mats(){
   M.casco   = new T.MeshStandardMaterial({ map: texCasco, roughness: 0.46, metalness: 0.10,
                                            side: T.DoubleSide });
-  M.cascoIn = new T.MeshStandardMaterial({ color: 0xAEB6BC, roughness: 0.55, metalness: 0.12,
+  M.cascoIn = new T.MeshStandardMaterial({ color: 0x283B43, roughness: 0.64, metalness: 0.22,
                                            side: T.DoubleSide });
   M.costilla= new T.MeshStandardMaterial({ color: 0x9AA3AA, roughness: 0.34, metalness: 0.72 });
   M.acero   = new T.MeshStandardMaterial({ color: 0xB6BEC5, roughness: 0.28, metalness: 0.88 });
@@ -1605,12 +1605,11 @@ function construirHabitat(){
   /* ── terreno ── */
   const geoT = new T.PlaneGeometry(150, 150, 190, 190);
   const pT = geoT.attributes.position;
+  const alturaTerreno=(x,y)=>((fbm(x*.035+40,y*.035+40,64,5)-.5)*5.2+
+    (fbm(x*.16+9,y*.16+9,64,3)-.5)*.55)*sat((Math.hypot(x,y)-5.4)/9);
   for (let i = 0; i < pT.count; i++){
     const x = pT.getX(i), y = pT.getY(i), d = Math.hypot(x, y);
-    let h = (fbm(x * 0.035 + 40, y * 0.035 + 40, 64, 5) - 0.5) * 5.2
-          + (fbm(x * 0.16 + 9, y * 0.16 + 9, 64, 3) - 0.5) * 0.55;
-    h *= sat((d - 5.4) / 9);                       // explanada plana bajo el módulo
-    pT.setZ(i, h);
+    pT.setZ(i, alturaTerreno(x,y));
   }
   geoT.computeVertexNormals();
   const texSuelo = texRego.clone(); texSuelo.needsUpdate = true;
@@ -1634,14 +1633,17 @@ function construirHabitat(){
     const roca = malla(geoR, matR, [Math.cos(a) * r, s * 0.34, Math.sin(a) * r]);
     roca.scale.set(s * (0.8 + azar() * 0.6), s * (0.5 + azar() * 0.5), s);
     roca.rotation.set(azar(), azar() * TAU, azar());
+    roca.position.y=alturaTerreno(roca.position.x,-roca.position.z)+PISO-ESPESOR_PISO_VISUAL+s*.12;
+    roca.visible=!limpio;
   }
 
   /* ── talud de regolito: el blindaje contra radiación ── */
-  const talud = malla(new T.CylinderGeometry(R_CASCO + 0.95, R_CASCO + 1.55, 0.72, 64, 1, true),
+  const talud = malla(new T.CylinderGeometry(R_CASCO + 0.95, R_CASCO + 1.55, 0.72, 64, 1, true, CIL_INI, A_LARGO),
     new T.MeshStandardMaterial({ map: texRego, roughness: 1, side: T.DoubleSide }), [0, 0.36, 0]);
   clicable(talud, "radiacion");
-  malla(new T.RingGeometry(R_CASCO + 0.08, R_CASCO + 0.95, 64), M.rego, [0, 0.716, 0])
-    .rotation.x = -Math.PI / 2;
+  talud.visible=!limpio;
+  const cimaTalud=malla(new T.RingGeometry(R_CASCO + 0.08, R_CASCO + 0.95, 64, 1, A_PARED, A_LARGO), M.rego, [0, 0.716, 0]);
+  cimaTalud.rotation.x = Math.PI / 2;cimaTalud.visible=!limpio;
 
   /* ── casco presurizado, en corte ── */
   const cascoGrp = new T.Group(); cascoGrp.name="casco"; gHabitat.add(cascoGrp);
@@ -1654,8 +1656,10 @@ function construirHabitat(){
   malla(new T.CylinderGeometry(R_CASCO - 0.07, R_CASCO - 0.07, H_CASCO, 72, 1, true, CIL_INI, A_LARGO),
     M.cascoIn, [0, H_CASCO / 2, 0], cascoGrp);
   /* Techo nominal a H_CASCO: el casquete anterior excedía la cota de P2. */
-  const techo = malla(new T.CircleGeometry(R_CASCO, 72, A_PARED, A_LARGO),
+  // Techo seccionado para inspección; nunca una abertura operativa.
+  const techo = malla(new T.RingGeometry(R_CASCO-0.22, R_CASCO, 72, 1, A_PARED, A_LARGO),
     M.casco, [0, H_CASCO, 0], cascoGrp);
+  techo.name = 'techo-seccionado';
   techo.rotation.x = Math.PI / 2;
   /* costillas: el toro se pre-rota en la geometría para que el grupo solo gire en Y */
   const geoCost = new T.TorusGeometry(R_CASCO + 0.04, 0.05, 8, 90, A_LARGO);
@@ -1826,7 +1830,11 @@ function construirHabitat(){
     g.position.set(p[0], CUBIERTA, p[2]);
     g.rotation.y = -k / N_POS * TAU;
     gHabitat.add(g);
-    malla(new T.CylinderGeometry(0.026, 0.034, altura, 10), M.acero, [0, altura / 2, 0], g);
+    // Ménsula desde el casco: el poste anterior atravesaba la cubeta al indexar.
+    // Aún falta verificar dosel, herramienta y resistencia (B15/B18).
+    const alcance=R_CASCO-.07-R_MED;
+    malla(new T.BoxGeometry(alcance,.035,.055),M.acero,[alcance/2,altura+.085,0],g);
+    malla(new T.BoxGeometry(.025,.16,.12),M.costilla,[alcance,altura+.085,0],g);
     const mat = new T.MeshStandardMaterial({ color, roughness: 0.34, metalness: 0.4,
       emissive: color, emissiveIntensity: 0.28 });
     malla(new T.BoxGeometry((ancho || 0.32), 0.115, 0.30), mat, [0, altura, 0], g);
@@ -2227,6 +2235,82 @@ function construirHabitat(){
                      { w: 700, h: 160, fondo: "#0E1317", barra: "#63A9D1", y0: 0.42 }),
         0.60, 0.135, [-0.14, 0.80, 0], Math.PI / 2, filt);
 
+  /* S5: detalle de ensamblaje nominal. Pernos, rodillos y refuerzos son ilustrativos;
+     su apariencia no acredita selección de materiales, cálculo resistente ni acceso. */
+  const blanco = new T.MeshStandardMaterial({color:0xDCE2DF,roughness:0.48,metalness:0.22});
+  const ambar = new T.MeshStandardMaterial({color:0xE9AE52,roughness:0.5,metalness:0.3});
+  const baseMecanica = new T.Group();baseMecanica.name='soporte-ilustrativo';gHabitat.add(baseMecanica);
+  for(const r of [R0+0.06,R1-0.06]){
+    const guia=malla(new T.TorusGeometry(r,0.025,8,100),M.oscuro,[0,0.21,0],baseMecanica);
+    guia.rotation.x=Math.PI/2;
+    const perfil=malla(new T.TorusGeometry(r,0.010,6,100),M.acero,[0,0.255,0],baseMecanica);
+    perfil.rotation.x=Math.PI/2;
+  }
+  const pernos=new T.InstancedMesh(new T.CylinderGeometry(0.013,0.013,0.015,6),M.acero,N_POS*4);
+  const dummy=new T.Object3D();let tornillo=0;
+  for(let i=0;i<N_POS;i++){
+    const a=i/N_POS*TAU, g=carrusel.bandejas[i].g;
+    // Identidad física fijada al cartucho: permanece al cambiar de estación.
+    const cara=malla(new T.CylinderGeometry(R1+0.003,R1+0.003,0.19,12,1,true,
+      Math.PI/2-GEOM.anillo.sector_grados*RAD/2,GEOM.anillo.sector_grados*RAD),blanco,[0,Y_MARCO+0.125,0],g);
+    clicable(cara,'carrusel');
+    bandaRotulo(R1+0.009,0.11,Y_MARCO+0.12,0,0.18,
+      texturaPlaca([{t:'CARTUCHO '+String(i+1).padStart(2,'0'),s:0.35,esp:0.015,c:'#152830'}],
+      {w:400,h:100,fondo:'#DCE2DF',tinta:'#152830',barra:'#D2622F',y0:0.56}),g);
+    for(const r of [R0+0.03,R1-0.03])for(const s of [-1,1]){
+      const ang=a+s*GEOM.anillo.sector_grados*RAD*.40;
+      dummy.position.set(Math.cos(ang)*r,CUBIERTA+0.004,Math.sin(ang)*r);dummy.updateMatrix();
+      pernos.setMatrixAt(tornillo++,dummy.matrix);
+    }
+    if(i%2===0){
+      for(const r of [R0+0.06,R1-0.06]){
+        const rodillo=malla(new T.CylinderGeometry(.065,.065,.07,16),M.acero,
+          [Math.cos(a)*r,.28,Math.sin(a)*r],baseMecanica);
+        rodillo.rotation.z=Math.PI/2;rodillo.rotation.y=-a;
+      }
+      const trav=malla(new T.BoxGeometry(R1-R0,.055,.075),M.oscuro,
+        [Math.cos(a)*R_MED,.14,Math.sin(a)*R_MED],baseMecanica);trav.rotation.y=-a;
+    }
+  }
+  pernos.name='pernos-ilustrativos';carrusel.grupo.add(pernos);
+  marcarSubarbol(baseMecanica,'carrusel');
+  // Paneles de servicio del casco, tornillería y juntas con geometría visible.
+  for(let k=0;k<12;k++){
+    const a=A_PARED+(k+.5)/12*A_LARGO, g=new T.Group();
+    g.position.set(Math.cos(a)*(R_CASCO-.085),0,Math.sin(a)*(R_CASCO-.085));
+    g.rotation.y=Math.PI/2-a;cascoGrp.add(g);
+    malla(new T.BoxGeometry(.46,.51,.025),blanco,[0,.42,0],g);
+    for(let j=0;j<5;j++)malla(new T.BoxGeometry(.33,.012,.03),M.oscuro,[0,.30+j*.045,-.01],g,false);
+    malla(new T.BoxGeometry(.015,H_CASCO-.12,.055),M.costilla,[.255,H_CASCO/2,0],g);
+  }
+  for(const a of [A_PARED,A_FIN]){
+    const canto=malla(new T.BoxGeometry(.023,H_CASCO,.14),ambar,
+      [Math.cos(a)*(R_CASCO-.025),H_CASCO/2,Math.sin(a)*(R_CASCO-.025)],cascoGrp);
+    canto.rotation.y=-a;
+  }
+  // Punto de acceso estudiado: marca en el suelo, NO puerta/evacuación resuelta.
+  const aviso=new T.Group();aviso.name='acceso-pendiente';aviso.rotation.y=.62;gHabitat.add(aviso);
+  for(let k=0;k<8;k++){
+    const marca=malla(new T.BoxGeometry(.10,.008,.70),k%2?M.oscuro:ambar,[R_CASCO+.12+k*.12,.007,0],aviso,false);
+    marca.receiveShadow=true;
+  }
+  placa(texturaPlaca([{t:'ENTRADA / EVACUACIÓN PENDIENTE',s:.25,esp:.01},
+    {t:'B19 · EL ANILLO INTERCEPTA EL PASO',s:.17,c:'#E9AE52',esp:.01}],
+    {w:900,h:180,fondo:'#0E1B21',barra:'#E9AE52',y0:.42}),1.35,.27,[R_CASCO+.57,.022,0],Math.PI/2,aviso,-Math.PI/2);
+  const referencia=gHabitat.getObjectByName('referencia-humana');
+  for(const lado of [-1,1]){
+    const brazo=malla(new T.CapsuleGeometry(.035,.48,3,8),blanco,[lado*.20,1.13,0],referencia);
+    brazo.rotation.z=lado*.12;
+  }
+  placa(texturaPlaca([{t:'SECCIÓN DIGITAL · NO ES HÁBITAT ABIERTO',s:.22,esp:.015},
+    {t:'Ø '+GEOM.casco.diametro.toFixed(2)+' m · FIGURA '+GEOM.casco.altura_figura.toFixed(2)+' m · S5',s:.19,c:'#A8C7D1',esp:.015}],
+    {w:1000,h:170,fondo:'#10222A',barra:'#D2622F',y0:.42}),2.2,.374,[1.55,.15,-2.20],Math.PI/2+.62,null,-.25);
+
+  // Contorno de lote seleccionado. Es una capa técnica de la pieza, no una etiqueta flotante.
+  const seleccion=new T.LineSegments(new T.EdgesGeometry(GEO.marco),new T.LineBasicMaterial({color:0xFFCE76}));
+  seleccion.name='lote-seleccionado';seleccion.visible=false;seleccion.position.y=Y_MARCO+.003;
+  gHabitat.add(seleccion);
+
   /* ── polvo en suspensión durante la tormenta ── */
   const gp = new T.BufferGeometry(), NP = 1400, pp = new Float32Array(NP * 3);
   for (let i = 0; i < NP; i++){
@@ -2259,6 +2343,7 @@ const S = {
   get gas(){ return modelo.estado.gasKWh / MILPA_DATOS.parametros.simulacion.capacidad_gas.valor; },
   play: !reduce && Q.get("play") !== "0", vel:4, transicion:0, destino:null,
   reducido:reduce, proyeccion:"orbita",
+  explosion:Q.get('explosion')==='1', loteSeguido:null,
 };
 const VELS = [1, 4, 12];
 let iVel = 1;
@@ -2357,6 +2442,7 @@ document.body.appendChild(mostrarRiel);
 
 /* transporte */
 $("b-play").onclick = e => {
+  if(S.explosion){S.explosion=false;const c=$("vista-explosion");if(c)c.checked=false;}
   S.play = !S.play;
   e.currentTarget.textContent = S.play ? "PAUSAR" : "REANUDAR";
   e.currentTarget.classList.toggle("on", S.play);
@@ -2373,7 +2459,7 @@ $("b-tormenta").onclick = e => {
 function controles(){
   $("b-play").textContent=S.sol>=SOLES_MISION?"Misión terminada":S.play?"Pausar":"Reanudar";
   $("b-play").classList.toggle("on",S.play);
-  $("aviso-modelo").textContent="Ilustrativo · "+(modelo.autorizacionesIlustrativas?"autorizaciones simuladas":"sin autorización de lotes")+" · "+(modelo.estado.bloqueo||"acceso interior pendiente");
+  $("aviso-modelo").textContent=(S.explosion?"Despiece visual · desplazamientos no operativos":"Ilustrativo · "+(modelo.autorizacionesIlustrativas?"autorizaciones simuladas":"sin autorización de lotes"))+" · "+(modelo.estado.bloqueo||"acceso interior pendiente");
 }
 $("b-reset").onclick=()=>{modelo.reiniciar();S.play=false;controles();};
 function vistaTecnica(tipo){
@@ -2387,9 +2473,11 @@ function abrirTecnica(){
   <p><b>Acceso sin resolver:</b> ${(GEOM.casco.altura-PISO).toFixed(2)} m sobre el piso; ${(GEOM.casco.altura-CUBIERTA).toFixed(2)} m sobre la cama. Figura de ${GEOM.casco.altura_figura.toFixed(2)} m. Entrada a través del anillo pendiente. Equipos, tuberías y cultivos son esquemáticos; B15–B19 pendientes.</p>
   <div class="acciones"><button class="btn" id="cam-planta">Planta</button><button class="btn" id="cam-lateral">Lateral</button><button class="btn" id="cam-orbita">Órbita</button></div>
   <label><input type="checkbox" id="casco-visible" ${gHabitat.getObjectByName('casco').visible?'checked':''}> Mostrar casco en corte</label>
+  <label><input type="checkbox" id="vista-explosion" ${S.explosion?'checked':''}> Separar ensamblaje (sólo inspección)</label>
   <label><input type="checkbox" id="menos-movimiento" ${S.reducido?'checked':''}> Reducir movimiento</label>
   <label>Equipo o flujo <select id="equipo-elegido"><option value="">Elegir ficha</option>${Object.keys(FICHAS).map(k=>`<option value="${k}">${FICHAS[k].tit}</option>`).join('')}</select></label>
   <label>Lote <select id="lote-elegido">${modelo.estado.lotes.map(l=>`<option>${l.id}</option>`).join('')}</select></label>
+  <button class="btn" id="seguir-lote">Resaltar cartucho del lote</button>
   <div class="datos-vivos" id="datos-vivos"></div>
   <label>Fallo <select id="tipo-fallo"><option value="bomba">Bomba detenida</option><option value="atasco">Atasco del anillo</option><option value="lote">Lote rechazado en S8</option></select></label>
   <div class="acciones"><button class="btn" id="aplicar-fallo">Aplicar fallo</button><button class="btn" id="reparar-fallo">Reparar</button><button class="btn" id="aislar-lote">Aislar / sustituir S8</button></div>
@@ -2400,6 +2488,8 @@ function abrirTecnica(){
   for(const tipo of ['planta','lateral','orbita']) $("cam-"+tipo).onclick=()=>vistaTecnica(tipo);
   $("equipo-elegido").onchange=e=>{if(e.target.value)abrirFicha(e.target.value);};
   $("casco-visible").onchange=e=>gHabitat.getObjectByName('casco').visible=e.target.checked;
+  $("vista-explosion").onchange=e=>{S.explosion=e.target.checked;if(S.explosion){S.play=false;controles();}};
+  $("seguir-lote").onclick=()=>{S.loteSeguido=$("lote-elegido").value;};
   $("menos-movimiento").onchange=e=>S.reducido=e.target.checked;
   const actuar=fn=>{try{fn();$("mensaje-accion").textContent="Estado actualizado; reparación no elimina el daño previo.";}catch(e){$("mensaje-accion").textContent=e.message;}};
   $("aplicar-fallo").onclick=()=>actuar(()=>modelo.fallar($("tipo-fallo").value));
@@ -2546,6 +2636,7 @@ function iniciar(){
   for (const k in M) if (M[k].envMapIntensity !== undefined) M[k].envMapIntensity = 0.42;
   construirPlaneta(tex);
   refsHab = construirHabitat();
+  if(S.explosion) S.play=false;
 
   /* iluminación por imagen: refleja el cielo marciano en metales y vidrios */
   const pmrem = new T.PMREMGenerator(renderer);
@@ -2592,6 +2683,13 @@ function bucle(ahora){
   const enTormenta = S.tormenta > 0;
   const estado = modelo.estado;
   if (S.vista === "habitat"){
+    // Despiece gráfico. No se simula una maniobra física ni se desplazan inventarios.
+    carrusel.grupo.position.y=S.explosion?.55:0;
+    gHabitat.getObjectByName('casco').position.y=S.explosion?1.25:0;
+    const seleccionado=gHabitat.getObjectByName('lote-seleccionado');
+    const seguido=estado.lotes.find(l=>l.id===S.loteSeguido);
+    seleccionado.visible=!!seguido;
+    if(seguido){seleccionado.rotation.y=-seguido.pos/N_POS*TAU;seleccionado.position.y=CUBIERTA-GEOM.cartucho.altura_caja+.003+carrusel.grupo.position.y;}
     // Indexado esquemático de 18°: duración mecánica pendiente, no velocidad física.
     carrusel.grupo.rotation.y = -estado.pasos / N_POS * TAU;
     for (let i=0;i<N_POS;i++){

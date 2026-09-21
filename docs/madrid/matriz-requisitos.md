@@ -1,6 +1,6 @@
 # Matriz de requisitos — MILPA-360 · P0
 
-**Corte:** commit `c3e0ad3`, 15 sep 2026 · **evidencia actualizada hasta S3, 20 sep 2026**, con `analysis/milpa360_p1.py` y [`P1-INGENIERIA.md`](P1-INGENIERIA.md). Evidencia y cálculos en [`AUDITORIA.md`](AUDITORIA.md) y
+**Corte original:** commit `c3e0ad3`, 15 sep 2026 · **evidencia actualizada hasta S5, 21 sep 2026 UTC**, con `analysis/milpa360_p1.py` y [`P5-DEFENSA.md`](P5-DEFENSA.md). Evidencia y cálculos en [`AUDITORIA.md`](AUDITORIA.md) y
 `python3 analysis/p0_verificacion.py`.
 
 **Estados permitidos:** cumplido con evidencia · parcial · pendiente · no aplicable justificado · por confirmar con organizador.
@@ -51,13 +51,13 @@ requisito es estructural y el diseño lo satisface por construcción. No signifi
 
 | ID | Texto / paráfrasis fiel | Fuente y pág. | Autoridad / rev. | Oblig. o ejemplo | Subsistema | Método de verificación | Evidencia | Estado | Brecha | Responsable |
 |---|---|---|---|---|---|---|---|---|---|---|
-| G-01 | **Documento Concepto:** registro del proceso con fotos del trabajo físico, investigación, ideas descartadas y por qué, retroalimentación y cómo se aplicó, aprendizaje | pp.2–3, 35 | Guía TGJ 2026 | Obligatorio | Documentación | Revisión documental | Materia prima dispersa (FASE-*.md, IDEA-DESCARTADA, IDEAS-ORIGINALES) | pendiente | No hay documento consolidado ni retroalimentación del jurado en el repo (B4) | Comunicaciones |
-| G-02 | **Prototipo esquemático** con fotos del proceso, bocetos y versiones anteriores | pp.3, 20–22 | Guía TGJ 2026 | Obligatorio | Prototipo | Revisión y prueba de comprensión por terceros | Simulador, planos P02–P05, renders | parcial | Geometrías divergentes; los renders de «arcilla» y «alambre» son digitales; no hay fotos físicas en el repo | UX/UI |
+| G-01 | **Documento Concepto:** registro del proceso con fotos del trabajo físico, investigación, ideas descartadas y por qué, retroalimentación y cómo se aplicó, aprendizaje | pp.2–3, 35 | Guía TGJ 2026 | Obligatorio | Documentación | Revisión documental | P5-DEFENSA.md §7 consolida cronología, decisiones y aprendizaje | parcial | Sin fotos de ensayo físico ni retroalimentación real del jurado (B4) | Comunicaciones |
+| G-02 | **Prototipo esquemático** con fotos del proceso, bocetos y versiones anteriores | pp.3, 20–22 | Guía TGJ 2026 | Obligatorio | Prototipo | Revisión y prueba de comprensión por terceros | Simulador/Blender S5, P02/P03 paramétricos, flujos en planos/madrid y comparación S3/S5 | parcial | B15–B19 abiertos; los renders son digitales y no hay fotos de ensayo físico | UX/UI |
 | G-03 | «Cualquiera que lo vea entiende qué hace y para quién es — sin que el equipo tenga que explicarlo» | p.21 | Guía TGJ 2026 | Criterio de preparación | Prototipo | Prueba cronometrada con personas ajenas | — | pendiente | Sin prueba con usuarios | UX/UI |
-| G-04 | **Presentación de 5 min:** apertura → problema con datos → solución → prototipo → viabilidad → retorno | pp.3, 24 | Guía TGJ 2026 | Obligatorio | Presentación | Ensayo cronometrado y trazabilidad de cada afirmación | Deck de 9 diapositivas; guion PLAN §11 | parcial | El guion usa «2.9 kWh autosuficiente», «97 %», «25 % vs 100 %» y «cumple NASA» sin sustento | UX/UI 2 + Comunicaciones |
-| G-05 | **Video obligatorio** (presencial y virtual) | pp.3, 24, 28 | Guía TGJ 2026 | Obligatorio | Presentación | Archivo, duración y URL activa | No está en el repo | pendiente | Formato de Madrid por confirmar (B1) | UX/UI 2 |
+| G-04 | **Presentación de 5 min:** apertura → problema con datos → solución → prototipo → viabilidad → retorno | pp.3, 24 | Guía TGJ 2026 | Obligatorio | Presentación | Ensayo cronometrado y trazabilidad de cada afirmación | Deck S5 de 9 diapositivas; guion y trazabilidad P5-DEFENSA.md §8–10 | parcial | Falta ensayo humano cronometrado y formato Madrid; no afirma autosuficiencia ni validación | UX/UI 2 + Comunicaciones |
+| G-05 | **Video obligatorio** (presencial y virtual) | pp.3, 24, 28 | Guía TGJ 2026 | Obligatorio | Presentación | Archivo, duración y URL activa | RESPALDO-PITCH-S5.mp4, 300 s sin audio, para narrar en vivo | parcial | No es vídeo oficial aprobado; falta formato Madrid, narración y publicación autorizada (B1) | UX/UI 2 |
 | G-06 | Final: «Hasta 5 minutos de presentación», preguntas del jurado, prototipo visible | p.30 | Guía TGJ 2026 (formato local) | Obligatorio localmente | Presentación | — | — | por confirmar con organizador | El formato de Madrid es desconocido (B1) | CEO |
-| G-07 | ODS: 1 a 5, cada uno con dónde aplica **y dónde no** | pp.22–23 | Guía TGJ 2026 | Obligatorio | Retorno | Revisión de cada justificación contra datos | PLAN §9.3 con 5 ODS a doble columna | parcial | Varias justificaciones repiten afirmaciones sin sustento («convierte el 100 %», «elimina la compra de alimento balanceado») | Científico Planetario |
+| G-07 | ODS: 1 a 5, cada uno con dónde aplica **y dónde no** | pp.22–23 | Guía TGJ 2026 | Obligatorio | Retorno | Revisión de cada justificación contra datos | P5-DEFENSA.md §6: ODS 2, 6 y 12 con aplicación y límites | parcial | Beneficios del piloto aún sin mediciones; no acredita tratar el 100% ni sustituir ración animal | Científico Planetario |
 | G-08 | Problemática respaldada con **datos duros** verificables | p.15 | Guía TGJ 2026 | Obligatorio | Documentación | Registro de afirmaciones con fuente leída | `registro-afirmaciones.csv` (P0) | parcial | Varios datos discrepantes o sin fuente primaria (AUD C4, C5, C8) | Ing. Soporte Vital |
 | G-09 | IA permitida para el prototipo; empezar con bocetos a lápiz y subir ambos | p.20 | Guía TGJ 2026 | Recomendación | Prototipo | — | Sin bocetos a mano en el repo | pendiente | Política de IA de Madrid por confirmar (B1) | UX/UI |
 
@@ -67,12 +67,12 @@ El jurado evalúa estos criterios; no se «cumplen». El estado refleja la **pre
 
 | ID | Criterio (qué observa el jurado) | Fuente y pág. | Autoridad / rev. | Oblig. o ejemplo | Subsistema | Método de verificación | Evidencia | Estado | Brecha | Responsable |
 |---|---|---|---|---|---|---|---|---|---|---|
-| G-C1 | Impacto: diferencia real en la vida de las personas, en Marte y en la Tierra | p.31 | Guía TGJ 2026 | Criterio | Sistema | Cifra de aporte alimentario y caso piloto | — | pendiente | RU-03 y RU-T-01 | CMO |
+| G-C1 | Impacto: diferencia real en la vida de las personas, en Marte y en la Tierra | p.31 | Guía TGJ 2026 | Criterio | Sistema | Cifra de aporte alimentario y caso piloto | P5: 2.46% kcal calculadas; piloto Tuxtla en P4-PRESUPUESTO-CHIAPAS.md | parcial | Aporte e impacto sin medir; sitio/operador pendientes. RU-03 y RU-T-01 | CMO |
 | G-C2 | Creatividad: original, más allá de lo obvio | p.31 | Guía TGJ 2026 | Criterio | Sistema | Tabla de antecedentes y rasgos compartidos o diferentes | Afirmaciones de novedad sin comparación (AUD C8) | pendiente | Hipótesis de novedad sin contrastar | Científico Planetario |
-| G-C3 | Diseño: bien pensado; el prototipo comunica cómo funciona | p.31 | Guía TGJ 2026 | Criterio | Prototipo | Geometría única, acceso y trasvase explicables | P02/P03 paramétricos; P04/P05 históricos y deck por sincronizar | parcial | S3: altura sobre piso corregida; B19 sigue en entrada/evacuación. Equipos, maniobra y carga por validar | UX/UI |
+| G-C3 | Diseño: bien pensado; el prototipo comunica cómo funciona | p.31 | Guía TGJ 2026 | Criterio | Prototipo | Geometría única, acceso y trasvase explicables | P02/P03 paramétricos; P04/P05 en planos/madrid; Three/Blender y deck S5 | parcial | B19 sigue en entrada/evacuación. Equipos, maniobra y carga por validar; sin prueba de comprensión por terceros | UX/UI |
 | G-C4 | Culminación: proceso completo, coherente y profundo | p.31 | Guía TGJ 2026 | Criterio | Documentación | Documento Concepto y versión congelada | Historial de fases | parcial | G-01 | CEO |
-| G-C5 | Aprendizaje real a lo largo del proceso | p.31 | Guía TGJ 2026 | Criterio | Documentación | Registro de cambios con motivo y evidencia | PLAN §4.1 corrige Ø 3.5 → 4.56 m | parcial | Falta la retroalimentación del jurado y los cambios posteriores (B4) | Comunicaciones |
-| G-C6 | Validez: problemática respaldada con datos; pertinente, viable, implementable | p.31 | Guía TGJ 2026 | Criterio | Documentación | Registro de afirmaciones depurado | P0 inicial | parcial | G-08 | Ing. Soporte Vital |
+| G-C5 | Aprendizaje real a lo largo del proceso | p.31 | Guía TGJ 2026 | Criterio | Documentación | Registro de cambios con motivo y evidencia | P5-DEFENSA.md §7: decisiones P0–S5 con motivos y límites | parcial | Falta retroalimentación real del jurado y su aplicación (B4) | Comunicaciones |
+| G-C6 | Validez: problemática respaldada con datos; pertinente, viable, implementable | p.31 | Guía TGJ 2026 | Criterio | Documentación | Registro de afirmaciones depurado | Registro actualizado P0–S5 y cálculos reproducibles | parcial | G-08; parámetros biológicos y mecánicos sin validación física | Ing. Soporte Vital |
 | G-C7 | Relevancia técnica: viable en el contexto de Marte | p.31 | Guía TGJ 2026 | Criterio | Sistema | Balances, normativa aplicable y límites | — | pendiente | C4, C5, C6, C7 | Ing. Soporte Vital |
 | G-C8 | Presentación clara y convincente en 5 minutos | p.31 | Guía TGJ 2026 | Criterio | Presentación | Ensayos cronometrados ante personas ajenas | Deck actual | parcial | G-04 | Comunicaciones |
 | G-C9 | Retorno a la humanidad: contribución significativa a la Tierra | p.31 | Guía TGJ 2026 | Criterio | Retorno | Caso piloto con indicador base | P4-PRESUPUESTO-CHIAPAS.md §5; comparación y presupuesto preliminares | parcial | RU-T-01: sin línea base ni resultados reales | CMO |
@@ -118,10 +118,10 @@ Criterios, requisitos de Madrid y referencias NASA van aparte porque no son requ
 
 | Estado | Nº | % de 27 |
 |---|---:|---:|
-| cumplido con evidencia | 1 (RU-RC-01) | 4 % |
-| parcial | 22 | 81 % |
-| pendiente | 3 | 11 % |
-| por confirmar con organizador | 1 (G-06) | 4 % |
+| cumplido con evidencia | 1 (RU-RC-01) | 3.7 % |
+| parcial | 24 | 88.9 % |
+| pendiente | 1 | 3.7 % |
+| por confirmar con organizador | 1 (G-06) | 3.7 % |
 | no aplicable justificado | 0 | 0 % |
 
 La cobertura **no** mide la probabilidad de ganar ni la validez científica.

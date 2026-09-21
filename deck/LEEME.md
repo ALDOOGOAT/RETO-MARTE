@@ -1,3 +1,6 @@
+> **Defensa S5 actual:** [paquete Madrid](../outputs/madrid-s5/LEEME.md), con PPTX/PDF,
+> guion y video provisional. [Memoria y Documento Concepto](../docs/madrid/P5-DEFENSA.md).
+>
 > **Material histórico del hackathon.** El texto y las capturas anteriores a S2
 > no constituyen la defensa vigente de Madrid. Las capturas P3 nuevas están en
 > `../docs/madrid/capturas/` (anillo único); P5 debe sincronizar afirmaciones,

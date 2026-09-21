@@ -2,13 +2,13 @@
 // Chrome aislado, sin red; sólo stdlib y el cliente WebSocket nativo de Node 20.
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
-import {mkdtemp,writeFile,mkdir,readFile} from 'node:fs/promises';
+import {mkdtemp,writeFile,appendFile,mkdir,readFile} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 const raiz=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const perfil=await mkdtemp(path.join(os.tmpdir(),'milpa-chrome-'));
-const chrome=spawn('google-chrome',['--headless=new','--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-angle=swiftshader','--remote-debugging-port=0','--no-first-run','--no-default-browser-check','--disable-background-networking','--user-data-dir='+perfil,'about:blank'],{stdio:['ignore','ignore','pipe']});
+const chrome=spawn('google-chrome',['--headless=new','--no-sandbox','--allow-file-access-from-files','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-angle=swiftshader','--remote-debugging-port=0','--no-first-run','--no-default-browser-check','--disable-background-networking','--user-data-dir='+perfil,'about:blank'],{stdio:['ignore','ignore','pipe']});
 let socket;
 try {
   console.log('Chrome: arranque aislado');
@@ -41,6 +41,7 @@ try {
   const piso=await evaluar(`(()=>{const b=new THREE.Box3().setFromObject(gHabitat.getObjectByName('piso-modulo'));return {base:b.min.y,cara:b.max.y,terreno:gHabitat.getObjectByName('terreno').position.y};})()`);
   assert.ok(piso.terreno<=piso.base+1e-6&&Math.abs(piso.cara-cotas.piso)<1e-6,'Terreno invade piso transitable');
   console.log('Chrome: escena cargada sin red');
+  if(process.env.MILPA_SOLO_CAPTURAS!=='1'){
   const snap=await evaluar('JSON.stringify(modelo.estado)');
   await new Promise(r=>setTimeout(r,500));
   assert.equal(await evaluar('JSON.stringify(modelo.estado)'),snap,'Pausa muta el modelo');
@@ -48,6 +49,12 @@ try {
   assert.ok(alineacion.every(x=>x<1e-8),'Escena y posición del lote no coinciden');
   await evaluar('document.getElementById("b-tecnica").click()');
   await esperar('document.getElementById("datos-vivos")');
+  await evaluar('document.getElementById("vista-explosion").click()');
+  await esperar('carrusel.grupo.position.y===.55');
+  assert.equal(await evaluar('S.play'),false);
+  await evaluar('document.getElementById("vista-explosion").click();document.getElementById("seguir-lote").click()');
+  await esperar('gHabitat.getObjectByName("lote-seleccionado").visible');
+  assert.equal(await evaluar('carrusel.grupo.position.y'),0);
   await evaluar('document.getElementById("cam-planta").click()');
   assert.equal(await evaluar('camara.isOrthographicCamera'),true);
   await evaluar('document.getElementById("cam-lateral").click();document.getElementById("cam-orbita").click()');
@@ -77,11 +84,13 @@ try {
   assert.ok((await evaluar('document.getElementById("f-tit").textContent')).includes('Módulo'));
   await evaluar('document.getElementById("cerrar").click()');
   console.log('Chrome: controles y geometría verificados');
+  }
   const hardware=await evaluar(`(()=>{const gl=renderer.getContext(),ext=gl.getExtension('WEBGL_debug_renderer_info');return {three:THREE.REVISION,renderer:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):'no disponible',pantalla:[innerWidth,innerHeight],dpr:devicePixelRatio};})()`);
   const fps=await evaluar('new Promise(resolve=>{let n=0;const inicio=performance.now();function contar(){if(++n===30)resolve(30000/(performance.now()-inicio));else requestAnimationFrame(contar);}requestAnimationFrame(contar);})');
   assert.equal(hardware.three,'160');
   const capturas=path.join(raiz,'docs/madrid/capturas');await mkdir(capturas,{recursive:true});
   const poses={hero:'vista=habitat&ui=0&sol=62&theta=-0.62&phi=1.08&dist=10.4&play=0',planta:'vista=habitat&ui=0&piso=0&casco=0&sol=62&theta=-1.5708&phi=0.12&dist=11.5&play=0',nucleo:'vista=habitat&ui=0&piso=0&sol=62&theta=-0.78&phi=1.16&dist=5.4&play=0',tormenta:'vista=habitat&ui=0&sol=62&storm=1&play=0&theta=-0.62&phi=1.04&dist=10',planeta:'ui=0&theta=-0.62&phi=1.30&dist=18.5&play=0',tecnica:'vista=habitat&play=0&sol=62'};
+  poses.explosion='vista=habitat&ui=0&sol=62&theta=-0.62&phi=1.10&dist=12.4&play=0&explosion=1';
   for(const [nombre,q] of Object.entries(poses)){
     await cdp('Page.navigate',{url:url+'?'+q});await esperar('typeof refsHab!=="undefined"&&refsHab&&!document.getElementById("carga")');
     await evaluar('camara.position.copy(new THREE.Vector3(mira.x+orbe.dist*Math.sin(orbe.phi)*Math.cos(orbe.theta),mira.y+orbe.dist*Math.cos(orbe.phi),mira.z+orbe.dist*Math.sin(orbe.phi)*Math.sin(orbe.theta)))');
@@ -90,10 +99,20 @@ try {
     console.log('Captura: '+nombre);
     const imagen=await cdp('Page.captureScreenshot',{format:'png'});
     await writeFile(path.join(capturas,nombre+'.png'),Buffer.from(imagen.data,'base64'));
+    if(nombre==='hero'&&process.env.MILPA_EXPORT_GLB==='1'){
+      // Exportación de mallas ya evaluadas; Blender aplica el cambio Y-arriba → Z-arriba.
+      // Sin un segundo motor ni un cargador añadido a la demo offline.
+      const largo=await evaluar(`(()=>{gHabitat.updateMatrixWorld(true);const geometrias={},materiales={},texturas={},objetos=[];gHabitat.traverseVisible(o=>{if(!o.isMesh||!o.material.visible||Array.isArray(o.material))return;const g=o.geometry,m=o.material;if(!g.attributes.position)return;if(!geometrias[g.uuid])geometrias[g.uuid]={pos:Array.from(g.attributes.position.array),uv:g.attributes.uv?Array.from(g.attributes.uv.array):null,index:g.index?Array.from(g.index.array):null};if(!materiales[m.uuid]){materiales[m.uuid]={color:m.color.toArray(),metal:m.metalness||0,rough:m.roughness??1,alpha:m.opacity,map:m.map?.uuid};if(m.map&&!texturas[m.map.uuid]&&m.map.image?.toDataURL)texturas[m.map.uuid]={png:m.map.image.toDataURL('image/png'),repeat:m.map.repeat.toArray()};}const add=(matrix,nombre)=>objetos.push({nombre,geometria:g.uuid,material:m.uuid,matrix:matrix.toArray()});if(o.isInstancedMesh){for(let i=0;i<o.count;i++){const mat=new THREE.Matrix4();o.getMatrixAt(i,mat);add(o.matrixWorld.clone().multiply(mat),(o.name||'pieza')+'-'+i);}}else add(o.matrixWorld,o.name||'pieza');});globalThis.mallasExport=JSON.stringify({tipo:'Mallas nominales Three160, no CAD ni fabricación',parametros:GEOM,sol:modelo.estado.sol,geometrias,materiales,texturas,objetos});return mallasExport.length;})()`);
+      await mkdir(path.join(raiz,'outputs/madrid-s5'),{recursive:true});
+      const salida=path.join(raiz,'outputs/madrid-s5/escena-three.json');await writeFile(salida,'');
+      console.log('Exportando '+largo+' caracteres en bloques');
+      for(let i=0;i<largo;i+=65536)await appendFile(salida,await evaluar(`mallasExport.slice(${i},${i+65536})`));
+      console.log('Mallas de escena nominal exportadas para Blender');
+    }
   }
   assert.deepEqual(errores,[],'Errores de consola');
   assert.deepEqual(peticiones.filter(u=>/^https?:/.test(u)),[],'La demo solicita Internet');
-  const informe={fecha:new Date().toISOString(),prueba:'Chrome headless, red deshabilitada, file://',browser:await cdp('Browser.getVersion'),cpu:os.cpus()[0].model,plataforma:os.platform(),...hardware,cotas,piso,fps30Frames:fps,limite:'SwiftShader por software; NO prueba del equipo del evento',controles:'pausa, avance, reset, fallos, cuarentena, vistas, fichas y comparación comprobados',errores,solicitudesHTTP:0};
+  const informe={fecha:new Date().toISOString(),prueba:'Chrome headless, red deshabilitada, file://',browser:await cdp('Browser.getVersion'),cpu:os.cpus()[0].model,plataforma:os.platform(),...hardware,cotas,piso,fps30Frames:fps,limite:'SwiftShader por software; NO prueba del equipo del evento',controles:process.env.MILPA_SOLO_CAPTURAS==='1'?'omitidos; sólo capturas':'pausa, avance, reset, fallos, cuarentena, vistas, fichas, despiece, selección y comparación comprobados',errores,solicitudesHTTP:0};
   await writeFile(path.join(raiz,'docs/madrid/PRUEBA-P3-NAVEGADOR.json'),JSON.stringify(informe,null,2)+'\n');
   console.log(JSON.stringify(informe,null,2));
 } finally {if(socket)socket.close();chrome.kill('SIGTERM');}

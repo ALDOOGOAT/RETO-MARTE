@@ -201,7 +201,7 @@ def barra_escala(x, y, esc, metros=2):
 
 
 def cabecera(num, h1, h2, escala):
-    return (f'<link rel="stylesheet" href="_estilo.css">\n<div class="marco"></div>\n'
+    return (f'<!doctype html><html lang="es"><meta charset="utf-8">\n<link rel="stylesheet" href="_estilo.css">\n<div class="marco"></div>\n'
             f'<div class="cab"><h1>{h1}</h1>\n<h2>{h2}</h2>\n'
             f'<div class="n"><b>{num}</b><span>{escala}</span></div></div>\n')
 
@@ -309,7 +309,7 @@ def plano_p02(G, m_nom):
     cx, suelo = 520, 640                                # suelo = cara interior del piso
     W, H = 1520, 820
     s = [cabecera("P-02", "Corte transversal del módulo — arquitectura B",
-                  "Anillo único, pasillo central de acceso y cambio de cartucho en S8",
+                  "Anillo único y pasillo nominal; entrada y evacuación pendientes (B19)",
                   "ESC. GRÁFICA"),
          f'<svg width="{W}" height="{H}" viewBox="0 0 {W} {H}">']
 

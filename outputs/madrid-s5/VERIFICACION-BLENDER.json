@@ -1,0 +1,12 @@
+{
+  "fuente_sha256": "04cac54b972c5e36e596e09b1cc7eb2be8ab0297f2ecfe4a13dac354b735d5c1",
+  "config_sha256": "ac0a4152b58f4a5dae4fc6f105bdf56cb3e946a9e825dcdc391d6d5050baeceb",
+  "blender": "5.2.0 LTS",
+  "sol": 62,
+  "mallas": 1194,
+  "piso_diametro_m": 4.460000038146973,
+  "piso_z_m": 1.6836031591083156e-07,
+  "base_piso_z_m": -0.08000016957521439,
+  "reimportacion_glb": "recuento y dimensiones del piso coinciden a 1e-5 m",
+  "limite": "Sólo mallas exportadas; no tolerancia física, resistencia ni interferencias completas."
+}

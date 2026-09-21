@@ -18,7 +18,7 @@ Cada cifra lleva su tipo de evidencia en el JSON. Los escenarios **conservador /
 
 | # | Decisión propuesta | Estado | Por qué, en una línea |
 |---|---|---|---|
-| D1 | **Arquitectura B:** un solo anillo de 20 cartuchos idénticos contra el casco, pasillo central y estaciones fijas | **Pendiente de aprobación del equipo** | Es la única opción evaluada que da acceso y resuelve el trasvase sin agrandar el módulo (§3) |
+| D1 | **Arquitectura B:** un solo anillo de 20 cartuchos idénticos contra el casco, pasillo central y estaciones fijas | **Pendiente de aprobación del equipo** | Elimina el trasvase entre piezas distintas y deja un pasillo nominal. La entrada al pasillo y evacuación siguen abiertas (B19); no se acredita acceso completo. |
 | D2 | Horizonte de diseño en superficie de **539 días** (DRA 5.0) y escenario de bases de **≈355 días** | Pendiente de aprobación y de confirmación del organizador | Las bases hablan de ~2 años en total; 730 soles en superficie más los tránsitos dan 3.1 años (§2) |
 | D3 | La salmuera de perclorato va a un **reactor separado**, no a una cámara del digestor metanogénico | Propuesta técnica | La salmuera calculada (20–40 mM) está en o por encima del rango que inhibe a los metanógenos (§6) |
 | D4 | La **desintoxicación inicial** del regolito es un proceso ISRU **fuera del módulo**; el módulo solo verifica y reacondiciona | Propuesta técnica | Un lavado inicial pide 1.8–13 m³ de agua según el escenario (§6) |

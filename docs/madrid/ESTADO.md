@@ -1,82 +1,85 @@
 # ESTADO · preparación para Madrid
 
-**Sesión:** S4/P4, presupuestos preliminares y caso Chiapas documentados.
-**Fecha:** 20 sep 2026 (verificaciones del 21 sep UTC).
-**Rama:** `preparacion-madrid-p1`. Base S3 `b71a1b8`; el commit que contiene este
-checkpoint identifica S4. Antecedentes S2 `e23bb12`, S1 `5959333`, S0 `25f39e4`.
-El usuario autorizó push de checkpoints revisados el 20 sep, sin force-push.
+**Sesión:** S5/P5, candidata documental y visual para revisión del equipo.
+**Fecha:** 21 sep 2026 UTC (20 sep en Chiapas).
+**Rama:** `preparacion-madrid-p1`. Base S4 `a24a687`; el commit que contiene este
+checkpoint identifica S5. Push de checkpoints autorizado, sin force-push.
+**No es cierre físico ni entrega oficial:** B15–B19 y S6 permanecen abiertos.
 
-## Alcance y archivos
+## Archivos y resultado
 
-Se ejecutó el bloque documental S4: costes separados y caso terrestre concreto.
-`P4-PRESUPUESTO-CHIAPAS.md` reúne decisiones, fuentes, fórmulas, opciones, protocolo y
-datos faltantes. `config/milpa360.presupuesto.json` contiene ocho referencias públicas
-fechadas y listas preliminares: 19 partidas Madrid y 20 Chiapas. No son cotizaciones.
+`P5-DEFENSA.md` integra memoria modular, Documento Concepto, requisitos, balances
+S3, alternativas de acceso, ODS con límites, guion provisional de cinco minutos,
+13 respuestas para el jurado y trazabilidad de nueve láminas. Se exportó una memoria
+de nueve páginas, un deck editable de nueve diapositivas con notas/fuentes, su PDF
+y un MP4 de 300 s a 1080p sin audio, pensado para narración en vivo. No se presenta
+como vídeo oficial narrado ni como registro de ensayo.
 
-`analysis/presupuesto_s4.mjs` genera
-`outputs/madrid-s4-20260920/PRESUPUESTOS-MILPA360-S4.xlsx`, con cinco pestañas:
-Resumen, Madrid, Chiapas, Marte y Precios. Reutiliza los JSON técnicos S3 para recursos
-marcianos. No agrega dependencias al proyecto ni cambia geometría, simulación o renders.
-Se actualizaron contexto, matriz, afirmaciones, referencia S3 y continuidad. Los cinco
-archivos preexistentes sin seguimiento —AGENTS y cuatro presupuestos— conservan sus hashes
-y quedan fuera del commit. No hubo compras ni contactos externos.
+`outputs/madrid-s5/LEEME.md` identifica archivos, comandos, herramientas y límites.
+P02/P03 mantienen parámetros comunes; se corrigió su cabecera y modo HTML. Los
+nuevos P04/P05 de `prototipo/planos/madrid/` muestran fronteras abiertas y procesos
+separados. Se conservaron el deck y planos históricos. El paquete ZIP S5 reúne
+demo, fuentes y defensa con manifiesto SHA-256; no sustituye revisión independiente.
 
-## Decisiones y resultados
+## Cambios de modelo y hallazgos
 
-- **Madrid:** maqueta propuesta 1:10, Ø456 mm nominal, 20 cartuchos y dos repuestos,
-  control local y agua limpia. Dos kg de PLA son provisión pendiente de laminado. El
-  NEMA17 es candidato para maqueta; su ficha discrepa en el par. No selecciona el motor
-  de las 1.98 t del carrusel. Un banco E1 a carga real requiere diseño/cotización propios.
-  Se describe también una opción manual de menor alcance.
-- **Hoja económica:** IVA incluido/excluido/desconocido, fletes por pedido y trabajo
-  separados. Recursos propios/donados/prestados/voluntarios empiezan pendientes;
-  desembolso y reposición son distintos. Contingencia provisional 20%, sin significado
-  probabilístico, aplicable sólo a base completa. Falta límite MXN del equipo.
-- Cuatro líneas Madrid y una Chiapas tienen cantidad, precio e IVA resueltos: suman
-  1,050.96 y 139.20 MXN. **No son costes de los proyectos**: faltan fabricación, equipos,
-  horas, impuestos y envíos. Los totales siguen como Pendiente.
-- **Chiapas:** propuesta exploratoria para huerto periurbano de Tuxtla, seis recipientes
-  de rábano en tres pares independientes, manual frente a goteo e aislamiento. Primero
-  agua limpia, después cultivo revisado por agrónomo. Sitio, operador, variedad y línea base
-  no confirmados. Indicadores: agua nueva/kg utilizable, tiempo/kg, energía, cosecha y
-  supervivencia. Sin cosecha, no inventar L/kg. No valida residuos pecuarios.
-- **Marte:** 17 entradas de recursos/brechas, sin coste de misión defendible. Masa móvil
-  no es masa lanzada; útil/total del digestor no se suman. Los antiguos millones USD,
-  sustitución de siete toneladas de comida y retorno al sol 150 no se usan como conclusiones
-  vigentes. Faltan estructura, integración, energía total, consumibles y mantenimiento.
+El simulador conserva Three 0.160, interacción por objeto, tubos seleccionables,
+fuentes locales y ausencia de transmisión. S5 añade cartuchos identificados,
+pernos instanciados, guías/rodillos ilustrativos, casco seccionado, señal de entrada
+pendiente y despiece visual que pausa el modelo. Al reanudar vuelve al ensamblaje.
+La selección resalta el cartucho del lote, sin modificar sus inventarios.
 
-## Evidencia y pruebas
+Los postes de varias estaciones atravesaban la trayectoria de cartuchos: se
+sustituyeron por ménsulas esquemáticas desde el casco. Se corrigieron rocas que
+flotaban sobre el terreno, orientación de una placa y paisaje en vistas técnicas.
+Faltan envolventes de dosel, herramientas, tuberías, aviario y cargas; el detalle
+visual no cierra B15–B18 ni selecciona componentes.
 
-Se abrieron fichas de 3DMarket, Lionchip, Steren y Home Depot, alternativa de motor Teckali
-y condiciones comerciales. IVA de Steren/Home Depot y entrega a Chiapas siguen pendientes.
-SAT artículo 1 respalda 16% general aplicado al PLA anunciado más IVA. INEGI CA2022
-Chiapas, lámina 15 del PDF, registra 4.5% de superficie agrícola activa de riego:
-contexto estatal, no línea base del piloto.
+**B19:** se compararon cruce elevado, sector desmontable y disposición abierta/fija.
+Dos posiciones retiradas dan 0.976 m de cuerda interior nominal antes de estructura.
+La candidata requiere retirar unos 180 kg, almacenar cartuchos, abrir guía y esclusa
+y bloquear mecánicamente el giro durante toda ocupación. Si quedan diez cartuchos
+de cultivo activos, son 2.5715 m²; no se conserva la producción de doce. Se solicitó
+criterio al usuario, sin respuesta registrada; no se adoptó ni se declaró evacuación
+resuelta. También se corrigió una frase antigua de P1 que daba por probado el acceso.
 
-El generador pasó comprobaciones de cantidades vacías/cero/negativas, IVA, recursos,
-contingencia y límite de gasto con cambios temporales restaurados. Se comprobaron subtotales
-y ausencia de errores de fórmula. La inspección visual de cinco hojas detectó títulos
-recortados; se corrigieron y revisaron de nuevo, junto con fuentes y notas. El XLSX se
-reabrió con un lector independiente, verificando subtotales y conservación de fórmulas.
+## Blender, evidencia y pruebas
 
-LibreOffice 24.2 está presente **sin Calc instalado**; no pudo verificar recálculo nativo.
-`sudo -n` requiere contraseña. Las pruebas de cálculo ejecutadas son las de Artifact Tool;
-no se presenta una apertura en Calc como realizada ni se alteró el sistema. El CSV de
-afirmaciones conserva 16 columnas e IDs únicos. Los scripts P3 no se modificaron.
+Se exportó la geometría evaluada de Three por bloques a JSON y se importó mediante
+Python en Blender 5.2. El GLB se reimportó: 1194 mallas y dimensiones del piso
+coincidentes con tolerancia digital de 1e-5 m. El BLEND incluye texturas empaquetadas.
+El sombreado conserva el tinte de hojas grises. Se generó un render y se importó
+el GLB mediante MCP en una escena nueva de la aplicación, preservando la original.
+El modo seguro rechazó cargar bibliotecas BLEND; la importación GLB permitida
+resolvió esa operación. La captura de viewport MCP falló; se revisó el render
+producido por Blender, sin atribuir una captura de interfaz inexistente.
 
-## Estado, bloqueos y siguiente acción
+Pasaron P0, regeneración P1/P2/P3, verificaciones geométricas, P4 y pruebas del modelo.
+Chrome pasó pausa, reloj, fallos, cuarentena, fichas, vistas, despiece, selección y
+comparación sin errores ni solicitudes HTTP. Su medición usa SwiftShader: no
+acredita 30 FPS en la GPU del evento. Se conservaron seis poses S3 y sus equivalentes
+S5, con comparador HTML; se añadió captura del despiece.
+Se repitió la prueba completa desde el ZIP extraído en una carpeta temporal limpia:
+controles correctos, cero errores y cero solicitudes HTTP; manifiesto y CRC verificados.
 
-P4 sigue abierto para validación física y presupuesto de compra. La matriz conserva 27
-obligatorios: 22 parciales, tres pendientes, uno con evidencia documental y uno por confirmar.
-RU-T-01/G-C9 incorporan el piloto propuesto sin cambiar a cumplimiento probado. Persisten
-B6/inventario, cotizaciones/plazos, sitio/operador, B7, B10, B15–B19 y reglas/feedback.
-La solicitud de presupuesto y recursos no recibió respuesta; se avanzó con lo independiente.
+Se revisaron visualmente nueve páginas, nueve diapositivas y cuatro planos. El
+finalizador reabrió PPTX y verificó estructura, tabla y fuentes; PowerPoint nativo
+sigue sin probar. FFmpeg decodificó el vídeo completo sin errores. CSV mantiene
+16 columnas e IDs únicos. Los cinco archivos preexistentes sin seguimiento
+conservan sus hashes. No hubo compras, contactos ni publicación de plataforma.
 
-**Siguiente acción exacta: S5/P5**, continuidad §5–6. Astra high para decisiones e integración;
-Sol medium para pulido delimitado si está disponible. Tratar primero B19, entrada/evacuación,
-y envolventes que cambien geometría; después la transformación visual profunda con
-Blender/Three y comparación antes/después. Integrar memoria, Documento Concepto, planos,
-deck, guion y vídeo. Conservar cifras S3: 3.086 m², 2.46% kcal y aportes externos.
-Blender MCP se verificó en S3, no se reconectó en S4; Google sigue sin autenticación
-confirmada. Sin datos físicos, avanzar tareas independientes con brechas visibles. El objetivo
-de 30 FPS sigue pendiente en la GPU del equipo del evento.
+## Estado y siguiente acción
+
+La matriz conserva 27 obligatorios: uno con evidencia documental, 24 parciales,
+uno pendiente y uno por confirmar. G-01/G-05 pasan a parcial por los documentos y
+respaldo disponibles, sin inventar fotografías físicas, feedback ni URL publicada.
+P4 sigue abierto para mediciones, recursos y cotizaciones. Persisten B1–B7, B10,
+B15–B19 y prueba de legibilidad/rendimiento en equipo real.
+
+**Siguiente acción exacta:** continuar S5 por B19 y envolventes, usando §3 de
+`P5-DEFENSA.md` y la respuesta del equipo sobre la candidata desmontable. Antes de
+cambiar arquitectura, modelar guía, cartuchos retirados, depósito externo, persona,
+herramienta y ruta que siga libre sin energía. Actualizar parámetros/balances si
+cambia área o casco. Después ejecutar S6 sobre una candidata corregida: revisión
+independiente acotada, reglas de Madrid, ensayo humano, equipo/proyector y backups.
+No repetir P0 ni presentar esta candidata como final aprobada.
