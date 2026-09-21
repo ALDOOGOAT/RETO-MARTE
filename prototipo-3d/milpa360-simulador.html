@@ -10,6 +10,10 @@
 <script src="milpa360-idiomas.js"></script>
 <script src="milpa360-traducciones.js"></script>
 <script src="milpa360-contenido.js"></script>
+<script src="milpa360-personas.js"></script>
+<script src="milpa360-guion.js"></script>
+<script src="milpa360-audio.js"></script>
+<script src="milpa360-proyeccion.js"></script>
 <script src="vendor/mars-viking.js"></script>
 <style>
 :root{
@@ -270,11 +274,13 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
   <p id="intro-description">Explora cómo conectar suelo, residuos y alimento en un entorno extremo.</p>
   <button class="primary-action" id="intro-action">Explorar el módulo <span aria-hidden="true">↗</span></button>
   <button class="intro-secondary" id="intro-datos">Conocer el planeta</button>
+  <button class="projection-start" id="intro-cine">Proyección con voz</button>
   <p class="intro-foot">Un concepto de BioMars Chiapas.<br>Ciencia, cálculo y preguntas abiertas.</p>
 </section>
 <div id="quick-views" role="group" aria-label="Vistas del modelo"><button id="ver-exterior" aria-pressed="false">Exterior cerrado</button><button id="ver-interior" aria-pressed="true">Interior</button><span class="view-divider"></span><button data-view="orbita">Perspectiva</button><button data-view="planta">Planta</button><button data-view="lateral">Lateral</button><button id="quick-explosion">Despiece</button><button id="giro-camara" aria-pressed="false">Giro 360°</button></div>
 <nav id="ruta-proceso" aria-label="Explorar el proceso"><button data-process="lavado"><small>01</small> Suelo</button><button data-process="aviario"><small>02</small> Animales</button><button data-process="digestor"><small>03</small> Tratamiento</button><button data-process="cultivo"><small>04</small> Cultivo</button><button id="ver-ciencia">Fundamentos</button></nav>
 <div id="estado-vista" role="status" aria-live="polite"></div>
+<div id="vida-vegetal" role="status" aria-live="polite"></div>
 <div id="scene-meta">Mapa Viking · NASA/JPL-Caltech<br>Procesado por USGS · sin elevación</div>
 <dialog id="ayuda" aria-labelledby="ayuda-titulo"><h2 id="ayuda-titulo">Explora a tu ritmo</h2>
 <p>Elige un recorrido guiado o toca directamente una pieza para entender su función.</p>
@@ -919,6 +925,7 @@ let camara = new T.PerspectiveCamera(38, 1, 0.05, 4000);
 const perspectiva = camara;
 const ortografica = new T.OrthographicCamera(-4,4,4,-4,0.01,100);
 const mira = new T.Vector3();
+const miraVisual = new T.Vector3();
 const orbe = { theta: -0.62, phi: 1.02, dist: 8.4 };
 
 const gPlaneta = new T.Group(); escena.add(gPlaneta);
@@ -1611,10 +1618,7 @@ function construirHabitat(){
   clicable(malla(new T.CylinderGeometry(0.09, 0.13, 1.5, 18), M.acero, [0, 0.75, 0]), "carrusel");
 
   malla(new T.CylinderGeometry(0.62,0.62,CUBIERTA-PISO,32),M.acero,[0,PISO+(CUBIERTA-PISO)/2,0]); // soporte fijo del núcleo, fuera del pasillo
-  const humano=new T.Group();humano.name="referencia-humana";humano.position.set(1.08,PISO,-0.40);humano.scale.y=GEOM.casco.altura_figura/1.75;gHabitat.add(humano);
-  malla(new T.SphereGeometry(0.09,12,8),M.acero,[0,1.66,0],humano);
-  malla(new T.BoxGeometry(0.28,0.52,0.17),M.acero,[0,1.25,0],humano);
-  for(const x of [-0.08,0.08]) malla(new T.CylinderGeometry(0.045,0.055,0.94,8),M.acero,[x,0.49,0],humano);
+  const humano=MILPA_PERSONA(GEOM.casco.altura_figura);humano.name="referencia-humana";humano.position.set(1.08,PISO,-0.40);humano.rotation.y=-1.1;gHabitat.add(humano);
   marcarSubarbol(humano,"carrusel"); // referencia visual; altura calculada no valida la entrada.
 
   /* Equipos esquemáticos separados. B17: volumen útil y mantenimiento pendientes. */
@@ -2245,12 +2249,7 @@ function construirHabitat(){
   placa(texturaPlaca([{t:'ENTRADA / EVACUACIÓN PENDIENTE',s:.25,esp:.01},
     {t:'B19 · EL ANILLO INTERCEPTA EL PASO',s:.17,c:'#E9AE52',esp:.01}],
     {w:900,h:180,fondo:'#0E1B21',barra:'#E9AE52',y0:.42}),1.35,.27,[R_CASCO+.57,.022,0],Math.PI/2,aviso,-Math.PI/2);
-  const referencia=gHabitat.getObjectByName('referencia-humana');
-  for(const lado of [-1,1]){
-    const brazo=malla(new T.CapsuleGeometry(.035,.48,3,8),blanco,[lado*.20,1.13,0],referencia);
-    brazo.rotation.z=lado*.12;
-  }
-  const pedestal=new T.Group();pedestal.position.set(1.55,0,-2.20);pedestal.rotation.y=-.40;gHabitat.add(pedestal);
+  const pedestal=new T.Group();pedestal.name='placa-exterior';pedestal.position.set(1.55,0,-2.20);pedestal.rotation.y=-.40;gHabitat.add(pedestal);
   for(const x of [-.34,.34]){
     malla(new T.BoxGeometry(.024,.43,.024),M.costilla,[x,.215,0],pedestal);
     malla(new T.BoxGeometry(.12,.012,.23),M.oscuro,[x,.006,0],pedestal);
@@ -2355,7 +2354,7 @@ function construirHabitat(){
   caja.rotation.y=2.51;marcarSubarbol(conexion,'panel');
   // Materiales exclusivos para la transición de inspección. No altera inventarios.
   const matsExt=new Map();exterior.traverse(o=>{if(o.isMesh){if(!matsExt.has(o.material))matsExt.set(o.material,o.material.clone());o.material=matsExt.get(o.material);o.userData.opacidadBase=o.material.opacity;}});
-  const compartidos=new Set([terreno,rocas,talud,solar,conexion,exterior,gHabitat.getObjectByName('piso-modulo')]);
+  const compartidos=new Set([terreno,rocas,talud,solar,conexion,exterior,pedestal,aviso,gHabitat.getObjectByName('piso-modulo')]);
   const interiores=gHabitat.children.filter(o=>!compartidos.has(o)).map(o=>({o,visible:o.visible}));
   exterior.visible=false;
 
@@ -2379,7 +2378,7 @@ function construirHabitat(){
    ESTADO
    ═══════════════════════════════════════════════════════════════ */
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const modelo = new MILPA.Modelo(MILPA_DATOS, {autorizacionesIlustrativas: Q.get("autorizacion") !== "0"});
+let modelo = new MILPA.Modelo(MILPA_DATOS, {autorizacionesIlustrativas: Q.get("autorizacion") !== "0"});
 const solInicial = Math.max(0, Math.min(SOLES_MISION, qn("sol", 0)));
 const tramoTormenta = Q.get("storm") === "1" ? Math.min(10, solInicial) : 0;
 modelo.avanzar(solInicial - tramoTormenta);
@@ -2420,11 +2419,10 @@ function abrirFicha(clave){
   ficha.dataset.tipo=f.tipo||'ilustrativo';
   $("f-sub").textContent = f.sub;
   $("f-tit").innerHTML = f.tit;
-  $("f-txt").innerHTML = "<p>" + f.txt.split("<br><br>").join("</p><p>") + "</p>";
+  $("f-txt").innerHTML = '<p class="idea-publico">'+(f.resumen||f.txt)+'</p><details><summary>'+MILPA_I18N.pick('Cómo funciona y qué falta comprobar','How it works and what needs testing')+'</summary><p>'+f.txt.split('<br><br>').join('</p><p>')+'</p></details>';
   $("f-viz").innerHTML = f.viz || "";
   $("f-dl").innerHTML = f.d.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
-  $("f-fte").textContent = f.f;
-  const fuente=document.createElement('a');fuente.href='../docs/madrid/'+f.href;fuente.target='_blank';fuente.rel='noopener';fuente.textContent=MILPA_I18N.pick('Abrir evidencia y límites ↗','Open evidence and limitations (ES) ↗');fuente.style.display='block';$('f-fte').appendChild(fuente);
+  $("f-fte").textContent = MILPA_I18N.pick('Base de la explicación: ','Basis of this explanation: ')+(f.f.includes('docs/')?MILPA_I18N.pick('revisión técnica y balances del proyecto.','project technical review and balances.'):f.f);
   const acc = $("f-accion");
   acc.innerHTML = "";
   if (f.accion === "habitat"){
@@ -2479,8 +2477,7 @@ function rielPlaneta(){
   $("riel-titulo").textContent = "MARTE · DATOS DUROS";
   $("riel-cuerpo").innerHTML =
     `<p style="font-size:11.5px;line-height:1.55;color:var(--text-3);margin:12px 0 4px">
-     Todo sale de <b style="color:var(--text-2)">INVESTIGACION-MARTE.md §2</b> y de
-     <b style="color:var(--text-2)">CONTEXTO-RETO-MARTE.md §8</b>. Los puntos ◉ están sobre el globo.</p>` +
+     Datos de NASA y fuentes planetarias revisadas. Toca un punto del globo para entender qué significa.</p>` +
     DATOS_PLANETA.map(([k, n, v, m]) =>
       `<button class="dato" data-k="${k}"${m ? ' data-marca="1"' : ''}>
          <span class="dk">${n}</span><span class="dv">${v}</span></button>`).join("");
@@ -2567,7 +2564,7 @@ function abrirTecnica(){
   <div class="acciones"><button class="btn" id="aplicar-fallo">Aplicar fallo</button><button class="btn" id="reparar-fallo">Reparar</button><button class="btn" id="aislar-lote">Aislar / sustituir S8</button></div>
   <p id="mensaje-accion" role="status"></p>
   <div class="acciones"><button class="btn" id="comparar-siembras">Comparar siembras</button></div>
-  </details><p><a href="../docs/madrid/P3-SIMULACION.md" target="_blank" rel="noopener">Ecuaciones, fuentes y límites</a></p>`;
+  </details><button class="btn" id="tecnica-ciencia">Entender los cálculos</button>`;
   $("f-viz").innerHTML="";$("f-dl").innerHTML="";$("f-fte").textContent="Geometría calculada; reservas y respuesta de cultivos ilustrativas. Sin mediciones físicas.";
   for(const tipo of ['planta','lateral','orbita']) $("cam-"+tipo).onclick=()=>vistaTecnica(tipo);
   $("equipo-elegido").onchange=e=>{if(e.target.value)abrirFicha(e.target.value);};
@@ -2580,6 +2577,7 @@ function abrirTecnica(){
   $("reparar-fallo").onclick=()=>actuar(()=>modelo.reparar($("tipo-fallo").value));
   $("aislar-lote").onclick=()=>actuar(()=>modelo.aislar());
   $("comparar-siembras").onclick=abrirComparacion;
+  $("tecnica-ciencia").onclick=abrirCiencia;
 }
 function abrirComparacion(){
   abrirFicha("cultivo");fichaActual="comparacion";$("f-sub").textContent="Banco virtual · parcelas fijas, no cinemática del anillo";
@@ -2639,13 +2637,58 @@ document.querySelectorAll('[data-process]').forEach(b=>b.onclick=()=>{
   const k=b.dataset.process;abrirFicha(k);
   if(k==='aviario')enfocarAviario();else {mira.set(k==='lavado'?1.1:0,k==='digestor'?1.2:.8,0);Object.assign(orbe,{theta:k==='cultivo'?-1.6:-.62,phi:1.02,dist:k==='digestor'?5.8:8.4});}
 });
-$('ver-ciencia').onclick=()=>{abrirFicha('carrusel');fichaActual='ciencia';$('f-sub').textContent='Cálculo · supuestos y unidades';$('f-tit').textContent='La ciencia del módulo';
+function abrirCiencia(){abrirFicha('carrusel');fichaActual='ciencia';$('f-sub').textContent='Cálculo · supuestos y unidades';$('f-tit').textContent='La ciencia del módulo';
   $('f-txt').innerHTML='<p>La superficie, la luz y la energía ponen límites a la propuesta. Cada resultado puede reproducirse desde los parámetros.</p>';
   $('f-viz').innerHTML='<div class="formula"><math display="block"><mi>A</mi><mo>=</mo><mfrac><mi>θ</mi><mn>2</mn></mfrac><mo>(</mo><msubsup><mi>r</mi><mi>o</mi><mn>2</mn></msubsup><mo>−</mo><msubsup><mi>r</mi><mi>i</mi><mn>2</mn></msubsup><mo>)</mo></math><p>Área de un sector anular; θ en radianes.</p></div><div class="formula"><math display="block"><mi>E</mi><mo>=</mo><mfrac><mrow><mi>PPFD</mi><mo>·</mo><mi>A</mi><mo>·</mo><mi>t</mi></mrow><mrow><mn>1000</mn><mo>·</mo><mi>η</mi></mrow></mfrac></math><p>Luz en kWh por día; η en µmol/J y t en horas.</p></div>';
   $('f-dl').innerHTML='<dt>Área de cultivo</dt><dd>'+GEOM.areas.cultivo.toFixed(3)+' m²</dd><dt>Tipo de evidencia</dt><dd>Cálculo bajo supuestos</dd>';
-  $('f-fte').innerHTML='<a href="../outputs/madrid-s5/FUNDAMENTOS-MILPA360.pdf" target="_blank" rel="noopener">Abrir fundamentos, ecuaciones y fuentes (ES)</a>';$('f-accion').innerHTML='';MILPA_I18N.apply();};
+  $('f-fte').textContent=MILPA_I18N.pick('Área: geometría de sectores. Luz: superficie, horas de iluminación y eficiencia de la lámpara. Los valores son cálculos; necesitan contrastarse con mediciones.','Area: sector geometry. Lighting: growing area, lighting hours and lamp efficiency. These are calculations that need comparison with measurements.');$('f-accion').innerHTML='';MILPA_I18N.apply();}
+$('ver-ciencia').onclick=abrirCiencia;
 lienzo.addEventListener('keydown',e=>{const keys=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','=','-'];if(!keys.includes(e.key))return;e.preventDefault();if(e.key==='ArrowLeft')orbe.theta-=.12;if(e.key==='ArrowRight')orbe.theta+=.12;if(e.key==='ArrowUp')orbe.phi=Math.max(.16,orbe.phi-.1);if(e.key==='ArrowDown')orbe.phi=Math.min(1.5,orbe.phi+.1);if(e.key==='+'||e.key==='=')orbe.dist=Math.max(distanciaMinima(),orbe.dist*.9);if(e.key==='-')orbe.dist=Math.min(50,orbe.dist*1.1);});
 addEventListener('keydown',e=>{if(e.key==='Escape'){$('cerrar').click();if($('ayuda').open)$('ayuda').close();}});
+
+/* Exposición: escenario propio, con el mismo modelo. Se conserva la exploración al salir. */
+let accesoCine=null,ultimoMensajeAcceso=0,estadoAccesoCine=null,modeloExploracion=null;
+addEventListener('message',e=>{if(e.source===accesoCine?.contentWindow&&e.data?.milpa==='estado-acceso')estadoAccesoCine=e.data.estado;});
+const vistasCine={
+ marte:{theta:.65,phi:1.25,dist:17.7,mira:[0,0,0]},
+ exterior:{theta:-.72,phi:1.13,dist:11.8,mira:[0,.9,0]},
+ anillo:{theta:-.65,phi:.70,dist:9.3,mira:[0,.8,0]},
+ animales:{theta:-.48,phi:1.10,dist:1.8,mira:null},
+ tratamiento:{theta:-.82,phi:1.00,dist:5.9,mira:[0,1.02,0]},
+ cultivo:{theta:-1.7,phi:.83,dist:7.5,mira:[0,.72,0]},
+ energia:{theta:2.08,phi:1.05,dist:13,mira:[-1.4,.8,1]},
+ chiapas:{theta:-.65,phi:1.03,dist:10.4,mira:[0,.8,0]}
+};
+const cine=MILPA_PROYECCION({tipo:'modulo',async entrar(id){
+  if(!modeloExploracion){modeloExploracion=modelo;modelo=new MILPA.Modelo(MILPA_DATOS,{autorizacionesIlustrativas:true});modelo.avanzar(62);}
+  S.play=false;S.presentacion=false;S.explosion=false;S.detalle=false;S.transicion=0;S.destino=null;$('cerrar').click();
+  const vigente=()=>cine.state.activo&&MILPA_GUION.modulo[cine.state.indice].id===id;
+  if(accesoCine&&id!=='acceso'){accesoCine.classList.remove('activo');accesoCine.hidden=true;accesoCine.src='about:blank';}
+  if(id==='acceso'){
+    if(!accesoCine){accesoCine=document.createElement('iframe');accesoCine.id='acceso-cine';accesoCine.title='Demostración del acceso';accesoCine.setAttribute('aria-hidden','true');document.body.appendChild(accesoCine);}
+    accesoCine.hidden=false;
+    await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error('Acceso: no arrancó')),15000);accesoCine.onload=()=>{clearTimeout(timer);resolve();};accesoCine.src='milpa360-acceso.html?embebido=1&lang='+MILPA_I18N.lang;});
+    if(!vigente())return;accesoCine.classList.add('activo');ultimoMensajeAcceso=0;return;
+  }
+  const vista=id==='marte'?'planeta':'habitat';
+  if(S.vista!==vista){cambiarVista(vista);await new Promise(resolve=>{const esperar=()=>S.transicion>0?setTimeout(esperar,30):resolve();esperar();});}
+  if(!vigente())return;
+  envolvente(id==='exterior');const p=vistasCine[id];Object.assign(orbe,{theta:p.theta,phi:p.phi,dist:p.dist});
+  if(id==='animales'){aviario.updateWorldMatrix(true,false);mira.copy(aviario.localToWorld(new T.Vector3(0,.76,0)));}
+  else mira.set(...p.mira);
+  medir();
+},fotograma(id,progreso,dt,tiempo){
+  if(id==='acceso'){if(performance.now()-ultimoMensajeAcceso>80){accesoCine?.contentWindow?.postMessage({milpa:'demostracion',tiempo,pausa:dt===0},'*');ultimoMensajeAcceso=performance.now();}return;}
+  if(dt>0&&!S.reducido&&['anillo','cultivo'].includes(id))modelo.avanzar(dt*.65);
+  if(!S.reducido&&vistasCine[id])orbe.theta=vistasCine[id].theta+Math.sin(progreso*Math.PI/2)*.20;
+},pausar(value){accesoCine?.contentWindow?.postMessage({milpa:'pausa',valor:value},'*');},salir(){
+  if(accesoCine){accesoCine.classList.remove('activo');accesoCine.hidden=true;accesoCine.src='about:blank';}
+  if(modeloExploracion){modelo=modeloExploracion;modeloExploracion=null;}
+  S.transicion=0;S.destino=null;S.play=false;controles();medir();
+  $('estado-vista').textContent=MILPA_I18N.pick('Exploración restaurada · escenario pausado','Exploration restored · scenario paused');
+}});
+$('intro-cine').onclick=()=>{cine.start();medir();};
+lienzo.addEventListener('pointerdown',()=>{if(cine.state.activo)cine.pause();});
 
 /* cambio de vista, con fundido */
 function cambiarVista(v){
@@ -2743,7 +2786,7 @@ function medir(){
   renderer.setSize(w, h, false);
   perspectiva.aspect = w / h;
   perspectiva.fov=w<h?Math.min(72,38*h/w):38;
-  if(document.body.classList.contains('captura'))perspectiva.clearViewOffset();
+  if(document.body.classList.contains('captura')||document.body.classList.contains('proyectando'))perspectiva.clearViewOffset();
   else if(w>800)perspectiva.setViewOffset(w,h,document.body.classList.contains('inspector-open')?w*.12:S.vista==='planeta'?-w*.14:0,0,w,h);
   else perspectiva.setViewOffset(w,h,0,S.vista==='planeta'?h*.17:0,w,h);
   perspectiva.updateProjectionMatrix();
@@ -2803,11 +2846,11 @@ const CIELO_MARTE  = { cenit: new T.Color(0x3A3348), horiz: new T.Color(0xC79468
 const CIELO_TORM   = { cenit: new T.Color(0x2A1B12), horiz: new T.Color(0x7A4A26), suelo: new T.Color(0x241009) };
 const cAux = new T.Color(), cAuxB = new T.Color();
 const C_MARCHITO = new T.Color(0x8A7139);
-let anterior = performance.now(), ultimaSombra=0, firmaSombra='', tiempoVisual=0, ultimaUI=0, inicioCalidad=0, framesCalidad=0;
+let anterior = performance.now(), ultimaSombra=0, firmaSombra='', tiempoVisual=0, ultimaUI=0, inicioCalidad=0, framesCalidad=0, ultimoCambioVegetal=0;
 
 function bucle(ahora){
   const elapsed = Math.max(0, (ahora - anterior) / 1000);
-  const dt = Math.min(0.05, elapsed);
+  const dt = cine.state.activo&&!cine.state.reproduciendo?0:Math.min(0.05, elapsed);
   anterior = ahora;
   if(!document.hidden&&S.transicion===0)framesCalidad++;
   if(ahora-inicioCalidad>3000){
@@ -2818,7 +2861,8 @@ function bucle(ahora){
       if(Math.abs(siguiente-actual)>.01){renderer.setPixelRatio(siguiente);renderer.shadowMap.enabled=siguiente>=.95;renderer.shadowMap.needsUpdate=true;medir();}
     }
   }
-  const dv=S.play&&!S.reducido?dt:0;
+  cine.tick(elapsed);
+  const dv=(S.play||(cine.state.activo&&cine.state.reproduciendo))&&!S.reducido?dt:0;
   tiempoVisual+=dv;const t=tiempoVisual;
   const actualizaUI=ahora-ultimaUI>120;if(actualizaUI)ultimaUI=ahora;
 
@@ -2842,7 +2886,7 @@ function bucle(ahora){
     gHabitat.getObjectByName('casco').position.y=T.MathUtils.lerp(gHabitat.getObjectByName('casco').position.y,S.explosion?1.25:0,suave);
     if(Math.abs(carrusel.grupo.position.y-(S.explosion?.55:0))<1e-5)carrusel.grupo.position.y=S.explosion?.55:0;
     if(Math.abs(gHabitat.getObjectByName('casco').position.y-(S.explosion?1.25:0))<1e-5)gHabitat.getObjectByName('casco').position.y=S.explosion?1.25:0;
-    refsHab.cierre=T.MathUtils.lerp(refsHab.cierre,S.cerrado?1:0,suave);
+    refsHab.cierre=T.MathUtils.lerp(refsHab.cierre,S.cerrado?1:0,S.reducido?1:1-Math.exp(-dt*4));
     if(Math.abs(refsHab.cierre-(S.cerrado?1:0))<.002)refsHab.cierre=S.cerrado?1:0;
     refsHab.exterior.visible=refsHab.cierre>0;
     for(const m of refsHab.materialesExterior){m.opacity=refsHab.cierre;m.transparent=refsHab.cierre<1;}
@@ -2857,17 +2901,26 @@ function bucle(ahora){
     if(Math.abs(carrusel.grupo.rotation.y-anguloObjetivo)<1e-5)carrusel.grupo.rotation.y=anguloObjetivo;
     for (let i=0;i<N_POS;i++){
       const lote=estado.lotes[i], p=lote.pos, b=carrusel.bandejas[i];
-      b.sustrato.material.color.setHex(COL_IN[p]);
+      cAux.setHex(COL_IN[p]);b.sustrato.material.color.lerp(cAux,suave);
       const verdor=p>=4&&p<=7?0.8:0;
-      b.musgo.visible=verdor>0;
-      for (const m of b.musgo.children) m.scale.setScalar(verdor);
-      b.costra.material.opacity=verdor;b.costra.material.transparent=true;
+      b.verdor??=verdor;b.verdor=T.MathUtils.lerp(b.verdor,verdor,suave*.45);
+      b.musgo.visible=b.verdor>.005;
+      for (const m of b.musgo.children) m.scale.setScalar(Math.max(.001,b.verdor));
+      b.costra.material.opacity=b.verdor;b.costra.material.transparent=true;
       const vigor=lote.cultivos.length?lote.cultivos.reduce((a,c)=>a+(c.activa?c.edadD/c.ciclo:0),0)/3:0;
       const dano=lote.cultivos.length?lote.cultivos.reduce((a,c)=>a+c.dano,0)/3:0;
-      const esc=lote.cultivos.length?0.07+Math.min(1,vigor)*1.38:0;
-      b.plantas.visible=esc>0;
-      for(const pl of b.plantas.children) pl.scale.set(esc,esc*(1-dano*0.65),esc);
-      if(b.matVeg) for(const m of b.matVeg) m.color.copy(m.userData.vivo).lerp(C_MARCHITO,dano);
+      let maxPlanta=0;
+      b.plantas.children.forEach((pl,j)=>{
+        const cultivo=lote.cultivos[Math.floor(j/2)];
+        const esc=cultivo?(cultivo.activa?.07+Math.min(1,cultivo.edadD/cultivo.ciclo)*1.38:.025):0;
+        if(pl.userData.escObjetivo!==undefined&&pl.userData.escObjetivo>.3&&esc<.1)ultimoCambioVegetal=ahora;
+        pl.userData.escObjetivo=esc;pl.userData.escVisual??=esc;
+        pl.userData.escVisual=T.MathUtils.lerp(pl.userData.escVisual,esc,S.reducido?1:1-Math.exp(-dt*2.8));
+        const v=Math.max(.001,pl.userData.escVisual)*(pl.userData.base||1);maxPlanta=Math.max(maxPlanta,v);
+        pl.scale.set(v,v*(1-(cultivo?.dano||0)*.65),v);
+      });
+      b.plantas.visible=maxPlanta>.004;
+      if(b.matVeg) for(const m of b.matVeg){cAux.copy(m.userData.vivo).lerp(C_MARCHITO,dano);m.color.lerp(cAux,suave);}
       const fl=filas[i];
       if(fl&&actualizaUI){
         fl.pip.style.background="#"+COL_IN[p].toString(16).padStart(6,"0");
@@ -2883,13 +2936,15 @@ function bucle(ahora){
       const activa=fl.ficha==="f_biogas"||(fl.ficha==="f_riego"&&!estado.bomba);
       if(S.play && activa && !fl.bloqueado) fl.tex.offset.x-=dv*fl.v;
     }
-    gasometro.position.y = gasometro.userData.y0 + S.gas * 0.26;
+    gasometro.position.y = T.MathUtils.lerp(gasometro.position.y,gasometro.userData.y0 + S.gas * 0.26,suave);
+    gHabitat.getObjectByName('referencia-humana').userData.animar(dv,0,'inspeccion',t);
+    if(actualizaUI){$('vida-vegetal').classList.toggle('activo',ahora-ultimoCambioVegetal<3000&&ultimoCambioVegetal>0);poner($('vida-vegetal'),'Cosecha o preparación del lote · transición visual en tiempo acelerado');}
 
     /* huevo recogido: la bandeja se llena a lo largo del sol y se vacía al recogerse */
     const nHuevos = (S.sol % 1) * 12; // iconos ilustrativos, no contador de producción
     bandejaHuevos.userData.huevos.forEach((h, i) => {
       const e = sat(nHuevos - i);                     // cada huevo entra creciendo
-      h.scale.set(e, e * 0.8, e * 0.8);
+      const v=T.MathUtils.lerp(h.scale.x,e,suave*.5);h.scale.set(v,v*.8,v*.8);
     });
 
     /* goteo: cada gota cae los últimos centímetros y entra al sustrato */
@@ -2965,7 +3020,7 @@ function bucle(ahora){
     mira.y + orbe.dist * Math.cos(orbe.phi),
     mira.z + orbe.dist * Math.sin(orbe.phi) * Math.sin(orbe.theta)
   );
-  if(S.proyeccion==='orbita') {camara.up.set(0,1,0);camara.position.lerp(objetivo,S.reducido?1:1-Math.exp(-dt*(S.transicion>0?6:12)));camara.lookAt(mira);}
+  if(S.proyeccion==='orbita') {const alpha=S.reducido?1:1-Math.exp(-dt*(cine.state.activo?1.8:S.transicion>0?6:12));camara.up.set(0,1,0);camara.position.lerp(objetivo,alpha);miraVisual.lerp(mira,alpha);camara.lookAt(miraVisual);}
   else {camara.up.set(0,S.proyeccion==='planta'?0:1,S.proyeccion==='planta'?-1:0);camara.position.set(S.proyeccion==='planta'?0:8,S.proyeccion==='planta'?10:1.4,0.001);camara.lookAt(0,S.proyeccion==='planta'?0:1.4,0);}
   sol.target.position.copy(mira); sol.target.updateMatrixWorld();
 
@@ -3028,7 +3083,7 @@ function bucle(ahora){
   if(nuevaFirma!==firmaSombra&&ahora-ultimaSombra>100){
     renderer.shadowMap.needsUpdate=true;ultimaSombra=ahora;firmaSombra=nuevaFirma;
   }
-  renderer.render(escena, camara);
+  if(!accesoCine?.classList.contains('activo'))renderer.render(escena, camara);
   requestAnimationFrame(bucle);
 }
 
@@ -3070,7 +3125,7 @@ addEventListener('milpa-language',()=>{
   const fields=['lote-elegido','tipo-fallo','cmp-inicio','cmp-duracion','cmp-luz'];
   const values=Object.fromEntries(fields.filter(id=>$(id)).map(id=>[id,$(id).value]));
   const expanded=[...ficha.querySelectorAll('details')].map(el=>el.open);
-  if(fichaActual==='tecnica')abrirTecnica();else if(fichaActual==='comparacion')abrirComparacion();else if(fichaActual)abrirFicha(fichaActual);
+  if(fichaActual==='tecnica')abrirTecnica();else if(fichaActual==='comparacion')abrirComparacion();else if(fichaActual==='ciencia')abrirCiencia();else if(fichaActual)abrirFicha(fichaActual);
   for(const [id,value] of Object.entries(values))if($(id))$(id).value=value;
   ficha.querySelectorAll('details').forEach((el,i)=>el.open=expanded[i]??el.open);
   if(fichaActual==='comparacion')$('cmp-calcular').click();

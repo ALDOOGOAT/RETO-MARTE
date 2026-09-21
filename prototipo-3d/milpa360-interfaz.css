@@ -55,3 +55,53 @@ body.exterior-cerrado #scene-meta{bottom:95px}
 @media(max-width:1100px){#quick-views{max-width:calc(100vw - 265px);gap:0}#quick-views button{padding:8px 9px}body.inspector-open #quick-views{max-width:calc(100vw - 415px)}#estado-vista{top:196px}}
 @media(max-width:800px){#quick-views{top:117px;right:12px;left:12px;max-width:none;flex-direction:row;justify-content:center;padding:3px;gap:0}#quick-views button{font-size:11px;min-height:38px;padding:5px 8px}#quick-views #ver-exterior,#quick-views #ver-interior{min-height:38px}.view-divider{margin:7px 2px}body.modo-habitat #introduccion{top:172px;max-width:190px}body.modo-habitat #intro-title{font-size:25px}#estado-vista{top:215px;right:14px;max-width:165px;text-align:right;font-size:9px}#ruta-proceso{bottom:155px;overflow-x:auto;justify-content:flex-start;width:calc(100% - 24px);max-width:none;padding:3px}#ruta-proceso button{font-size:11px;padding:8px 9px;min-height:40px}#ruta-proceso small{display:none}#ruta-proceso #ver-ciencia{padding-left:10px}body.inspector-open #ruta-proceso{display:none}#aviso-modelo{bottom:132px;font-size:9px}body.exterior-cerrado #ruta-proceso{bottom:20px}body.detalle-ave #estado-vista{display:none}}
 @media(max-width:800px){body.modo-habitat #introduccion{top:210px}body.modo-habitat #intro-title,body.modo-habitat .intro-secondary{display:none}body.modo-habitat .primary-action{font-size:11px;padding:8px 10px}}
+/* V5: lectura a distancia. Archivo normal, jerarquía por función y fuentes dentro de la escena. */
+body.simulador #ficha{width:min(480px,36vw);max-height:calc(100dvh - 180px)}
+body.simulador #ficha h2{font-size:34px;font-stretch:100%;letter-spacing:-.025em;line-height:1.12}
+body.simulador #ficha p{font-size:18px;line-height:1.6;color:#d1dfe4}
+body.simulador #ficha .idea-publico{font-size:22px;line-height:1.45;color:#f0f5f3;margin-bottom:18px}
+body.simulador #ficha .para-que{font-size:17px;color:#b8d9e4}
+body.simulador #ficha dl{font:16px/1.45 Archivo;grid-template-columns:1.3fr 1fr}
+body.simulador #ficha dd{font-size:19px;font-variant-numeric:tabular-nums}
+body.simulador #ficha .fuente{font:14px/1.6 Archivo;color:#a9c1ce}
+body.simulador #ficha .viz-pill{font-size:16px;padding:10px 12px}body.simulador #ficha .viz-nota{font-size:15px}
+body.simulador #ficha summary{font-size:18px;font-weight:600;padding:6px 0}
+body.simulador.inspector-open #introduccion{visibility:hidden}
+body.simulador.inspector-open #quick-views{right:calc(min(480px,36vw) + 45px);max-width:calc(64vw - 65px);flex-wrap:wrap}
+.projection-start{border:1px solid #8ac5d7;background:#163a4a;color:#e4f5f8;font-weight:650;padding:12px 18px;display:inline-flex;align-items:center;gap:12px;min-height:48px}
+.projection-start:before{content:'▶';font-size:12px;color:#a9e0ed}
+#intro-cine{margin-top:14px}body.modo-habitat #intro-cine{font-size:14px}
+#vida-vegetal{position:fixed;left:50%;transform:translateX(-50%);bottom:178px;z-index:14;font:16px/1.5 Archivo;color:#deeadb;background:#132a25ed;border-left:3px solid #b9d393;padding:10px 18px;max-width:520px;pointer-events:none;opacity:0;transition:opacity .4s}
+#vida-vegetal.activo{opacity:1}
+.evidencia-inline{border:1px solid #3c5667;background:#102b3b;padding:16px;border-radius:8px}
+.evidencia-inline h3{font-size:20px;margin:0 0 12px}.evidencia-inline p{margin:8px 0}
+.acceso-explicacion{font-size:20px!important;line-height:1.55!important;color:#dfebed!important}
+body.acceso header{height:88px}body.acceso h1{font-size:28px;font-stretch:100%}body.acceso header a{font-size:16px}
+body.acceso main{height:calc(100dvh - 88px);grid-template-columns:minmax(360px,420px) 1fr}
+body.acceso aside{padding:26px 30px;scrollbar-width:thin}
+body.acceso h2{font-size:34px;margin:22px 0 16px;line-height:1.15;font-stretch:100%}
+body.acceso .metricas strong{font:600 29px Archivo}body.acceso .metricas span{font:15px/1.4 Archivo;color:#c5d9e1}
+body.acceso .acciones button{font-size:16px;min-height:46px}body.acceso #pasos li{font-size:16px;line-height:1.45}
+body.acceso .estado{font-size:16px;min-height:24px;color:#f3c792}body.acceso .leyenda{font-size:16px;line-height:1.5;max-width:780px}
+body.acceso .vistas button{font-size:15px}body.acceso .nota{font-size:15px}body.acceso details{border-top:1px solid #3b5463;padding:16px 0;margin-top:14px}body.acceso summary{font-size:17px;cursor:pointer;line-height:1.5}body.acceso details p{font-size:16px}
+#cine{position:fixed;inset:0;z-index:80;pointer-events:none;color:#f2f6f3;background:linear-gradient(180deg,#050f1cdc,transparent 23%,transparent 52%,#050f1cee 84%,#050f1c);font-family:Archivo,Arial,sans-serif}
+#cine button,#cine input,#cine label{pointer-events:auto}
+.cine-top{position:absolute;top:28px;left:40px;right:40px;display:flex;align-items:center;gap:28px}
+.cine-top b{font-size:24px;letter-spacing:-.5px}.cine-top b span{font-size:15px;font-weight:400;margin-left:16px;color:#bbd2dc}#cine-count{font-size:16px;margin-left:auto;color:#bed5df}
+#cine button{border:1px solid #6a8492;border-radius:8px;background:#102b3ee8;color:#e5f0f4;min-height:44px;padding:10px 16px;font-size:16px}
+#cine button:hover{background:#27516b}#cine button[aria-pressed=true]{background:#d1e8ed;color:#122e3c}#cine button:disabled{opacity:.35}
+.cine-heading{position:absolute;left:4.5vw;top:15vh;max-width:650px}.cine-heading h2{font-size:clamp(32px,3.4vw,64px);font-stretch:100%;letter-spacing:-.045em;line-height:1.06;margin:12px 0;max-width:19ch;text-shadow:0 3px 25px #04111c}
+#cine-idea{font-size:clamp(17px,1.35vw,24px);line-height:1.4;color:#b9dbe6;max-width:48ch;margin:0;text-shadow:0 2px 16px #04111c}
+.cine-bottom{position:absolute;bottom:18px;left:4.5vw;right:4.5vw}
+#cine-subtitle{font-size:clamp(20px,1.7vw,30px);line-height:1.4;max-width:1000px;margin:0 auto 26px;text-align:center;min-height:2.8em;text-wrap:balance;text-shadow:0 2px 7px #000}
+#cine-progress{display:flex;gap:8px;max-width:1000px;margin:0 auto 15px}#cine #cine-progress button{flex:1;border:0;height:16px;min-height:16px;padding:6px 0;background:transparent}#cine-progress button:after{content:'';display:block;background:#4a6475;height:3px;margin-top:-3px}#cine-progress i{display:block;position:relative;height:3px;background:#b6dba2;z-index:1}
+.cine-controls{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}.cine-controls #cine-play{min-width:115px;background:#d7ebef;color:#152e3e;font-weight:650}.cine-volume{display:flex;align-items:center;gap:10px;font-size:14px;padding:0 6px}.cine-volume input{width:85px;accent-color:#b9dce7}#cine-note,#cine-alert{text-align:center;color:#a7c0d0;font-size:13px;margin:12px 0 0}#cine-alert:empty{display:none}
+#acceso-cine{position:fixed;inset:0;width:100%;height:100%;border:0;z-index:40;background:#07131f;opacity:0;transition:opacity .8s;pointer-events:none}#acceso-cine.activo{opacity:1}
+body.proyectando>header,body.proyectando #introduccion,body.proyectando #quick-views,body.proyectando #ruta-proceso,body.proyectando #transporte,body.proyectando #aviso-modelo,body.proyectando #estado-vista,body.proyectando #scene-meta,body.proyectando #pista,body.proyectando #riel,body.proyectando #mostrar-datos,body.proyectando #ficha,body.proyectando #etiquetas,body.proyectando #vida-vegetal{visibility:hidden!important}
+body.proyectando:before{display:none!important}body.acceso.proyectando main,body.acceso.embebido main{height:100dvh;display:block}body.acceso.proyectando aside,body.acceso.embebido aside,body.acceso.embebido header{display:none}
+body.acceso.proyectando .vistas,body.acceso.proyectando .leyenda,body.acceso.embebido .vistas,body.acceso.embebido .leyenda{display:none}
+body.acceso.embebido #escena{height:100dvh}
+body.captura .projection-start,body.captura #vida-vegetal{display:none!important}
+@media(max-width:1000px){body.simulador #ficha{width:420px;max-width:calc(100vw - 28px)}body.simulador.inspector-open #quick-views{visibility:hidden}body.acceso main{grid-template-columns:340px 1fr}body.acceso aside{padding:20px}body.acceso h2{font-size:30px}.cine-heading{top:15vh;max-width:60vw}.cine-top{left:24px;right:24px}.cine-top b span{display:none}.cine-controls button{font-size:14px!important}.cine-volume{display:none}}
+@media(max-width:800px){body.simulador #ficha{width:auto;max-height:60dvh}body.simulador #ficha h2{font-size:29px}body.simulador #ficha p{font-size:17px}body.simulador #ficha .idea-publico{font-size:20px}body.simulador #ficha dl{font-size:14px}body.simulador #ficha dd{font-size:16px}#intro-cine{margin-top:9px;padding:10px 14px}.cine-top{top:15px;left:18px;right:18px;gap:10px}.cine-top b{font-size:18px}#cine-count{font-size:12px}#cine-close{font-size:12px!important;min-height:38px!important;padding:8px!important}.cine-heading{top:12vh;max-width:90vw}.cine-heading h2{font-size:34px;max-width:19ch}#cine-idea{font-size:16px;max-width:37ch}.cine-bottom{bottom:12px;left:18px;right:18px}#cine-subtitle{font-size:19px;margin-bottom:12px}#cine-note{font-size:11px}.cine-controls{gap:5px}.cine-controls button{font-size:12px!important;padding:8px 10px!important;min-height:38px!important}.cine-controls #cine-loop{display:none}body.acceso header{height:auto;min-height:105px;padding:16px}body.acceso h1{font-size:24px}body.acceso main{display:flex;height:auto;flex-direction:column}body.acceso #escena{height:63dvh;min-height:420px;order:-1}body.acceso aside{padding:24px}body.acceso .leyenda{font-size:13px;bottom:14px}body.acceso .vistas{top:14px;left:14px;right:14px;justify-content:center}#vida-vegetal{bottom:230px;font-size:14px;width:86vw}body.acceso.proyectando #escena,body.acceso.embebido #escena{height:100dvh;min-height:100dvh}}
+@media(prefers-reduced-motion:reduce){#acceso-cine,#vida-vegetal{transition:none}}

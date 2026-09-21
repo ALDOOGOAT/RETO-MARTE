@@ -1,8 +1,8 @@
 # Continuidad para Astra · MILPA-360 rumbo a Madrid
 
-**Corte técnico revisado:** revisión visual V4 sobre `c99e151`, posterior al cierre S5/B19, 21 sep 2026, rama `preparacion-madrid-p1`. **Este archivo es un relevo de trabajo, no una validación científica ni una orden para ejecutar tareas en segundo plano.** Al retomar, verificar otra vez HEAD, fecha, rama, estado de Git, herramientas, fuentes y reglas de la final.
+**Corte técnico revisado:** proyección e interfaz V5 sobre `f3b61e2`, posterior al cierre S5/B19, 21 sep 2026, rama `preparacion-madrid-p1`. **Este archivo es un relevo de trabajo, no una validación científica ni una orden para ejecutar tareas en segundo plano.** Al retomar, verificar otra vez HEAD, fecha, rama, estado de Git, herramientas, fuentes y reglas de la final.
 
-**Prioridad vigente:** [CIERRE-V4.md](CIERRE-V4.md) registra la entrega visual, fundamentos y limpieza. [CIERRE-ACUMULADO.md](CIERRE-ACUMULADO.md) da la
+**Prioridad vigente:** [PROYECCION-V5.md](PROYECCION-V5.md) documenta la nueva presentación narrada y ambos visores. [CIERRE-V4.md](CIERRE-V4.md) conserva el cierre anterior de fundamentos, Blender y limpieza. [CIERRE-ACUMULADO.md](CIERRE-ACUMULADO.md) da la
 disposición individual B1–B19. El usuario delegó decisiones: D1/D2 están ratificadas,
 sin volver a pedir aprobación interna. Entregable base digital; maqueta manual opcional.
 Se calcularon provisiones completas, auxiliares/térmica, agua, Cl/DQO y alternativa de
@@ -202,3 +202,20 @@ trabajo de ingeniería y mediciones específicas, no sólo decisiones de prefere
 La siguiente sesión debe incorporar esa evidencia o ejecutar el diseño acotado que
 permita; no repetir una auditoría completa ni prometer validación física automática.
 Se preservó la restricción de no crear subagentes sin autorización posterior.
+
+
+### Proyección V5 sobre f3b61e2 · 21 sep 2026
+
+Pedido vigente ejecutado sobre los dos HTML: tipografía y explicaciones para público,
+fuentes dentro de las fichas, personas articuladas, transiciones de cultivo/cubierta,
+acceso con maniobras continuas y proyección automática ES/EN. El recorrido principal
+tiene nueve capítulos y el acceso seis; los treinta MP3 y subtítulos son locales.
+Ver `PROYECCION-V5.md`, su informe de navegador y `prototipo-3d/audio/CREDITOS.md`.
+El escenario del recorrido se separa de la exploración y se descarta al salir.
+
+Se conservan parámetros, ecuaciones y reglas científicas. Blender/GLB, memoria, deck
+y vídeo de respaldo son instantáneas V4 identificadas; no se presentan como una
+grabación de V5. No reinstalar Blender/MCP ni repetir P0–P2 por este cambio de interfaz.
+El próximo paso es ensayar la proyección con el equipo y comprobar sonido, lectura
+y fluidez en el hardware del evento; luego incorporar datos reales de B14–B19/E0–E5.
+Las mejoras visuales no cierran esas brechas ni sustituyen la revisión independiente.

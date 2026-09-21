@@ -402,3 +402,13 @@ Se conserva arquitectura B y el proceso calculado. La fuente LaTeX en
 y cinemática; `analysis/fundamentos_latex.py` toma los valores de los JSON actuales.
 No se añaden mediciones ni descubrimientos experimentales. Fuentes, decisiones y
 aceptación constan en `docs/madrid/CIERRE-V4.md`; el registro anterior es histórico.
+
+
+### Presentación narrada V5 · 21 sep 2026
+
+Los dos visores incorporan explicaciones accesibles, personas articuladas, maniobras
+continuas y un modo de proyección con audio ES/EN sin conexión. El guion muestra
+qué hace cada proceso, sus aportes externos y qué falta comprobar. No se cambian
+parámetros ni el modelo científico. `docs/madrid/PROYECCION-V5.md` identifica
+archivos, tiempos, fuentes del audio, prueba del navegador y límites. Blender,
+memoria, deck y vídeo de respaldo conservan su instantánea V4 identificada.

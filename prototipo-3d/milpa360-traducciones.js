@@ -315,3 +315,30 @@ MILPA_I18N.add({'Automática':'Automatic'});
 
 MILPA_I18N.add({'Giro 360°':'360° orbit'});
 MILPA_I18N.add({'Envolvente nominal · terreno ilustrativo':'Nominal envelope · illustrative terrain','Acceso, presión y blindaje por validar':'Access, pressure and shielding awaiting validation'});
+MILPA_I18N.add({
+ 'Proyección con voz':'Narrated presentation',
+ 'Ver maniobra con voz':'Watch narrated access',
+ 'BioMars Chiapas · acceso en estudio':'BioMars Chiapas · access study',
+ 'Un camino para entrar y salir':'A route in and out',
+ 'Volver al módulo':'Back to the module',
+ 'Entender los cálculos':'Understand the calculations',
+ 'Cómo funciona y qué falta comprobar':'How it works and what needs testing',
+ 'Datos de NASA y fuentes planetarias revisadas. Toca un punto del globo para entender qué significa.':'Data from NASA and reviewed planetary sources. Select a point on the globe to understand what it means.',
+ 'Cosecha o preparación del lote · transición visual en tiempo acelerado':'Harvest or batch preparation · visual transition in accelerated time',
+ 'Dimensiones y lo que falta comprobar':'Dimensions and remaining checks',
+ 'El anillo ocupa la entrada. Dos recipientes deben moverse antes de que pueda pasar una persona.':'The ring occupies the entrance. Two containers must move before a person can pass.',
+ 'El bloqueo evita que el anillo gire. Antes de abrir, la presión de ambos espacios debe ser compatible.':'The lock prevents rotation. Before opening, pressure in both spaces must be compatible.',
+ 'El riego está aislado y las puertas se abren. Los recipientes se moverán apoyados sobre una guía.':'Irrigation is isolated and the doors open. The containers will move on supporting guides.',
+ 'Los recipientes están en el vestíbulo, pero todavía tapan el paso. Hay que apartarlos a los lados.':'The containers are in the vestibule, but still block the passage. They must be moved to the sides.',
+ 'La carga está a ambos lados. Se retienen los recipientes y las puertas antes de permitir la entrada.':'The load is parked on both sides. Containers and doors are retained before entry is allowed.',
+ 'La persona puede entrar. El paso permanece abierto durante la ocupación, incluso si se corta la energía.':'The person can enter. The passage remains open during occupancy, even if power is cut.',
+ 'La anchura es una estimación geométrica. Hay que comprobarla con personas, herramientas, carga y rescate. Esta animación permite entender la secuencia; todavía no acredita seguridad física.':'The width is a geometric estimate. It must be checked with people, tools, loads and rescue tasks. This animation explains the sequence; it does not establish physical safety.',
+ 'Cobre: carga que se retira. Azul: ruta de paso.':'Copper: load being removed. Blue: passage route.',
+ 'Vista de corte · espacio presurizado conectado · secuencia por comprobar físicamente.':'Cutaway view · connected pressurised space · sequence awaiting physical verification.',
+ 'Presión compatible: condición ilustrativa, sin sensores reales.':'Compatible pressure: illustrative condition, without real sensors.',
+ 'Sin energía: la ruta de salida permanece abierta.':'Power off: the exit route remains open.',
+ 'La persona recorre el paso preparado.':'The person walks along the prepared route.',
+ 'Salida manual: se conserva la ocupación hasta llegar al vestíbulo.':'Manual exit: occupancy stays active until the person reaches the vestibule.',
+ 'Maniobra preparada. Observa el movimiento.':'Operation ready. Watch the movement.',
+ 'Voz sintética · concepto en evaluación · Escape para salir':'Synthetic voice · concept under evaluation · Escape to exit'
+});

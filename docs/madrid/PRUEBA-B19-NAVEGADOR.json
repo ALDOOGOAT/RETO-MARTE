@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-09-21T10:08:34.973Z",
+  "fecha": "2026-09-21T11:20:26.941Z",
   "prueba": "B19 Chrome offline file://",
   "browser": {
     "protocolVersion": "1.3",
@@ -41,6 +41,12 @@
       ]
     }
   ],
+  "reservaHumana": {
+    "altura": 2,
+    "diametro": 0.800000011920929,
+    "alturaNominal": 2,
+    "diametroNominal": 0.8
+  },
   "errores": [],
   "solicitudesHTTP": 0,
   "limite": "Sólo candidata digital; sin validación física ni prueba de GPU del evento"

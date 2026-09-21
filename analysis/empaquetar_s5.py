@@ -11,7 +11,7 @@ for p in ['config/*.json','analysis/*.py','analysis/*.cjs','analysis/*.mjs',
           'docs/madrid/capturas-v4/*.png','docs/madrid/PRUEBA-VISUAL-V4.json','docs/madrid/LIMPIEZA-V4.json','docs/madrid/latex/*.tex',
           'docs/madrid/capturas-v3/*.png','docs/madrid/PRUEBA-REFINAMIENTO-V3.json','docs/madrid/RENDIMIENTO-V3-INTEL.json',
           'visuales/atlas-marciano.html','prototipo-3d/milpa360-interfaz.css',
-          'prototipo-3d/vendor/*','prototipo-3d/milpa360-*.js','prototipo-3d/milpa360-simulador.html','prototipo-3d/milpa360-acceso.html',
+          'prototipo-3d/vendor/*','prototipo-3d/audio/*','docs/madrid/capturas-v5/*.png','docs/madrid/PRUEBA-PROYECCION-V5.json','prototipo-3d/milpa360-*.js','prototipo-3d/milpa360-simulador.html','prototipo-3d/milpa360-acceso.html',
           'prototipo-3d/LEEME-P3.md','prototipo-3d/package*.json','prototipo/planos/P02*.html',
           'prototipo/planos/P03*.html','prototipo/planos/_estilo.css','prototipo/planos/madrid/*.html','prototipo/planos/madrid/*.svg',
           'outputs/madrid-s4-20260920/*.xlsx','outputs/madrid-s5/diapositivas/*.png',
@@ -29,7 +29,8 @@ records={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for
 manifest=ROOT/'docs/madrid/MANIFIESTO-S5.json'
 manifest.write_text(json.dumps({'estado':'Candidata digital revisada; aceptación física y reglamento Madrid abiertos. Ver CIERRE-ACUMULADO.md.',
  'revision_calculos':json.loads((ROOT/'config/milpa360.parameters.json').read_text())['meta']['version'],
- 'geometria_blender':'V4 interior y exterior regenerados desde la escena actual: materiales y acabados nuevos, mismas cotas nominales. B19 permanece separado.',
+ 'revision_interactiva':'V5: dos visores y proyección narrada ES/EN. PROYECCION-V5.md documenta alcance y prueba.',
+ 'geometria_blender':'Instantáneas V4 del interior y exterior, mismas cotas nominales. No incluyen personas ni animación V5. Memoria, deck y vídeo conservan revisión V4. B19 permanece separado.',
  'base_git':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
  'sha256':records},ensure_ascii=False,indent=2)+'\n')
 output=ROOT/'entregas/madrid-s5-revision.zip';output.parent.mkdir(exist_ok=True)

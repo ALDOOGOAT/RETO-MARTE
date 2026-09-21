@@ -40,6 +40,21 @@ with zipfile.ZipFile(archive) as z:
     manifest=json.loads(z.read('docs/madrid/MANIFIESTO-S5.json'))
     for n,h in manifest['sha256'].items():
         assert hashlib.sha256(z.read(n)).hexdigest()==h,n
+    audio=json.loads(z.read('prototipo-3d/milpa360-audio.js').decode().split('window.MILPA_AUDIO = ',1)[1].rstrip().removesuffix(';'))
+    guion=json.loads(z.read('prototipo-3d/milpa360-guion.js').decode().split('window.MILPA_GUION = ',1)[1].rstrip().removesuffix(';'))
+    assert len(audio)==30
+    duraciones={}
+    for tipo,chapters in guion.items():
+        for lang in ('es','en'):
+            duraciones[tipo+'-'+lang]=round(sum(max(c['min'],audio[c['id']+'-'+lang]['duracion']+2) for c in chapters),1)
+            for c in chapters:
+                ident=c['id']+'-'+lang; a=audio[ident]
+                assert hashlib.sha256(z.read('prototipo-3d/audio/'+ident+'.mp3')).hexdigest()==a['sha256'],ident
+                assert ' '.join(cue['texto'] for cue in a['cues'])==c[lang]['voz'],ident
+                previous=0
+                for cue in a['cues']:
+                    assert previous<=cue['inicio']<cue['fin']<=a['duracion'],ident
+                    previous=cue['fin']
     for n in ('prototipo-3d/milpa360-simulador.html','prototipo-3d/milpa360-acceso.html','visuales/atlas-marciano.html'):
         parser=Links();parser.feed(z.read(n).decode())
         for link in parser.links:
@@ -100,16 +115,17 @@ with zipfile.ZipFile(archive) as z:
         app_files=[n for n in names if n.startswith(('prototipo-3d/','visuales/'))]
         for n in app_files:
             assert (tested/n).read_bytes()==z.read(n),f'Demo distinta de la probada: {n}'
-        reports=['docs/madrid/PRUEBA-P3-NAVEGADOR.json','docs/madrid/PRUEBA-B19-NAVEGADOR.json','docs/madrid/PRUEBA-VISUAL-V2.json','docs/madrid/PRUEBA-REFINAMIENTO-V3.json','docs/madrid/PRUEBA-VISUAL-V4.json']
+        reports=['docs/madrid/PRUEBA-P3-NAVEGADOR.json','docs/madrid/PRUEBA-B19-NAVEGADOR.json','docs/madrid/PRUEBA-VISUAL-V2.json','docs/madrid/PRUEBA-REFINAMIENTO-V3.json','docs/madrid/PRUEBA-VISUAL-V4.json','docs/madrid/PRUEBA-PROYECCION-V5.json']
         for n in reports:
             r=json.loads(z.read(n))
             assert not r['errores'] and r['solicitudesHTTP']==0,n
+        assert r['recorridoCompleto'] and r['archivoLocalSinPermisoExtra']
         browser_evidence=dict(carpeta_probada=str(tested),archivos_identicos=len(app_files),reportes=reports)
     clean=Path(tempfile.mkdtemp(prefix='milpa-s6-limpia-'))
     z.extractall(clean)
     result=dict(archivo=str(archive),archivos_sha256=len(manifest['sha256']),
         enlaces_documentales=checked_links,paginas_memoria=len(reader.pages),
-        diapositivas=9,afirmaciones=len(rows)-1,geometria_blender_regenerada="V4",
+        diapositivas=9,afirmaciones=len(rows)-1,geometria_blender_regenerada="V4",revision_interactiva="V5",audios_verificados=len(audio),duracion_recorridos_s=duraciones,
         carpeta_limpia=str(clean),navegador=browser_evidence,
         limite='Integridad digital. La revisión visual se registra aparte; no acredita ensayo físico, revisión independiente ni rendimiento del equipo del evento.')
     (ROOT/'tmp/madrid-s5').mkdir(exist_ok=True,parents=True)

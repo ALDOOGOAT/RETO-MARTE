@@ -2,8 +2,8 @@
 window.MILPA_FICHAS=function(d){
  const en=MILPA_I18N.lang==='en',p=(es,eng)=>en?eng:es,choose=x=>Array.isArray(x)?x[en?1:0]:x;
  const b=d.balance,g=d.geometria,pg=d.parametros,out={};
- const sources={calculo:'config/milpa360.parameters.json · docs/madrid/CALCULOS-CIERRE.md',
-  planeta:'NASA/JPL-Caltech · INVESTIGACION-MARTE.md §2',bio:'docs/madrid/P1-INGENIERIA.md · registro-afirmaciones.csv',geometria:'docs/madrid/P2-GEOMETRIA.md · B19-ACCESO.md'};
+ const sources={calculo:p('Balances calculados del proyecto','Project calculations'),
+  planeta:'NASA / JPL-Caltech',bio:p('Literatura terrestre y revisión del proyecto','Earth-based literature and project review'),geometria:p('Geometría paramétrica y estudio de acceso','Parametric geometry and access study')};
  function add(k,type,title,body,rows,steps,source='calculo'){
   out[k]={tipo:type,sub:({literatura:p('Dato publicado','Published data'),calculo:p('Calculado · supuestos visibles','Calculated · explicit assumptions'),hipotesis:p('Propuesta · por validar','Proposal · awaiting validation'),ilustrativo:p('Escenario ilustrativo','Illustrative scenario')})[type],
    tit:choose(title),txt:choose(body),d:rows.map(([label,value])=>[choose(label),choose(value)]),pasos:choose(steps).split('|'),f:sources[source]||source,href:({calculo:'CALCULOS-CIERRE.md',bio:'P1-INGENIERIA.md',geometria:'P2-GEOMETRIA.md'})[source]||'P1-INGENIERIA.md'};
@@ -95,5 +95,35 @@ window.MILPA_FICHAS=function(d){
  add('retorno','hipotesis',['Un piloto medible en Chiapas','A measurable pilot in Chiapas'],
  ['El piloto propuesto en Tuxtla compara riego manual y goteo aislable: seis recipientes en tres pares. Se medirán agua nueva por cosecha y tiempo de trabajo. Sitio, operador y resultados siguen pendientes.','The proposed Tuxtla pilot compares manual irrigation with isolatable drip: six containers in three pairs. Make-up water per harvest and working time would be measured. Site, operator and results remain pending.'],
  [[['Variable principal','Primary measure'],'L/kg'],[['Diseño exploratorio','Exploratory design'],p('3 pares independientes','3 independent pairs')]],['Línea base|Ensayo|Comparación','Baseline|Test|Comparison'],'docs/madrid/P4-PRESUPUESTO-CHIAPAS.md');
+ const sencillo={
+ envolvente:['El casco separa el cultivo del ambiente de Marte. El corte nos permite ver lo que hay dentro.','The hull separates crops from the Martian environment. The cutaway lets us see inside.'],
+ atmosfera:['Fuera del módulo no podemos respirar. El aire de las personas necesita su propio sistema de tratamiento.','We cannot breathe outside the module. People need a separate air-treatment system.'],
+ gravedad:['En Marte las cosas pesan menos, pero sigue costando ponerlas en movimiento y detenerlas.','Things weigh less on Mars, but they still require force to start moving and stop.'],
+ radiacion:['Una barrera alrededor del módulo podría reducir la exposición. Su espesor debe calcularse y comprobarse.','A barrier around the module could reduce exposure. Its thickness must be calculated and checked.'],
+ regolito:['El material del suelo contiene sales que pueden dañar a los seres vivos. Hay que tratar toda la carga antes de cultivar.','The soil material contains salts that may harm living things. The entire load needs treatment before planting.'],
+ polvo:['Una tormenta exterior puede reducir la energía disponible. Con menos luz, el cultivo puede perder producción.','An outside storm may reduce available energy. With less light, crops may produce less food.'],
+ agua:['Recuperar agua ahorra recursos, pero hay que comprobar qué contiene antes de volver a usarla.','Recovering water saves resources, but its contents must be checked before reuse.'],
+ comms:['Un mensaje tarda minutos en viajar entre Marte y la Tierra. Las decisiones urgentes deben poder tomarse junto al módulo.','Messages take minutes to travel between Mars and Earth. Urgent decisions must be possible at the module.'],
+ valles:['El planeta y el módulo se muestran a escalas distintas. El mapa ayuda a situarnos; el terreno cercano es una ilustración.','The planet and module are shown at different scales. The map gives context; the nearby terrain is illustrative.'],
+ sitio:['Una pequeña instalación conecta animales, tratamiento de residuos y cultivos para aportar alimento fresco.','A small installation connects animals, waste processing and crops to provide fresh food.'],
+ aviario:['Las codornices aportan huevos. Sus residuos se recogen para llevarlos a tratamiento, y su alimento entra desde fuera.','Quail provide eggs. Their waste is collected for treatment, and their feed comes from outside.'],
+ larvario:['Las larvas aprovechan una parte de los residuos. Lo que sale debe revisarse antes de incorporarlo a otros procesos.','Larvae process part of the waste. Outputs must be checked before entering other processes.'],
+ digestor:['Dentro del digestor, microorganismos transforman residuos orgánicos y producen gas. El agua con sales se trata aparte.','Inside the digester, microorganisms process organic waste and produce gas. Salty water is treated separately.'],
+ musgo:['El musgo se propone como cobertura del suelo. Que se vea verde no significa que el suelo ya sea seguro.','Moss is proposed as a soil cover. A green appearance does not mean the soil is safe.'],
+ cultivo:['Camote, frijol y rábano necesitan agua, luz y tiempos de crecimiento diferentes. El módulo aporta una parte pequeña de la dieta.','Sweet potato, beans and radish need water, light and different growing times. The module provides a small part of the diet.'],
+ lavado:['El lavado lleva las sales del suelo al agua. Esa agua queda retenida para tratarla; las sales no desaparecen.','Washing carries salts from soil into water. That water is held for treatment; the salts do not disappear.'],
+ mfc:['Antes de sembrar, se toma una muestra. Si falta un análisis que autorice el lote, el recipiente espera.','A sample is taken before planting. If an analysis has not authorised the batch, the container waits.'],
+ carrusel:['Giran los recipientes de suelo. Las estaciones permanecen fijas, como puestos de trabajo alrededor de una mesa circular.','The soil containers rotate. The stations stay fixed, like workstations around a circular table.'],
+ panel:['La luz de cultivo necesita electricidad. El gas recuperado cubre sólo una fracción pequeña de esa necesidad.','Growing lights need electricity. Recovered gas covers only a small fraction of that need.'],
+ f_salmuera:['El tubo lleva el agua del lavado a un reactor separado. No entra directamente al riego.','The pipe carries wash water to a separate reactor. It does not flow directly into irrigation.'],
+ f_frass:['Una parte de los residuos se destina al digestor. Preparar y mover esa mezcla todavía necesita diseño.','Part of the waste goes to the digester. Preparing and moving that mixture still needs design.'],
+ f_inoculo:['El material que sale del digestor se retiene hasta comprobar su calidad. No se usa como abono automáticamente.','Material leaving the digester is held until its quality is checked. It is not automatically used as fertiliser.'],
+ riego:['Los goteros viajan con cada recipiente. El riego puede funcionar aunque el carrusel no esté girando.','Drip emitters travel with each container. Irrigation can work even when the carousel is not moving.'],
+ f_riego:['El depósito entrega agua acondicionada a los goteros. El circuito de bebida de las personas va por separado.','The tank supplies conditioned water to the emitters. Drinking water uses a separate circuit.'],
+ f_biogas:['El gas se acumula en un depósito. Para aprovecharlo hay que limpiarlo y usar equipos adecuados fuera de la cabina.','Gas collects in a holder. Using it requires cleaning and suitable equipment outside the cabin.'],
+ f_proteina:['Las larvas podrían aprovecharse como alimento sólo después del tratamiento y los controles necesarios.','Larvae could be used as feed only after the required treatment and checks.'],
+ f_estiercol:['Una tolva dirige el residuo de las aves hacia el recipiente. Su cierre permite detener el aporte cuando sea necesario.','A hopper directs bird waste into the container. Its shutoff allows the supply to stop when needed.'],
+ retorno:['En Chiapas, un ensayo pequeño puede comparar el agua y el trabajo que requiere cada forma de riego.','In Chiapas, a small trial can compare the water and labour required by different irrigation methods.']};
+ for(const [key,copy] of Object.entries(sencillo))out[key].resumen=choose(copy);
  return out;
 };

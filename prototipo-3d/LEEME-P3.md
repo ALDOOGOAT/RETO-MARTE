@@ -1,7 +1,7 @@
 # MILPA-360 · demostrador P3 sin Internet
 
 Abra `milpa360-simulador.html` en Chrome. No necesita servidor ni instalar npm.
-Conserve todos los archivos `milpa360-*.js`, `milpa360-interfaz.css` y `vendor/`.
+Conserve todos los archivos `milpa360-*.js`, `milpa360-interfaz.css`, `vendor/` y `audio/`.
 El ZIP conserva también `visuales/atlas-marciano.html` y la documentación enlazada.
 
 **ES / EN** traduce interfaz, fichas, mensajes y rótulos 3D sin Internet. También puede
@@ -95,7 +95,33 @@ en `../docs/madrid/MEJORA-VISUAL-BILINGUE.md`. No se detectó proyector conectad
 Exterior cerrado muestra casco y techo completos; Interior vuelve al corte. Giro 360°
 mueve sólo la cámara y se detiene al arrastrar o reducir movimiento. Cerrar el exterior
 pausa el proceso. Los accesos Suelo/Animales/Tratamiento/Cultivo enfocan cada etapa;
-Fundamentos abre fórmulas y el PDF local incluido en el paquete. La calidad Automática
+Fundamentos abre fórmulas dentro de la interfaz; el PDF de respaldo está incluido en el paquete. La calidad Automática
 ajusta resolución/sombras según el equipo, sin modificar los parámetros de proceso.
 En móvil se adapta el campo de visión. El exterior completo no acredita estanqueidad,
 blindaje, entrada o evacuación. `docs/madrid/CIERRE-V4.md` documenta los límites.
+
+## Proyección V5
+
+1. Abrir el simulador y elegir **ES / EN**.
+2. Pulsar **Proyección con voz**. El sonido necesita esa acción del usuario.
+3. Usar **⛶** para pantalla completa. Pausa detiene voz, cámara y escenario narrado;
+   Espacio pausa/reanuda y Escape vuelve a explorar. Anterior/Siguiente permiten saltar.
+4. Activar **Repetición** sólo si se quiere un recorrido continuo de exposición.
+5. **Salir del recorrido** recupera el estado previo de exploración, pausado.
+
+Nueve capítulos enlazan Marte, envolvente, anillo, animales, tratamiento, cultivo,
+acceso, energía y Chiapas. El capítulo del acceso muestra el propio visor B19 en
+una ventana integrada, sin perder la narración. Se usan 30 MP3 locales (dos idiomas,
+nueve capítulos generales y seis de acceso) y subtítulos por oración.
+
+El visor de acceso conserva ocupación hasta que la persona termina de salir.
+No se mueve la carga mientras camina por la ruta. Las figuras muestran tareas y
+escala; no son maniquíes antropométricos certificados. Las plantas y el musgo
+interpolan estados, y la cosecha/preparación tiene una explicación visible.
+
+Las fichas presentan primero una idea en lenguaje sencillo. **Cómo funciona y qué
+falta comprobar** amplía la explicación dentro de la página. No se abren archivos
+Markdown durante el recorrido. El audio del evento debe probarse con sus altavoces.
+
+Prueba de proyección: `MILPA_VISUAL_V5=1 MILPA_FILE_ESTRICTO=1 node --experimental-websocket analysis/verificar_p3_navegador.mjs`.
+Para GPU NVIDIA en este equipo: añadir `__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia MILPA_VISIBLE=1 MILPA_GPU=1`.

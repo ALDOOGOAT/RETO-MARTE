@@ -1,0 +1,43 @@
+{
+  "fecha": "2026-09-21T11:19:20.081Z",
+  "revision": "V5",
+  "carpetaProbada": "/tmp/milpa-s6-limpia-1ld209n6/prototipo-3d",
+  "navegador": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/148.0.7778.96",
+    "revision": "@8625e066febc721e015ea99842da12901eb7ed73",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+    "jsVersion": "14.8.178.14"
+  },
+  "gpu": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2, OpenGL 4.5.0)",
+  "resolucion": [
+    1920,
+    1080
+  ],
+  "humano": {
+    "mallas": 30,
+    "altura": 1.75,
+    "alturaErguida": 1.7499999999999998,
+    "articulado": true
+  },
+  "rendimiento": {
+    "modulo": {
+      "fps": 55.40497448977946,
+      "duracionMs": 5017.60000000149,
+      "llamadas": 822
+    },
+    "acceso": {
+      "fps": 68.59725610971472,
+      "duracionMs": 5000.20000000298,
+      "llamadas": 278
+    }
+  },
+  "archivoLocalSinPermisoExtra": true,
+  "audio": "MP3 local ES/EN: reproducción, pausa, reactivar voz, cambio de idioma y avance comprobados",
+  "acceso": "Persona continua, retención de ocupación, parada de carga y salida sin energía",
+  "recorridoCompleto": true,
+  "alcanceRecorrido": "Nueve vistas visitadas; avance automático entre capítulos, fin y secuencia de acceso completa. No se reprodujo toda la narración de principio a fin.",
+  "errores": [],
+  "solicitudesHTTP": 0,
+  "limite": "Prueba digital local, sin proyector ni ensayo físico. Audio del navegador silenciado durante automatización. FPS de cinco segundos: no garantizan mínimo sostenido."
+}

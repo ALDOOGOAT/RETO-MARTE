@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-09-21T10:08:23.825Z",
+  "fecha": "2026-09-21T11:11:53.760Z",
   "prueba": "Chrome visible X11, red deshabilitada, file://",
   "browser": {
     "protocolVersion": "1.3",
@@ -19,8 +19,8 @@
   "dpr": 1,
   "cotas": {
     "piso": 0,
-    "pies": 0.020000001192092887,
-    "cabeza": 1.7500000035762786,
+    "pies": 3.469446951953614e-17,
+    "cabeza": 1.7608727949592087,
     "techo": 2.2,
     "figura": 1.75,
     "sueloMin": -1.6901270258677457e-17,
@@ -35,9 +35,9 @@
     "terreno": -0.08
   },
   "rendimiento": {
-    "fotogramas": 218,
-    "duracionMs": 5012,
-    "fps": 43.49561053471668
+    "fotogramas": 306,
+    "duracionMs": 5012.900000002235,
+    "fps": 61.0425103233385
   },
   "limite": "GPU local; no prueba del equipo del evento",
   "controles": "pausa, avance, reset, fallos, cuarentena, vistas, fichas, despiece, selección y comparación comprobados",

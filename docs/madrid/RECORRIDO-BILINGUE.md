@@ -1,6 +1,10 @@
 # Recorrido bilingüe · MILPA-360
 
-Guion breve para ensayar la demo V4. Duración orientativa: 2–3 minutos por idioma;
+**Proyección automática vigente V5:** pulsar «Proyección con voz» en el simulador.
+Incluye nueve capítulos y narración ES/EN local, aproximadamente cuatro minutos.
+El acceso tiene otro recorrido de seis capítulos. Ver [PROYECCION-V5.md](PROYECCION-V5.md).
+
+El guion manual siguiente se conserva para una presentación en vivo de la demo. Duración orientativa: 2–3 minutos por idioma;
 no es un tiempo medido de exposición ni sustituye el pitch de cinco minutos.
 El verificador recorre los cinco pasos en ES y EN. La comprensión por una persona
 ajena al equipo y la legibilidad en el proyector requieren ensayo humano.

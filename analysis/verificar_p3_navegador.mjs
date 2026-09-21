@@ -11,7 +11,7 @@ const perfil=await mkdtemp(path.join(os.tmpdir(),'milpa-chrome-'));
 const gpu=process.env.MILPA_GPU==='1';
 const graficos=gpu?['--enable-gpu','--use-gl=angle','--use-angle=gl']:['--enable-unsafe-swiftshader','--use-angle=swiftshader'];
 const ventana=process.env.MILPA_VISIBLE==='1'?['--ozone-platform=x11','--window-size=1920,1080']:['--headless=new'];
-const chrome=spawn('google-chrome',[...ventana,'--no-sandbox','--allow-file-access-from-files','--disable-dev-shm-usage',...graficos,'--remote-debugging-port=0','--no-first-run','--no-default-browser-check','--disable-background-networking','--user-data-dir='+perfil,'about:blank'],{stdio:['ignore','ignore','pipe']});
+const chrome=spawn('google-chrome',[...ventana,'--mute-audio','--no-sandbox',...(process.env.MILPA_FILE_ESTRICTO==='1'?[]:['--allow-file-access-from-files']),'--disable-dev-shm-usage',...graficos,'--remote-debugging-port=0','--no-first-run','--no-default-browser-check','--disable-background-networking','--user-data-dir='+perfil,'about:blank'],{stdio:['ignore','ignore','pipe']});
 let socket;
 try {
   console.log('Chrome: arranque aislado');
@@ -25,13 +25,91 @@ try {
   let id=0;const pendientes=new Map(),errores=[],peticiones=[];
   socket.onmessage=e=>{const m=JSON.parse(e.data);if(m.id){const p=pendientes.get(m.id);pendientes.delete(m.id);if(!p)return;m.error?p.reject(new Error(JSON.stringify(m.error))):p.resolve(m.result);}else if(m.method==='Runtime.consoleAPICalled'&&['error','assert'].includes(m.params.type))errores.push(m.params);else if(m.method==='Runtime.exceptionThrown')errores.push(m.params.exceptionDetails);else if(m.method==='Log.entryAdded'&&m.params.entry.level==='error')errores.push(m.params.entry);else if(m.method==='Network.requestWillBeSent')peticiones.push(m.params.request.url);};
   const cdp=(method,params={})=>new Promise((resolve,reject)=>{const numero=++id;const limite=setTimeout(()=>{pendientes.delete(numero);reject(new Error("Timeout CDP: "+method));},60000);pendientes.set(numero,{resolve:r=>{clearTimeout(limite);resolve(r)},reject:e=>{clearTimeout(limite);reject(e)}});socket.send(JSON.stringify({id:numero,method,params}));});
-  const evaluar=async expression=>{const r=await cdp('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw new Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
+  const evaluar=async expression=>{const r=await cdp('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true,userGesture:true});if(r.exceptionDetails)throw new Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
   const esperar=async expression=>{const limite=Date.now()+60000;while(Date.now()<limite){try{if(await evaluar(expression))return;}catch{}await new Promise(r=>setTimeout(r,250));}throw new Error('No se cumplió: '+expression+' errores '+JSON.stringify(errores));};
   await cdp('Runtime.enable');await cdp('Log.enable');await cdp('Network.enable');
   await cdp('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});
   await cdp('Network.setBlockedURLs',{urls:['http://*','https://*']});
   await cdp('Emulation.setDeviceMetricsOverride',{width:1920,height:1080,deviceScaleFactor:1,mobile:false});
-  if(process.env.MILPA_VISUAL_V4==='1'){
+  if(process.env.MILPA_VISUAL_V5==='1'){
+    const base=process.env.MILPA_DEMO_DIR||path.join(raiz,'prototipo-3d');
+    const dir=path.join(raiz,'docs/madrid/capturas-v5');await mkdir(dir,{recursive:true});
+    const medirFPS=()=>evaluar('new Promise(resolve=>{let n=0,raf;const inicio=performance.now();function f(){n++;raf=requestAnimationFrame(f);}raf=requestAnimationFrame(f);setTimeout(()=>{cancelAnimationFrame(raf);const ms=performance.now()-inicio;resolve({fps:n*1000/ms,duracionMs:ms,llamadas:renderer.info.render.calls});},5000);})');
+    const cap=async name=>{await new Promise(r=>setTimeout(r,2200));const im=await cdp('Page.captureScreenshot',{format:'png'});await writeFile(path.join(dir,name+'.png'),Buffer.from(im.data,'base64'));};
+    await cdp('Page.navigate',{url:pathToFileURL(path.join(base,'milpa360-simulador.html')).href+'?vista=habitat&play=0&sol=62&lang=es'});
+    await esperar('typeof refsHab!=="undefined"&&refsHab&&!document.getElementById("carga")');
+    const initial=await evaluar('JSON.stringify(modelo.estado)');
+    await evaluar('abrirFicha("aviario")');await cap('ficha-es');
+    assert.ok(await evaluar('parseFloat(getComputedStyle(document.querySelector("#ficha .idea-publico")).fontSize)>=20'));
+    assert.equal(await evaluar('[...document.querySelectorAll("#ficha a")].filter(a=>/\\.md(?:$|#)/.test(a.href)).length'),0);
+    await evaluar('MILPA_I18N.set("en")');await cap('ficha-en');
+    await evaluar('MILPA_I18N.set("es");document.getElementById("cerrar").click();document.getElementById("intro-cine").click()');
+    await esperar('cine.state.audioListo&&cine.audio.currentTime>.5');await cap('cine-marte-es');
+    await evaluar('cine.pause()');const paused=await evaluar('cine.audio.currentTime'),cameraPaused=await evaluar('camara.position.toArray()');
+    await new Promise(r=>setTimeout(r,600));assert.ok(Math.abs(await evaluar('cine.audio.currentTime')-paused)<.05);
+    assert.deepEqual(await evaluar('camara.position.toArray()'),cameraPaused,'La cámara continuó durante la pausa');
+    await evaluar('MILPA_I18N.set("en");cine.pause(false)');await esperar('cine.state.audioListo&&cine.audio.currentTime>.5');await cap('cine-marte-en');
+    assert.equal(await evaluar('document.getElementById("cine-title").textContent'),'Growing on another world');
+    await evaluar('document.getElementById("cine-voice").click()');const mutedTime=await evaluar('cine.state.tiempo');
+    await new Promise(r=>setTimeout(r,400));assert.ok(await evaluar('cine.state.tiempo')>mutedTime);
+    await evaluar('document.getElementById("cine-voice").click()');await esperar('cine.state.audioListo');
+    assert.ok(await evaluar('cine.audio.currentTime')>=mutedTime-.1,'La voz se reinició al reactivarla');
+    await evaluar('cine.audio.currentTime=cine.audio.duration-.15');await esperar('cine.state.indice===1');
+    await esperar('S.vista==="habitat"&&refsHab.cierre===1');await cap('cine-exterior');
+    await evaluar('cine.go(2)');await esperar('refsHab.cierre===0');await cap('cine-anillo');
+    const pared=await evaluar('gHabitat.getObjectByName("placa-exterior").visible');assert.equal(pared,true,'La placa exterior desaparece al abrir el corte');
+    await evaluar('cine.go(3)');await cap('cine-aves');
+    assert.equal(await evaluar('JSON.stringify(modeloExploracion.estado)'),initial,'El recorrido cambió los inventarios de exploración');
+    const humano=await evaluar('(()=>{const h=gHabitat.getObjectByName("referencia-humana"),b=new THREE.Box3().setFromObject(MILPA_PERSONA(1.75));return {mallas:h.getObjectsByProperty("isMesh",true).length,altura:h.userData.alturaDeclarada,alturaErguida:b.max.y-b.min.y,articulado:typeof h.userData.animar==="function"};})()');
+    assert.ok(humano.mallas>25&&humano.articulado);
+    assert.ok(Math.abs(humano.alturaErguida-1.75)<1e-6,'Estatura erguida incorrecta');
+    await evaluar('cine.go(4)');await cap('cine-tratamiento');
+    await evaluar('cine.go(5)');await cap('cine-cultivo');
+    await evaluar('cine.go(6);cine.state.voz=false;cine.audio.pause()');
+    await esperar('document.getElementById("acceso-cine").classList.contains("activo")');await cap('cine-acceso');
+    if(process.env.MILPA_V5_SMOKE!=='1'){
+      await esperar('cine.state.indice===7');
+      assert.equal(await evaluar('estadoAccesoCine.ocupado'),false);
+      assert.equal(await evaluar('estadoAccesoCine.energia'),false);
+    }
+    await evaluar('cine.go(7)');await cap('cine-energia');
+    await evaluar('cine.go(8)');await cap('cine-chiapas');
+    await evaluar('cine.state.voz=false;cine.audio.pause();cine.state.tiempo=cine.duracion()');await esperar('cine.state.terminado');
+    assert.equal(await evaluar('cine.state.reproduciendo'),false);
+    await evaluar('cine.stop()');
+    assert.equal(await evaluar('JSON.stringify(modelo.estado)'),initial,'No se restauró la exploración');
+    const rendimientoModulo=await medirFPS();
+    await cdp('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:false});
+    await evaluar('cine.start();cine.state.voz=false;cine.audio.pause();cine.go(1)');await esperar('S.vista==="habitat"&&refsHab.cierre===1');await cap('cine-movil');
+    assert.equal(await evaluar('document.documentElement.scrollWidth<=innerWidth+1'),true);
+    assert.ok(await evaluar('document.querySelector(".cine-heading").getBoundingClientRect().bottom<document.getElementById("cine-subtitle").getBoundingClientRect().top'));
+    await evaluar('cine.stop()');await new Promise(r=>setTimeout(r,800));
+    assert.equal(await evaluar('document.getElementById("cine").hidden'),true);
+    await cdp('Emulation.setDeviceMetricsOverride',{width:1920,height:1080,deviceScaleFactor:1,mobile:false});
+    await cdp('Page.navigate',{url:pathToFileURL(path.join(base,'milpa360-acceso.html')).href+'?lang=es'});
+    await esperar('typeof B19!=="undefined"');await cap('acceso-inicial');
+    const rendimientoAcceso=await medirFPS();
+    await evaluar('B19.accion("bloquear");B19.accion("igualar");B19.accion("aislar")');await esperar('puertaVisual>.98');
+    await evaluar('B19.accion("extraer")');await esperar('B19.estudio.estado.movimiento?.progreso>.2');
+    await evaluar('B19.accion("cortar_energia")');const load=await evaluar('B19.carros[datos.acceso.retirados[0]].position.toArray()');
+    await new Promise(r=>setTimeout(r,300));assert.deepEqual(await evaluar('B19.carros[datos.acceso.retirados[0]].position.toArray()'),load);
+    await evaluar('B19.accion("restaurar_energia");document.getElementById("continuar").click()');await esperar('!B19.estudio.estado.movimiento');
+    await evaluar('B19.accion("estacionar")');await esperar('!B19.estudio.estado.movimiento');
+    await evaluar('B19.accion("abrir_paso");B19.accion("entrar")');const x0=await evaluar('B19.humano.position.x');
+    await new Promise(r=>setTimeout(r,800));const xm=await evaluar('B19.humano.position.x');assert.ok(xm<x0&&xm>1.13,'La persona saltó al destino');
+    await cap('acceso-caminando');await esperar('!B19.caminando');
+    await evaluar('B19.accion("cortar_energia");B19.accion("salir")');assert.equal(await evaluar('B19.estudio.estado.ocupado'),true,'Se liberó la ruta antes de completar la salida');
+    await esperar('!B19.caminando');assert.equal(await evaluar('B19.estudio.estado.ocupado'),false);
+    await evaluar('document.getElementById("acceso-cine-iniciar").click()');await esperar('B19.cine.state.audioListo');await cap('acceso-narrado');
+    await evaluar('B19.cine.pause();MILPA_I18N.set("en");B19.cine.pause(false)');await esperar('B19.cine.audio.currentTime>.3');await cap('acceso-narrado-en');
+    await evaluar('B19.cine.stop()');
+    await cdp('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:false});await cap('acceso-movil');
+    assert.equal(await evaluar('document.documentElement.scrollWidth<=innerWidth+1'),true);
+    assert.deepEqual(errores,[]);assert.deepEqual(peticiones.filter(u=>/^https?:/.test(u)),[]);
+    const gpuInfo=await evaluar('(()=>{const gl=renderer.getContext(),e=gl.getExtension("WEBGL_debug_renderer_info");return e?gl.getParameter(e.UNMASKED_RENDERER_WEBGL):"no disponible";})()');
+    const report={fecha:new Date().toISOString(),revision:'V5',carpetaProbada:base,navegador:await cdp('Browser.getVersion'),gpu:gpuInfo,resolucion:[1920,1080],humano,rendimiento:{modulo:rendimientoModulo,acceso:rendimientoAcceso},archivoLocalSinPermisoExtra:process.env.MILPA_FILE_ESTRICTO==='1',audio:'MP3 local ES/EN: reproducción, pausa, reactivar voz, cambio de idioma y avance comprobados',acceso:'Persona continua, retención de ocupación, parada de carga y salida sin energía',recorridoCompleto:process.env.MILPA_V5_SMOKE!=='1',alcanceRecorrido:'Nueve vistas visitadas; avance automático entre capítulos, fin y secuencia de acceso completa. No se reprodujo toda la narración de principio a fin.',errores,solicitudesHTTP:0,limite:'Prueba digital local, sin proyector ni ensayo físico. Audio del navegador silenciado durante automatización. FPS de cinco segundos: no garantizan mínimo sostenido.'};
+    await writeFile(path.join(raiz,'docs/madrid/PRUEBA-PROYECCION-V5.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
+  }else if(process.env.MILPA_VISUAL_V4==='1'){
     const base=process.env.MILPA_DEMO_DIR||path.join(raiz,'prototipo-3d');
     const dir=path.join(raiz,'docs/madrid/capturas-v4');await mkdir(dir,{recursive:true});
     await cdp('Page.navigate',{url:pathToFileURL(path.join(base,'milpa360-simulador.html')).href+'?vista=habitat&play=0&sol=62'});
@@ -196,10 +274,13 @@ try {
     const html=path.join(process.env.MILPA_DEMO_DIR||path.join(raiz,'prototipo-3d'),'milpa360-acceso.html');
     await cdp('Page.navigate',{url:pathToFileURL(html).href});
     await esperar('typeof B19!=="undefined"');
+    const reservaHumana=await evaluar('(()=>{const b=new THREE.Box3().setFromObject(reserva),v=b.getSize(new THREE.Vector3());return {altura:v.y,diametro:v.x,alturaNominal:p.altura_persona_equipo,diametroNominal:p.diametro_persona_equipo};})()');
+    assert.ok(Math.abs(reservaHumana.altura-reservaHumana.alturaNominal)<1e-6&&Math.abs(reservaHumana.diametro-reservaHumana.diametroNominal)<1e-6,'La postura de la persona cambió la reserva de acceso');
     const dir=path.join(raiz,'docs/madrid/capturas-b19');await mkdir(dir,{recursive:true});
     const capturar=async nombre=>{const im=await cdp('Page.captureScreenshot',{format:'png'});await writeFile(path.join(dir,nombre+'.png'),Buffer.from(im.data,'base64'));};
     await capturar('ensamblado');
     for(const k of ['bloquear','igualar','aislar'])await evaluar(`B19.accion('${k}')`);
+    await esperar('puertaVisual>.98');
     await evaluar(`B19.accion('extraer')`);
     await esperar('B19.estudio.estado.movimiento && B19.estudio.estado.movimiento.progreso>0.15');
     await evaluar(`B19.accion('cortar_energia')`);
@@ -214,9 +295,11 @@ try {
     await evaluar(`B19.accion('estacionar')`);await esperar('!B19.estudio.estado.movimiento');
     await evaluar(`B19.accion('abrir_paso');B19.accion('entrar');B19.accion('cortar_energia')`);
     assert.equal(await evaluar('B19.estudio.estado.ocupado'),true);
+    await esperar('!B19.caminando');
     await capturar('ocupado-sin-energia');
     await evaluar(`document.getElementById('planta').click()`);await capturar('planta');
     await evaluar(`B19.accion('salir')`);
+    await esperar('!B19.caminando');
     assert.equal(await evaluar('B19.estudio.estado.ocupado'),false);
     assert.equal(await evaluar('B19.estudio.estado.energia'),false);
     await evaluar(`B19.accion('restaurar_energia');B19.accion('cerrar_paso');B19.accion('centrar')`);
@@ -238,7 +321,7 @@ try {
     assert.deepEqual(errores,[]);assert.deepEqual(peticiones.filter(u=>/^https?:/.test(u)),[]);
     const informe={fecha:new Date().toISOString(),prueba:'B19 Chrome offline file://',browser:await cdp('Browser.getVersion'),
       controles:'extracción, paro en traslado, recuperación explícita, estacionamiento, ocupación, salida sin energía, retorno completo y móvil',
-      geometria,errores,solicitudesHTTP:0,limite:'Sólo candidata digital; sin validación física ni prueba de GPU del evento'};
+      geometria,reservaHumana,errores,solicitudesHTTP:0,limite:'Sólo candidata digital; sin validación física ni prueba de GPU del evento'};
     await writeFile(path.join(raiz,'docs/madrid/PRUEBA-B19-NAVEGADOR.json'),JSON.stringify(informe,null,2)+'\n');
     console.log(JSON.stringify(informe,null,2));
   }else{
@@ -251,7 +334,10 @@ try {
   assert.ok(cotas.cabeza<cotas.techo,'Figura no cabe bajo techo');
   assert.ok(Math.abs(cotas.sueloMin)<1e-6&&Math.abs(cotas.sueloMax-cotas.prof)<1e-6,'Sustrato sin profundidad nominal');
   assert.ok(Math.abs(cotas.marcoMax-cotas.caja)<1e-6,'Caja sin altura nominal');
-  assert.ok(Math.abs(cotas.cabeza-cotas.piso-cotas.figura)<1e-6,'Escala humana inconsistente');
+  // V5: la figura tiene postura articulada; inclinar la cabeza modifica su cota.
+  // La estatura erguida se normaliza a 1.75 m, sin tratar esa postura como otra dimensión.
+  assert.ok(Math.abs(cotas.cabeza-cotas.piso-cotas.figura)<.02,'Escala humana inconsistente');
+  assert.ok(Math.abs(cotas.pies-cotas.piso)<.005,'La figura no apoya en el piso');
   const piso=await evaluar(`(()=>{const b=new THREE.Box3().setFromObject(gHabitat.getObjectByName('piso-modulo'));return {base:b.min.y,cara:b.max.y,terreno:gHabitat.getObjectByName('terreno').position.y};})()`);
   assert.ok(piso.terreno<=piso.base+1e-6&&Math.abs(piso.cara-cotas.piso)<1e-6,'Terreno invade piso transitable');
   console.log('Chrome: escena cargada sin red');

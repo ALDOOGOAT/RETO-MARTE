@@ -11,6 +11,19 @@ BLEND/GLB se regeneran con el acabado V4 desde Three.js, con normales y texturas
 de la escena. Las dimensiones nominales conservan S5. B19 es estudio separado y su
 vestíbulo no forma parte de esas mallas.
 
+## Revisiones incluidas
+
+La demo interactiva y el acceso están en **V5**, con proyección automática y voz local
+ES/EN: abrir el simulador y pulsar **Proyección con voz**. El recorrido principal
+dura aproximadamente cuatro minutos; el estudio de acceso tiene seis capítulos
+aparte, de unos cien segundos. Pausa, idioma, volumen y repetición están en pantalla.
+Copiar completa la carpeta `prototipo-3d`, incluida `audio/`.
+
+Blender/GLB, memoria, deck y vídeo de respaldo conservan la instantánea **V4**. Sus
+cotas y cálculos siguen vigentes, pero no incorporan las personas, diálogos o voz V5.
+El MP4 sin sonido es el respaldo anterior; no es una grabación del recorrido narrado.
+Detalles y verificación: `../../docs/madrid/PROYECCION-V5.md`.
+
 ## Abrir
 
 - `FUNDAMENTOS-MILPA360.pdf`: seis páginas con fórmulas, hipótesis y hallazgos calculados; fuente en `../../docs/madrid/latex/`.
@@ -26,7 +39,7 @@ vestíbulo no forma parte de esas mallas.
 - `../../prototipo-3d/milpa360-simulador.html`: demo local, sin Internet; abrir con Chrome.
   Selector ES/EN local, recorrido guiado, teclado y calidad automática.
   Exterior cerrado/Interior, giro de cámara independiente y navegación por procesos.
-  Fundamentos abre fórmulas y el PDF local.
+  Fundamentos abre fórmulas y explicaciones dentro de la aplicación; el PDF queda disponible en este paquete.
   La ficha del aviario incluye «Ver aves de cerca»; «Perspectiva» vuelve al conjunto.
   Órbita por arrastre y rueda. Inspección técnica permite planta/lateral, resaltar lote,
   fallos y despiece visual; reanudar vuelve al ensamblaje. El movimiento no valida biología.

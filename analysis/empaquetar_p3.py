@@ -4,6 +4,7 @@ import hashlib,json,pathlib,zipfile
 raiz=pathlib.Path(__file__).resolve().parent.parent
 archivos=[raiz/'prototipo-3d'/n for n in ('milpa360-simulador.html','milpa360-acceso.html','milpa360-modelo.js','milpa360-datos.js','LEEME-P3.md','package.json','package-lock.json')]
 archivos+=list((raiz/'prototipo-3d/vendor').glob('*'))
+archivos+=list((raiz/'prototipo-3d/audio').glob('*'))
 archivos+=list((raiz/'prototipo-3d').glob('milpa360-*.js'))
 archivos+=[raiz/'prototipo-3d/milpa360-interfaz.css',raiz/'visuales/atlas-marciano.html',raiz/'docs/madrid/MEJORA-VISUAL-BILINGUE.md',raiz/'docs/madrid/PRUEBA-VISUAL-V2.json']
 archivos+=list((raiz/'docs/madrid/capturas-v2').glob('*.png'))
@@ -24,6 +25,8 @@ archivos+=list((raiz/'prototipo/planos').glob('*.html'))+[raiz/'prototipo/planos
 archivos+=list((raiz/'prototipo/planos/madrid').glob('*.html'))
 archivos+=list((raiz/'prototipo/planos/madrid').glob('*.svg'))
 archivos+=list((raiz/'docs/madrid/capturas-v4').glob('*.png'))
+archivos+=list((raiz/'docs/madrid/capturas-v5').glob('*.png'))
+archivos+=[raiz/'docs/madrid/PROYECCION-V5.md',raiz/'docs/madrid/PRUEBA-PROYECCION-V5.json']
 archivos+=[raiz/'docs/madrid/PRUEBA-VISUAL-V4.json',raiz/'outputs/madrid-s5/FUNDAMENTOS-MILPA360.pdf',raiz/'docs/madrid/latex/fundamentos.tex']
 registros={str(p.relative_to(raiz)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(set(archivos))}
 manifiesto=raiz/'docs/madrid/MANIFIESTO-P3.json'
