@@ -11,6 +11,9 @@ window.MILPA_FICHAS=function(d){
   if(source.startsWith('docs/madrid/'))out[k].href=source.slice('docs/madrid/'.length);
  }
  const pending=p('Pendiente de validación','Awaiting validation');
+ add('envolvente','hipotesis',['Una envolvente, dos formas de explorar','One envelope, two ways to explore'],
+ ['El exterior muestra el casco cerrado; el corte retira gráficamente una parte para explicar el proceso. La piel, el techo y los encuentros son una propuesta visual de integración. Presión, material, sellos y acceso requieren cálculo y ensayos.','The exterior shows the closed hull; the cutaway removes part of it visually to explain the process. Skin, roof and joints are a visual integration proposal. Pressure, material, seals and access require analysis and testing.'],
+ [[['Diámetro nominal','Nominal diameter'],g.casco.diametro.toFixed(2)+' m'],[['Altura del casco','Hull height'],g.casco.altura.toFixed(2)+' m'],[['Acceso','Access'],'B19 · '+pending]],['Exterior|Corte de inspección|Proceso','Exterior|Inspection cutaway|Process'],'docs/madrid/MEJORA-VISUAL-BILINGUE.md');
  add('atmosfera','literatura',['Una atmósfera que hay que procesar','An atmosphere that needs processing'],
  ['El aire exterior no es respirable. Capturar y acondicionar sus gases requiere equipos y electricidad. La cabina y los gases de proceso permanecen separados.','The outside air is not breathable. Capturing and conditioning its gases requires equipment and electricity. Cabin air and process gases stay separate.'],
  [[['Presión superficial','Surface pressure'],'~6 mbar'],[['Cabina','Cabin'],p('Presurizada','Pressurized')]],['Atmósfera|Procesamiento|Cabina','Atmosphere|Processing|Cabin'],'planeta');

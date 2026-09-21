@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# Arma el video del prototipo a partir de los frames de Blender.
+# Herramienta histórica del modelo anterior; no produce el pitch vigente.
+# Los frames se archivaron en V4. Ver docs/madrid/LIMPIEZA-V4.json.
+# Para el vídeo vigente: python3 analysis/video_s5.py.
+# Arma el video del prototipo a partir de los frames regenerados de Blender.
 # uso: ./hacer-video.sh
 set -e
 cd "$(dirname "$0")"

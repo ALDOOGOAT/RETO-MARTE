@@ -30,7 +30,7 @@ body{
   -webkit-font-smoothing:antialiased;overflow:hidden;
 }
 canvas{display:block;touch-action:none}
-#lienzo{position:fixed;inset:0;cursor:grab}
+#lienzo{position:fixed;inset:0;width:100%;height:100%;cursor:grab}
 #lienzo:active{cursor:grabbing}
 
 /* ───────── tipografía ───────── */
@@ -258,7 +258,7 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
     <a href="../visuales/atlas-marciano.html" data-preserve-language>Atlas</a>
   </div>
   <div class="tools">
-    <select id="calidad" aria-label="Calidad gráfica"><option value="alta">Detalle alto</option><option value="fluida">Más fluidez</option></select>
+    <select id="calidad" aria-label="Calidad gráfica"><option value="auto">Automática</option><option value="alta">Detalle alto</option><option value="fluida">Más fluidez</option></select>
     <div class="lang-switch" role="group" aria-label="Idioma"><button data-language="es" aria-pressed="true">ES</button><button data-language="en" aria-pressed="false">EN</button></div>
     <button class="icon-button" id="ayuda-abrir" aria-label="Cómo explorar" title="Cómo explorar">?</button>
     <button class="icon-button" id="pantalla-completa" aria-label="Pantalla completa" title="Pantalla completa">⛶</button>
@@ -272,7 +272,9 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
   <button class="intro-secondary" id="intro-datos">Conocer el planeta</button>
   <p class="intro-foot">Un concepto de BioMars Chiapas.<br>Ciencia, cálculo y preguntas abiertas.</p>
 </section>
-<div id="quick-views" role="group" aria-label="Vistas del modelo"><button data-view="orbita">Perspectiva</button><button data-view="planta">Planta</button><button data-view="lateral">Lateral</button><button id="quick-explosion">Despiece</button></div>
+<div id="quick-views" role="group" aria-label="Vistas del modelo"><button id="ver-exterior" aria-pressed="false">Exterior cerrado</button><button id="ver-interior" aria-pressed="true">Interior</button><span class="view-divider"></span><button data-view="orbita">Perspectiva</button><button data-view="planta">Planta</button><button data-view="lateral">Lateral</button><button id="quick-explosion">Despiece</button><button id="giro-camara" aria-pressed="false">Giro 360°</button></div>
+<nav id="ruta-proceso" aria-label="Explorar el proceso"><button data-process="lavado"><small>01</small> Suelo</button><button data-process="aviario"><small>02</small> Animales</button><button data-process="digestor"><small>03</small> Tratamiento</button><button data-process="cultivo"><small>04</small> Cultivo</button><button id="ver-ciencia">Fundamentos</button></nav>
+<div id="estado-vista" role="status" aria-live="polite"></div>
 <div id="scene-meta">Mapa Viking · NASA/JPL-Caltech<br>Procesado por USGS · sin elevación</div>
 <dialog id="ayuda" aria-labelledby="ayuda-titulo"><h2 id="ayuda-titulo">Explora a tu ritmo</h2>
 <p>Elige un recorrido guiado o toca directamente una pieza para entender su función.</p>
@@ -903,7 +905,7 @@ function texturaSolar(){
    MOTOR
    ═══════════════════════════════════════════════════════════════ */
 const lienzo = $("lienzo");
-const renderer = new T.WebGLRenderer({ canvas: lienzo, antialias: true });
+const renderer = new T.WebGLRenderer({ canvas: lienzo, antialias: true, powerPreference:'high-performance' });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));   // 13 luces × 8 Mpx no cabe en el presupuesto
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.autoUpdate = false;
@@ -961,7 +963,11 @@ const cielo = new T.Mesh(
       void main(){
         float h = normalize(vP).y;
         vec3 c = h > 0.0 ? mix(horiz, cenit, pow(h, 0.62)) : mix(horiz, suelo, pow(-h, 0.75));
-        c = mix(c, vec3(0.012, 0.016, 0.026), mezclaEspacio);
+        vec3 dir=normalize(vP);
+        float gal=exp(-pow((dir.y+.26*dir.x-.12)/.19,2.0));
+        float fil=.55+.20*sin(dir.x*37.0+dir.z*13.0)+.18*sin(dir.x*83.0-dir.z*47.0);
+        vec3 espacio=vec3(.0025,.005,.010)+vec3(.009,.012,.019)*gal*fil;
+        c = mix(c, espacio, mezclaEspacio);
         gl_FragColor = vec4(c, 1.0);
       }`
   })
@@ -1504,7 +1510,7 @@ function construirHabitat(){
   for(let i=0;i<pT.count;i++){const c=new T.Color(0xb9a394).multiplyScalar(.72+.32*fbm(pT.getX(i)*.3+19,pT.getY(i)*.3+7,64,3));tintes.push(c.r,c.g,c.b);}
   geoT.setAttribute('color',new T.Float32BufferAttribute(tintes,3));
   const texSuelo = texRego.clone(); texSuelo.needsUpdate = true;
-  texSuelo.repeat.set(13, 13);
+  texSuelo.repeat.set(64, 64);
   const terreno = new T.Mesh(geoT, new T.MeshStandardMaterial({
     map: texSuelo, roughness: 1, metalness: 0, vertexColors:true, bumpMap:texSuelo,bumpScale:.025,
   }));
@@ -1516,7 +1522,7 @@ function construirHabitat(){
   gHabitat.add(terreno);
 
   /* rocas dispersas */
-  const geoR = new T.IcosahedronGeometry(1, 0);
+  const geoR = new T.IcosahedronGeometry(1, 1);
   const matR = new T.MeshStandardMaterial({ color: 0x6E3D28, roughness: 0.96, flatShading: true });
   const rocas=new T.InstancedMesh(geoR,matR,90),roca=new T.Object3D();
   rocas.name='rocas-ilustrativas';rocas.visible=!limpio;rocas.castShadow=true;rocas.receiveShadow=true;gHabitat.add(rocas);
@@ -1530,13 +1536,21 @@ function construirHabitat(){
     roca.updateMatrix();rocas.setMatrixAt(i,roca.matrix);
   }
 
-  /* ── talud de regolito: el blindaje contra radiación ── */
-  const talud = malla(new T.CylinderGeometry(R_CASCO + 0.95, R_CASCO + 1.55, 0.72, 64, 1, true, CIL_INI, A_LARGO),
-    new T.MeshStandardMaterial({ map: texRego, roughness: 1, side: T.DoubleSide }), [0, 0.36, 0]);
-  clicable(talud, "radiacion");
-  talud.visible=!limpio;
-  const cimaTalud=malla(new T.RingGeometry(R_CASCO + 0.08, R_CASCO + 0.95, 64, 1, A_PARED, A_LARGO), M.rego, [0, 0.716, 0]);
-  cimaTalud.rotation.x = Math.PI / 2;cimaTalud.visible=!limpio;
+  /* Perfil continuo en contacto con casco y explanada. No espesor de blindaje validado. */
+  const perfilTalud=[[R_CASCO,.34],[R_CASCO+.15,.32],
+    [R_CASCO+.40,.21],[R_CASCO+.72,.07],[R_CASCO+.96,-.085]];
+  const geoTalud=new T.LatheGeometry(perfilTalud.slice().reverse().map(p=>new T.Vector2(...p)),96);
+  const pTalud=geoTalud.attributes.position,uvTalud=geoTalud.attributes.uv,colTalud=[];
+  for(let i=0;i<pTalud.count;i++){
+    const x=pTalud.getX(i),z=pTalud.getZ(i);
+    uvTalud.setXY(i,(x+75)/150,(-z+75)/150);
+    const c=new T.Color(0xb9a394).multiplyScalar(.72+.32*fbm(x*.3+19,-z*.3+7,64,3));
+    colTalud.push(c.r,c.g,c.b);
+  }
+  geoTalud.setAttribute('color',new T.Float32BufferAttribute(colTalud,3));
+  const talud=malla(geoTalud,terreno.material,[0,0,0]);
+  talud.receiveShadow=false;
+  talud.name='regolito-continuo-ilustrativo';talud.visible=!limpio;clicable(talud,'radiacion');
 
   /* ── casco presurizado, en corte ── */
   const cascoGrp = new T.Group(); cascoGrp.name="casco"; gHabitat.add(cascoGrp);
@@ -1807,7 +1821,7 @@ function construirHabitat(){
   }
 
   /* paneles solares fuera del módulo */
-  const solar = new T.Group(); solar.position.set(-3.9, 0, 2.5); gHabitat.add(solar);
+  const solar = new T.Group(); solar.name='energia-exterior';solar.position.set(-3.9, 0, 2.5); gHabitat.add(solar);
   solar.rotation.y = 0.55;
   malla(new T.CylinderGeometry(0.05, 0.07, 1.5, 10), M.acero, [0, 0.75, 0], solar);
   for (const dx of [-0.95, 0.95]){
@@ -2288,6 +2302,63 @@ function construirHabitat(){
   seleccion.name='lote-seleccionado';seleccion.visible=false;seleccion.position.y=Y_MARCO+.003;
   gHabitat.add(seleccion);
 
+  /* Envolvente completa: las mismas cotas nominales, sin una cúpula que aumente altura.
+     Piel y encuentros son representación de integración, no cálculo de recipiente a presión. */
+  const exterior=new T.Group();exterior.name='envolvente-cerrada';gHabitat.add(exterior);
+  const acabadoExterior=lienzoTex(1024,512,g=>{
+    g.fillStyle='#bac8ce';g.fillRect(0,0,1024,512);
+    const gr=g.createLinearGradient(0,0,1024,0);gr.addColorStop(0,'#b4c1c6');gr.addColorStop(.4,'#d0d8db');gr.addColorStop(1,'#becacf');g.fillStyle=gr;g.fillRect(3,3,1018,506);
+    g.strokeStyle='#8b9ca4';g.lineWidth=3;g.strokeRect(9,9,1006,494);
+    g.fillStyle='#657b85';for(const x of [20,1004])for(const y of [23,489]){g.beginPath();g.arc(x,y,4,0,TAU);g.fill();}
+    g.fillStyle='rgba(218,169,112,.20)';for(let j=0;j<70;j++)g.fillRect(j*17%1024,480+(j*13%31),30,1);
+  },true);acabadoExterior.repeat.set(10,1);
+  const piel=new T.MeshStandardMaterial({map:acabadoExterior,color:0xe9eeef,roughness:.47,metalness:.32,side:T.FrontSide});
+  const juntaExterior=new T.MeshStandardMaterial({color:0x172c35,roughness:.72,metalness:.35});
+  const paredCompleta=malla(new T.CylinderGeometry(R_CASCO,R_CASCO,H_CASCO-.08,128,1,true),piel,[0,(H_CASCO-.08)/2,0],exterior);
+  paredCompleta.name='casco-360';paredCompleta.receiveShadow=false;
+  const perfilTecho=[[0,H_CASCO-.08],[R_CASCO,H_CASCO-.08],[R_CASCO,H_CASCO-.025],
+    [R_CASCO-.05,H_CASCO],[0,H_CASCO]];
+  const tapa=malla(new T.LatheGeometry(perfilTecho.map(p=>new T.Vector2(...p)),128),new T.MeshStandardMaterial({color:0xb7c5cc,roughness:.53,metalness:.35}),null,exterior);
+  tapa.name='techo-cerrado';tapa.receiveShadow=false;
+  clicable(paredCompleta,'envolvente');clicable(tapa,'envolvente');
+  for(const y of [.12,H_CASCO-.13]){
+    const cincho=malla(new T.TorusGeometry(R_CASCO+.005,.025,12,128),new T.MeshStandardMaterial({color:0x9aaab1,roughness:.68,metalness:.25}),[0,y,0],exterior);
+    cincho.rotation.x=Math.PI/2;cincho.receiveShadow=false;
+  }
+  const uniones=new T.Group();
+  for(let i=0;i<20;i++){
+    const a=i*TAU/20,r=R_CASCO+.004;
+    const j=malla(new T.BoxGeometry(.009,H_CASCO-.3,.012),juntaExterior,[Math.cos(a)*r,H_CASCO/2,Math.sin(a)*r],uniones,false);
+    j.rotation.y=-a;
+    const nervio=malla(new T.BoxGeometry(R_CASCO-.35,.006,.008),juntaExterior,
+      [Math.cos(a)*(R_CASCO+.35)/2,H_CASCO+.006,Math.sin(a)*(R_CASCO+.35)/2],uniones,false);
+    nervio.rotation.y=-a;
+  }
+  exterior.add(fusionar(uniones));
+  const escotilla=malla(new T.CylinderGeometry(.35,.35,.009,64),M.costilla,[0,H_CASCO+.006,0],exterior);
+  escotilla.name='registro-techo-ilustrativo';
+  const cara=new T.Group();const aFrente=-.62;
+  cara.position.set(Math.cos(aFrente)*R_CASCO,1.16,Math.sin(aFrente)*R_CASCO);
+  cara.rotation.y=Math.PI/2-aFrente;exterior.add(cara);
+  malla(new T.BoxGeometry(.94,1.62,.045),juntaExterior,[0,-.13,.008],cara);
+  malla(new T.BoxGeometry(.82,1.49,.046),M.cascoIn,[0,-.13,.035],cara);
+  for(const x of [-.32,.32])malla(new T.BoxGeometry(.035,.44,.06),M.costilla,[x,-.08,.086],cara);
+  placa(texturaPlaca([{t:'MILPA-360',s:.34},{t:'BioMars Chiapas',s:.17,c:'#b9d393'}],
+    {w:1024,h:260,fondo:'#10232e'}),.68,.19,[0,.78,.054],0,cara);
+  placa(texturaPlaca([{t:'ACCESO EN ESTUDIO',s:.24},{t:'B19 · verificación física pendiente',s:.17}],
+    {w:1024,h:220,fondo:'#10232e'}),.63,.14,[0,.27,.064],0,cara);
+  const conexion=new T.Group();conexion.name='conexion-energia';gHabitat.add(conexion);
+  const rutaCable=new T.CatmullRomCurve3([new T.Vector3(-3.9,.045,2.5),new T.Vector3(-3.1,.045,2.5),
+    new T.Vector3(-2.7,.13,1.9),new T.Vector3(-2.05,.35,1.55),new T.Vector3(-1.85,.53,1.36)]);
+  malla(new T.TubeGeometry(rutaCable,36,.018,6,false),juntaExterior,null,conexion);
+  const caja=malla(new T.BoxGeometry(.22,.25,.10),M.oscuro,[-1.85,.53,1.36],conexion);
+  caja.rotation.y=2.51;marcarSubarbol(conexion,'panel');
+  // Materiales exclusivos para la transición de inspección. No altera inventarios.
+  const matsExt=new Map();exterior.traverse(o=>{if(o.isMesh){if(!matsExt.has(o.material))matsExt.set(o.material,o.material.clone());o.material=matsExt.get(o.material);o.userData.opacidadBase=o.material.opacity;}});
+  const compartidos=new Set([terreno,rocas,talud,solar,conexion,exterior,gHabitat.getObjectByName('piso-modulo')]);
+  const interiores=gHabitat.children.filter(o=>!compartidos.has(o)).map(o=>({o,visible:o.visible}));
+  exterior.visible=false;
+
   /* ── polvo en suspensión durante la tormenta ── */
   const gp = new T.BufferGeometry(), NP = 1400, pp = new Float32Array(NP * 3);
   for (let i = 0; i < NP; i++){
@@ -2301,7 +2372,7 @@ function construirHabitat(){
   gHabitat.add(polvo);
 
   if (limpio){ terreno.visible = false; cielo.visible = false; }
-  return { terreno, polvo };
+  return { terreno, polvo, exterior, interiores, materialesExterior:[...matsExt.values()], cierre:0 };
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2320,6 +2391,7 @@ const S = {
   get gas(){ return modelo.estado.gasKWh / MILPA_DATOS.parametros.simulacion.capacidad_gas.valor; },
   play: !reduce && Q.get("play") !== "0", vel:4, transicion:0, destino:null,
   reducido:reduce, proyeccion:"orbita",
+  cerrado:Q.get('cerrado')==='1', presentacion:false,
   explosion:Q.get('explosion')==='1', loteSeguido:null,
 };
 const VELS = [1, 4, 12];
@@ -2365,6 +2437,9 @@ function abrirFicha(clave){
   if(clave==='aviario'&&S.vista==='habitat'){
     const b=document.createElement('button');b.className='btn on';b.id='ver-aves';
     b.textContent='Ver aves de cerca';b.onclick=enfocarAviario;acc.appendChild(b);
+  }
+  if(clave==='envolvente'){
+    const b=document.createElement('button');b.className='btn on';b.textContent='Explorar el interior';b.onclick=()=>{envolvente(false);$('cerrar').click();};acc.appendChild(b);
   }
   ficha.classList.remove("oculto");
   MILPA_I18N.apply();medir();
@@ -2448,10 +2523,23 @@ function controles(){
 }
 $("b-reset").onclick=()=>{modelo.reiniciar();S.play=false;controles();};
 function vistaTecnica(tipo){
+  if(tipo!=='orbita'&&S.cerrado)envolvente(false);
   if(S.detalle){S.detalle=false;document.body.classList.remove('detalle-ave');mira.set(0,1,0);Object.assign(orbe,{theta:-.62,phi:1.02,dist:8.4});}
+  document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===tipo)));
   S.proyeccion=tipo;camara=tipo==="orbita"?perspectiva:ortografica;medir();
 }
+function envolvente(cerrar){
+  S.cerrado=cerrar;S.explosion=false;S.detalle=false;S.presentacion=false;if(cerrar)S.play=false;controles();
+  $('giro-camara').setAttribute('aria-pressed','false');
+  document.body.classList.toggle('exterior-cerrado',cerrar);document.body.classList.remove('detalle-ave');
+  vistaTecnica('orbita');mira.set(0,.95,0);Object.assign(orbe,{theta:-.62,phi:cerrar?1.22:1.05,dist:cerrar?12.4:10.4});
+  if(cerrar)$('cerrar').click();
+  $('ver-exterior').setAttribute('aria-pressed',String(cerrar));$('ver-interior').setAttribute('aria-pressed',String(!cerrar));
+  poner($('estado-vista'),cerrar?'Envolvente completa · acceso en estudio':'Corte de inspección · no es una apertura operativa');
+  actualizarIntroduccion();renderer.shadowMap.needsUpdate=true;
+}
 function enfocarAviario(){
+  if(S.cerrado)envolvente(false);
   vistaTecnica('orbita');S.detalle=true;document.body.classList.add('detalle-ave');S.play=false;S.explosion=false;
   aviario.updateWorldMatrix(true,false);
   mira.copy(aviario.localToWorld(new T.Vector3(0,.78,0)));
@@ -2512,6 +2600,7 @@ $("b-tecnica").onclick=abrirTecnica;
 let pasoRecorrido=-1;
 const recorrido=['sitio','carrusel','digestor','cultivo','retorno'];
 function mostrarPaso(n){
+  if(S.cerrado)envolvente(false);
   pasoRecorrido=Math.max(0,Math.min(recorrido.length-1,n));
   const poses=[[-.62,1.0,11.4],[-.62,.50,9.8],[-.5,1.05,7.4],[-1.1,.76,8.3],[-.62,1,11.4]];
   const pos=poses[pasoRecorrido];S.play=false;S.explosion=false;vistaTecnica('orbita');
@@ -2528,21 +2617,33 @@ function actualizarIntroduccion(){
   const hab=S.vista==='habitat';
   $('intro-kicker').textContent=hab?'Una pieza, tres procesos':'Un sistema vivo, otro mundo';
   $('intro-title').innerHTML=hab?'MILPA-360':'Cultivar<br>en Marte.';
-  $('intro-description').textContent=hab?'Toca una pieza para descubrir qué entra, qué cambia y qué sale.':'Explora cómo conectar suelo, residuos y alimento en un entorno extremo.';
-  $('intro-action').innerHTML=(hab?'Iniciar recorrido':'Explorar el módulo')+' <span aria-hidden="true">↗</span>';
+  $('intro-description').textContent=hab?(S.cerrado?'Una envolvente continua protege el proceso. Abre el corte para explorar el interior.':'Toca una pieza para descubrir qué entra, qué cambia y qué sale.'):'Explora cómo conectar suelo, residuos y alimento en un entorno extremo.';
+  $('intro-action').innerHTML=(hab?(S.cerrado?'Explorar el interior':'Iniciar recorrido'):'Explorar el módulo')+' <span aria-hidden="true">↗</span>';
   $('intro-datos').textContent=hab?'Ver los 20 lotes':'Conocer el planeta';
-  $('scene-meta').innerHTML=hab?'Geometría nominal · terreno ilustrativo<br>El corte permite inspeccionar el interior':'Mapa Viking · NASA/JPL-Caltech<br>Procesado por USGS · sin elevación';
+  $('scene-meta').innerHTML=hab?(S.cerrado?'Envolvente nominal · terreno ilustrativo<br>Acceso, presión y blindaje por validar':'Geometría nominal · terreno ilustrativo<br>El corte permite inspeccionar el interior'):'Mapa Viking · NASA/JPL-Caltech<br>Procesado por USGS · sin elevación';
   MILPA_I18N.apply();
 }
-$('intro-action').onclick=()=>S.vista==='planeta'?cambiarVista('habitat'):mostrarPaso(0);
+$('intro-action').onclick=()=>S.vista==='planeta'?cambiarVista('habitat'):S.cerrado?envolvente(false):mostrarPaso(0);
 function alternarDatos(){const mostrar=riel.classList.contains('oculto');riel.classList.toggle('oculto',!mostrar);document.body.classList.toggle('datos-abiertos',mostrar);MILPA_I18N.apply();}
 $('intro-datos').onclick=alternarDatos;$('riel-toggle').onclick=alternarDatos;mostrarRiel.onclick=alternarDatos;
 $('ayuda-abrir').onclick=()=>$('ayuda').showModal();$('ayuda-cerrar').onclick=()=>$('ayuda').close();
-$('ayuda-reducir').checked=S.reducido;$('ayuda-reducir').onchange=e=>{S.reducido=e.target.checked;if(S.reducido)S.play=false;controles();};
+$('ayuda-reducir').checked=S.reducido;$('ayuda-reducir').onchange=e=>{S.reducido=e.target.checked;if(S.reducido){S.play=false;S.presentacion=false;$('giro-camara').setAttribute('aria-pressed','false');}controles();};
 $('pantalla-completa').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{$('ayuda').showModal();}};
-$('calidad').onchange=e=>{const high=e.target.value==='alta';renderer.setPixelRatio(high?Math.min(devicePixelRatio,1.5):1);renderer.shadowMap.enabled=high;renderer.shadowMap.needsUpdate=true;medir();};
+$('calidad').onchange=e=>{const high=e.target.value!=='fluida';renderer.setPixelRatio(high?Math.min(devicePixelRatio,1.5):1);renderer.shadowMap.enabled=high;renderer.shadowMap.needsUpdate=true;medir();};
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>vistaTecnica(b.dataset.view));
-$('quick-explosion').onclick=()=>{S.explosion=!S.explosion;S.play=false;controles();};
+$('quick-explosion').onclick=()=>{if(S.cerrado)envolvente(false);S.explosion=!S.explosion;S.play=false;controles();};
+$('giro-camara').onclick=()=>{S.presentacion=!S.presentacion&&!S.reducido;$('giro-camara').setAttribute('aria-pressed',String(S.presentacion));};
+$('ver-exterior').onclick=()=>envolvente(true);$('ver-interior').onclick=()=>envolvente(false);
+document.querySelectorAll('[data-process]').forEach(b=>b.onclick=()=>{
+  if(S.cerrado)envolvente(false);S.play=false;S.explosion=false;vistaTecnica('orbita');
+  const k=b.dataset.process;abrirFicha(k);
+  if(k==='aviario')enfocarAviario();else {mira.set(k==='lavado'?1.1:0,k==='digestor'?1.2:.8,0);Object.assign(orbe,{theta:k==='cultivo'?-1.6:-.62,phi:1.02,dist:k==='digestor'?5.8:8.4});}
+});
+$('ver-ciencia').onclick=()=>{abrirFicha('carrusel');fichaActual='ciencia';$('f-sub').textContent='Cálculo · supuestos y unidades';$('f-tit').textContent='La ciencia del módulo';
+  $('f-txt').innerHTML='<p>La superficie, la luz y la energía ponen límites a la propuesta. Cada resultado puede reproducirse desde los parámetros.</p>';
+  $('f-viz').innerHTML='<div class="formula"><math display="block"><mi>A</mi><mo>=</mo><mfrac><mi>θ</mi><mn>2</mn></mfrac><mo>(</mo><msubsup><mi>r</mi><mi>o</mi><mn>2</mn></msubsup><mo>−</mo><msubsup><mi>r</mi><mi>i</mi><mn>2</mn></msubsup><mo>)</mo></math><p>Área de un sector anular; θ en radianes.</p></div><div class="formula"><math display="block"><mi>E</mi><mo>=</mo><mfrac><mrow><mi>PPFD</mi><mo>·</mo><mi>A</mi><mo>·</mo><mi>t</mi></mrow><mrow><mn>1000</mn><mo>·</mo><mi>η</mi></mrow></mfrac></math><p>Luz en kWh por día; η en µmol/J y t en horas.</p></div>';
+  $('f-dl').innerHTML='<dt>Área de cultivo</dt><dd>'+GEOM.areas.cultivo.toFixed(3)+' m²</dd><dt>Tipo de evidencia</dt><dd>Cálculo bajo supuestos</dd>';
+  $('f-fte').innerHTML='<a href="../outputs/madrid-s5/FUNDAMENTOS-MILPA360.pdf" target="_blank" rel="noopener">Abrir fundamentos, ecuaciones y fuentes (ES)</a>';$('f-accion').innerHTML='';MILPA_I18N.apply();};
 lienzo.addEventListener('keydown',e=>{const keys=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','=','-'];if(!keys.includes(e.key))return;e.preventDefault();if(e.key==='ArrowLeft')orbe.theta-=.12;if(e.key==='ArrowRight')orbe.theta+=.12;if(e.key==='ArrowUp')orbe.phi=Math.max(.16,orbe.phi-.1);if(e.key==='ArrowDown')orbe.phi=Math.min(1.5,orbe.phi+.1);if(e.key==='+'||e.key==='=')orbe.dist=Math.max(distanciaMinima(),orbe.dist*.9);if(e.key==='-')orbe.dist=Math.min(50,orbe.dist*1.1);});
 addEventListener('keydown',e=>{if(e.key==='Escape'){$('cerrar').click();if($('ayuda').open)$('ayuda').close();}});
 
@@ -2595,6 +2696,7 @@ function apuntarA(clave){
    ═══════════════════════════════════════════════════════════════ */
 let arrastre = null;
 lienzo.addEventListener("pointerdown", e => {
+  S.presentacion=false;$('giro-camara').setAttribute('aria-pressed','false');
   arrastre = { x: e.clientX, y: e.clientY, mov: 0 };
   lienzo.setPointerCapture(e.pointerId);
 });
@@ -2624,7 +2726,8 @@ function picar(e){
   pnt.y = -((e.clientY - r.top) / r.height) * 2 + 1;
   rayo.setFromCamera(pnt, camara);
   if (S.vista === "habitat"){
-    const h = rayo.intersectObjects(clicables, false)[0];
+    const visibles=clicables.filter(o=>{for(let p=o;p;p=p.parent)if(!p.visible)return false;return true;});
+    const h = rayo.intersectObjects(visibles, false)[0];
     if (h) abrirFicha(h.object.userData.ficha);
   } else {
     const h = rayo.intersectObjects(marcas.map(m => m.anillo), false)[0];
@@ -2639,6 +2742,7 @@ function medir(){
   const w = innerWidth, h = innerHeight;
   renderer.setSize(w, h, false);
   perspectiva.aspect = w / h;
+  perspectiva.fov=w<h?Math.min(72,38*h/w):38;
   if(document.body.classList.contains('captura'))perspectiva.clearViewOffset();
   else if(w>800)perspectiva.setViewOffset(w,h,document.body.classList.contains('inspector-open')?w*.12:S.vista==='planeta'?-w*.14:0,0,w,h);
   else perspectiva.setViewOffset(w,h,0,S.vista==='planeta'?h*.17:0,w,h);
@@ -2684,6 +2788,8 @@ async function iniciar(){
 
   medir();
   aplicarVista(S.vista);
+  if(S.cerrado){envolvente(true);refsHab.cierre=1;}
+  carrusel.grupo.rotation.y=-modelo.estado.pasos/N_POS*TAU;
   $("carga").classList.add("listo");
   setTimeout(() => $("carga").remove(), 800);
   requestAnimationFrame(bucle);
@@ -2697,14 +2803,24 @@ const CIELO_MARTE  = { cenit: new T.Color(0x3A3348), horiz: new T.Color(0xC79468
 const CIELO_TORM   = { cenit: new T.Color(0x2A1B12), horiz: new T.Color(0x7A4A26), suelo: new T.Color(0x241009) };
 const cAux = new T.Color(), cAuxB = new T.Color();
 const C_MARCHITO = new T.Color(0x8A7139);
-let anterior = performance.now(), ultimaSombra=0, firmaSombra='';
+let anterior = performance.now(), ultimaSombra=0, firmaSombra='', tiempoVisual=0, ultimaUI=0, inicioCalidad=0, framesCalidad=0;
 
 function bucle(ahora){
   const elapsed = Math.max(0, (ahora - anterior) / 1000);
   const dt = Math.min(0.05, elapsed);
   anterior = ahora;
+  if(!document.hidden&&S.transicion===0)framesCalidad++;
+  if(ahora-inicioCalidad>3000){
+    const fps=framesCalidad*1000/(ahora-inicioCalidad);framesCalidad=0;inicioCalidad=ahora;
+    if($('calidad').value==='auto'&&!document.hidden){
+      const actual=renderer.getPixelRatio(),max=Math.min(devicePixelRatio,1.25);
+      const siguiente=Math.max(.65,Math.min(max,actual+(fps<28?-.15:fps>52?.05:0)));
+      if(Math.abs(siguiente-actual)>.01){renderer.setPixelRatio(siguiente);renderer.shadowMap.enabled=siguiente>=.95;renderer.shadowMap.needsUpdate=true;medir();}
+    }
+  }
   const dv=S.play&&!S.reducido?dt:0;
-  const t = S.play&&!S.reducido?ahora / 1000:0;
+  tiempoVisual+=dv;const t=tiempoVisual;
+  const actualizaUI=ahora-ultimaUI>120;if(actualizaUI)ultimaUI=ahora;
 
   /* ── transición de vista ── */
   if (S.transicion > 0){
@@ -2721,27 +2837,39 @@ function bucle(ahora){
   const estado = modelo.estado;
   if (S.vista === "habitat"){
     // Despiece gráfico. No se simula una maniobra física ni se desplazan inventarios.
-    carrusel.grupo.position.y=S.explosion?.55:0;
-    gHabitat.getObjectByName('casco').position.y=S.explosion?1.25:0;
+    const suave=S.reducido?1:1-Math.exp(-dt*9);
+    carrusel.grupo.position.y=T.MathUtils.lerp(carrusel.grupo.position.y,S.explosion?.55:0,suave);
+    gHabitat.getObjectByName('casco').position.y=T.MathUtils.lerp(gHabitat.getObjectByName('casco').position.y,S.explosion?1.25:0,suave);
+    if(Math.abs(carrusel.grupo.position.y-(S.explosion?.55:0))<1e-5)carrusel.grupo.position.y=S.explosion?.55:0;
+    if(Math.abs(gHabitat.getObjectByName('casco').position.y-(S.explosion?1.25:0))<1e-5)gHabitat.getObjectByName('casco').position.y=S.explosion?1.25:0;
+    refsHab.cierre=T.MathUtils.lerp(refsHab.cierre,S.cerrado?1:0,suave);
+    if(Math.abs(refsHab.cierre-(S.cerrado?1:0))<.002)refsHab.cierre=S.cerrado?1:0;
+    refsHab.exterior.visible=refsHab.cierre>0;
+    for(const m of refsHab.materialesExterior){m.opacity=refsHab.cierre;m.transparent=refsHab.cierre<1;}
+    for(const {o,visible} of refsHab.interiores)o.visible=visible&&refsHab.cierre<1;
     const seleccionado=gHabitat.getObjectByName('lote-seleccionado');
     const seguido=estado.lotes.find(l=>l.id===S.loteSeguido);
-    seleccionado.visible=!!seguido;
-    if(seguido){seleccionado.rotation.y=-seguido.pos/N_POS*TAU;seleccionado.position.y=CUBIERTA-GEOM.cartucho.altura_caja+.003+carrusel.grupo.position.y;}
+    seleccionado.visible=!!seguido&&!S.cerrado;
+    if(seguido){seleccionado.rotation.y=-seguido.pos/N_POS*TAU+carrusel.grupo.rotation.y+estado.pasos/N_POS*TAU;seleccionado.position.y=CUBIERTA-GEOM.cartucho.altura_caja+.003+carrusel.grupo.position.y;}
     // Indexado esquemático de 18°: duración mecánica pendiente, no velocidad física.
-    carrusel.grupo.rotation.y = -estado.pasos / N_POS * TAU;
+    const anguloObjetivo=-estado.pasos/N_POS*TAU;
+    carrusel.grupo.rotation.y=T.MathUtils.lerp(carrusel.grupo.rotation.y,anguloObjetivo,suave);
+    if(Math.abs(carrusel.grupo.rotation.y-anguloObjetivo)<1e-5)carrusel.grupo.rotation.y=anguloObjetivo;
     for (let i=0;i<N_POS;i++){
       const lote=estado.lotes[i], p=lote.pos, b=carrusel.bandejas[i];
       b.sustrato.material.color.setHex(COL_IN[p]);
       const verdor=p>=4&&p<=7?0.8:0;
+      b.musgo.visible=verdor>0;
       for (const m of b.musgo.children) m.scale.setScalar(verdor);
       b.costra.material.opacity=verdor;b.costra.material.transparent=true;
       const vigor=lote.cultivos.length?lote.cultivos.reduce((a,c)=>a+(c.activa?c.edadD/c.ciclo:0),0)/3:0;
       const dano=lote.cultivos.length?lote.cultivos.reduce((a,c)=>a+c.dano,0)/3:0;
       const esc=lote.cultivos.length?0.07+Math.min(1,vigor)*1.38:0;
+      b.plantas.visible=esc>0;
       for(const pl of b.plantas.children) pl.scale.set(esc,esc*(1-dano*0.65),esc);
       if(b.matVeg) for(const m of b.matVeg) m.color.copy(m.userData.vivo).lerp(C_MARCHITO,dano);
       const fl=filas[i];
-      if(fl){
+      if(fl&&actualizaUI){
         fl.pip.style.background="#"+COL_IN[p].toString(16).padStart(6,"0");
         if(fl.tr.children[0].lastChild.textContent!==lote.id)fl.tr.children[0].lastChild.textContent=lote.id;
         poner(fl.est,ESTACIONES[p][0]);
@@ -2806,11 +2934,11 @@ function bucle(ahora){
     estrellas.material.uniforms.op.value += (0 - estrellas.material.uniforms.op.value) * 0.08;
 
     /* riel */
-    poner($("sol-n"), Math.floor(S.sol));
+    if(actualizaUI){poner($("sol-n"), Math.floor(S.sol));
     $("prog-i").style.width = (S.sol / SOLES_MISION * 100).toFixed(1) + "%";
     poner($("b-tormenta"),enTormenta
       ? "TORMENTA · " + Math.ceil(S.tormenta) + " SOLES · LUZ " + Math.round(estado.luz*100) + "%"
-      : "TORMENTA DE POLVO · 21 SOLES");
+      : "TORMENTA DE POLVO · 21 SOLES");}
 
   } else {
     /* ── planeta ── */
@@ -2830,13 +2958,14 @@ function bucle(ahora){
     });
   }
 
+  if(S.presentacion&&!S.reducido)orbe.theta+=dt*.08;
   /* ── cámara ── */
   const objetivo = new T.Vector3(
     mira.x + orbe.dist * Math.sin(orbe.phi) * Math.cos(orbe.theta),
     mira.y + orbe.dist * Math.cos(orbe.phi),
     mira.z + orbe.dist * Math.sin(orbe.phi) * Math.sin(orbe.theta)
   );
-  if(S.proyeccion==='orbita') {camara.up.set(0,1,0);camara.position.lerp(objetivo,S.reducido?1:S.transicion>0?0.10:0.22);camara.lookAt(mira);}
+  if(S.proyeccion==='orbita') {camara.up.set(0,1,0);camara.position.lerp(objetivo,S.reducido?1:1-Math.exp(-dt*(S.transicion>0?6:12)));camara.lookAt(mira);}
   else {camara.up.set(0,S.proyeccion==='planta'?0:1,S.proyeccion==='planta'?-1:0);camara.position.set(S.proyeccion==='planta'?0:8,S.proyeccion==='planta'?10:1.4,0.001);camara.lookAt(0,S.proyeccion==='planta'?0:1.4,0);}
   sol.target.position.copy(mira); sol.target.updateMatrixWorld();
 
@@ -2885,9 +3014,9 @@ function bucle(ahora){
   }
   mostrarRiel.style.display = riel.classList.contains("oculto") ? "" : "none";
 
-  renderer.toneMappingExposure = 1.05 * (1 - fundido * 0.96);
-  controles();
-  if(fichaActual==='tecnica' && $("datos-vivos")){
+  renderer.toneMappingExposure = (S.vista==='habitat'?1.18:1.02) * (1 - fundido * 0.96);
+  if(actualizaUI)controles();
+  if(actualizaUI&&fichaActual==='tecnica' && $("datos-vivos")){
     const e=modelo.estado,l=e.lotes.find(l=>l.id===$("lote-elegido").value);
     const tr=MILPA_I18N.t,pick=MILPA_I18N.pick;
     poner($("datos-vivos"),`${tr('Agua')}: ${e.aguaL.toFixed(1)} L · ${pick('gas almacenado','stored gas')}: ${e.gasKWh.toFixed(3)} ${pick('kWh químicos','chemical kWh')} · ${pick('luz acumulada','cumulative lighting')}: ${e.electricidadKWh.toFixed(1)} kWh. ${pick('Cosecha vegetal','Crop harvest')}: ${e.cosechaKg.toFixed(2)} kg. ${pick('Cuarentena','Quarantine')}: ${e.cuarentena.length}; ${pick('repuestos','spares')}: ${e.repuestos.length}. `+(l?`${l.id}: ${ESTACIONES[l.pos][0]}, ${tr(l.calidad)}; ${pick('historial','history')}: ${l.historial.slice(-3).map(h=>tr(h.evento)+' (sol '+h.sol.toFixed(1)+')').join('; ')}`:pick('Lote retirado; abrir de nuevo la lista.','Batch removed; reopen the list.')));
@@ -2895,7 +3024,7 @@ function bucle(ahora){
   }
   // Sombras de equipos casi estáticos: caché y refresco a 10 Hz durante movimiento.
   // La cámara sigue a la frecuencia completa; cambiar vista/despiece invalida la caché.
-  const nuevaFirma=[S.vista,S.explosion,S.sol,S.play].join('|');
+  const nuevaFirma=[S.vista,S.explosion,S.sol,S.play,refsHab.cierre.toFixed(3),carrusel.grupo.rotation.y.toFixed(4)].join('|');
   if(nuevaFirma!==firmaSombra&&ahora-ultimaSombra>100){
     renderer.shadowMap.needsUpdate=true;ultimaSombra=ahora;firmaSombra=nuevaFirma;
   }

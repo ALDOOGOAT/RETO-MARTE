@@ -34,3 +34,24 @@ body.inspector-open #introduccion,body.datos-abiertos #introduccion{display:none
 #f-accion .tour-count{margin-bottom:8px}#tour-navigation{margin-top:10px}#ficha input[type=checkbox]{min-height:0;width:16px;height:16px;vertical-align:middle;margin:0 8px 0 0}#ficha label:has(input[type=checkbox]){display:flex;align-items:center;margin:14px 0;min-height:30px;line-height:1.5}
 @media(max-width:800px){#f-accion:has(#tour-navigation){bottom:-17px;padding-bottom:12px}#ficha .cuerpo{max-height:none}#tour-navigation button{min-height:44px}}
 .detalle-ave #introduccion{display:none}
+
+/* V4: exterior e interior como modos; el proceso se explora desde una única barra. */
+#quick-views{max-width:calc(100vw - 345px);flex-wrap:wrap;justify-content:flex-end;box-shadow:0 6px 24px #06121b44}
+#quick-views [aria-pressed=true]{background:#dcebed;color:#163442;font-weight:650}
+#quick-views #ver-exterior,#quick-views #ver-interior{min-height:44px}
+.view-divider{width:1px;background:#415a67;margin:7px 4px}
+#ruta-proceso{position:fixed;bottom:147px;left:50%;transform:translateX(-50%);display:flex;gap:4px;padding:5px;border:1px solid #44616e;border-radius:11px;background:#112631ed;z-index:15;max-width:calc(100vw - 36px)}
+#ruta-proceso button{background:transparent;border:0;color:#c9dde3;white-space:nowrap;padding:10px 13px;font-size:13px}
+#ruta-proceso button:hover,#ruta-proceso button:focus-visible{background:#2b4957;color:white}
+#ruta-proceso small{color:#91b49e;margin-right:6px;font:11px 'IBM Plex Mono'}
+#ruta-proceso #ver-ciencia{border-left:1px solid #415c67;border-radius:0;padding-left:18px}
+body:not(.modo-habitat) #ruta-proceso,body:not(.modo-habitat) #estado-vista,body.captura #ruta-proceso,body.captura #estado-vista{display:none}
+#estado-vista{position:fixed;top:150px;right:30px;z-index:12;color:#d9e7e8;font-size:11px;text-shadow:0 1px 4px #000;background:#142632c9;padding:5px 9px;border-radius:4px;pointer-events:none}
+body.inspector-open #estado-vista{display:none}
+body.exterior-cerrado #aviso-modelo,body.exterior-cerrado #transporte{display:none}
+body.exterior-cerrado #ruta-proceso{bottom:32px}
+body.exterior-cerrado #scene-meta{bottom:95px}
+.formula{padding:14px 0;color:#d9e8e7}.formula math{font-size:24px;margin:5px 0 15px}.formula p{font-size:12px!important;color:#bbced6}
+@media(max-width:1100px){#quick-views{max-width:calc(100vw - 265px);gap:0}#quick-views button{padding:8px 9px}body.inspector-open #quick-views{max-width:calc(100vw - 415px)}#estado-vista{top:196px}}
+@media(max-width:800px){#quick-views{top:117px;right:12px;left:12px;max-width:none;flex-direction:row;justify-content:center;padding:3px;gap:0}#quick-views button{font-size:11px;min-height:38px;padding:5px 8px}#quick-views #ver-exterior,#quick-views #ver-interior{min-height:38px}.view-divider{margin:7px 2px}body.modo-habitat #introduccion{top:172px;max-width:190px}body.modo-habitat #intro-title{font-size:25px}#estado-vista{top:215px;right:14px;max-width:165px;text-align:right;font-size:9px}#ruta-proceso{bottom:155px;overflow-x:auto;justify-content:flex-start;width:calc(100% - 24px);max-width:none;padding:3px}#ruta-proceso button{font-size:11px;padding:8px 9px;min-height:40px}#ruta-proceso small{display:none}#ruta-proceso #ver-ciencia{padding-left:10px}body.inspector-open #ruta-proceso{display:none}#aviso-modelo{bottom:132px;font-size:9px}body.exterior-cerrado #ruta-proceso{bottom:20px}body.detalle-ave #estado-vista{display:none}}
+@media(max-width:800px){body.modo-habitat #introduccion{top:210px}body.modo-habitat #intro-title,body.modo-habitat .intro-secondary{display:none}body.modo-habitat .primary-action{font-size:11px;padding:8px 10px}}

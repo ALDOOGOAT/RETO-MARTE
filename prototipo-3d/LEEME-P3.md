@@ -88,3 +88,14 @@ Prueba local de tipografía, anatomía representada, móvil y recorrido: ejecuta
 `MILPA_GPU=1 MILPA_REFINAMIENTO_V3=1 node --experimental-websocket analysis/verificar_p3_navegador.mjs`.
 La RTX de este equipo requirió `MILPA_VISIBLE=1` y las variables PRIME documentadas
 en `../docs/madrid/MEJORA-VISUAL-BILINGUE.md`. No se detectó proyector conectado.
+
+
+## Revisión V4
+
+Exterior cerrado muestra casco y techo completos; Interior vuelve al corte. Giro 360°
+mueve sólo la cámara y se detiene al arrastrar o reducir movimiento. Cerrar el exterior
+pausa el proceso. Los accesos Suelo/Animales/Tratamiento/Cultivo enfocan cada etapa;
+Fundamentos abre fórmulas y el PDF local incluido en el paquete. La calidad Automática
+ajusta resolución/sombras según el equipo, sin modificar los parámetros de proceso.
+En móvil se adapta el campo de visión. El exterior completo no acredita estanqueidad,
+blindaje, entrada o evacuación. `docs/madrid/CIERRE-V4.md` documenta los límites.

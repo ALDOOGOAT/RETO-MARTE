@@ -1,0 +1,39 @@
+{
+  "fecha": "2026-09-21T10:11:06.868Z",
+  "hardware": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2, OpenGL 4.5.0)",
+  "pantalla": [
+    1920,
+    1080
+  ],
+  "modo": "ventana X11",
+  "cerrado": {
+    "arco": 6.283185307179586,
+    "techo": 2.200000047683716,
+    "juntaPared": 2.119999942779541,
+    "juntaTecho": 2.119999885559082,
+    "interioresVisibles": 0,
+    "llamadas": 32
+  },
+  "mediciones": [
+    {
+      "vista": "interior",
+      "fps": 58.68251510763169,
+      "duracionMs": 8009.199999999255,
+      "p95ms": 24.299999999999272,
+      "llamadas": 816,
+      "triangulos": 409778
+    },
+    {
+      "vista": "exterior",
+      "fps": 68.74656267187922,
+      "duracionMs": 8000.39999999851,
+      "p95ms": 18.299999999999272,
+      "llamadas": 32,
+      "triangulos": 90860
+    }
+  ],
+  "errores": [],
+  "solicitudesHTTP": 0,
+  "verificado": "envolvente 360°, altura, ocultación y selección interior, calidad automática, ES/EN, móvil, MathML, pausa sin salto, giro de cámara y movimiento reducido, interpolación de indexado y despiece, inventarios conservados",
+  "limite": "Visualización y cálculo; no prueba física, presión, blindaje ni proyector."
+}

@@ -1,8 +1,8 @@
 # Continuidad para Astra · MILPA-360 rumbo a Madrid
 
-**Corte técnico revisado:** cierre acumulado S5/B19 sobre `bd3eb2f`, 21 sep 2026, rama `preparacion-madrid-p1`. **Este archivo es un relevo de trabajo, no una validación científica ni una orden para ejecutar tareas en segundo plano.** Al retomar, verificar otra vez HEAD, fecha, rama, estado de Git, herramientas, fuentes y reglas de la final.
+**Corte técnico revisado:** revisión visual V4 sobre `c99e151`, posterior al cierre S5/B19, 21 sep 2026, rama `preparacion-madrid-p1`. **Este archivo es un relevo de trabajo, no una validación científica ni una orden para ejecutar tareas en segundo plano.** Al retomar, verificar otra vez HEAD, fecha, rama, estado de Git, herramientas, fuentes y reglas de la final.
 
-**Prioridad de esta actualización:** [CIERRE-ACUMULADO.md](CIERRE-ACUMULADO.md) da la
+**Prioridad vigente:** [CIERRE-V4.md](CIERRE-V4.md) registra la entrega visual, fundamentos y limpieza. [CIERRE-ACUMULADO.md](CIERRE-ACUMULADO.md) da la
 disposición individual B1–B19. El usuario delegó decisiones: D1/D2 están ratificadas,
 sin volver a pedir aprobación interna. Entregable base digital; maqueta manual opcional.
 Se calcularon provisiones completas, auxiliares/térmica, agua, Cl/DQO y alternativa de
@@ -89,7 +89,7 @@ Al finalizar cada sesión: actualizar `docs/madrid/ESTADO.md` con archivos/commi
 |---|---|---|
 | Plan y revisión | Skill `superpowers:writing-plans` (usada para este relevo), `superpowers:systematic-debugging` al hallar fallos y `superpowers:verification-before-completion` antes de cada cierre. | Leer la skill al aplicarla en la sesión futura; no agregar ceremonias sin una prueba útil. |
 | Bases y artículos | Skill `pdf:pdf`, `pdftotext`/`pdfinfo` y búsqueda web en fuentes primarias (NASA, ESA, FAO, trabajos originales, organizador). | Citar página, revisión y condiciones. Las bases locales mandan sobre la interpretación del reto; una norma no certifica el diseño. |
-| Cálculo físico y químico | Python estándar y scripts de `analysis/`, configuración JSON y ecuaciones con unidades en Markdown/LaTeX. | La fórmula visible acompaña al código que reproduce el número; comprobar dimensión, conservación y sensibilidad. **No hay motor LaTeX ni MCP de LaTeX comprobado en este equipo al 19 sep**; incorporarlo sólo si la memoria final necesita una exportación matemática que las herramientas presentes no logren. |
+| Cálculo físico y químico | Python estándar y scripts de `analysis/`, configuración JSON y ecuaciones con unidades en Markdown/LaTeX. | La fórmula visible acompaña al código que reproduce el número; comprobar dimensión, conservación y sensibilidad. **Tectonic 0.17.0 instalado y compilación verificada el 21 sep**; `analysis/fundamentos_latex.py` genera seis páginas. No se requiere MCP de LaTeX. |
 | Simulador y geometría | Chrome/headless y, sólo si hace falta para una pieza vigente, Blender/MCP de Blender instalado. Skill `frontend-design:frontend-design` si se revisa la interfaz. | Three.js existente primero; Blender anterior sigue histórico. Medir rendimiento en el hardware objetivo, no extrapolar WebGL por software. |
 | Presupuestos y entrega | Skill `spreadsheets:Spreadsheets` para hoja con fórmulas; `presentations:Presentations` y `pdf:pdf` para exportar/verificar P5. | No usar conectores de publicación, Canva/Figma ni nuevas dependencias salvo que resuelvan una necesidad concreta. |
 
@@ -156,7 +156,7 @@ Búsqueda web y Chrome disponibles; no requieren otro MCP de búsqueda.
 **Google:** Google Drive (incluye Docs/Sheets/Slides) localizado y ofrecido para instalación;
 su conexión requiere la cuenta del usuario y no se ha confirmado. Mientras tanto, cálculos,
 documentación y presupuestos se preparan localmente. No instalar Gmail/Calendar ni
-otros conectores sin una tarea concreta. No hay compilador LaTeX comprobado: las ecuaciones
+otros conectores sin una tarea concreta. En S5 todavía no había compilador LaTeX comprobado: las ecuaciones
 ya están en Markdown/LaTeX; S5 exportó la memoria con ReportLab instalado, sin necesitar otro MCP.
 
 
@@ -184,3 +184,21 @@ La prueba local ya incluye GPU Intel y RTX 4060 con Chrome visible: consultar
 sustituye un proyector. `RECORRIDO-BILINGUE.md` prepara el ensayo humano; no se declara
 realizado sin participantes. No repetir la instalación de Blender ni cambiar parámetros
 de ingeniería para justificar acabados visuales.
+
+
+### Cierre visual V4 sobre c99e151 · 21 sep 2026
+
+Ejecutado por delegación del usuario: envolvente completa, integración del terreno,
+animaciones suaves, giro independiente, UI por procesos, MathML y fundamentos LaTeX.
+Tectonic 0.17.0 ya está instalado y compiló seis páginas. Se regeneran interior y
+exterior en Blender, GLB, capturas, memoria, deck y vídeo; no repetir instalaciones.
+La revisión digital y su limpieza están en `CIERRE-V4.md`, con el estado real de P0–P5.
+`ESTADO.md` sigue siendo el punto de entrada para retomar. No se cambió el modelo
+científico para hacer más atractivo el resultado ni se borraron datos desconocidos.
+
+S6 digital incluye extracción limpia y pruebas offline; revisión independiente,
+ensayo humano y equipo/proyector del evento siguen pendientes. B14–B19 requieren
+trabajo de ingeniería y mediciones específicas, no sólo decisiones de preferencia.
+La siguiente sesión debe incorporar esa evidencia o ejecutar el diseño acotado que
+permita; no repetir una auditoría completa ni prometer validación física automática.
+Se preservó la restricción de no crear subagentes sin autorización posterior.

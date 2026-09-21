@@ -173,7 +173,7 @@ del casco, señal física de acceso pendiente y selección de lote. La explosió
 separa grupos visualmente y pausa el modelo. El paisaje es procedural, no topografía
 de un emplazamiento medido. Las piezas y fotos digitales se rotulan como renders.
 
-### Revisión visual V3
+### Revisión visual V4
 
 Los modelos interactivos y el atlas incorporan selector ES/EN local, navegación por
 procesos, fichas breves con evidencia y datos avanzados desplegables. Las cifras se
@@ -182,14 +182,14 @@ y elecciones de controles. Los rótulos sobre equipos también cambian de idioma
 
 El globo utiliza una imagen Viking NASA/JPL-Caltech procesada por USGS, sin relieve
 medido. La localización del hábitat sigue siendo ilustrativa. El terreno del módulo
-es procedural. La iluminación, materiales y piezas de acabado V3 son representaciones;
+es procedural. La iluminación, materiales y piezas de acabado V4 son representaciones;
 no acreditan selección resistente ni capacidades de equipos. Blender/GLB, capturas y
 materiales de defensa se regeneran desde la misma escena. La candidata de acceso B19
 mantiene sus enclavamientos y se presenta aparte. Véase
 [revisión y comprobaciones](MEJORA-VISUAL-BILINGUE.md).
 
-V3 añade anatomía y movimiento de las aves, 38 rótulos sin deformación tipográfica
-y soportes visibles. Las siete figuras no prueban capacidad para las 24 aves propuestas.
+V4 conserva las aves articuladas y mejora su pausa. Añade exterior cerrado, giro,
+calidad automática y 40 rótulos sin deformación tipográfica con soportes visibles. Las siete figuras no prueban capacidad para las 24 aves propuestas.
 Se midió la GPU local a 1080p; el proyector y equipo del evento siguen pendientes.
 El [guion bilingüe de la demo](RECORRIDO-BILINGUE.md) acompaña al recorrido automático.
 
@@ -410,3 +410,13 @@ son la fuente dimensional; los archivos oficiales y versiones del hackathon se c
 La demo, el archivo Blender, los planos y la memoria son entregables digitales.
 P5 queda abierto hasta validar brechas de aceptación. S6 digital se verificó; faltan
 revisión independiente, ensayo humano y prueba en el equipo del evento.
+
+
+## 12. Anexo V4 de fundamentos y visualización
+
+[Fundamentos físicos, químicos y matemáticos](../../outputs/madrid-s5/FUNDAMENTOS-MILPA360.pdf)
+compila seis páginas desde LaTeX y parámetros vigentes. Incluye superficie útil,
+masa/peso, PPFD/DLI, energía química/neta, balance térmico, estequiometría ideal,
+conservación, interpolación visual y acceso. La envolvente completa y el corte se
+presentan como vistas de un concepto nominal. La placa de acceso conserva B19 pendiente.
+[CIERRE-V4.md](CIERRE-V4.md) identifica decisiones, pruebas y límites de la entrega.

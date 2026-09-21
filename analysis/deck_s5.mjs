@@ -24,22 +24,22 @@ function text(s,content,x,y,w,h,size=28,font='Archivo',color=C.ink){
 }
 function slide(title,i,source){
   const s=p.slides.add();s.background.fill=C.bg;
-  text(s,'BIOMARS CHIAPAS / MADRID · V3',56,26,900,24,16,'IBM Plex Mono',C.muted);
+  text(s,'BIOMARS CHIAPAS / MADRID · V4',56,26,900,24,16,'IBM Plex Mono',C.muted);
   text(s,title,56,74,1170,90,54,'Bodoni Moda');
   text(s,String(i).padStart(2,'0')+' / 09',1110,663,115,30,17,'IBM Plex Mono',C.muted);
   text(s,'Concepto y cálculo · sin validación física',56,663,940,30,17,'Archivo',C.muted);
-  s.speakerNotes.textFrame.setText((notes[i-1]||'')+'\n\nTrazabilidad: '+source+'\nCierre acumulado 21 sep 2026: CALCULOS-CIERRE.md y CIERRE-ACUMULADO.md. Capturas y Blender regenerados en revisión visual V3; cotas S5 conservadas. B15-B19 no aceptados físicamente.');
+  s.speakerNotes.textFrame.setText((notes[i-1]||'')+'\n\nTrazabilidad: '+source+'\nCierre acumulado 21 sep 2026: CALCULOS-CIERRE.md y CIERRE-ACUMULADO.md. Capturas y Blender regenerados en revisión visual V4; cotas S5 conservadas. B15-B19 no aceptados físicamente.');
   return s;
 }
 async function photo(s,name,x,y,w,h){
   const file=name==='blender'?out+'/blender-S5.png':root+'/docs/madrid/capturas/'+name+'.png';
-  s.images.add({blob:new Uint8Array(await fs.readFile(file)),contentType:'image/png',alt:'Render digital MILPA-360; no fotografía de prototipo',fit:'contain',position:{left:x,top:y,width:w,height:h}});
+  s.images.add({blob:new Uint8Array(await fs.readFile(file)),contentType:'image/png',alt:'Render digital MILPA-360; no fotografía de prototipo',fit:name==='planta'?'cover':'contain',position:{left:x,top:y,width:w,height:h}});
 }
 let s=slide('MILPA-360',1,'P5-DEFENSA.md §1; captura hero, escena nominal S5');
 text(s,'Sustrato en movimiento',56,177,430,100,38,'Archivo',C.green);
 text(s,'Recuperación de sustrato\nResiduos animales\nCultivo complementario',56,304,390,180,27);
 text(s,'Aldo Fabio Contreras Marroquín\nEquipo BioMars Chiapas',56,550,500,70,21,'Archivo',C.muted);
-await photo(s,'hero',470,170,760,455);
+await photo(s,'exterior',470,170,760,455);
 s=slide('Procesos conectados y separados',2,'Matriz RU, P1 D3–D5, P5 §2/4; P05-procesos S5');
 text(s,'Animal → residuo → cultivo',56,189,1140,55,34,'Archivo',C.green);
 text(s,'Salmuera: reactor separado\nDigestato: retención y análisis\nLiberación: autorización del lote',56,280,555,200,30);

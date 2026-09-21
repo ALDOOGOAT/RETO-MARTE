@@ -1,13 +1,15 @@
 # Recorrido bilingüe · MILPA-360
 
-Guion breve para ensayar la demo V3. Duración orientativa: 2–3 minutos por idioma;
+Guion breve para ensayar la demo V4. Duración orientativa: 2–3 minutos por idioma;
 no es un tiempo medido de exposición ni sustituye el pitch de cinco minutos.
 El verificador recorre los cinco pasos en ES y EN. La comprensión por una persona
 ajena al equipo y la legibilidad en el proyector requieren ensayo humano.
 
 ## Preparación
 
-Abrir el simulador local, elegir ES o EN y pulsar **Iniciar recorrido / Start the tour**.
+Abrir el simulador local y elegir ES o EN. Mostrar **Exterior cerrado / Closed exterior**,
+activar brevemente **Giro 360° / 360° orbit** y entrar con **Explorar el interior / Explore inside**.
+Después pulsar **Iniciar recorrido / Start the tour**.
 Usar **Siguiente / Next**. Para las aves, terminar el recorrido, abrir su ficha y pulsar
 **Ver aves de cerca / Inspect birds**. **Perspectiva / Perspective** vuelve al conjunto.
 Elegir la calidad gráfica después de probar el equipo; consultar las mediciones
@@ -15,6 +17,7 @@ y límites en `MEJORA-VISUAL-BILINGUE.md`.
 
 | Paso y acción | Español | English |
 |---|---|---|
+| Exterior | Esta es la envolvente nominal completa. El corte permite explicar el interior; presión, puerta y acceso necesitan validación. | This is the complete nominal envelope. The cutaway reveals the interior; pressure, door and access still require validation. |
 | 1. Módulo | MILPA-360 conecta recuperación del suelo, tratamiento de residuos y cultivo. Es un módulo agrícola complementario. Los cálculos actuales no demuestran que alimente por completo a seis personas. | MILPA-360 connects soil recovery, waste treatment and crops. It is a supplementary agricultural module. Current calculations do not show that it can fully feed six people. |
 | 2. Carrusel | Veinte cartuchos iguales conservan la identidad de cada lote. Ocho posiciones representan recuperación y doce cultivo. El tiempo transcurrido no autoriza por sí solo que un lote pase a producir alimentos. | Twenty identical cartridges preserve each batch's identity. Eight positions represent recovery and twelve represent crops. Time alone does not authorize a batch to enter food production. |
 | 3. Reactores | La salmuera y la digestión metanogénica se mantienen separadas. El biogás calculado es energía química, no electricidad disponible. El sistema requiere energía y otros insumos externos. | Brine treatment and methane-producing digestion stay separate. Calculated biogas is chemical energy, not available electricity. The system needs external energy and other inputs. |

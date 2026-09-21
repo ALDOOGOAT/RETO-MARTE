@@ -286,3 +286,32 @@ MILPA_I18N.add({'Mapa Viking de Marte':'Viking map of Mars','Proceso':'Process',
 MILPA_I18N.add({'Emplazamiento ilustrativo':'Illustrative site','Percloratos · Phoenix':'Perchlorates · Phoenix','Hielo · casquete norte':'Ice · north polar cap','Tormentas · Hellas':'Storms · Hellas','Reacondicionamiento':'Reconditioning','Aviario':'Aviary','Larvario':'Larvae','Descanso e inóculo':'Rest and inoculum','Musgo':'Moss','Consolidación':'Consolidation','Muestreo':'Sampling','Compuerta':'Gate','Cultivo':'Crops'});
 
 MILPA_I18N.add({'0.7 mSv/día':'0.7 mSv/day','hielo SWIM':'SWIM ice','Abrir evidencia y límites ↗':'Open evidence and limitations (ES) ↗'});
+
+MILPA_I18N.add({
+  "Exterior cerrado": "Closed exterior",
+  "Interior": "Interior",
+  "Explorar el proceso": "Explore the process",
+  "Suelo": "Soil",
+  "Animales": "Animals",
+  "Tratamiento": "Treatment",
+  "Fundamentos": "Science",
+  "Envolvente completa · acceso en estudio": "Complete envelope · access under study",
+  "Corte de inspección · no es una apertura operativa": "Inspection cutaway · not an operational opening",
+  "Una envolvente continua protege el proceso. Abre el corte para explorar el interior.": "A continuous envelope protects the process. Open the cutaway to explore inside.",
+  "Explorar el interior": "Explore inside",
+  "ACCESO EN ESTUDIO": "ACCESS UNDER STUDY",
+  "B19 · verificación física pendiente": "B19 · physical verification pending",
+  "Cálculo · supuestos y unidades": "Calculation · assumptions and units",
+  "La ciencia del módulo": "The science behind the module",
+  "La superficie, la luz y la energía ponen límites a la propuesta. Cada resultado puede reproducirse desde los parámetros.": "Area, light and energy constrain the proposal. Each result can be reproduced from the parameters.",
+  "Área de un sector anular; θ en radianes.": "Area of an annular sector; θ in radians.",
+  "Luz en kWh por día; η en µmol/J y t en horas.": "Lighting in kWh per day; η in µmol/J and t in hours.",
+  "Área de cultivo": "Crop area",
+  "Tipo de evidencia": "Evidence type",
+  "Cálculo bajo supuestos": "Calculation with assumptions",
+  "Abrir fundamentos, ecuaciones y fuentes (ES)": "Open principles, equations and sources (ES)"
+});
+MILPA_I18N.add({'Automática':'Automatic'});
+
+MILPA_I18N.add({'Giro 360°':'360° orbit'});
+MILPA_I18N.add({'Envolvente nominal · terreno ilustrativo':'Nominal envelope · illustrative terrain','Acceso, presión y blindaje por validar':'Access, pressure and shielding awaiting validation'});

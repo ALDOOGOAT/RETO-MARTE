@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-09-21T09:14:53.100Z",
+  "fecha": "2026-09-21T10:10:27.104Z",
   "navegador": {
     "protocolVersion": "1.3",
     "product": "Chrome/148.0.7778.96",
@@ -802,6 +802,52 @@
             "alto": 213
           }
         ]
+      },
+      {
+        "aspecto": 3.5789473684210527,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "MILPA-360",
+            "px": 97,
+            "ancho": 512.0623779296875,
+            "max": 839.6800000000001,
+            "y": 108.49,
+            "alto": 286
+          },
+          {
+            "texto": "BioMars Chiapas",
+            "px": 49,
+            "ancho": 397.48822021484375,
+            "max": 839.6800000000001,
+            "y": 201.51,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 4.5,
+        "ancho": 1024,
+        "alto": 228,
+        "lineas": [
+          {
+            "texto": "ACCESO EN ESTUDIO",
+            "px": 55,
+            "ancho": 590.8059692382812,
+            "max": 839.6800000000001,
+            "y": 86.52,
+            "alto": 228
+          },
+          {
+            "texto": "B19 · verificación física pendiente",
+            "px": 39,
+            "ancho": 622.2846069335938,
+            "max": 839.6800000000001,
+            "y": 149.48000000000002,
+            "alto": 228
+          }
+        ]
       }
     ],
     "en": [
@@ -1590,6 +1636,52 @@
             "alto": 213
           }
         ]
+      },
+      {
+        "aspecto": 3.5789473684210527,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "MILPA-360",
+            "px": 97,
+            "ancho": 512.0623779296875,
+            "max": 839.6800000000001,
+            "y": 108.49,
+            "alto": 286
+          },
+          {
+            "texto": "BioMars Chiapas",
+            "px": 49,
+            "ancho": 397.48822021484375,
+            "max": 839.6800000000001,
+            "y": 201.51,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 4.5,
+        "ancho": 1024,
+        "alto": 228,
+        "lineas": [
+          {
+            "texto": "ACCESS UNDER STUDY",
+            "px": 55,
+            "ancho": 646.1766357421875,
+            "max": 839.6800000000001,
+            "y": 86.52,
+            "alto": 228
+          },
+          {
+            "texto": "B19 · physical verification pending",
+            "px": 39,
+            "ancho": 633.9066162109375,
+            "max": 839.6800000000001,
+            "y": 149.48000000000002,
+            "alto": 228
+          }
+        ]
       }
     ]
   },
@@ -1668,19 +1760,19 @@
   "mediciones": [
     {
       "calidad": "alta",
-      "fotogramas": 1079,
-      "duracionMs": 8007.60000000149,
-      "fps": 134.74699035913372,
-      "llamadas": 1051,
-      "triangulos": 460930
+      "fotogramas": 8,
+      "duracionMs": 8000.199999999255,
+      "fps": 0.9999750006250775,
+      "llamadas": 814,
+      "triangulos": 409686
     },
     {
       "calidad": "fluida",
-      "fotogramas": 1173,
-      "duracionMs": 8002.70000000298,
-      "fps": 146.57553075831447,
-      "llamadas": 1055,
-      "triangulos": 461250
+      "fotogramas": 8,
+      "duracionMs": 8000,
+      "fps": 1,
+      "llamadas": 813,
+      "triangulos": 409606
     }
   ],
   "errores": [],

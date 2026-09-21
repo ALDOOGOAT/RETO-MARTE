@@ -1,4 +1,37 @@
-# Revisión visual y bilingüe · V2 y V3 · 21 sep 2026
+# Revisión visual y bilingüe · V4 · 21 sep 2026
+
+## Revisión vigente V4 sobre c99e151
+
+Exterior completo de 360°, techo a 2.20 m nominal, talud continuo, conexión de energía
+y acceso rotulado como estudio. Los modos exterior/interior evitan confundir un corte
+con la operación del hábitat. La selección filtra ancestros invisibles; no se puede
+seleccionar una pieza oculta a través de la tapa. Cerrar el casco pausa el proceso.
+
+Giro de cámara independiente, despiece/indexado interpolados y pausa que conserva
+la pose de las aves. Calidad automática con ventanas de tres segundos, actualización
+de datos cada 120 ms, plantas inactivas excluidas del render y 32 llamadas de dibujo
+en el exterior. La cámara ajusta el campo vertical en pantalla estrecha. Navegación
+por suelo/animales/tratamiento/cultivo, controles ES/EN y fundamentos con MathML.
+
+Las cifras finales de rendimiento están en `PRUEBA-VISUAL-V4.json`: GPU RTX 4060 Laptop,
+Chrome visible X11, 1920×1080, muestras de ocho segundos en detalle alto. No comparar
+como experimento controlado con V3: carga, escena, frecuencia de pantalla y estado
+varían. Se mantiene pendiente proyector/equipo del evento y ensayo humano.
+
+La documentación [CIERRE-V4.md](CIERRE-V4.md) registra decisiones, fórmulas, limpieza y
+estado por paquete. [Fundamentos PDF](../../outputs/madrid-s5/FUNDAMENTOS-MILPA360.pdf)
+y [fuente LaTeX](latex/fundamentos.tex) explican las ecuaciones con valores regenerados.
+Tectonic 0.17.0 se instaló desde su binario oficial; no requiere un MCP de LaTeX.
+Los BLEND/GLB V4 interior y exterior proceden de Three evaluado, con reimportación.
+Las capturas V4 están en `capturas-v4/`. Los apartados V2/V3 siguientes son historial.
+
+Fuentes primarias consultadas el 21 sep 2026: [Three.js, instancias](https://threejs.org/docs/pages/InstancedMesh.html),
+[NASA, acceso/tareas](https://www.nasa.gov/reference/8-0-architecture-vol-2/),
+[Tectonic](https://tectonic-typesetting.github.io/en-US/install.html) y
+[Grand Jam](https://thegrandjam2026.mars-challenge.com/en/la-experiencia/como-funciona).
+No se promovió una referencia química indirecta a lectura nueva ni se usaron imágenes
+IA como evidencia. Las matemáticas químicas reutilizan el cierre previamente registrado.
+
 
 ## Refinamiento V3 sobre e6c989b
 

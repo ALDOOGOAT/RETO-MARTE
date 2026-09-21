@@ -1,7 +1,7 @@
 {
   "schemaVersion": "presentation-finalization.v1",
-  "finalSha256": "71fc0a6fa80d97281d80b4b902ac689e827d48381cf7e7fefb972fc7c5ef625c",
-  "byteCount": 8284758,
+  "finalSha256": "901a3bc99117f3458986a2daece7f3a48e0bd6617a49a118dfa3809bce183f5a",
+  "byteCount": 9168254,
   "packageIntegrity": {
     "chart_count": 0,
     "claim_boundary": "Structural package checks only; no slide text, notes, formulas, chart values, or native PowerPoint execution were inspected.",
@@ -89,7 +89,7 @@
     "performed": true,
     "passed": true,
     "slideCount": 9,
-    "sha256": "71fc0a6fa80d97281d80b4b902ac689e827d48381cf7e7fefb972fc7c5ef625c",
+    "sha256": "901a3bc99117f3458986a2daece7f3a48e0bd6617a49a118dfa3809bce183f5a",
     "runtimeNodeModules": "/home/aldo/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
     "nodeExecutable": "/home/aldo/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
   },
@@ -123,7 +123,7 @@
     "native_chart_count": 0,
     "native_powerpoint_verified": false,
     "passed": true,
-    "presentation_sha256": "71fc0a6fa80d97281d80b4b902ac689e827d48381cf7e7fefb972fc7c5ef625c",
+    "presentation_sha256": "901a3bc99117f3458986a2daece7f3a48e0bd6617a49a118dfa3809bce183f5a",
     "schema_version": "presentation-native-chart-titles.v1",
     "slide_count": 9,
     "source_text_emitted": false,

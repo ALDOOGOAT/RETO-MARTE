@@ -185,3 +185,13 @@ SwiftShader produjo aproximadamente 0.88 FPS en este chequeo por software: no se
 cumplió allí el objetivo de 30 FPS y tampoco se midió la GPU de presentación.
 La defensa digital es candidata revisable; B14–B19 y la evidencia externa impiden
 declarar cierre de ingeniería, aceptación física o conformidad final.
+
+
+### Actualización V4 · 21 sep 2026
+
+La defensa digital tiene ahora envolvente completa y corte, animaciones interpoladas,
+UI ES/EN, fundamentos LaTeX, modelos Blender interior/exterior y entrega sincronizada.
+Consultar [CIERRE-V4.md](CIERRE-V4.md) y el checkpoint actual. La RTX 4060 local sí fue
+medida con Chrome visible a 1080p; los valores están en `PRUEBA-VISUAL-V4.json`.
+Esto actualiza la evidencia gráfica posterior a la prueba SwiftShader descrita arriba;
+no sustituye proyector ni revisión independiente. B1–B19 conservan sus condiciones.

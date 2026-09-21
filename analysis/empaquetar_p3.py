@@ -23,6 +23,8 @@ archivos+=list((raiz/'analysis').glob('*.py'))+list((raiz/'analysis').glob('*.cj
 archivos+=list((raiz/'prototipo/planos').glob('*.html'))+[raiz/'prototipo/planos/_estilo.css']
 archivos+=list((raiz/'prototipo/planos/madrid').glob('*.html'))
 archivos+=list((raiz/'prototipo/planos/madrid').glob('*.svg'))
+archivos+=list((raiz/'docs/madrid/capturas-v4').glob('*.png'))
+archivos+=[raiz/'docs/madrid/PRUEBA-VISUAL-V4.json',raiz/'outputs/madrid-s5/FUNDAMENTOS-MILPA360.pdf',raiz/'docs/madrid/latex/fundamentos.tex']
 registros={str(p.relative_to(raiz)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(set(archivos))}
 manifiesto=raiz/'docs/madrid/MANIFIESTO-P3.json'
 manifiesto.write_text(json.dumps({'tipo':'P3 offline, no entrega final P5','sha256':registros},ensure_ascii=False,indent=2)+'\n')

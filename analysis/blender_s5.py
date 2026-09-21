@@ -4,14 +4,18 @@ MILPA_EXPORT_GLB=1 node --experimental-websocket analysis/verificar_p3_navegador
 blender -b --python analysis/blender_s5.py
 Mallas de visualización; no CAD, análisis resistente ni diseño de equipos aprobado.
 """
-import base64, hashlib, json, math
+import base64, hashlib, json, math, os
 from pathlib import Path
 import bpy
 from mathutils import Matrix, Vector
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'outputs/madrid-s5'
-data = json.loads((OUT / 'escena-three.json').read_text())
+exterior = os.environ.get('MILPA_EXTERIOR') == '1'
+entrada = 'escena-exterior.json' if exterior else 'escena-three.json'
+nombre = 'MILPA360-EXTERIOR-V4' if exterior else 'MILPA360-S5'
+render_name = 'blender-exterior-V4.png' if exterior else 'blender-S5.png'
+data = json.loads((OUT / entrada).read_text())
 geom = json.loads((ROOT / 'config/milpa360.geometria.json').read_text())
 assert data['parametros']['casco'] == geom['casco']
 assert data['parametros']['anillo']['n'] == geom['anillo']['n']
@@ -20,7 +24,7 @@ scene = bpy.data.scenes.new('MILPA360_S5')
 bpy.context.window.scene = scene
 scene['estado'] = 'Visualización nominal. B15-B19 pendientes. No ensayos físicos.'
 scene['fuente'] = 'config/milpa360.parameters.json + escena Three160 evaluada'
-scene['revision'] = 'V3 visual / ' + geom['_fuente']
+scene['revision'] = 'V4 visual / ' + geom['_fuente']
 scene.unit_settings.system = 'METRIC'
 scene.unit_settings.scale_length = 1
 materials, meshes = {}, {}
@@ -102,26 +106,26 @@ try:
 except (TypeError, RuntimeError):
     scene.cycles.device='CPU'
 scene.render.resolution_x=1920;scene.render.resolution_y=1440;scene.render.resolution_percentage=100
-scene.render.image_settings.file_format='PNG';scene.render.filepath=str(OUT/'blender-S5.png')
+scene.render.image_settings.file_format='PNG';scene.render.filepath=str(OUT/render_name)
 scene.view_settings.view_transform='AgX'
-bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'MILPA360-S5.blend'),compress=True)
+bpy.ops.wm.save_as_mainfile(filepath=str(OUT/(nombre+'.blend')),compress=True)
 # GLB reimportado en una escena aparte: comprueba tamaño del piso y recuento de mallas.
 for obj in scene.objects: obj.select_set(obj.type=='MESH')
 bpy.context.view_layer.objects.active=floor
-bpy.ops.export_scene.gltf(filepath=str(OUT/'MILPA360-S5.glb'),use_selection=True,use_active_scene=True,export_format='GLB',export_yup=True)
+bpy.ops.export_scene.gltf(filepath=str(OUT/(nombre+'.glb')),use_selection=True,use_active_scene=True,export_format='GLB',export_yup=True)
 verify=bpy.data.scenes.new('Verificacion-GLB');bpy.context.window.scene=verify
-bpy.ops.import_scene.gltf(filepath=str(OUT/'MILPA360-S5.glb'))
+bpy.ops.import_scene.gltf(filepath=str(OUT/(nombre+'.glb')))
 floor2=next(o for o in verify.objects if o.name.startswith('piso-modulo'))
 bpy.context.view_layer.update()
 assert max(abs(a-b) for a,b in zip(floor.dimensions, floor2.dimensions)) < 1e-5
 assert len([o for o in verify.objects if o.type=='MESH']) == len(data['objetos']), (len(verify.objects),len(data['objetos']))
-report={'fuente_sha256':hashlib.sha256((OUT/'escena-three.json').read_bytes()).hexdigest(),
+report={'fuente_sha256':hashlib.sha256((OUT/entrada).read_bytes()).hexdigest(),
         'config_sha256':hashlib.sha256((ROOT/'config/milpa360.parameters.json').read_bytes()).hexdigest(),
-        'revision_visual':'V3','blender':bpy.app.version_string,'render':scene.cycles.device,'sol':data['sol'],'mallas':len(data['objetos']),
+        'revision_visual':'V4','blender':bpy.app.version_string,'render':scene.cycles.device,'sol':data['sol'],'mallas':len(data['objetos']),
         'piso_diametro_m':floor.dimensions.x,'piso_z_m':max_z,'base_piso_z_m':min_z,
         'reimportacion_glb':'recuento y dimensiones del piso coinciden a 1e-5 m',
         'limite':'Sólo mallas exportadas; no tolerancia física, resistencia ni interferencias completas.'}
-(OUT/'VERIFICACION-BLENDER.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+(OUT/('VERIFICACION-EXTERIOR.json' if exterior else 'VERIFICACION-BLENDER.json')).write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
 bpy.context.window.scene=scene
 bpy.ops.render.render(write_still=True)
 print(json.dumps(report,ensure_ascii=False))

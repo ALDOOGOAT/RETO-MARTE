@@ -1,0 +1,16 @@
+{
+  "fecha": "2026-09-21",
+  "blender": "5.2.0 LTS",
+  "conexion": "execute_blender_code ejecutado en aplicación abierta",
+  "escenas_nuevas": {
+    "MILPA360_V4_INTERIOR": 1003,
+    "MILPA360_V4_EXTERIOR": 124
+  },
+  "escenas_preservadas": [
+    "MILPA360_S5_REVISION",
+    "MILPA360_V2_REVISION",
+    "MILPA360_V3_REVISION",
+    "Scene"
+  ],
+  "limite": "Importación de mallas; renders verificados proceden del generador background. No se sobrescribe el archivo abierto del usuario."
+}

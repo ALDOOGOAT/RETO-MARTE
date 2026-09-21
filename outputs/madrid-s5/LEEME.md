@@ -7,11 +7,16 @@ equivale a revisión independiente ni a medición en el equipo de Madrid.
 
 **Corte acumulado 21 sep:** consultar `../../docs/madrid/CIERRE-ACUMULADO.md` y
 `../../docs/madrid/CALCULOS-CIERRE.md`. D1/D2 ratificadas; provisiones completas y auxiliares calculados.
-BLEND/GLB se regeneran con el acabado V3 desde Three.js, con normales y texturas
+BLEND/GLB se regeneran con el acabado V4 desde Three.js, con normales y texturas
 de la escena. Las dimensiones nominales conservan S5. B19 es estudio separado y su
 vestíbulo no forma parte de esas mallas.
 
 ## Abrir
+
+- `FUNDAMENTOS-MILPA360.pdf`: seis páginas con fórmulas, hipótesis y hallazgos calculados; fuente en `../../docs/madrid/latex/`.
+- `MILPA360-EXTERIOR-V4.blend` y `.glb`: envolvente completa; misma base nominal, sin certificación de presión/acceso.
+- `blender-exterior-V4.png`: render de la escena exterior.
+
 
 - `MEMORIA-MILPA360-S5.pdf`: memoria modular; incluye Documento Concepto, guion y preguntas.
 - `DECK-MILPA360-S5.pptx`: nueve láminas editables con guion y fuentes en notas.
@@ -19,7 +24,9 @@ vestíbulo no forma parte de esas mallas.
 - `RESPALDO-PITCH-S5.mp4`: 300 segundos, sin audio, para narración en vivo. No es grabación
   de ensayo ni vídeo oficial final. Los tiempos coinciden con el guion provisional.
 - `../../prototipo-3d/milpa360-simulador.html`: demo local, sin Internet; abrir con Chrome.
-  Selector ES/EN local, recorrido guiado, teclado y menú de calidad.
+  Selector ES/EN local, recorrido guiado, teclado y calidad automática.
+  Exterior cerrado/Interior, giro de cámara independiente y navegación por procesos.
+  Fundamentos abre fórmulas y el PDF local.
   La ficha del aviario incluye «Ver aves de cerca»; «Perspectiva» vuelve al conjunto.
   Órbita por arrastre y rueda. Inspección técnica permite planta/lateral, resaltar lote,
   fallos y despiece visual; reanudar vuelve al ensamblaje. El movimiento no valida biología.
@@ -52,6 +59,8 @@ python3 analysis/milpa360_p3.py
 python3 analysis/cierre_acumulado.py
 MILPA_EXPORT_GLB=1 node --experimental-websocket analysis/verificar_p3_navegador.mjs
 /home/aldo/.local/bin/blender -b --python "$PWD/analysis/blender_s5.py"
+MILPA_EXTERIOR=1 /home/aldo/.local/bin/blender -b --python "$PWD/analysis/blender_s5.py"
+python3 analysis/fundamentos_latex.py
 /home/aldo/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node analysis/deck_s5.mjs
 /home/aldo/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python analysis/documentos_s5.py --planos
 python3 analysis/video_s5.py
@@ -96,3 +105,16 @@ headless con NVIDIA no creó contexto WebGL. No extrapolar a otro equipo.
 
 El guion está en `../../docs/madrid/RECORRIDO-BILINGUE.md`. La prueba recorre los
 cinco pasos en ES/EN; no reemplaza un ensayo con público o proyector.
+
+
+## Verificación V4
+
+`MILPA_VISUAL_V4=1` ejecuta con el mismo verificador las vistas cerrada/abierta,
+ES/EN, móvil, giro, pausa, MathML, indexado y despiece; genera `PRUEBA-VISUAL-V4.json`.
+Usar `MILPA_DEMO_DIR` para probar el ZIP extraído. `MILPA_REFINAMIENTO_V3=1` conserva
+el nombre de la prueba de rótulos/aves, también aplicada a V4. No ejecutar mediciones
+de FPS a la vez que renders o codificación de vídeo.
+
+LaTeX: Tectonic 0.17.0 instalado en `~/.local/bin/tectonic`. El PDF ya compilado se abre
+sin instalarlo; para regenerar necesita los paquetes TeX (caché local o primera descarga).
+[CIERRE-V4](../../docs/madrid/CIERRE-V4.md) registra la aceptación y los pendientes.

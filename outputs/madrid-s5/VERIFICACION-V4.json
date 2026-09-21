@@ -1,0 +1,23 @@
+{
+  "revision": "V4",
+  "carpeta_probada": "/tmp/milpa-s6-limpia-qqng1438",
+  "sha256_aplicacion": {
+    "prototipo-3d/milpa360-simulador.html": "5f9faae73b4de8e998523a899d723d8bc58ac28d9a021bce0a4ab1744d5b34f9",
+    "prototipo-3d/milpa360-interfaz.css": "95690a97cbdf9f47fa4ea24be1892c943b452f26f55f5820c5dcc0d2c683ff5c",
+    "prototipo-3d/milpa360-contenido.js": "dd1bc49c2982888f2a994b8039a8659075acec8f6eec77e51bd9b2deac714649",
+    "prototipo-3d/milpa360-traducciones.js": "6211741a1453ddd196fe9b7e46c787227059aed92ba8bdb4c5045e49bacd3484",
+    "prototipo-3d/milpa360-modelo.js": "a303bcee12172d7891614a623da0ec43311250d57a08b4a1e8e54efb08f76970"
+  },
+  "comprobaciones": [
+    "lógica P3, conservación y fallos",
+    "geometría y cotas",
+    "P4 unidades y límites",
+    "B19 secuencia, ocupación y corte de energía",
+    "Chrome offline: controles, B19, idioma, 40 rótulos y aves, V4",
+    "Blender GPU: exportación/reimportación de 1003 y 124 mallas",
+    "Tectonic: 6 páginas",
+    "inspección visual de PDF y 9 diapositivas",
+    "H264 de 300 segundos, decodificación completa"
+  ],
+  "limite": "Autorrevisión digital. No revisión independiente, ensayo físico ni proyector."
+}

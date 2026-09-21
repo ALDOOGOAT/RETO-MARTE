@@ -1,0 +1,80 @@
+{
+  "respaldo_local": "/home/aldo/Descargas/RETO-MARTE-respaldo-animacion-historica-20260921.zip",
+  "sha256_zip": "c2f9bad8401e3ea31793ebcc09f02ae73398102f9e9066bd77350fa1aa8bab40",
+  "bytes_retirados": 42294233,
+  "origen_git": "c99e1514dfe92cf78d528dc562f8cba865acd158",
+  "archivos_sha256": {
+    "prototipo-3d/fotos-para-subir/anim/f0001.png": "97cf849bf45440d7f863db500d01e72c7f90c31f4a092c0cca4e6cc0d6dc7d2f",
+    "prototipo-3d/fotos-para-subir/anim/f0002.png": "62dff4da929d120a22f866b93cf7d8c08363e34c0f761d272dab3fc44347fb19",
+    "prototipo-3d/fotos-para-subir/anim/f0003.png": "df977bfe9ff9b2bf3c15691b1e8e969f814d138b6e2f103bd03f18fb168593a3",
+    "prototipo-3d/fotos-para-subir/anim/f0004.png": "eb7d215a5a90a7673b2d27d1feebfca47ac388f92d78037f492c67a32c2a7511",
+    "prototipo-3d/fotos-para-subir/anim/f0005.png": "61e6edfabbfd70db07683904f87982ffddb9ab23f4f03e07e1e19fca6dd1838d",
+    "prototipo-3d/fotos-para-subir/anim/f0006.png": "c2b7dc2cdf409097dce60950147e1c6fde840402e057caf154ad5ad0fb250c31",
+    "prototipo-3d/fotos-para-subir/anim/f0007.png": "56a7c429187c1e8108e682659f9874863556dd6e403a97c64277e53e7a907cec",
+    "prototipo-3d/fotos-para-subir/anim/f0008.png": "7ef469ec3eebc84d47193a588b1839e9479f41745c908f02c23f870fbb6e5e54",
+    "prototipo-3d/fotos-para-subir/anim/f0009.png": "694bc092c6635176519793867601af1defb4e0d266f639e0e407d5bc2df6ece7",
+    "prototipo-3d/fotos-para-subir/anim/f0010.png": "3a7096c29f25f93744fe785a174e0be9957c98addac96aeaa8a60c8d5db5d8d2",
+    "prototipo-3d/fotos-para-subir/anim/f0011.png": "639029af443d57678ba5d3fba0b9125847a1337d127ca8a5596d7c12507ce7c8",
+    "prototipo-3d/fotos-para-subir/anim/f0012.png": "35bb8efd28f797c8baf5d8e67498543087bd1e575a38ff02f9ed28d0f15786b4",
+    "prototipo-3d/fotos-para-subir/anim/f0013.png": "326f0cde6fb7cb1e6c18b19e5a9bc2b31e9f7d7d3240015847417721e37a3674",
+    "prototipo-3d/fotos-para-subir/anim/f0014.png": "326bc31c111f16f18cf4ded996f8e6120c4c1af548804be592f43a06f5803686",
+    "prototipo-3d/fotos-para-subir/anim/f0015.png": "2f5a546edb86ca561ac1ca4700e62b253e56c0a5301bf80c2c0decfa1504ea7d",
+    "prototipo-3d/fotos-para-subir/anim/f0016.png": "ae4ef83f3b904ac3a84ce7701913befbd98f85d39b99ce121070b1c283e45029",
+    "prototipo-3d/fotos-para-subir/anim/f0017.png": "9a7b39a3ec11cb985571a6fb5805229b85a76221fd0d5afcad3307d416ed4e35",
+    "prototipo-3d/fotos-para-subir/anim/f0018.png": "678dc2bec0fec2bfc4b75a2a6eac6ebc8d7fd742d9da3bc2ecd2903d70d9f0af",
+    "prototipo-3d/fotos-para-subir/anim/f0019.png": "53bb01f70ecf5eca9ea810b99c9a5a7a6e9efa7d31e0424d6af629879eac4790",
+    "prototipo-3d/fotos-para-subir/anim/f0020.png": "a9e4c79c7acd375168cdb5ecc704dd67169c24454f4a811cb3f161022d379021",
+    "prototipo-3d/fotos-para-subir/anim/f0021.png": "699bd4d5e00e674064209c9c5d6f5b76dc9cd58ed8062f730632beb44bddfbe9",
+    "prototipo-3d/fotos-para-subir/anim/f0022.png": "a9c719850d2574e310f76fffead33810a185474f8a85f558deada404f8cb6a6b",
+    "prototipo-3d/fotos-para-subir/anim/f0023.png": "13f494745d81f043b6820a7403bf237973c999191516dbf4a43dbd1644c7b084",
+    "prototipo-3d/fotos-para-subir/anim/f0024.png": "d657c47fc0b788f851a86e080dd6839aed635ad1026b44079e0e03a7c80bfb2e",
+    "prototipo-3d/fotos-para-subir/anim/f0025.png": "fad6886b967e8b34ebb84847dc0a770dcda8a2f257b41bae38345fe5b21e027b",
+    "prototipo-3d/fotos-para-subir/anim/f0026.png": "d1548912ac5de16b2d6946e83890aab45902477b3f36b27621e084f575910ddd",
+    "prototipo-3d/fotos-para-subir/anim/f0027.png": "c8bff61410d4b03c8b8025aec896dd4203744e01f1bf6f75506e59bb4d5857e6",
+    "prototipo-3d/fotos-para-subir/anim/f0028.png": "eec5392019080134b55e0427998705cd22a781b1fc539da1eb36e22afc369ce8",
+    "prototipo-3d/fotos-para-subir/anim/f0029.png": "31f0f35184ab536366006e15589c5993df4fa1f93f28861a8890ecccb951fdb4",
+    "prototipo-3d/fotos-para-subir/anim/f0030.png": "0b2383b32d4c70a059ac20d1ee0b734e55a506b041f02b4fd859172732913774",
+    "prototipo-3d/fotos-para-subir/anim/f0031.png": "845ba9a3f2625a6857d6608abe3ab74b86c782bbbe93bc35c9393928f7c4a7b8",
+    "prototipo-3d/fotos-para-subir/anim/f0032.png": "dbdf337a416cfea8ddf15556e8b9ba21e4fd7d7466fdc3902adb377623c74274",
+    "prototipo-3d/fotos-para-subir/anim/f0033.png": "fd0a2ad93903d52ed9ff3a7852b22acdb8725499eaf85394feb7fb64514e9dd3",
+    "prototipo-3d/fotos-para-subir/anim/f0034.png": "68f9c4c96e60c07c8a95ab236f2bc6cf1680210263c96dde25db35da190a3963",
+    "prototipo-3d/fotos-para-subir/anim/f0035.png": "5abb48367dd21a3ab5dea37de57039b696a7aa8a50c6d6f6edf9c6f8312bace4",
+    "prototipo-3d/fotos-para-subir/anim/f0036.png": "f2babeb2150ef0e9559519d6f0d88a003fa7fba04ecbafab9586de0b8f7e52c1",
+    "prototipo-3d/fotos-para-subir/anim/f0037.png": "73ae38cdfb841a202a30bceadb954c80c1f8e6f17eb45e1efb53afc555ff5c05"
+  },
+  "motivo": "37 fotogramas regenerables del modelo histórico, fuera de la entrega vigente; fuentes y fotografías clave conservadas.",
+  "intermedios_regenerables_retirados": [
+    {
+      "patron": "outputs/madrid-s5/tex-*.png",
+      "archivos": 349,
+      "bytes": 16800077
+    },
+    {
+      "patron": "outputs/madrid-s5/*.blend1",
+      "archivos": 2,
+      "bytes": 16466869
+    },
+    {
+      "patron": "outputs/madrid-s5/escena-*.json",
+      "archivos": 2,
+      "bytes": 127038469
+    },
+    {
+      "patron": "outputs/madrid-s5/FUNDAMENTOS-MILPA360.tex",
+      "archivos": 1,
+      "bytes": 13049
+    },
+    {
+      "patron": "outputs/madrid-s5/valores.tex",
+      "archivos": 1,
+      "bytes": 308
+    },
+    {
+      "patron": "outputs/madrid-s5/*.log",
+      "archivos": 1,
+      "bytes": 19190
+    }
+  ],
+  "bytes_intermedios": 160337962,
+  "regeneracion": "analysis/fundamentos_latex.py; MILPA_EXPORT_GLB=1 analysis/verificar_p3_navegador.mjs; analysis/blender_s5.py. Los recursos finales están empaquetados en BLEND/GLB."
+}

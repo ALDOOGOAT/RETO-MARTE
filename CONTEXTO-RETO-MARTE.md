@@ -391,3 +391,14 @@ texturas. Las siete figuras representan el concepto: no validan alojamiento de 2
 Hay pruebas locales con GPU Intel/RTX 4060, sin proyector conectado. Blender/GLB se
 regeneran como V3 y conservan cotas nominales. La ejecución de los cinco pasos ES/EN
 es una prueba digital; el ensayo humano se prepara con `docs/madrid/RECORRIDO-BILINGUE.md`.
+
+
+### Revisión visual y fundamentos V4 · 21 sep 2026
+
+El módulo dispone de exterior completo, corte, giro de cámara, inspección y navegación
+por procesos ES/EN. El talud conecta con la explanada; el terreno sigue siendo procedural.
+Se conserva arquitectura B y el proceso calculado. La fuente LaTeX en
+`docs/madrid/latex/fundamentos.tex` explica área útil, energía, conservación, estequiometría
+y cinemática; `analysis/fundamentos_latex.py` toma los valores de los JSON actuales.
+No se añaden mediciones ni descubrimientos experimentales. Fuentes, decisiones y
+aceptación constan en `docs/madrid/CIERRE-V4.md`; el registro anterior es histórico.
