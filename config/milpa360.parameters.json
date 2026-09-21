@@ -1,6 +1,6 @@
 {
   "meta": {
-    "version": "P3-2026-09-20",
+    "version": "P4-S3-2026-09-20",
     "fecha": "2026-09-20",
     "rama": "preparacion-madrid-p1",
     "descripcion": "Fuente única de parámetros de MILPA-360. Simulador, planos, tablas y cálculos deben leer de aquí.",
@@ -160,7 +160,8 @@
         "valor": 0.62,
         "unidad": "m",
         "evidencia": "geometria_digital",
-        "fuente": "milpa360-simulador.html L1137"
+        "fuente": "milpa360-simulador.html L1137",
+        "nota": "Cara superior nominal del cartucho, NO piso transitable. Piso separado en S3/D8."
       },
       "r_casco": {
         "valor": 2.28,
@@ -179,6 +180,13 @@
         "unidad": "soles",
         "evidencia": "decision_equipo",
         "fuente": "milpa360-simulador.html L1127; PLAN §4.2"
+      },
+      "altura_piso": {
+        "valor": 0,
+        "unidad": "m",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "D8: plano de marcha separado de la cara superior del cartucho. Coincide con el datum del corte P-02; no acredita entrada."
       }
     },
     "acceso": {
@@ -221,6 +229,41 @@
         "unidad": "kg",
         "evidencia": "pendiente",
         "fuente": "Límite de manipulación manual de un tripulante en 0.38 g: sin fuente leída. Condiciona el cambio de cartucho en S8"
+      },
+      "altura_figura": {
+        "valor": 1.75,
+        "unidad": "m",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Referencia visual, no envolvente de población ni astronauta vestido."
+      },
+      "altura_casco_alternativa": {
+        "valor": 2.9,
+        "unidad": "m",
+        "evidencia": "supuesto",
+        "fuente": "P4-MECANICA-ENSAYOS.md §1, comparación S3",
+        "nota": "Candidato no adoptado: techo para comparar cruce elevado."
+      },
+      "altura_piso_alternativa": {
+        "valor": 0.62,
+        "unidad": "m",
+        "evidencia": "supuesto",
+        "fuente": "P4-MECANICA-ENSAYOS.md §1, comparación S3",
+        "nota": "Piso del candidato elevado, no vigente."
+      },
+      "cota_cruce_alternativa": {
+        "valor": 0.8,
+        "unidad": "m",
+        "evidencia": "supuesto",
+        "fuente": "P4-MECANICA-ENSAYOS.md §1, comparación S3",
+        "nota": "Paso elevado candidato, aún sin apoyos ni evacuación."
+      },
+      "margen_maniobra": {
+        "valor": 0.02,
+        "unidad": "m",
+        "evidencia": "supuesto",
+        "fuente": "P4-MECANICA-ENSAYOS.md §1, comparación S3",
+        "nota": "Holgura nominal de proyecto del cartucho desnudo; no tolerancia numérica ni fabricación."
       }
     },
     "arquitectura": {
@@ -264,6 +307,13 @@
         "unidad": "m",
         "evidencia": "supuesto",
         "fuente": "P2: 0.22 m de sustrato más 0.06 m de fondo, pared y guías. Sin diseño mecánico ni cálculo estructural"
+      },
+      "reborde_cartucho": {
+        "valor": 0.035,
+        "unidad": "m",
+        "evidencia": "supuesto",
+        "fuente": "S3: reborde ya dibujado en geometrias() de milpa360-simulador.html",
+        "nota": "Reserva nominal de pared de la cubeta; se descuenta de superficie cultivable. No espesor fabricado ni dimensionado resistente."
       }
     },
     "estaciones": {
@@ -291,7 +341,7 @@
           "nominal": 1500,
           "favorable": 1200
         },
-        "nota": "Pendiente de medición (bloqueo B7)"
+        "nota": "B7 pendiente: S3 interpreta cada escenario como densidad operativa total del lecho; no añade otra vez agua de poro. No hay densidad seca/húmeda medida."
       },
       "humedad_gravimetrica": {
         "valor": null,
@@ -686,7 +736,203 @@
         "rango": [
           0.001,
           0.01
-        ]
+        ],
+        "escenarios": {
+          "conservador": 0.01,
+          "nominal": 0.005,
+          "favorable": 0.001
+        },
+        "nota": "Coeficiente equivalente adimensional F_t/(m g), no longitud de rodadura ni dato de rodamiento elegido."
+      },
+      "masa_cartucho_vacio": {
+        "valor": 5,
+        "unidad": "kg",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Tara por pieza sin pesaje ni material seleccionado.",
+        "escenarios": {
+          "conservador": 8,
+          "nominal": 5,
+          "favorable": 2
+        }
+      },
+      "masa_anillo": {
+        "valor": 150,
+        "unidad": "kg",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Estructura giratoria adicional; no incluye cartuchos, ni equipos fijos.",
+        "escenarios": {
+          "conservador": 250,
+          "nominal": 150,
+          "favorable": 80
+        }
+      },
+      "masa_fluido_movil": {
+        "valor": 10,
+        "unidad": "kg",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Sólo tuberías móviles; agua en el sustrato ya incluida en densidad operativa supuesta.",
+        "escenarios": {
+          "conservador": 20,
+          "nominal": 10,
+          "favorable": 5
+        }
+      },
+      "masa_biomasa_movil": {
+        "valor": 20,
+        "unidad": "kg",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Reserva mecánica del anillo completo, no predicción de cosecha.",
+        "escenarios": {
+          "conservador": 40,
+          "nominal": 20,
+          "favorable": 10
+        }
+      },
+      "tiempo_indexado": {
+        "valor": 60,
+        "unidad": "s",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Tiempo físico de movimiento de 18 grados; distinto de ocho soles de residencia.",
+        "escenarios": {
+          "conservador": 30,
+          "nominal": 60,
+          "favorable": 120
+        }
+      },
+      "par_auxiliar": {
+        "valor": 5,
+        "unidad": "N m",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Rozamiento adicional en sellos/juntas/guías referido al anillo, pendiente de medida.",
+        "escenarios": {
+          "conservador": 15,
+          "nominal": 5,
+          "favorable": 2
+        }
+      },
+      "factor_dimensionado": {
+        "valor": 2,
+        "unidad": "1",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Margen preliminar aplicado al par máximo; no factor certificado.",
+        "escenarios": {
+          "conservador": 2.5,
+          "nominal": 2,
+          "favorable": 1.5
+        }
+      },
+      "n_apoyos": {
+        "valor": 12,
+        "unidad": "1",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Ruedas/apoyos propuestos; cargas iguales sólo como media."
+      },
+      "factor_reparto_apoyos": {
+        "valor": 2,
+        "unidad": "1",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Sensibilidad de reparto desigual; no análisis hiperestático."
+      },
+      "radio_apoyos": {
+        "valor": 1.88,
+        "unidad": "m",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Radio nominal de rodadura, dentro del anillo."
+      },
+      "radio_bloqueo": {
+        "valor": 1.88,
+        "unidad": "m",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Brazo del bloqueo mecánico positivo, diseño pendiente."
+      },
+      "desnivel_eje": {
+        "valor": 1,
+        "unidad": "deg",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Sensibilidad con una bandeja ausente y eje inclinado, no dato del terreno."
+      },
+      "deformacion_objetivo": {
+        "valor": 0.002,
+        "unidad": "m",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Objetivo exploratorio para el soporte del cartucho; no tolerancia de fabricación."
+      },
+      "fraccion_sv_rastrojo": {
+        "valor": 0.85,
+        "unidad": "kg SV/kg MS",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Sólo para estimación de OLR; no alterar el rendimiento P1 por MS.",
+        "escenarios": {
+          "conservador": 0.95,
+          "nominal": 0.85,
+          "favorable": 0.7
+        }
+      },
+      "fraccion_st_alimentacion": {
+        "valor": 0.05,
+        "unidad": "kg ST/kg mezcla",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Mezcla al digestor supuesta; no se conoce bombeabilidad.",
+        "escenarios": {
+          "conservador": 0.03,
+          "nominal": 0.05,
+          "favorable": 0.08
+        }
+      },
+      "retencion_digestor": {
+        "valor": 30,
+        "unidad": "d",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "HRT candidato, no tasa validada para la mezcla.",
+        "escenarios": {
+          "conservador": 40,
+          "nominal": 30,
+          "favorable": 20
+        }
+      },
+      "densidad_mezcla": {
+        "valor": 1000,
+        "unidad": "kg/m3",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Aproximación de mezcla diluida, requiere medición."
+      },
+      "fraccion_gas_reactor": {
+        "valor": 0.25,
+        "unidad": "fracción",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Espacio no líquido candidato, no cálculo de presión."
+      },
+      "diametro_interior_digestor": {
+        "valor": 0.5,
+        "unidad": "m",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Cilindro candidato para confrontar volumen; no equipo seleccionado."
+      },
+      "margen_radial_reactor": {
+        "valor": 0.03,
+        "unidad": "m",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
+        "nota": "Reserva para pared/aislamiento, no espesor resistente."
       }
     },
     "simulacion": {

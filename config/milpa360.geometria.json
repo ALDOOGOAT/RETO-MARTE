@@ -1,13 +1,15 @@
 {
   "_generado_por": "analysis/milpa360_p2.py",
-  "_fuente": "config/milpa360.parameters.json vP3-2026-09-20",
+  "_fuente": "config/milpa360.parameters.json vP4-S3-2026-09-20",
   "_aviso": "ARCHIVO GENERADO. No editar a mano: se sobrescribe en cada ejecución.",
   "arquitectura": "B",
   "casco": {
     "radio": 2.28,
     "diametro": 4.56,
     "altura": 2.2,
-    "cubierta": 0.62
+    "cubierta": 0.62,
+    "piso": 0,
+    "altura_figura": 1.75
   },
   "anillo": {
     "r0": 1.58,
@@ -19,22 +21,24 @@
     "soles_por_paso": 8
   },
   "cartucho": {
-    "area": 0.33311,
+    "area": 0.25715,
+    "area_huella": 0.33311,
+    "reborde": 0.035,
     "profundidad_sustrato": 0.22,
     "altura_caja": 0.28,
     "cuerda_exterior": 0.6414,
     "ancho_radial": 0.6,
     "masa_kg": {
-      "conservador": 131.9,
-      "nominal": 109.9,
-      "favorable": 87.9
+      "conservador": 101.8,
+      "nominal": 84.9,
+      "favorable": 67.9
     },
     "repuestos": 2
   },
   "areas": {
-    "cultivo": 3.9973,
-    "regeneracion": 2.6649,
-    "total": 6.6622
+    "cultivo": 3.0858,
+    "regeneracion": 2.0572,
+    "total": 5.1429
   },
   "pasillo": {
     "ancho": 0.9,

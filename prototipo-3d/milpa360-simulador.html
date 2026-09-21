@@ -304,7 +304,7 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
    No editar entre los marcadores: se sobrescribe. Ese script es la única fuente de
    radios, áreas, masas y del reloj de misión; aquí no se escribe ninguna cifra a mano. */
 /*←P2:GEOM*/
-const GEOM = {"casco":{"radio":2.28,"diametro":4.56,"altura":2.2,"cubierta":0.62},"anillo":{"r0":1.58,"r1":2.18,"n":20,"holgura_angular":0.94,"paso_grados":18.0,"sector_grados":16.92,"soles_por_paso":8},"cartucho":{"area":0.33311,"profundidad_sustrato":0.22,"cuerda_exterior":0.6414,"ancho_radial":0.6},"areas":{"cultivo":3.9973,"regeneracion":2.6649,"total":6.6622},"pasillo":{"ancho":0.9,"r_equipos_max":0.68},"mision":{"soles_horizonte":525},"ciclo":{"n_regeneracion":8,"n_cultivo":12}};
+const GEOM = {"casco":{"radio":2.28,"diametro":4.56,"altura":2.2,"cubierta":0.62,"piso":0,"altura_figura":1.75},"anillo":{"r0":1.58,"r1":2.18,"n":20,"holgura_angular":0.94,"paso_grados":18.0,"sector_grados":16.92,"soles_por_paso":8},"cartucho":{"area":0.25715,"profundidad_sustrato":0.22,"cuerda_exterior":0.6414,"ancho_radial":0.6,"altura_caja":0.28,"reborde":0.035},"areas":{"cultivo":3.0858,"regeneracion":2.0572,"total":5.1429},"pasillo":{"ancho":0.9,"r_equipos_max":0.68},"mision":{"soles_horizonte":525},"ciclo":{"n_regeneracion":8,"n_cultivo":12}};
 /*P2:GEOM→*/
 
 "use strict";
@@ -987,7 +987,7 @@ const FICHAS = {
     sub: "LITERATURA LOCAL / CÁLCULO",
     tit: "Perclorato: seguir toda la masa",
     txt: "Phoenix es un emplazamiento, no una concentración universal. P1 aplica escenarios al volumen completo del cartucho. Lavar transfiere sales al agua; no las destruye.",
-    d: [["Cartucho nominal", "~110 kg de sustrato"], ["ClO₄⁻ nominal supuesto", "~550 g al 0.5 %"], ["Lavado inicial", "proceso ISRU externo por diseñar"]],
+    d: [], // Valores derivados de MILPA_DATOS al terminar de definir las fichas.
     f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
     pasos: ["regolito", "lavado inicial", "salmuera retenida"]
   },
@@ -1027,7 +1027,7 @@ const FICHAS = {
     sub: "GEOMETRÍA CALCULADA",
     tit: "Módulo agrícola complementario",
     txt: "Un anillo de cartuchos conserva la rotación del sustrato bajo estaciones fijas. El módulo aporta sólo una fracción de la dieta; no es un hábitat completo ni sostiene por sí solo a seis personas.",
-    d: [["Área de cultivo", "4.00 m² nominales"], ["Cobertura calórica P1", "~2.6 % nominal, régimen productivo"], ["Horizonte", "539 días ≈525 soles"]],
+    d: [], // Valores derivados de MILPA_DATOS al terminar de definir las fichas.
     f: "docs/madrid/P2-GEOMETRIA.md · geometría nominal, equipos esquemáticos",
     pasos: ["regeneración", "cultivo", "alimento complementario"],
     accion: "habitat"
@@ -1175,6 +1175,7 @@ FICHAS.retorno={sub:"Propuesta terrestre · por validar en P4",tit:"Un piloto me
   f:"MISION-MADRID-MILPA360.md §5K–M · P4 pendiente",pasos:["problema local","banco terrestre","medición comparada"]};
 const bn=MILPA_DATOS.balance, pg=MILPA_DATOS.parametros;
 FICHAS.sitio.d=[["Diámetro",GEOM.casco.diametro.toFixed(2)+" m"],["Cultivo",GEOM.areas.cultivo.toFixed(2)+" m²"],["Cobertura nominal P1",(bn.cobertura_kcal*100).toFixed(1)+" % de kcal"],["Horizonte",GEOM.mision.soles_horizonte+" soles"]];
+FICHAS.regolito.d=[["Sustrato nominal",MILPA_DATOS.geometria.cartucho.masa_kg.nominal.toFixed(1)+" kg por lote"],["ClO₄⁻ supuesto",(MILPA_DATOS.geometria.cartucho.masa_kg.nominal*pg.sustrato.fraccion_perclorato.valor*1000).toFixed(0)+" g; depende del lugar"],["Lavado inicial","proceso ISRU externo por diseñar"]];
 FICHAS.panel.d=[["Luz nominal P1",bn.luz_kwh.toFixed(1)+" kWh eléctricos/d"],["Biogás P1",bn.biogas_kwh_quimico.toFixed(3)+" kWh químicos/d"],["Auxiliares","pendientes, no son cero"]];
 FICHAS.aviario.d=[["Aves propuestas",pg.aviario.n_aves.valor],["Primer huevo publicado",pg.aviario.edad_primer_huevo.valor+" d"],["Ración publicada",pg.aviario.consumo_alimento.valor+" g/ave/d"],["Ración importada",bn.alimento_kg.toFixed(2)+" kg/d"]];
 for (const f of Object.values(FICHAS)) f.viz = VIZ.cadena("MECANISMO PROPUESTO", f.pasos.map(p => [p, "#63A9D1"]));
@@ -1274,6 +1275,8 @@ const R_MED = (R0 + R1) / 2;                   // radio medio: ahí se cuelgan l
 const R_EQ = GEOM.pasillo.r_equipos_max;       // envolvente de los equipos centrales
 const HONDO = GEOM.cartucho.profundidad_sustrato;
 const CUBIERTA = GEOM.casco.cubierta;
+const PISO = GEOM.casco.piso;
+const ESPESOR_PISO_VISUAL = 0.08; // representación del casco inferior, no espesor de fabricación
 const R_CASCO = GEOM.casco.radio, H_CASCO = GEOM.casco.altura;
 const esCultivo = p => p >= N_REG;             // posiciones 8–19; 0–7 son S1–S8
 /* el reloj sale del horizonte de diseño (539 d ≈ 525 soles, DRA 5.0), no de un 730 fijo */
@@ -1456,7 +1459,6 @@ function geoSector(r0, r1, ang, alto){
   f.absarc(0, 0, r0, ang / 2, -ang / 2, true);
   const g = new T.ExtrudeGeometry(f, { depth: alto, bevelEnabled: false, curveSegments: 28 });
   g.rotateX(-Math.PI / 2);
-  g.translate(0, alto, 0);
   g.computeVertexNormals();
   return g;
 }
@@ -1473,7 +1475,6 @@ function geoMarco(r0, r1, ang, alto, grosor){
   f.holes.push(h);
   const g = new T.ExtrudeGeometry(f, { depth: alto, bevelEnabled: false, curveSegments: 28 });
   g.rotateX(-Math.PI / 2);
-  g.translate(0, alto, 0);
   g.computeVertexNormals();
   return g;
 }
@@ -1488,10 +1489,10 @@ function geometrias(){
   /* Un solo juego de geometrías: los 20 cartuchos son idénticos. Eso es la arquitectura B,
      no una economía de código — un lote avanza de posición sin cambiar de forma.           */
   const ang = TAU / N_POS * HOLGURA;
-  const REB = 0.035;                             // reborde de la cubeta
-  GEO.marco  = geoMarco(R0, R1, ang, 0.07, REB);
+  const REB = GEOM.cartucho.reborde;                             // reborde de la cubeta
+  GEO.marco  = geoMarco(R0, R1, ang, GEOM.cartucho.altura_caja, REB);
   const ang2 = ang - 2 * REB / R_MED;
-  GEO.suelo  = geoSector(R0 + REB, R1 - REB, ang2, HONDO - 0.05);
+  GEO.suelo  = geoSector(R0 + REB, R1 - REB, ang2, HONDO);
   GEO.costra = geoSector(R0 + REB + 0.005, R1 - REB - 0.005, ang2 * 0.99, 0.012);
 }
 
@@ -1619,6 +1620,7 @@ function construirHabitat(){
   }));
   texRego.repeat.set(3, 3);
   terreno.rotation.x = -Math.PI / 2;
+  terreno.position.y = PISO - ESPESOR_PISO_VISUAL; // explanada bajo el casco, nunca dentro del pasillo
   terreno.receiveShadow = true;
   terreno.name = "terreno";
   gHabitat.add(terreno);
@@ -1687,24 +1689,22 @@ function construirHabitat(){
   }
 
   /* ── plataforma y eje ── */
-  malla(new T.CylinderGeometry(R_CASCO - 0.12, R_CASCO - 0.05, 0.6, 64), M.cubierta, [0, 0.3, 0]);
-  /* Las cubetas van hundidas en el piso, como en cualquier banda de cultivo real: solo asoma
-     el borde. El piso se arma en tres coronas y las ranuras de los anillos quedan abiertas. */
-  /* Dos coronas de piso: el pasillo central hasta el anillo, y la faja que queda al casco.
-     La ranura por donde corre el anillo queda abierta entre ambas.                         */
+  malla(new T.CylinderGeometry(R_CASCO - 0.05, R_CASCO - 0.05, ESPESOR_PISO_VISUAL, 64),
+    M.cubierta, [0, PISO - ESPESOR_PISO_VISUAL / 2, 0]).name="piso-modulo";
+  /* Un piso continuo; las cubetas quedan elevadas. Las coronas señalan su huella sin
+     añadir superficies coplanares que parpadeen sobre la tapa del piso. */
   for (const [ra, rb] of [[0.10, R0 - 0.02], [R1 + 0.02, R_CASCO - 0.08]]){
-    const c = malla(new T.RingGeometry(ra, rb, 72), M.cubierta, [0, CUBIERTA, 0]);
-    c.rotation.x = -Math.PI / 2;
-    malla(new T.TorusGeometry(rb, 0.012, 6, 72), M.acero, [0, CUBIERTA, 0]).rotation.x = Math.PI / 2;
-    malla(new T.TorusGeometry(ra, 0.012, 6, 72), M.acero, [0, CUBIERTA, 0]).rotation.x = Math.PI / 2;
+    malla(new T.TorusGeometry(rb, 0.012, 6, 72), M.acero, [0, PISO, 0]).rotation.x = Math.PI / 2;
+    malla(new T.TorusGeometry(ra, 0.012, 6, 72), M.acero, [0, PISO, 0]).rotation.x = Math.PI / 2;
   }
   clicable(malla(new T.CylinderGeometry(0.09, 0.13, 1.5, 18), M.acero, [0, 0.75, 0]), "carrusel");
 
-  const humano=new T.Group();humano.position.set(1.08,CUBIERTA,-0.40);gHabitat.add(humano);
+  malla(new T.CylinderGeometry(0.62,0.62,CUBIERTA-PISO,32),M.acero,[0,PISO+(CUBIERTA-PISO)/2,0]); // soporte fijo del núcleo, fuera del pasillo
+  const humano=new T.Group();humano.name="referencia-humana";humano.position.set(1.08,PISO,-0.40);humano.scale.y=GEOM.casco.altura_figura/1.75;gHabitat.add(humano);
   malla(new T.SphereGeometry(0.09,12,8),M.acero,[0,1.66,0],humano);
   malla(new T.BoxGeometry(0.28,0.52,0.17),M.acero,[0,1.25,0],humano);
   for(const x of [-0.08,0.08]) malla(new T.CylinderGeometry(0.045,0.055,0.94,8),M.acero,[x,0.49,0],humano);
-  marcarSubarbol(humano,"carrusel"); // referencia 1.75 m; B19 visible con techo a 2.20 m.
+  marcarSubarbol(humano,"carrusel"); // referencia visual; altura calculada no valida la entrada.
 
   /* Equipos esquemáticos separados. B17: volumen útil y mantenimiento pendientes. */
   const dig = new T.Group(); dig.position.set(-0.22, CUBIERTA, 0); gHabitat.add(dig);
@@ -1897,8 +1897,8 @@ function construirHabitat(){
   }
   marcarSubarbol(solar, "panel");
 
-  /* ── anillos giratorios: cada bandeja es un sector, hundido en el piso ── */
-  const Y_MARCO = CUBIERTA - 0.05;                 // el reborde asoma 2 cm sobre el piso
+  /* ── anillo giratorio: cada bandeja es un sector elevado sobre el piso ── */
+  const Y_MARCO = CUBIERTA - GEOM.cartucho.altura_caja;                 // base nominal del cartucho; piso y cama separados
   const Y_SUELO = CUBIERTA - 0.03;                 // superficie de la tierra, bajo el reborde
   /* UN anillo de cartuchos idénticos. Cada uno lleva SU planta y SU musgo desde el principio
      y se enseña lo que toca según la posición en la que esté: al avanzar de S8 a C1 el mismo
@@ -1915,7 +1915,7 @@ function construirHabitat(){
       grupo.add(g);
       malla(GEO.marco, M.acero, [0, Y_MARCO, 0], g);
       const sustrato = malla(GEO.suelo, M.sustrato.clone(),
-        [0, Y_SUELO - (HONDO - 0.05), 0], g);
+        [0, Y_SUELO - HONDO, 0], g);
       clicable(sustrato, "cultivo");
 
       let plantas = null, musgo = null, matVeg = null;
@@ -2384,7 +2384,7 @@ function abrirTecnica(){
   $("f-sub").textContent="Inspección · cálculos y escenario";
   $("f-tit").textContent="Seguir un lote y sus recursos";
   $("f-txt").innerHTML=`<p>${N_POS} cartuchos · Ø ${GEOM.casco.diametro.toFixed(2)} m · cultivo ${GEOM.areas.cultivo.toFixed(2)} m².</p>
-  <p><b>Acceso sin resolver:</b> 1.58 m libres sobre el piso frente a figura de 1.75 m. Equipos, tuberías y cultivos son esquemáticos; B15–B19 pendientes.</p>
+  <p><b>Acceso sin resolver:</b> ${(GEOM.casco.altura-PISO).toFixed(2)} m sobre el piso; ${(GEOM.casco.altura-CUBIERTA).toFixed(2)} m sobre la cama. Figura de ${GEOM.casco.altura_figura.toFixed(2)} m. Entrada a través del anillo pendiente. Equipos, tuberías y cultivos son esquemáticos; B15–B19 pendientes.</p>
   <div class="acciones"><button class="btn" id="cam-planta">Planta</button><button class="btn" id="cam-lateral">Lateral</button><button class="btn" id="cam-orbita">Órbita</button></div>
   <label><input type="checkbox" id="casco-visible" ${gHabitat.getObjectByName('casco').visible?'checked':''}> Mostrar casco en corte</label>
   <label><input type="checkbox" id="menos-movimiento" ${S.reducido?'checked':''}> Reducir movimiento</label>
@@ -2778,8 +2778,10 @@ function bucle(ahora){
   ok(Math.round(max) === esperado && min === 0,
      "el descanso debe ir de 0 a " + esperado + " soles; se obtuvo " + min + "–" + Math.round(max));
   ok(N_REG + N_CUL === N_POS, "regeneración + cultivo deben sumar el anillo");
-  /* el área de la escena tiene que dar la del generador: si alguien toca un radio, salta */
-  const areaEscena = N_POS * 0.5 * (TAU / N_POS * HOLGURA) * (R1 * R1 - R0 * R0);
+  /* Área interior del lecho; el reborde no cuenta como sustrato ni cultivo. */
+  const reb = GEOM.cartucho.reborde;
+  const areaEscena = N_POS * 0.5 * (TAU / N_POS * HOLGURA - 2 * reb / R_MED) *
+                    ((R1 - reb) ** 2 - (R0 + reb) ** 2);
   ok(Math.abs(areaEscena - GEOM.areas.total) < 1e-3,
      "el área del anillo en escena (" + areaEscena.toFixed(4) + ") no cuadra con la generada (" +
      GEOM.areas.total + ")");

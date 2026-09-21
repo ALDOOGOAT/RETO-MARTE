@@ -271,3 +271,13 @@ El portafolio BMed gestiona 8 "gaps" de conocimiento/tecnología.
 - Definir a qué **parte de la misión** (viaje / estancia / retorno) apuntará la solución.
 - Preparar un banco de **datos duros** sobre Marte y sobre el problema terrestre elegido.
 - Herramientas listas: Figma/Canva/Miro/FigJam para mapas y Canvas; herramienta de video.
+
+## Actualización Madrid S3 · 20 sep 2026
+
+La ingeniería vigente distingue piso de cama: 2.20 m sobre el piso nominal; entrada a través
+del anillo pendiente. El reborde reduce el cultivo útil a 3.086 m². Mecánica, volúmenes candidatos
+y protocolos sin resultados físicos están en [P4/S3](docs/madrid/P4-MECANICA-ENSAYOS.md).
+NASA V2 8013/8014 exige analizar la ruta/tarea; no se adopta una cota universal de habitabilidad.
+Se leyó OCHMO-HB-004 Rev.A en las secciones registradas en ese documento. Estos estudios no
+certifican el módulo ni cambian las bases originales. S4 tratará costes; S5 la mejora visual
+profunda autorizada y la integración de defensa, según [continuidad](docs/madrid/PLAN-CONTINUIDAD-ASTRA.md).

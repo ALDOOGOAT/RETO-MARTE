@@ -1,3 +1,10 @@
+> **Revisión S3:** piso y cama separados; superficie útil descontando reborde 35 mm.
+> Valores vigentes: cartucho 0.25715 m² útiles (0.33311 de huella), cultivo 3.086 m²,
+> total de sustrato 5.143 m²; masa nominal 84.9 kg/cartucho sin tara. Piso 0, cama 0.62,
+> techo 2.20 m. Las tablas y comparación originales de P2 de abajo conservan su corte histórico;
+> resultados actuales en `config/milpa360.geometria.json` y [P4/S3](P4-MECANICA-ENSAYOS.md).
+> Entrada, equipos, resistencia y ergonomía siguen pendientes; ver B19 actualizado.
+
 # P2 · Geometría, interferencias y modelo paramétrico — MILPA-360
 
 **Rama:** `preparacion-madrid-p1` · **Fecha:** 19 sep 2026

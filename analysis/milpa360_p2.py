@@ -95,18 +95,23 @@ def geometria():
     sector   = paso_ang * hol            # arco útil del cartucho
     gap      = paso_ang - sector         # hueco angular entre cartuchos vecinos
 
-    a_cart = 0.5 * sector * (r1**2 - r0**2)
+    reborde = v('arquitectura_b.reborde_cartucho')
+    r0_suelo, r1_suelo = r0+reborde, r1-reborde
+    sector_suelo = sector - 2*reborde/((r0+r1)/2)
+    assert 0<=reborde and r0_suelo<r1_suelo and sector_suelo>0
+    area_huella = 0.5 * sector * (r1**2-r0**2)
+    a_cart = 0.5 * sector_suelo * (r1_suelo**2-r0_suelo**2)
     vol    = a_cart * hondo
     cuerda = 2 * r1 * math.sin(sector / 2)     # ancho máximo del cartucho, en su borde exterior
 
     return dict(
         r_casco=r_casco, h_casco=h_casco, r0=r0, r1=r1, r_eq=r_eq,
         pared=pared, alcance=alcance, pasillo=pasillo, hol=hol, hondo=hondo,
-        cubierta=cubierta, caja=caja,
+        cubierta=cubierta, caja=caja, piso=v("geometria_actual.altura_piso"),
         n=n, n_regeneracion=nrg, n_cultivo=ncu,
         repuestos=v("arquitectura_b.cartuchos_repuesto"),
         paso_ang=paso_ang, sector=sector, gap=gap,
-        area_cartucho=a_cart, area_total=a_cart * n,
+        area_cartucho=a_cart, area_huella=area_huella, reborde=reborde, r0_suelo=r0_suelo, r1_suelo=r1_suelo, area_total=a_cart * n,
         area_regeneracion=a_cart * nrg, area_cultivo=a_cart * ncu,
         fondo_envolvente=r1 - r0 * math.cos(sector / 2),
         volumen_cartucho=vol, cuerda=cuerda, ancho_radial=r1 - r0,
@@ -369,7 +374,7 @@ def plano_p02(G, m_nom):
         est = ' style="fill:#2f7d8f"' if cl == "tb" else ""
         s.append(f'<text x="{cx}" y="{suelo - 0.95 * esc + k * 17:.0f}" class="{cl}"{est} text-anchor="middle">{t}</text>')
 
-    s.append(figura_humana(cx - (G["r_eq"] + G["pasillo"] / 2) * esc, suelo, esc))
+    s.append(figura_humana(cx - (G["r_eq"] + G["pasillo"] / 2) * esc, suelo - G["piso"] * esc, esc, alto=v("acceso.altura_figura")))
 
     # cotas
     s.append(cota_h(cx - rc, cx + rc, suelo + 96, f"Ø {2 * G['r_casco']:.2f} m · casco presurizado"))
@@ -397,7 +402,7 @@ def plano_p02(G, m_nom):
              f'stroke="#b5502a" stroke-width="2.2" fill="none" stroke-dasharray="9 5"/>')
     s.append(f'<path d="M{x_fin:.0f} {suelo - 26:.0f} l-7 -10 l14 0 Z" fill="#b5502a"/>')
     s.append(f'<text x="{x_fin - 14:.0f}" y="{yr - 12:.0f}" class="cota" text-anchor="end">'
-             f'izado en S8 → pasillo → esclusa</text>')
+             f'izado S8 → pasillo; salida SIN RESOLVER</text>')
     s.append(barra_escala(96, suelo + 140, esc))
 
     # llamadas
@@ -443,7 +448,7 @@ def inyectar_geom(geo):
     compacto = {
         "casco": geo["casco"], "anillo": geo["anillo"], "cartucho": {
             k: geo["cartucho"][k] for k in ("area", "profundidad_sustrato",
-                                            "cuerda_exterior", "ancho_radial")},
+                                            "cuerda_exterior", "ancho_radial", "altura_caja", "reborde")},
         "areas": geo["areas"],
         "pasillo": {"ancho": geo["pasillo"]["ancho"],
                     "r_equipos_max": geo["pasillo"]["r_equipos_max"]},
@@ -518,8 +523,8 @@ def main():
     titulo("5. Cambio de cartucho en S8 y acceso humano")
     diag = math.hypot(G["cuerda"], G["fondo_envolvente"])
     linea("Huella del cartucho", f"{G['cuerda']:.3f} × {G['ancho_radial']:.2f}", "m", "cuerda exterior × ancho radial")
-    linea("Pasa de frente por el pasillo", f"{G['cuerda']:.3f} < {G['pasillo']:.2f}", "m",
-          f"margen {(G['pasillo'] - G['cuerda']) * 1000:.0f} mm ✓")
+    linea("Ancho nominal frente al pasillo", f"{G['cuerda']:.3f} < {G['pasillo']:.2f}", "m",
+          f"margen {(G['pasillo'] - G['cuerda']) * 1000:.0f} mm; ruta SIN verificar")
     linea("Diagonal de envolvente rectangular", f"{diag:.3f} vs {G['pasillo']:.2f}", "m",
           f"margen {(G['pasillo'] - diag) * 1000:.0f} mm" + "; NO prueba giro en pasillo curvo")
     linea("Alcance necesario desde el pasillo", f"{G['ancho_radial']:.2f}", "m",
@@ -552,13 +557,13 @@ def main():
         "_aviso": "ARCHIVO GENERADO. No editar a mano: se sobrescribe en cada ejecución.",
         "arquitectura": "B",
         "casco": {"radio": round(G["r_casco"], 4), "diametro": round(2 * G["r_casco"], 4),
-                  "altura": G["h_casco"], "cubierta": G["cubierta"]},
+                  "altura": G["h_casco"], "cubierta": G["cubierta"], "piso": G["piso"], "altura_figura": v("acceso.altura_figura")},
         "anillo": {"r0": round(G["r0"], 4), "r1": round(G["r1"], 4),
                    "n": G["n"], "holgura_angular": G["hol"],
                    "paso_grados": round(G["paso_ang"] * 180 / math.pi, 4),
                    "sector_grados": round(G["sector"] * 180 / math.pi, 4),
                    "soles_por_paso": G["soles_paso"]},
-        "cartucho": {"area": round(G["area_cartucho"], 5), "profundidad_sustrato": G["hondo"],
+        "cartucho": {"area": round(G["area_cartucho"], 5), "area_huella": round(G["area_huella"], 5), "reborde": G["reborde"], "profundidad_sustrato": G["hondo"],
                      "altura_caja": G["caja"], "cuerda_exterior": round(G["cuerda"], 4),
                      "ancho_radial": round(G["ancho_radial"], 4),
                      "masa_kg": {e: round(m[e], 1) for e in ESCENARIOS},

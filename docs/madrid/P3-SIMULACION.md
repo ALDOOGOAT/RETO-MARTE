@@ -1,6 +1,6 @@
 # P3 · Modelo y demostrador digital
 
-**Revisión:** S1/S2, 20 sep 2026. Modelo ilustrativo; no gemelo digital validado.
+**Revisión:** S1/S2 con correcciones S3, 20 sep 2026. Modelo ilustrativo; no gemelo digital validado.
 **Base:** P0 `7ea6b3f`, P1 `508f30a`, P2 `e8ffad4`, correcciones S0 `25f39e4`.
 Los datos salen de `config/milpa360.parameters.json`; `analysis/milpa360_p3.py`
 reutiliza los balances P1 y el generador P2 para exportar `milpa360-datos.js`.
@@ -37,7 +37,7 @@ Almacén de gas (kWh **químicos**, no volumen ni electricidad):
 
 $$G_{t+1}=G_t+G_{entrada}-G_{exportado}-G_{retenido\ fuera}.$$
 
-La entrada constante se toma del escenario nominal P1 (~0.240 kWh/d). **La frontera es el
+La entrada constante se toma del escenario nominal P1 (~0.199 kWh químicos/d tras D9; antes ~0.240). **La frontera es el
 almacén:** esa entrada no demuestra producción del digestor bajo fallos, ni se calcula de nuevo
 con las cosechas simuladas. El exceso se cuenta como necesidad de retención externa sin
 capacidad física resuelta. El gasómetro dibujado no está dimensionado por esa energía.
@@ -61,7 +61,7 @@ organismo: faltan CO₂, respiración, agua incorporada y biomasa no comestible.
 | Menos energía | Polvo exterior → disponibilidad eléctrica para luz (25 % ilustrativo, 21 soles) → daño | Termina la reducción; el daño previo permanece hasta cosecha/nueva siembra | Sin térmica ni predicción meteorológica |
 | Bomba detenida | Entrega de agua cero, aun con depósito lleno | Reparar restaura entrega; conserva el daño | Sin curva de retención del sustrato |
 | Atasco | El reloj y los cultivos continúan; el anillo no avanza | Reparación explícita; sin recuperar pasos de golpe | Torque, bloqueo y dosis real pendientes |
-| Lote rechazado | Resultado no apto en S8 | Retener giro; sustitución explícita de 0.5 sol con un repuesto y lote antiguo en cuarentena | Duración y maniobra ilustrativas; B19 y masa de 110 kg abiertos |
+| Lote rechazado | Resultado no apto en S8 | Retener giro; sustitución explícita de 0.5 sol con un repuesto y lote antiguo en cuarentena | Duración y maniobra ilustrativas; B19 y tara/resistencia abiertos |
 
 Sin autorización, S8 queda retenida. El constructor inicia seguro (`autorizacionesIlustrativas=false`).
 El recorrido didáctico activa resultados **simulados** para enseñar la secuencia; `?autorizacion=0`
@@ -104,7 +104,7 @@ recursos y biomasa inicial iguales y sensibilidad a duración e intensidad del f
 La interfaz conserva el motor Three.js 0.160.0 y añade recorrido guiado, vistas ortográficas,
 selección de lotes/fichas mediante controles nativos, inventarios, fallos, reinicio y menos
 movimiento. El polvo se representa fuera del casco; las pérdidas siguen el modelo causal.
-La figura humana de 1.75 m hace visible B19. El casco en corte es una herramienta visual.
+S3 separa el piso de la cama y corrige extrusiones/área útil; B19 sigue abierto en la ruta de entrada. El casco en corte es una herramienta visual.
 
 Three.js, fuentes tipográficas y licencias están en `prototipo-3d/vendor/`. La demo abre con
 `file://` sin servidor ni npm; instrucciones en [LEEME-P3.md](../../prototipo-3d/LEEME-P3.md).
@@ -123,13 +123,27 @@ vistas, fichas, recorrido y comparación: cero errores y cero solicitudes HTTP.
 Las seis capturas reales del navegador están en `capturas/` y se revisaron visualmente.
 Son renders digitales, no fotografías de maqueta ni evidencia de desempeño biológico.
 
-[PRUEBA-P3-NAVEGADOR.json](PRUEBA-P3-NAVEGADOR.json) registra Chrome 148, 1920×1080,
-CPU i7-13620H y SwiftShader: **1.26 FPS en 30 fotogramas con render por software**.
+El corte S2 registró Chrome 148, 1920×1080, CPU i7-13620H y SwiftShader: **1.26 FPS
+en 30 fotogramas con render por software**. El informe
+[PRUEBA-P3-NAVEGADOR.json](PRUEBA-P3-NAVEGADOR.json) conserva la ejecución más reciente.
 La medición inicial de 90 fotogramas excedió el límite del verificador; se redujo a 30
 sin cambiar el render. El objetivo propuesto de 30 FPS debe medirse con la GPU del evento.
 Este resultado no confirma ni refuta su rendimiento. **S2 conserva esa aceptación pendiente.**
 
 S1 y la integración digital S2 están verificadas con los límites descritos. La cantidad
 conservada de sustrato no implica densidad medida ni cierre de balances biológicos.
-B1–B19 siguen abiertos según `ESTADO.md`. S3/P4 debe priorizar B19, equipos, mecánica
+B1–B19 siguen abiertos según `ESTADO.md`. S3/P4 documenta B19, equipos, mecánica
 y protocolos; no se fabricaron mediciones, cotizaciones ni resultados sanitarios.
+
+## Corrección S3 de dimensiones
+
+El modelo conserva sus reglas ilustrativas y ahora recibe 3.086 m² útiles de cultivo,
+tras descontar el reborde de 35 mm ya dibujado. La prueba de Three integra los triángulos
+superiores de la cama y contrasta el área usada por los cálculos. Piso 0 y cama 0.62 m
+son cotas distintas. La prueba de navegador comprueba extrusión, profundidad y figura.
+Los resultados numéricos S1/S2 anteriores son históricos; no son mediciones de cosecha.
+
+S3 se volvió a probar desde ZIP extraído con red deshabilitada: cero errores y peticiones
+HTTP; seis capturas revisadas. Se eliminó la superposición del terreno y superficies
+coplanares del piso, conservando su cota. Resultado actual: 1.27 FPS por software
+en 30 fotogramas; se mantiene pendiente la aceptación en GPU del evento.

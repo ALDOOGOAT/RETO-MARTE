@@ -110,7 +110,9 @@ def main():
     assert n_rg + n_cu == n_c
     r1_B = r_casco - pared
     r0_B = r1_B - alcance
-    A_B = anillo(r0_B, r1_B, n_c, n_c, hol)
+    reborde = v('arquitectura_b.reborde_cartucho')
+    hol_suelo = hol - (2*reborde/((r0_B+r1_B)/2))/(2*math.pi/n_c)
+    A_B = anillo(r0_B+reborde, r1_B-reborde, n_c, n_c, hol_suelo)
     opciones["B · cartuchos Ø actual"] = dict(D=2 * r_casco, A_reg=A_B * n_rg / n_c, A_cul=A_B * n_cu / n_c, formas=1, giran=1, acceso=True)
     print(f"  B (Ø{2 * r_casco:.2f} m): anillo {r0_B:.2f}–{r1_B:.2f} m · cartucho {A_B / n_c:.3f} m² · "
           f"espacio central Ø{2 * r0_B:.2f} m · equipos centrales hasta Ø{2 * (r0_B - ancho):.2f} m con pasillo de {ancho} m")
@@ -120,10 +122,11 @@ def main():
     # C: bandejas fijas (misma huella que B) y aviario móvil sobre riel
     opciones["C · bandejas fijas + aviario móvil"] = dict(D=2 * r_casco, A_reg=A_B * n_rg / n_c, A_cul=A_B * n_cu / n_c, formas=1, giran=0, acceso=True)
 
-    print(f"\n  {'Opción':<38}{'Ø casco m':>10}{'huella m²':>10}{'regen m²':>9}{'cultivo m²':>11}{'formas':>7}{'anillos que giran':>18}{'acceso':>8}")
+    print(f"\n  {'Opción':<38}{'Ø casco m':>10}{'huella m²':>10}{'regen m²':>9}{'cultivo m²':>11}{'formas':>7}{'anillos que giran':>18}{'pasillo':>8}")
     for nombre, o in opciones.items():
         print(f"  {nombre:<38}{o['D']:>10.2f}{math.pi * o['D'] ** 2 / 4:>10.1f}{o['A_reg']:>9.2f}{o['A_cul']:>11.2f}"
               f"{o['formas']:>7}{o['giran']:>18}{'sí' if o['acceso'] else 'NO':>8}")
+    print("  Pasillo: reserva nominal en planta; entrada, tarea y evacuación pendientes de verificación.")
 
     print("\n  Masa de sustrato a 22 cm (kg) por escenario de densidad:")
     fila("", ESCENARIOS, "{:>14}")

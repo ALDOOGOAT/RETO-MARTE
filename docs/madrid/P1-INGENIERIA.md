@@ -1,3 +1,8 @@
+> **Actualización S3:** se conserva aquí el estudio P1 y sus tablas del corte anterior.
+> `milpa360_p1.py` ya descuenta el reborde del cartucho B: 3.086 m² cultivables.
+> Usar los resultados regenerados en `milpa360-datos.js` y [P4/S3](P4-MECANICA-ENSAYOS.md)
+> para cifras activas; 4.00 m² y las tablas alimentarias/energéticas asociadas quedan históricas.
+
 # P1 · Ingeniería: parámetros, balances y arquitectura — MILPA-360
 
 **Rama:** `preparacion-madrid-p1` · **Fecha:** 15 sep 2026

@@ -9,7 +9,7 @@ Conserve a su lado `milpa360-modelo.js`, `milpa360-datos.js` y toda la carpeta `
 - **Inspección técnica:** planta/lateral ortográficas, casco en corte, reducción de movimiento,
   historial del lote, inventarios y fallos de bomba, atasco o rechazo en S8.
 - **Aislar / sustituir:** acción explícita con repuesto finito y tiempo ilustrativo. No prueba
-  que se pueda maniobrar físicamente con 110 kg ni que el acceso cumpla requisitos.
+  que se pueda maniobrar físicamente con la masa real del cartucho ni que el acceso cumpla requisitos.
 - **Comparar siembras:** banco virtual de parcelas fijas; mismo recurso y reglas para ambas.
 
 Los resultados químicos/sanitarios del recorrido son **simulados**. Para observar la retención
@@ -18,7 +18,8 @@ El modelo inicia con cultivos precargados; no demuestra arranque desde semillas.
 
 ## Límites visibles
 
-B19: piso 0.62 m y techo 2.20 m dejan 1.58 m libres. La figura mide 1.75 m. El acceso,
+S3/D8: piso 0 y techo 2.20 m; cama a 0.62 m con 1.58 m sobre su borde. Figura 1.75 m.
+B19: entrada/evacuación a través del anillo sin resolver. Área útil corregida: 3.086 m². El acceso,
 los equipos fijos, la estructura, los reactores y el aprovechamiento del gas están por diseñar.
 La pérdida de alimento no es una predicción agronómica: las leyes de daño son ilustrativas.
 La reserva de gas se contabiliza como energía química; su entrada nominal P1 no simula el

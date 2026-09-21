@@ -1,76 +1,78 @@
 # ESTADO · preparación para Madrid
 
-**Sesión:** S0 y S1 ejecutadas; S2 digital verificada, aceptación en equipo del evento pendiente.
-**Fecha:** 20 sep 2026 (prueba final 21 sep UTC). **Rama:** `preparacion-madrid-p1`.
-Base `0177a7a`; correcciones S0 `25f39e4`; modelo S1 `5959333`; S2 en el commit que acompaña
-este checkpoint. Los commits de esta ejecución son locales, sin push.
+**Sesión:** S3/P4, mecánica y protocolos documentados; validación física pendiente.
+**Fecha:** 20 sep 2026 (pruebas del 21 sep UTC). **Rama:** `preparacion-madrid-p1`.
+Base S2 `e23bb12`; el commit que incluye este checkpoint identifica S3. Antecedentes:
+S0 `25f39e4`, S1 `5959333`, P2 `e8ffad4`. El usuario autorizó push de checkpoints revisados
+el 20 sep; se conserva esa autorización para esta rama, sin force-push.
 
 ## Alcance y archivos
 
-Se aplicó el arranque del plan de continuidad: revisar P0–P2 y ejecutar P3 en S1/S2.
-P0, P1 y P2 se reprodujeron; regenerar la base P2 inicialmente no produjo diferencias.
-P0 conserva el diagnóstico de `c3e0ad3`, no certifica la geometría actual. P1 sigue siendo
-cálculo con hipótesis. No se ejecutaron P4/P5 ni se generaron mediciones físicas.
+Se ejecutó S3 del plan de continuidad: cargas, movimiento, bloqueo, volumen candidato,
+acceso y ensayos mínimos. `P4-MECANICA-ENSAYOS.md` concentra resultados y límites;
+`analysis/milpa360_p4.py` reutiliza P1/P2 y genera `config/milpa360.mecanica.json`.
+Los nuevos supuestos tienen unidad, evidencia y fuente en `milpa360.parameters.json`.
+Las cuatro plantillas CSV de `ensayos/` contienen sólo encabezados: no existen datos físicos.
 
-El modelo independiente está en `prototipo-3d/milpa360-modelo.js`; `analysis/milpa360_p3.py`
-reutiliza P1/P2 y genera `milpa360-datos.js`. La configuración identifica cada supuesto.
-`P3-SIMULACION.md` explica ecuaciones, fronteras y límites. El HTML conserva Three.js y
-la interacción existente, con inspección técnica, recorrido guiado, fallos y comparación.
-Three.js 0.160.0, fuentes y licencias quedan locales. `LEEME-P3.md` documenta el arranque.
-El ZIP `entregas/madrid-p3.zip` y `MANIFIESTO-P3.json` contienen el demostrador P3;
-**no constituyen la entrega final P5**. Las seis capturas nuevas están en `capturas/`.
+P1/P2/P3, planos P02/P03 y datos del simulador se regeneraron. P1/P2 conservan tablas
+históricas identificadas; su cabecera remite a la revisión S3. Se actualizaron contexto,
+matriz, registro de afirmaciones y continuidad. El ZIP `entregas/madrid-p3.zip` y su
+manifiesto contienen la demo y fuentes revisadas; **no son la entrega final P5**.
+Los cinco archivos preexistentes sin seguimiento —AGENTS y cuatro presupuestos— siguen
+intactos y fuera del commit. No se hicieron compras ni contactos externos.
 
-## Hallazgos y decisiones vigentes
+## Decisiones y resultados vigentes
 
-- Se separaron salmuera, digestor y riego acondicionado externo; las rutas sanitarias no
-  autorizadas permanecen cerradas. Se retiraron llama en cabina y afirmaciones de
-  autosuficiencia, inocuidad por musgo y alimentación completa.
-- Holgura mínima entre sectores corregida de 41 a **29.8 mm**: distancia interior euclídea.
-  La envolvente del cartucho tiene fondo **0.617 m** y diagonal aproximada **0.890 m**.
-  Su margen nominal de unos 10 mm no demuestra giro dentro de un pasillo curvo.
-- **B19 crítico:** techo 2.20 m menos piso 0.62 m deja **1.58 m libres**. La figura de
-  referencia de 1.75 m no cabe erguida. Se corrigió el techo visual antes sobredimensionado;
-  no se eligió arbitrariamente una nueva cota. P2 queda abierto en acceso y mantenimiento.
-- Se corrigió el signo del giro: cartuchos, goteros y estaciones coinciden ahora también
-  en la escena ejecutada. Se conserva D1, anillo único, y D2, dimensionado de 539 días.
-  Su ratificación humana B10 continúa pendiente; 355 días es otro escenario, no un requisito.
-- Reloj de paso fijo, daño persistente, horizonte sin reinicio implícito y cuarentena con
-  repuestos finitos. Autorizaciones didácticas explícitamente simuladas; sin autorización,
-  S8 retiene el avance. Crecimiento, daño y maniobras no están calibrados físicamente.
-- Agua, almacén de gas y sustrato tienen inventarios comprobables. La entrada nominal de
-  gas proviene de P1; no simula digestión durante fallos. Faltan balances biológicos,
-  térmica y auxiliares. Los cultivos precargados no demuestran arranque desde semillas.
+- **D8:** S2 confundía piso y cama en el HTML; P02 situaba al operario abajo. Se separan
+  piso 0, borde de cubeta 0.62 y techo 2.20 m. Hay 2.20 m sobre el piso, 1.58 sobre la
+  cama. Se conserva la figura de referencia de 1.75 m; no acredita ergonomía poblacional.
+  **B19 sigue abierto:** el anillo interrumpe la entrada radial y falta evacuación completa.
+- **D9:** el reborde supuesto de 35 mm ya dibujado debe descontarse del cultivo.
+  Área exterior por cartucho 0.33311 m²; lecho útil 0.25715 m². Doce cartuchos aportan
+  **3.086 m² útiles**, sustituyendo los 4.00 anteriores. Sustrato nominal **84.9 kg/cartucho**,
+  con tara adicional supuesta de 5 kg. Se corrigió también la traslación doble de extrusiones.
+- Masa móvil nominal **1.98 t**; par preliminar terrestre **380 N·m**, giro de 18° en 60 s,
+  rozamiento supuesto y margen 2. Sensibilidad al coeficiente: 88–744 N·m. No se ha
+  seleccionado motor, corona, pasador ni estructura; masa e inercia no disminuyen con g.
+- Digestor candidato: **63.9 L útiles / 85.1 L totales** nominales; envolvente combinada
+  178.3 / 237.7 L. HRT y concentración ST son hipótesis, no validación del consorcio.
+  Salmuera, dosel, servicios y volúmenes reales de equipos siguen pendientes B15–B18.
+- P1 nominal corregido: **0.199 kWh químicos/d** de gas, **10.48 kWh eléctricos/d** de
+  iluminación y **2.46 %** de cobertura calórica para seis tripulantes. Faltan auxiliares
+  y arranque; no son autosuficiencia ni alimentación completa.
+- Se conserva D1, anillo único, y D2, dimensionado de 539 días; ratificación humana B10
+  pendiente. El modelo continúa ilustrativo, con daño persistente, permisos simulados,
+  inventarios y repuestos finitos; ningún resultado constituye ensayo biológico.
 
-Se releyeron resultados de Harris et al. (2021), doi:10.1038/s41598-021-91882-0;
-la inhibición observada apoya separar salmuera sin validar nuestro consorcio. PMC10113653
-no permitió una nueva lectura por comprobación del sitio: se identifica como referencia
-previamente utilizada en P1. No se añadieron avales ni resultados experimentales.
+## Evidencia y comprobaciones
 
-## Verificación ejecutada
+Se leyeron NASA-STD-3001 Vol.2 §8.3 (V2 8013/8014), portada y secciones pertinentes de
+OCHMO-HB-004 Rev.A, y patrones de selección de Oriental Motor. Son referencias para
+rutas, antropometría y accionamiento, sin certificación ni rozamiento medido.
 
-`python3 analysis/verificar_geometria.py`, `node analysis/verificar_p3.cjs` y `npm test`
-pasaron. Cubren geometría mínima, determinismo, pausa, límites temporales, cuatro fallos,
-daño persistente, autorización, cuarentena, reservas y conservación numérica. El comparador
-usa parcelas fijas separadas del carrusel: mismos recursos/biomasa inicial y controles
-nominales propios; cambia la fase, sin resultado ganador prefijado.
+Pasaron `verificar_p4.py`, `verificar_geometria.py`, `verificar_modelo_geometrico.cjs`
+y `npm test --prefix prototipo-3d`. Comprueban casos analíticos, gravedad, perfil de giro,
+volúmenes, límites de la trayectoria, extrusiones reales y área triangulada de Three;
+P3 conserva determinismo, fallos, recuperación y balances numéricos. La primera prueba
+Chrome detectó un autotest que comparaba área bruta con útil; se corrigió la referencia.
+La repetición final pasó desde un ZIP extraído, con red deshabilitada: cero errores y cero
+solicitudes HTTP. Se corrigió la superposición terreno/piso detectada en capturas; las seis
+se revisaron visualmente. Chrome 148, 1080p, SwiftShader: **1.27 FPS** en 30 fotogramas.
+Es render por software; el objetivo de 30 FPS en la GPU del evento permanece pendiente.
 
-`analysis/verificar_p3_navegador.mjs` pasó en Chrome 148, a 1920×1080, abriendo una copia
-extraída del ZIP con red deshabilitada: controles, reinicio, posiciones reales de mallas,
-fichas, vistas y recorrido; **cero errores y cero solicitudes HTTP**. Las seis capturas se
-inspeccionaron visualmente. `PRUEBA-P3-NAVEGADOR.json` registra **1.26 FPS con SwiftShader**
-en 30 fotogramas: prueba de render por software, no del equipo del evento. El criterio
-propuesto de 30 FPS con la GPU real sigue pendiente. El ZIP verifica sus hashes SHA-256.
+## Requisitos, herramientas y siguiente acción
 
-## Requisitos, bloqueos y siguiente acción
+La matriz conserva 27 requisitos obligatorios: 22 parciales, 3 pendientes, 1 con evidencia
+documental y 1 por confirmar. B1–B19 mantienen sus datos faltantes; protocolos preparados
+no cierran ensayos ni requisitos físicos. Reglas, feedback, recursos y presupuesto real
+siguen pendientes del equipo. No se inventaron respuestas ni cotizaciones.
 
-La matriz conserva 27 requisitos obligatorios: 22 parciales, 3 pendientes, 1 cumplido con
-evidencia documental y 1 por confirmar. RU-P3-03 mejora a parcial; software funcionando
-no implica validación física. B1–B19 siguen abiertos según su dato faltante. Se pidieron
-reglas, feedback, presupuesto, recursos y ratificación D1/D2; no se inventaron respuestas.
-Plan maestro, memoria anterior, P04/P05 y deck están identificados como históricos.
-`AGENTS.md` y los cuatro presupuestos preexistentes permanecen intactos y sin seguimiento.
+Blender MCP conectado y consultado: Blender 5.2.0 LTS, addon 1.6/protocolo 5. Google Drive
+se ofreció para instalación; la conexión de la cuenta no está confirmada. El trabajo puede
+seguir localmente. LaTeX se evaluará al exportar S5, si resulta necesario.
 
-**Siguiente:** ejecutar S3/P4 con Astra high según el prompt actualizado de
-`PLAN-CONTINUIDAD-ASTRA.md`: resolver primero B19 y B15–B18 mediante alternativas de
-altura/entrada/mantenimiento, cargas, par y protocolos de ensayo. Después S4 costes y S5/S6
-integración y cierre. Conservar P3 y volver a probarlo si cambia la geometría. No hacer push.
+**Siguiente acción exacta:** leer continuidad §5 y ejecutar **S4/P4**: presupuestos separados
+del demostrador, piloto Chiapas y concepto marciano, con fórmulas, fuentes y pendientes.
+Terra medium para hoja/precios y Astra high para hipótesis, según disponibilidad. La mejora
+visual profunda solicitada queda pautada en **S5**, con comparación antes/después, geometría
+coherente, accesibilidad y prueba offline; la prueba de GPU del evento sigue pendiente.

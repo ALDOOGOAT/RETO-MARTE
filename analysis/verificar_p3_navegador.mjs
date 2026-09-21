@@ -33,6 +33,13 @@ try {
   await cdp('Page.navigate',{url:url+'?vista=habitat&play=0&sol=62'});
   await esperar('typeof refsHab!=="undefined" && refsHab && !document.getElementById("carga")');
   assert.equal(await evaluar('modelo.estado.sol'),62);
+  const cotas=await evaluar(`(()=>{gHabitat.updateMatrixWorld(true);const h=gHabitat.getObjectByName('referencia-humana'),b=new THREE.Box3().setFromObject(h);GEO.suelo.computeBoundingBox();GEO.marco.computeBoundingBox();return {piso:GEOM.casco.piso,pies:b.min.y,cabeza:b.max.y,techo:GEOM.casco.altura,figura:GEOM.casco.altura_figura,sueloMin:GEO.suelo.boundingBox.min.y,sueloMax:GEO.suelo.boundingBox.max.y,prof:GEOM.cartucho.profundidad_sustrato,marcoMax:GEO.marco.boundingBox.max.y,caja:GEOM.cartucho.altura_caja};})()`);
+  assert.ok(cotas.cabeza<cotas.techo,'Figura no cabe bajo techo');
+  assert.ok(Math.abs(cotas.sueloMin)<1e-6&&Math.abs(cotas.sueloMax-cotas.prof)<1e-6,'Sustrato sin profundidad nominal');
+  assert.ok(Math.abs(cotas.marcoMax-cotas.caja)<1e-6,'Caja sin altura nominal');
+  assert.ok(Math.abs(cotas.cabeza-cotas.piso-cotas.figura)<1e-6,'Escala humana inconsistente');
+  const piso=await evaluar(`(()=>{const b=new THREE.Box3().setFromObject(gHabitat.getObjectByName('piso-modulo'));return {base:b.min.y,cara:b.max.y,terreno:gHabitat.getObjectByName('terreno').position.y};})()`);
+  assert.ok(piso.terreno<=piso.base+1e-6&&Math.abs(piso.cara-cotas.piso)<1e-6,'Terreno invade piso transitable');
   console.log('Chrome: escena cargada sin red');
   const snap=await evaluar('JSON.stringify(modelo.estado)');
   await new Promise(r=>setTimeout(r,500));
@@ -86,7 +93,7 @@ try {
   }
   assert.deepEqual(errores,[],'Errores de consola');
   assert.deepEqual(peticiones.filter(u=>/^https?:/.test(u)),[],'La demo solicita Internet');
-  const informe={fecha:new Date().toISOString(),prueba:'Chrome headless, red deshabilitada, file://',browser:await cdp('Browser.getVersion'),cpu:os.cpus()[0].model,plataforma:os.platform(),...hardware,fps30Frames:fps,limite:'SwiftShader por software; NO prueba del equipo del evento',controles:'pausa, avance, reset, fallos, cuarentena, vistas, fichas y comparación comprobados',errores,solicitudesHTTP:0};
+  const informe={fecha:new Date().toISOString(),prueba:'Chrome headless, red deshabilitada, file://',browser:await cdp('Browser.getVersion'),cpu:os.cpus()[0].model,plataforma:os.platform(),...hardware,cotas,piso,fps30Frames:fps,limite:'SwiftShader por software; NO prueba del equipo del evento',controles:'pausa, avance, reset, fallos, cuarentena, vistas, fichas y comparación comprobados',errores,solicitudesHTTP:0};
   await writeFile(path.join(raiz,'docs/madrid/PRUEBA-P3-NAVEGADOR.json'),JSON.stringify(informe,null,2)+'\n');
   console.log(JSON.stringify(informe,null,2));
 } finally {if(socket)socket.close();chrome.kill('SIGTERM');}

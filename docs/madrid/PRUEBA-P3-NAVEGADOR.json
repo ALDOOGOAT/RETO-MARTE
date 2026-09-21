@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-09-21T03:45:37.928Z",
+  "fecha": "2026-09-21T04:31:39.375Z",
   "prueba": "Chrome headless, red deshabilitada, file://",
   "browser": {
     "protocolVersion": "1.3",
@@ -17,7 +17,24 @@
     1080
   ],
   "dpr": 1,
-  "fps30Frames": 1.2578299916982927,
+  "cotas": {
+    "piso": 0,
+    "pies": 0.020000001192092887,
+    "cabeza": 1.7500000035762786,
+    "techo": 2.2,
+    "figura": 1.75,
+    "sueloMin": -1.6901270258677457e-17,
+    "sueloMax": 0.2199999988079071,
+    "prof": 0.22,
+    "marcoMax": 0.2800000011920929,
+    "caja": 0.28
+  },
+  "piso": {
+    "base": -0.07999999910593034,
+    "cara": -8.940696724635266e-10,
+    "terreno": -0.08
+  },
+  "fps30Frames": 1.2651074919665475,
   "limite": "SwiftShader por software; NO prueba del equipo del evento",
   "controles": "pausa, avance, reset, fallos, cuarentena, vistas, fichas y comparación comprobados",
   "errores": [],

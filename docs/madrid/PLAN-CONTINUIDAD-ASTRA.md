@@ -1,6 +1,6 @@
 # Continuidad para Astra · MILPA-360 rumbo a Madrid
 
-**Corte técnico revisado:** 19 sep 2026, rama `preparacion-madrid-p1`, P2 en `e8ffad4`. **Este archivo es un relevo de trabajo, no una validación científica ni una orden para ejecutar tareas en segundo plano.** Al retomar, verificar otra vez HEAD, fecha, rama, estado de Git, herramientas, fuentes y reglas de la final.
+**Corte técnico revisado:** S3, 20 sep 2026, rama `preparacion-madrid-p1`, base S2 `e23bb12`. **Este archivo es un relevo de trabajo, no una validación científica ni una orden para ejecutar tareas en segundo plano.** Al retomar, verificar otra vez HEAD, fecha, rama, estado de Git, herramientas, fuentes y reglas de la final.
 
 **Especificación principal:** [`MISION-MADRID-MILPA360.md`](../../MISION-MADRID-MILPA360.md), especialmente §5 A–O y §6. **Checkpoint vigente:** [`ESTADO.md`](ESTADO.md). No copiar el prompt largo de P0 como instrucción nueva: P0 ya tiene commit. Este plan conserva la intención del prompt y la aplica al trabajo restante.
 
@@ -11,19 +11,24 @@
 | P0 · auditoría | `7ea6b3f`, reproducido en S0/S2 | Bloqueos documentales y externos siguen visibles |
 | P1 · ingeniería | `508f30a`, cálculos reutilizados por P3 | Tasas y balances parciales, sin mediciones; se retiró la inferencia de refrigeración sin envolvente |
 | P2 · geometría | `e8ffad4`, corregido por S0 `25f39e4` | **Aceptación mecánica/humana abierta:** B15–B19. Pasillo en planta no prueba mantenimiento |
-| P3 · simulación y relato | S1 `5959333`; S2 en el commit que acompaña este checkpoint | Modelo ilustrativo por lotes, UI técnica, comparación y demo local. Falta prueba de GPU/equipo del evento y calibración física |
-| P4 · validación y costes | Pendiente, siguiente sesión S3 | Resolver primero altura/entrada/mantenimiento B19; datos reales y precios faltantes |
-| P5 · defensa y entrega | Pendiente | El deck y material histórico aún no son la defensa vigente; usar capturas de S2 al integrarlos |
+| P3 · simulación y relato | S1 `5959333`; S2 `e23bb12`; correcciones geométricas S3 | Modelo ilustrativo por lotes, UI técnica, comparación y demo local. Falta prueba de GPU/equipo del evento y calibración física |
+| P4 · validación y costes | S3 documental ejecutada; siguiente S4 | Cálculos y protocolos en P4-MECANICA-ENSAYOS.md; sin mediciones físicas, entrada completa ni precios cerrados |
+| P5 · defensa y entrega | Pendiente | El deck y material histórico aún no son la defensa vigente; usar las capturas vigentes tras la corrección S3 al integrarlos |
 
-### Resultado de la revisión S0–S2
+### Resultado de la revisión S0–S3
 
 - Plan maestro, sistema y memoria anterior identificados como históricos; se conservó el proceso.
 - Fichas corregidas: alimento complementario, electricidad externa, reactor de salmuera separado,
   musgo/MFC sin autoridad sanitaria, circuitos y válvulas coherentes con esos límites.
 - Holgura mínima corregida de 41 a 29.8 mm. Envolvente de cartucho: margen nominal de unos 10 mm,
   **sin demostrar maniobra en pasillo curvo**. No hay aceptación de estructura ni ergonomía.
-- **B19 nuevo:** 2.20 m de techo menos 0.62 m de piso =1.58 m libres. La figura de 1.75 m
-  no cabe erguida. El casquete visual anterior añadía 0.96 m sin declarar; se corrigió a la cota nominal.
+- **B19 actualizado en S3:** S2 confundía piso y cama en el HTML, mientras P-02 situaba al
+  operario abajo. D8 separa piso 0 y cama 0.62: quedan 2.20 m sobre el piso y 1.58 sobre la
+  cama. Falta entrada/evacuación a través del anillo; no se declara resuelto por esa resta.
+- **D9:** se descuenta el reborde de 35 mm ya dibujado. Cultivo útil 3.086 m² y 84.9 kg de
+  sustrato/cartucho nominal; P1/P2/P3 regenerados. Extrusiones de Three corregidas y probadas.
+- S3 produce cargas, inercia, par, sensibilidad, volumen candidato del digestor y protocolos
+  con plantillas vacías. Los resultados siguen condicionados a hipótesis; ningún ensayo inventado.
 - Reloj con paso fijo, sin reinicio implícito al acabar misión. Daño persistente, cuatro fallos,
   autorización por lote y cuarentena con repuestos finitos. Biología/tiempos de maniobra ilustrativos.
 - Three.js fijado en 0.160.0, fuentes y licencias locales. Prueba funcional sin red y capturas
@@ -33,7 +38,7 @@
 
 ## 2. Regla de reentrada y decisiones
 
-- La próxima sesión empieza con `git status --short --branch`, `git log -4 --oneline`, lectura de `AGENTS.md`, `MISION-MADRID-MILPA360.md`, `ESTADO.md`, P1/P2, matriz y diff desde `e8ffad4`. Si cambió el repo, actualizar este corte antes de editar. No hacer reset/clean, push, publicación, carga a plataforma, compras ni contacto externo.
+- La próxima sesión empieza con `git status --short --branch`, `git log -4 --oneline`, lectura de `AGENTS.md`, `MISION-MADRID-MILPA360.md`, `ESTADO.md`, P1/P2, matriz y diff desde `e8ffad4`. Si cambió el repo, actualizar este corte antes de editar. No hacer reset/clean, publicación, carga a plataforma, compras ni contacto externo. El usuario autorizó push el 20 sep en esta continuación: permitido únicamente para checkpoints revisados en esta rama, sin force-push.
 - Reproducir `python3 analysis/p0_verificacion.py`, `python3 analysis/milpa360_p1.py` y `python3 analysis/milpa360_p2.py`; comprobar `git diff` después del generador. Repetir fuente original sólo donde una afirmación vigente sea crítica, esté en disputa o haya cambiado. No rehacer P0/P1 enteros por haber recibido el prompt original.
 - Abrir un **registro breve de hallazgos priorizados** dentro de `ESTADO.md` o el documento del paquete correspondiente: afirmación, archivo, fuente/cálculo, impacto, decisión y prueba. Resolver primero contradicciones que podrían hacer falsa la defensa; después añadir funciones.
 - Mantener como fronteras separadas **concepto marciano**, **demostrador terrestre**, **hábitat completo** y **módulo agrícola**. Etiquetar cada dato como requisito, literatura, cálculo, hipótesis, escenario ilustrativo, medición propia o pendiente. Nunca convertir una animación o una fórmula en ensayo.
@@ -71,14 +76,17 @@ Al finalizar cada sesión: actualizar `docs/madrid/ESTADO.md` con archivos/commi
 
 ## 5. Mensaje listo para la próxima sesión
 
-> Lee `MISION-MADRID-MILPA360.md`, este plan y `docs/madrid/ESTADO.md`. Revisa Git y el diff
-> de S0–S2. Ejecuta **S3/P4 con Astra high**, priorizando B19 (altura útil, entrada y mantenimiento),
-> B15–B18 (equipos, dosel, cargas, par y bloqueo) y protocolos de ensayo viables. No marques P2
-> validado por haber generado una malla. Conserva la demo P3 y el principio de rotación del
-> sustrato; compara cambios mínimos del casco/piso/disposición con supuestos y efectos visibles.
-> Si hay una contradicción físico-química decisiva, usa xhigh para esa decisión. No rehagas P0/P1
-> completos. Continúa tareas independientes si faltan mediciones o reglas. Actualiza parámetros,
-> cálculos y geometría sólo con una decisión trazable y vuelve a probar P3. Sin push ni publicación.
+> Lee `MISION-MADRID-MILPA360.md`, este plan, `ESTADO.md` y `P4-MECANICA-ENSAYOS.md`.
+> Verifica Git y el checkpoint S3. Ejecuta **S4/P4**, con Terra medium para hoja y precios y
+> Astra high para hipótesis: lista preliminar del demostrador, tres presupuestos separados,
+> fuentes de precios/IVA/envío y un caso concreto de Chiapas. Los presupuestos previos del
+> usuario son borradores intactos, no cotizaciones. No declares cerrado el diseño marciano:
+> B19 requiere una ruta completa, B15–B18 equipos/dosel/estructura y B7 pesajes.
+> Si hay datos humanos nuevos, intégralos en S3 y vuelve a probar P3. Mantén las cifras S3
+> (3.086 m² útiles) y distingue maqueta pequeña de banco a carga real. No repitas P0/P1.
+> Después aplica la dirección visual de §6 al integrar S5; no adelantes el acabado a decisiones
+> mecánicas aún no resueltas. No comprar ni publicar. Push sólo de checkpoints revisados.
+
 
 **Pendiente de S2:** abrir la demo en el hardware que se llevará a Madrid, registrar GPU/navegador,
 probar controles y medir el criterio propuesto de 30 FPS a 1080p. El resultado con renderizado por
@@ -87,3 +95,33 @@ software no confirma ni refuta ese rendimiento con la GPU real.
 **Datos humanos que no pueden inventarse:** reglas de Madrid, feedback, delegación, presupuesto,
 recursos de laboratorio, mediciones y ratificación de D1/D2. Se solicitaron durante esta ejecución;
 si aún faltan, conservar el bloqueo exacto y avanzar con lo independiente.
+
+## 6. Dirección visual autorizada por el usuario · 20 sep 2026
+
+El usuario pide una transformación visual **profunda y muy perceptible** del modelo. Queda
+como requisito de integración en **S5**, apoyado en las correcciones P2/P3 de S3 y la selección
+de recursos S4. No se limita a cambiar colores. Tampoco autoriza representar un mecanismo
+imposible ni convertir imágenes en evidencia científica.
+
+Salida prevista: escena Marte→superficie→módulo con escala legible, casco/entrada/colectores
+coherentes con la revisión adoptada, piezas funcionales detalladas, materiales y luz cuidados,
+corte/explosión útiles, seguimiento de lote y vistas que expliquen mantenimiento y fallos.
+Conservar rótulos sobre piezas, tubos seleccionables, tipografía y controles accesibles.
+Integrar el relato y las nuevas capturas en el deck de S5; conservar versiones anteriores.
+
+Criterios para aceptar la mejora: comparación visual antes/después en las mismas poses;
+cotas y estado coincidentes con la configuración; núcleo/acceso sin trucos de cámara;
+fuentes y licencias locales; arranque sin Internet; reducción de movimiento; prueba de
+legibilidad en proyector y objetivo de 30 FPS en GPU del evento medido, no supuesto.
+No migrar de Three.js ni añadir `transmission` para conseguir el acabado.
+
+**Herramientas comprobadas:** Blender MCP conectado, Blender 5.2.0 LTS, addon 1.6/protocolo 5;
+lectura de escena realizada. No se modificó la escena abierta. En S5, geometría técnica por
+Python desde la configuración; exportación/importación y dimensiones verificadas antes del uso.
+Búsqueda web y Chrome disponibles; no requieren otro MCP de búsqueda.
+
+**Google:** Google Drive (incluye Docs/Sheets/Slides) localizado y ofrecido para instalación;
+su conexión requiere la cuenta del usuario y no se ha confirmado. Mientras tanto, cálculos,
+documentación y futuros presupuestos se preparan localmente. No instalar Gmail/Calendar ni
+otros conectores sin una tarea concreta. No hay compilador LaTeX comprobado: las ecuaciones
+ya están en Markdown/LaTeX; evaluar motor sólo al exportar la memoria S5.
