@@ -1,3 +1,7 @@
+> **Material histórico del hackathon.** El texto y las capturas anteriores a S2
+> no constituyen la defensa vigente de Madrid. P5 debe sincronizar afirmaciones,
+> deck compilado y guion. No republicar automáticamente.
+
 # Deck · pitch de 5 minutos
 
 **Publicado:** https://claude.ai/code/artifact/9df5f219-932c-4c41-a091-3119dbebf37b

@@ -108,6 +108,7 @@ def geometria():
         paso_ang=paso_ang, sector=sector, gap=gap,
         area_cartucho=a_cart, area_total=a_cart * n,
         area_regeneracion=a_cart * nrg, area_cultivo=a_cart * ncu,
+        fondo_envolvente=r1 - r0 * math.cos(sector / 2),
         volumen_cartucho=vol, cuerda=cuerda, ancho_radial=r1 - r0,
         soles_paso=v("geometria_actual.soles_por_paso"),
     )
@@ -130,9 +131,9 @@ def barrido(G, pasos_por_sol=1):
             a_c = (i + avance) * G["paso_ang"]
             a1  = a_c + G["sector"] / 2                   # borde de salida de este cartucho
             a0_vecino = (i + 1 + avance) * G["paso_ang"] - G["sector"] / 2
-            arco = (a0_vecino - a1) * G["r1"]             # el hueco es más estrecho por dentro,
-            vecino["min"] = min(vecino["min"], arco)      # pero el roce se mide donde hay más
-            vecino["max"] = max(vecino["max"], arco)      # velocidad tangencial: el borde exterior
+            distancia = 2 * G["r0"] * math.sin((a0_vecino - a1) / 2)
+            vecino["min"] = min(vecino["min"], distancia)
+            vecino["max"] = max(vecino["max"], distancia)
             casco["min"]  = min(casco["min"],  G["r_casco"] - G["r1"])
             casco["max"]  = max(casco["max"],  G["r_casco"] - G["r1"])
             centro["min"] = min(centro["min"], G["r0"] - G["r_eq"])
@@ -495,7 +496,8 @@ def main():
     titulo("4. Interferencias a lo largo de un giro completo")
     B = barrido(G)
     print(f"  Barrido de {B['pasos']} pasos ({G['n']} posiciones × {G['soles_paso']} soles):")
-    for nombre, d, lim in (("Hueco entre cartuchos vecinos (borde exterior)", B["vecino"], GAP_MIN_MM / 1000),
+    assert B["vecino"]["min"] >= GAP_MIN_MM / 1000, "Holgura inferior al criterio de P2"
+    for nombre, d, lim in (("Hueco mínimo entre cartuchos (borde interior)", B["vecino"], GAP_MIN_MM / 1000),
                            ("Holgura cartucho ↔ casco", B["casco"], None),
                            ("Ancho del pasillo central", B["centro"], None)):
         cte = "constante" if abs(d["max"] - d["min"]) < 1e-9 else f"VARÍA {d['min']:.4f}–{d['max']:.4f}"
@@ -514,18 +516,18 @@ def main():
     print(f"    Presupuesto disponible a repartir entre ambos: {G['h_casco'] - G['cubierta']:.2f} m")
 
     titulo("5. Cambio de cartucho en S8 y acceso humano")
-    diag = math.hypot(G["cuerda"], G["ancho_radial"])
+    diag = math.hypot(G["cuerda"], G["fondo_envolvente"])
     linea("Huella del cartucho", f"{G['cuerda']:.3f} × {G['ancho_radial']:.2f}", "m", "cuerda exterior × ancho radial")
     linea("Pasa de frente por el pasillo", f"{G['cuerda']:.3f} < {G['pasillo']:.2f}", "m",
           f"margen {(G['pasillo'] - G['cuerda']) * 1000:.0f} mm ✓")
-    linea("Diagonal (giro en el pasillo)", f"{diag:.3f} vs {G['pasillo']:.2f}", "m",
-          f"margen {(G['pasillo'] - diag) * 1000:.0f} mm" + (" ✓" if diag < G["pasillo"] else " ✗ NO GIRA"))
+    linea("Diagonal de envolvente rectangular", f"{diag:.3f} vs {G['pasillo']:.2f}", "m",
+          f"margen {(G['pasillo'] - diag) * 1000:.0f} mm" + "; NO prueba giro en pasillo curvo")
     linea("Alcance necesario desde el pasillo", f"{G['ancho_radial']:.2f}", "m",
           f"= alcance supuesto {G['alcance']:.2f} m · SIN MARGEN")
     assert v("acceso.masa_max_manipulable") is None
     print(f"    NO VERIFICADO: {m['nominal']:.0f} kg ({m['nominal'] * g_marte:.0f} N en Marte) sin límite de")
     print("    manipulación con fuente. En la Tierra el mismo cartucho pesa "
-          f"{m['nominal'] * g_tierra:.0f} N y exige polipasto.")
+          f"{m['nominal'] * g_tierra:.0f} N: dimensionar ayuda mecánica y su ruta.")
 
     titulo("6. Ciclo y calendario")
     dps = v("mision.dias_por_sol")

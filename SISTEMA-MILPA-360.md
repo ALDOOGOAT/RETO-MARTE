@@ -1,3 +1,11 @@
+> **REGISTRO HISTÓRICO DEL HACKATHON · NO USAR COMO DEFENSA VIGENTE.**
+> Esta versión conserva el proceso anterior a P0–P2. Sus cifras de dos anillos,
+> 730 soles, 2.9 kWh/d, inocuidad por musgo y pérdidas prefijadas están superadas.
+> Diseño vigente: [P1](docs/madrid/P1-INGENIERIA.md),
+> [P2](docs/madrid/P2-GEOMETRIA.md), [checkpoint](docs/madrid/ESTADO.md).
+> Se conserva la rotación del sustrato bajo estaciones fijas. La novedad es una
+> hipótesis que requiere comparación con antecedentes, no una patente demostrada.
+
 # SISTEMA MILPA-360
 ### Módulo Integrado de **L**arvas, **P**ostura y **A**gricultura en rotación de 360°
 

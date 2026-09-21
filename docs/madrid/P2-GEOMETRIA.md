@@ -61,7 +61,7 @@ funciones, que es la práctica normal de ingeniería:
   bases (730 − 174 − 201).
 
 El ciclo del cartucho dura 160 soles ≈ 164 d, así que **caben 3.28 vueltas** en el horizonte
-de diseño y 2.16 en el de las bases. Ninguno de los dos parte un ciclo por la mitad.
+de diseño y 2.16 en el de las bases. Ambos terminan durante un ciclo: se requiere inventario de cierre y cosecha pendiente.
 
 ---
 
@@ -123,8 +123,8 @@ posición S8 a la C1 sin cambiar de pieza. La operación desaparece porque desap
 | S8 | **Compuerta de liberación** | 8 | a cultivo **o** a cuarentena |
 | C1–C12 | Cultivo | 96 | camote, frijol, rábano y rastrojo |
 
-Ciclo completo **160 soles** (164.4 d). Cada cartucho recibe estiércol una vez cada
-**152 soles**, no cada 56: con un anillo el descanso es la vuelta entera menos un paso.
+Ciclo completo **160 soles** (164.4 d). Cada cartucho entra al aviario cada **160 soles**; pasa **152 soles fuera** de él.
+El intervalo sin deposición no acredita regeneración biológica.
 El tramo de cultivo (96 soles ≈ 98.6 d) cubre el camote (85 d), el frijol (85 d) y admite
 3.95 siembras de rábano (25 d). El script lo comprueba con aserciones.
 
@@ -136,7 +136,7 @@ Barrido de **160 pasos** (20 posiciones × 8 soles), midiendo cada holgura en ca
 
 | Holgura | Mínimo | ¿Varía en el giro? | |
 |---|---:|---|---|
-| Entre cartuchos vecinos (borde exterior) | 41 mm | constante | ✓ sobre el criterio de 20 mm |
+| Entre cartuchos vecinos (mínimo interior) | 30 mm | constante | ✓ sobre el criterio de 20 mm |
 | Cartucho ↔ casco | 100 mm | constante | ✓ estructura, aislamiento y tubería |
 | Ancho del pasillo central | 900 mm | constante | ✓ |
 
@@ -162,9 +162,9 @@ la lámina P-02 marca esa holgura con «¿?» y no se afirma que el dosel pase b
 
 | Comprobación | Resultado | |
 |---|---|---|
-| Huella del cartucho | 0.641 × 0.60 m | |
+| Huella del cartucho | 0.641 × 0.617 m (envolvente rectangular) | |
 | Pasa de frente por el pasillo | 0.641 < 0.90 m | ✓ margen 259 mm |
-| Diagonal (girarlo en el pasillo) | 0.878 vs 0.90 m | ✓ margen **22 mm** — muy justo |
+| Diagonal (girarlo en el pasillo) | 0.890 vs 0.90 m | **10 mm nominales; giro sin verificar** |
 | Alcance necesario desde el pasillo | 0.60 m | **= el alcance supuesto. Sin margen** |
 
 Dos advertencias que hay que poder defender ante el jurado:
@@ -175,7 +175,7 @@ Dos advertencias que hay que poder defender ante el jurado:
 2. **La masa no está validada.** Un cartucho nominal son 110 kg (408 N en Marte). No existe
    fuente leída del límite de manipulación manual de un tripulante en 0.38 g
    (`acceso.masa_max_manipulable`, pendiente). En la Tierra el mismo cartucho pesa 1 078 N y
-   el demostrador **exigirá polipasto**.
+   el demostrador **necesita una ayuda mecánica dimensionada**.
 
 El envolvente central de **Ø 1.36 m** es un resultado de P2 que pasa a ser **requisito**: el
 digestor y el reactor de salmuera separado (D3) tienen que caber ahí sin invadir el pasillo.
@@ -195,7 +195,7 @@ Los documentos históricos y las capturas anteriores aún conservan cifras super
 | Ø 4.76 m | ficha del sitio, ficha de datos y **placa pintada en el casco** | generado desde `GEOM` |
 | Ø 5.40 m | lámina P-03 | lámina regenerada |
 | Ø 6.00 m | lámina P-02 (cota y nota) | lámina regenerada |
-| Ø 4.56 m | simulador, plan maestro, presupuesto | **el único, y ya no se escribe a mano** |
+| Ø 4.56 m | simulador, plan maestro, presupuesto | **valor nominal vigente; aún hay textos manuales e históricos** |
 
 También se retiraron, por la misma vía: «10 m² de bandeja» (son 6.66 m² de cartucho, 4.00 de
 cultivo), «8 interiores + 12 exteriores» y el reloj fijo de «730 soles», que ahora lee el
@@ -250,3 +250,21 @@ cd prototipo/planos && ./render.sh  # PNG de las láminas (requiere google-chrom
   volverá a divergir; conviene generarla como P-02 y P-03.
 - `prototipo/fotos-para-subir/P02-*.jpg` y `P03-*.jpg` son exportaciones **anteriores** y
   contradicen las láminas nuevas. Están sin borrar, a la espera de decisión del equipo.
+
+## Revisión S0 · 20 sep 2026
+
+- La holgura mínima es `2 r0 sin(gap/2) = 29.8 mm`; 41 mm era el arco exterior.
+- El fondo de la envolvente rectangular es `r1 − r0 cos(sector/2) = 0.617 m`;
+  una diagonal menor que el ancho no demuestra un giro en un pasillo curvo con persona,
+  equipos, paredes ni ayuda de elevación. Retirada la conclusión «pasa» como validación.
+- Con suelo a 0.62 m y techo a 2.20 m hay **1.58 m libres**: la figura de 1.75 m
+  no cabe erguida. **B19:** definir altura interior/suelo/entrada y repetir geometría.
+  No se aumenta el casco a ciegas: afecta estructura, masa y concepto.
+- La cúpula de la escena excedía la cota de 2.20 m en 0.96 m. S0 la hace coincidir
+  con el techo nominal; el conflicto de habitabilidad se deja visible.
+- El signo del giro Three.js invertía la posición de las bandejas respecto a las
+  estaciones fijas. Corregido para que la posición lógica coincida con el sector físico.
+- P-04/P-05 y deck permanecen identificados como históricos hasta su regeneración.
+
+Prueba: `python3 analysis/verificar_geometria.py` falló antes de corregir el mínimo,
+y pasa después. No verifica fabricación, resistencia ni mantenimiento.

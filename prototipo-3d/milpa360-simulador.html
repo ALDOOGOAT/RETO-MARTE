@@ -934,126 +934,217 @@ const VIZ = {
 
 const FUENTE_M = "INVESTIGACION-MARTE.md §2 · banco de datos duros";
 const FICHAS = {
-
-  /* ── planeta ── */
-  atmosfera: { sub:"MARTE · ATMÓSFERA", tit:"Casi vacío, y casi todo CO₂",
-    txt:"El aire de Marte es <b>95.3 % dióxido de carbono</b> y pesa muy poco: <b>6 mbar</b>, el 0.6 % de la presión terrestre. Para un cuerpo humano eso es prácticamente vacío, y el agua líquida no aguanta en la superficie.<br><br>La otra cara: ese CO₂ y ese nitrógeno están ahí, gratis, y son justo lo que necesitan las plantas y las bacterias fijadoras. MILPA-360 no los gasta — los devuelve al ciclo.",
-    d:[["CO₂","95.3 %"],["N₂","2.7 %"],["Ar","1.6 %"],["O₂","0.13 %"],["Presión","~6 mbar"],["Límite habitable de CO₂","≤3 mmHg [V2 6004]"]], f:FUENTE_M },
-
-  gravedad: { sub:"MARTE · GRAVEDAD", tit:"0.38 g — y nadie sabe qué le hace a una codorniz",
-    txt:"Un tercio de la gravedad de la Tierra. Cambia cómo se mueven los líquidos del cuerpo, cómo se forma el hueso y cómo crecen las raíces.<br><br>Es <b>la incógnita más grande de nuestro diseño</b>: nadie ha comprobado cómo se desarrolla una codorniz ni cómo sedimenta un biodigestor con esta gravedad. Lo decimos nosotros antes de que lo pregunte el jurado.",
-    d:[["Gravedad","0.38 g"],["Duración del día","24 h 39 min"],["Ventaja","el ciclo de luz casi no cambia"]], f:FUENTE_M + " · limitación declarada en PLAN-MAESTRO §13" },
-
-  radiacion: { sub:"MARTE · RADIACIÓN", tit:"0.7 mSv al día, sin escudo magnético",
-    txt:"Marte no tiene campo magnético global y su atmósfera es demasiado fina para frenar los rayos cósmicos. La superficie recibe <b>0.7 mSv al día</b> — entre 230 y 300 al año. Un astronauta agota rápido su límite de carrera.<br><br>Por eso el módulo va rodeado de un <b>talud de regolito</b>, y por eso elegimos un musgo que aguanta 5 000 Gy.",
-    d:[["Dosis por día","~0.7 mSv"],["Dosis por año","230 – 300 mSv"],["Aguante del musgo","LD50 ≈ 5 000 Gy"],["Nuestro blindaje","talud de regolito"]], f:FUENTE_M },
-
-  regolito: { sub:"SITIO PHOENIX · 68° N", tit:"El suelo es veneno",
-    txt:"En 2008 la sonda <b>Phoenix</b> midió el suelo marciano y encontró entre <b>0.5 y 1 % de percloratos</b>: una sal tóxica para la tiroides humana y para casi cualquier cultivo. Hay además arsénico, cromo, berilio y cadmio, y con la luz ultravioleta los percloratos se vuelven bactericidas.<br><br>En números: una bandeja de 20 kg de regolito trae <b>100 a 200 gramos de veneno</b>. Limpiar eso dentro del sólido no se puede en el tiempo de una misión. Por eso lavamos el suelo y tratamos el agua.",
-    viz: VIZ.barra("QUÉ HAY EN UNA BANDEJA DE 20 KG", [[1, "#D2622F"], [99, "rgba(255,255,255,.10)"]], "100–200 g de perclorato", "0.5 – 1 %") + VIZ.cadena("LA SAL QUE NO SE VE", [["ClO₄⁻ veneno", "#D2622F"], ["tiroides", "#E9AE52"], ["cultivo", "#E9AE52"]]),
-    d:[["Percloratos","0.5 – 1 %"],["Por bandeja de 20 kg","100 – 200 g"],["Quién lo midió","Phoenix, 2008"],["Con UV y hierro","~10× más letal para células"]], f:FUENTE_M + " · Phoenix Lander 2008" },
-
-  polvo: { sub:"MARTE · POLVO Y TORMENTAS", tit:"Tres micras que se meten en todo",
-    txt:"El polvo marciano mide unas <b>3 micras</b>, está cargado de electricidad y se cuela por todos lados: arruina sellos, paneles solares y filtros, y en el pulmón hace el mismo daño que respiró la tripulación del Apolo.<br><br>Las tormentas son de temporada y a veces cubren el planeta entero durante <b>semanas</b>. Cuando eso pasa, la energía solar se cae. Nuestra respuesta no es una batería más grande: es tener las doce bandejas en doce etapas distintas.",
-    viz: VIZ.rejilla("TORMENTA DE 21 SOLES SOBRE EL ANILLO EXTERIOR", 12, 12, [9, 10, 11], "#7FBB72", "#E9AE52", "9 bandejas siguen · 3 se pierden = 25 %"),
-    d:[["Tamaño del grano","~3 µm"],["Límite dentro del hábitat","0.1 mg/m³ en 24 h"],["Filtro","HEPA ≥99.97 % @0.3 µm"],["Duración de una tormenta","semanas"],["Lo que perdemos","≈25 %, no el 100 %"]], f:"Ebert et al. 2026 · NASA-STD-3001 V2 6053" },
-
-  agua: { sub:"CASQUETE POLAR NORTE", tit:"El recurso que sí está ahí",
-    txt:"Hay <b>hielo bajo la superficie</b> en buena parte del planeta — la NASA lo cartografió en el proyecto SWIM — más agua atrapada en el regolito y un pequeño porcentaje en el suelo del ecuador.<br><br>Es el recurso más valioso de Marte: con agua y CO₂ se hace oxígeno, combustible y cultivo. En MILPA-360 el agua con la que lavamos el regolito <b>no se tira</b>: vuelve limpia desde la cámara anóxica.",
-    d:[["Hielo","extenso bajo la superficie (SWIM)"],["Suelo del ecuador","unos pocos % de H₂O"],["Agua potable mínima","2.5 L por persona y día"],["Temperatura media","~ −63 °C"]], f:FUENTE_M + " · swim.psi.edu" },
-
-  comms: { sub:"MARTE ↔ TIERRA", tit:"Entre 3 y 22 minutos de silencio",
-    txt:"Una señal tarda de <b>3 a 22 minutos</b> en llegar, según dónde estén los dos planetas. Y durante la conjunción solar no llega nada.<br><br>Eso significa que <b>no hay ayuda en tiempo real</b>: la tripulación y sus máquinas están solas. Es también la razón de que nuestros biosensores tengan que avisar del problema <i>antes</i> de que se vea.",
-    d:[["Retardo","3 – 22 min por trayecto"],["Conjunción solar","sin señal"],["Misión ida y vuelta","~2–3 años"],["Reabastecimiento","ninguno"]], f:FUENTE_M },
-
-  valles: { sub:"VALLES MARINERIS", tit:"Cuatro mil kilómetros de cañón",
-    txt:"El sistema de cañones más grande del sistema solar: recorre casi un cuarto de la circunferencia del planeta.<br><br>Está aquí como referencia de tamaño. Cuando decimos que el hábitat entero cabe en <b>10 m² de bandeja</b>, conviene recordar contra qué se está midiendo.",
-    d:[["Longitud","~4 000 km"],["Temperatura media","~ −63 °C"],["Extremos","−140 a +20 °C"]], f:FUENTE_M },
-
-  sitio: { sub:"SITIO DEL HÁBITAT", tit:"Aquí se posa MILPA-360",
-    txt:`Un módulo presurizado de <b>${(GEOM.casco.radio*2).toFixed(2)} m de diámetro por ${GEOM.casco.altura} m de alto</b>, con <b>${GEOM.areas.total.toFixed(2)} m² de cartucho</b> adentro, para seis personas durante <b>${GEOM.mision.soles_horizonte} soles sin una sola nave de reabastecimiento</b>.<br><br>Toca «HÁBITAT» arriba, o este punto, para entrar.`,
-    d:[["Diámetro",(GEOM.casco.radio*2).toFixed(2)+" m"],["Altura",GEOM.casco.altura+" m"],["Cartuchos",GEOM.anillo.n+" idénticos · "+GEOM.ciclo.n_regeneracion+" regeneración + "+GEOM.ciclo.n_cultivo+" cultivo"],["Superficie de cultivo",GEOM.areas.cultivo.toFixed(2)+" m²"],["Tripulación","6 personas · "+GEOM.mision.soles_horizonte+" soles"]], f:"docs/madrid/P2-GEOMETRIA.md", accion:"habitat" },
-
-  /* ── hábitat · equipo ── */
-  aviario: { sub:"ESTACIÓN S2 · PARTE 1 DEL RETO", tit:"Aviario de codornices",
-    txt:"<b>24 codornices japonesas</b> viven aquí arriba, en una cámara con presión más baja que el resto del módulo para que nada salga de ella. El piso es una rejilla: el estiércol cae directo sobre la bandeja que está pasando debajo.<br><br>Mucho estiércol, poco tiempo, y luego ${(GEOM.anillo.n-1)*GEOM.anillo.soles_por_paso} soles de descanso. Es el pastoreo rotacional de Chiapas hecho en miniatura — sin pastor y sin cerca eléctrica.<br><br>Y hay un extra: su canto es uno de los pocos sonidos vivos a 22 minutos-luz de casa. La NASA lo cuenta como mitigante del riesgo de salud mental.",
-    viz: VIZ.barra("CICLO DE LA CODORNIZ EN " + GEOM.mision.soles_horizonte + " SOLES", [[5.5, "#E9AE52"], [94.5, "#7FBB72"]], "primer huevo · 40 días", "resto: postura ~68 %"),
-    d:[["Primer huevo","a los 40 días"],["Comida","23 g por ave y día"],["Ponen","~68 % de los días"],["Huevos en la misión","≈11 900"],["Filtro de aire","HEPA 99.97 % @0.3 µm"],["Ruido en zona de sueño","NC-40 [V2]"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2 · NASA-STD-3001 Vol. 2 Rev. E" },
-
-  larvario: { sub:"ESTACIÓN S3 · AQUÍ SE CIERRA EL BUCLE", tit:"Larvario de mosca soldado",
-    txt:"La <i>Hermetia illucens</i> no es el animal que pide el reto: es el <b>puente</b> que hace que todo encaje.<br><br>Come el estiércol de las codornices y devuelve dos cosas: <b>frass</b>, que es abono, y <b>larva</b>, que es proteína y vuelve al comedero de las codornices.<br><br>Lo único que entra de fuera es el grano de la ración. Bajar esa fracción es bajar toneladas de lanzamiento.",
-    d:[["Reduce el residuo","44 – 82 % de materia seca"],["Salida 1","frass · abono con NPK real"],["Salida 2","proteína + grasa"],["A dónde va","cámara B e inóculo de S4"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2" },
-
-  digestor: { sub:"PARTE 2 · NUESTRA APORTACIÓN ORIGINAL", tit:"El digestor es, además, el reactor de percloratos",
-    txt:"Las bacterias que destruyen el perclorato necesitan exactamente dos cosas: <b>que no haya oxígeno</b> y <b>algo orgánico que comer</b>.<br><br>Un biodigestor de estiércol <b>ya es las dos cosas</b>, todo el tiempo y sin costo. Nadie tuvo que construir un reactor de percloratos: lo construimos para hacer biogás y resultó que servía para las dos cosas.<br><br>Dos residuos que se anulan entre sí.",
-    viz: VIZ.cadena("EL ORDEN IMPORTA: A PROTEGE A B", [["salmuera ClO₄⁻", "#63A9D1"], ["A · anóxica", "#63A9D1"], ["Cl⁻ + O₂", "#7FBB72"], ["B · metanogénica", "#D2622F"], ["biogás", "#D2622F"]]),
-    d:[["Cámara A · anóxica","ClO₄⁻ → ClO₃⁻ → ClO₂⁻ → Cl⁻ + O₂"],["Cámara B · metanogénica","frass + estiércol → biogás"],["Carga a la cámara B","~2 kg de sólidos volátiles/día"],["Rendimiento","0.24 m³/kg · 60 % metano"],["Energía","≈2.9 kWh/día"],["Ojo","el O₂ es coproducto, no soporte vital"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3 · guía FAO de biodigestores" },
-
-  musgo: { sub:"ESTACIÓN S5 · COSTRA Y SEMÁFORO", tit:"Syntrichia caninervis",
-    txt:"Un musgo de desierto. En 2024 fue el primer candidato a planta pionera extraterrestre probado <b>con la planta entera</b> sobre suelo marciano simulado, y volvió al 100 % en 30 días.<br><br>Hace dos trabajos. Uno: sella la superficie de la bandeja para que el polvo no se levante cuando el carrusel gira. Dos, el importante: aguanta mucho más que cualquier cultivo de comer, así que <b>si el musgo verdea, la bandeja ya está limpia</b>.<br><br>Bandeja verde = bandeja lista para sembrar. Un análisis de suelo que lee cualquiera de un vistazo.",
-    viz: VIZ.cadena("EL SEMÁFORO DE LA BANDEJA", [["S4 descanso", "#3E2C1E"], ["S5 musgo", "#4E8A3C"], ["S6 consolida", "#599648"], ["S7 verde = apta", "#74B25F"]]),
-    d:[["Se recupera","100 % en 30 días"],["Radiación","LD50 ≈5 000 Gy"],["Frío","−196 °C durante un mes"],["Para qué sirve","sella el polvo y avisa si el suelo está limpio"]], f:"The Innovation, 2024 · PLAN-MAESTRO §4.4" },
-
-  cultivo: { sub:"ANILLO EXTERIOR · PARTE 3 DEL RETO", tit:"La Tríada Marciana",
-    txt:"La milpa mesoamericana metida en medio metro cuadrado: una planta que da estructura (<b>camote</b>), una que fija nitrógeno (<b>leguminosa</b>) y una que cubre el suelo y se cosecha rápido (<b>rábano</b>).<br><br>Las doce bandejas avanzan una posición cada 8 soles. Eso significa que <b>en cualquier momento hay bandejas en las doce etapas a la vez</b>: unas sembrando, otras a media, otras a punto de cosecha.<br><br>El retorno a la Tierra no es una frase bonita: el sistema le devuelve a Chiapas su propia agricultura, con los tiempos medidos.",
-    viz: VIZ.barra("CAMOTE · 90–120 SOLES", [[100, "#39702C"]], "siembra", "cosecha") + VIZ.barra("LEGUMINOSA · fija N₂ en continuo", [[100, "#5A9636"]], "siembra", "rastrojo al digestor") + VIZ.barra("RÁBANO · 25–30 SOLES", [[27, "#6BA33C"], [73, "rgba(255,255,255,.07)"]], "siembra", "cosecha rápida"),
-    d:[["Camote","90 – 120 soles"],["Leguminosa","fija nitrógeno con Rhizobium"],["Rábano","25 – 30 soles"],["Vuelta completa","96 soles"],["Cóctel del suelo","micorrizas · Trichoderma · PGPR"]], f:"PLAN-MAESTRO-BIOMARS.md §4.4" },
-
-  lavado: { sub:"ESTACIÓN S1 · POR AQUÍ EMPIEZA TODO", tit:"Lavado del regolito",
-    txt:"Agua reciclada arrastra el perclorato fuera del suelo. Sale <b>salmuera</b> concentrada hacia la cámara anóxica, y regresa agua limpia al riego.<br><br>Aquí está la jugada: tratar 20 kg de tierra tóxica es imposible en el tiempo y el espacio de una misión. Tratar <b>un litro de agua sucia</b> sí se puede. Ese cambio de problema es donde se rompen casi todas las demás propuestas.",
-    d:[["Cada bandeja","20 kg de regolito"],["Veneno por bandeja","100 – 200 g"],["Sale","salmuera → cámara A"],["Regresa","agua sin cloro al riego"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3" },
-
-  mfc: { sub:"EN CADA PUNTO DE TRASVASE", tit:"La MFC: el sistema nervioso",
-    txt:"Como batería, una celda de combustible microbiana es inútil: da microvatios.<br><br>Como <b>sensor</b> es excelente. Su voltaje sigue lo que están haciendo los microbios. Si el voltaje cae y la comida sigue entrando igual, es que <b>algo tóxico entró al ciclo</b>. Si cae y la comida bajó, es que hay hambre. Son dos avisos distintos y se distinguen.<br><br>Cero vatios de la misión, cero reactivos, y avisa antes de que el daño se vea. Que es justo lo que hace falta cuando la Tierra tarda 22 minutos en contestar.",
-    d:[["Consumo","0 W de la misión"],["Dónde van","S1→digestor · digestor→riego · riego→bandeja"],["Qué distingue","tóxico entrando vs. falta de comida"],["Retardo con la Tierra","22 min"]], f:"PLAN-MAESTRO-BIOMARS.md §4.4" },
-
-  carrusel: { sub:"EL MECANISMO", tit:"En Marte se mueve el suelo",
-    txt:"En la Tierra el pastoreo rotacional funciona porque el animal <i>se va</i> y el suelo descansa. En 10 m² no hay a dónde irse.<br><br>Así que invertimos el problema: <b>se fija el animal y se rota el suelo</b>. La bandeja que hoy recibe estiércol no vuelve a recibirlo hasta <b>56 soles</b> después.<br><br>Ese descanso no es una regla que alguien pueda olvidar en el sol 400. Es <b>geometría</b>: no puede pasar de otra manera.",
-    viz: VIZ.rejilla("LAS 8 POSICIONES DEL ANILLO INTERIOR", 8, 8, [1], "rgba(255,255,255,.12)", "#96633A", "solo una recibe estiércol · las otras 7 descansan = 56 soles"),
-    d:[["Anillo interior","8 bandejas · vuelta de 64 soles"],["Anillo exterior","12 bandejas · vuelta de 96 soles"],["Avanza","una posición cada 8 soles"],["Descanso garantizado","56 soles"],["Precedentes","MELiSSA · BIOS-3 · Lunar Palace 1"]], f:"PLAN-MAESTRO-BIOMARS.md §4.1–4.2" },
-
-  panel: { sub:"ENERGÍA", tit:"El biogás no compite: libera",
-    txt:"2.9 kWh al día no alimentan un hábitat marciano, y no vamos a decir que sí.<br><br>Alimentan <b>al propio MILPA-360</b>: el motor del carrusel, las bombas, la luz de mantenimiento y —lo importante— un <b>colchón térmico de emergencia</b> que mantiene la temperatura del cultivo durante una noche marciana o una tormenta que deje los paneles inservibles.<br><br>Dicho de otro modo: es el único subsistema del hábitat que se mueve con su propia basura. No pide energía a la misión: se la devuelve.",
-    d:[["Biogás","≈2.9 kWh/día"],["Solar en tormenta global","se cae"],["Para qué es crítico","autonomía térmica"],["Qué mueve","carrusel, bombas y luz"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3" },
-
-  /* ── hábitat · lo que corre por las tuberías ── */
-  f_salmuera: { sub:"CONDUCTO AZUL · S1 → CÁMARA A", tit:"Salmuera de lavado",
-    txt:"Por aquí va el <b>agua con la que se lavó el regolito</b>, cargada del perclorato que traía el suelo.<br><br>Sale de la estación S1, sube al colector y baja a la cámara anóxica. Ahí las bacterias rompen la sal: <b>ClO₄⁻ → Cl⁻ + O₂</b>. Lo que regresa es agua sin cloro que vuelve al riego.<br><br>Nada de esta agua se descarta. En una misión sin reabastecimiento, tirar agua no es una opción.",
-    viz: VIZ.cadena("LO QUE PASA DENTRO DE LA CÁMARA A", [["ClO₄⁻", "#D2622F"], ["ClO₃⁻", "#A2B0BD"], ["ClO₂⁻", "#A2B0BD"], ["Cl⁻ + O₂", "#7FBB72"]]) + VIZ.nota("El agua entra con veneno y sale limpia. <b>Ninguna gota se descarta.</b>"),
-    d:[["Qué transporta","agua de lavado + perclorato disuelto"],["De dónde","S1 · lavado del regolito"],["A dónde","cámara A · anóxica"],["Por bandeja","20 kg de regolito → ~1 L de salmuera"],["Veneno arrastrado","100 – 200 g"],["Qué vuelve","agua declorada al riego"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3" },
-
-  f_frass: { sub:"CONDUCTO VERDE · S3 → CÁMARA B", tit:"Frass y estiércol sobrante",
-    txt:"El <b>frass</b> es lo que dejan las larvas después de comerse el estiércol: un abono con nitrógeno, fósforo y potasio comparables a un fertilizante orgánico de tienda.<br><br>Lo que las larvas no alcanzan a procesar viaja por este mismo tubo, junto con el rastrojo del anillo de cultivo y las aguas negras de la tripulación. Todo eso es la comida de la cámara metanogénica.",
-    d:[["Qué transporta","frass + estiércol excedente + rastrojo"],["De dónde","S3 · larvario"],["A dónde","cámara B · metanogénica"],["Reducción previa","44 – 82 % de materia seca"],["Carga a la cámara B","~2 kg de sólidos volátiles/día"],["Calidad del frass","NPK comparable al comercial"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2–4.3" },
-
-  f_inoculo: { sub:"CONDUCTO VERDE · CÁMARA B → S4", tit:"Digestato e inóculo",
-    txt:"Al salir del digestor, la materia ya está estabilizada: eso es el <b>digestato</b>. Aquí se le suma el <b>cóctel biológico</b> y se inyecta en la estación de descanso, justo antes de que la bandeja vuelva a sembrarse.<br><br>El cóctel no es adorno. Cada organismo hace una tarea que el regolito no puede hacer solo: fijar nitrógeno, multiplicar la absorción de agua, liberar el fósforo que el mineral tiene atrapado, aguantar la sal que quedó y frenar los hongos que aparecen en un lugar cerrado y húmedo.",
-    d:[["Qué transporta","digestato + cóctel biológico"],["De dónde","cámara B"],["A dónde","S4 · descanso e inóculo"],["Rhizobium","fija nitrógeno en la leguminosa"],["Micorrizas","hasta ×10 de absorción de agua"],["Pseudomonas","libera fósforo y hierro del mineral"],["Bacillus · Trichoderma","tolera sal · frena hongos"]], f:"PLAN-MAESTRO-BIOMARS.md §4.4" },
-
-  riego: { sub:"ANILLO EXTERIOR · CÓMO SE RIEGA", tit:"Goteo sobre pivote central",
-    txt:"Es <b>riego por goteo</b>, y va montado sobre el anillo que gira — exactamente como un <b>pivote central</b> de la Tierra, esos círculos verdes que se ven desde el avión.<br><br>Tenía que ser así por aritmética: con 12 bandejas avanzando una posición cada 8 soles, una rampa fija regaría cada bandeja <b>una vez cada 96 soles</b>. Con el colector girando junto a las bandejas, cada una lleva sus dos goteros encima todo el tiempo.<br><br>Y es goteo <b>de baja altura</b>, no aspersión: dentro del hábitat el polvo no puede pasar de 0.1 mg/m³, así que nada de agua volando. La gota sale a pocos centímetros del suelo, la raíz toma lo que necesita y la costra de musgo retiene el resto.",
-    viz: VIZ.cadena("EL AGUA, DE LA CÁMARA B A LA RAÍZ", [["digestato", "#7FBB72"], ["unión rotativa", "#A2B0BD"], ["colector anular", "#63A9D1"], ["gotero", "#63A9D1"], ["raíz", "#7FBB72"]]) + VIZ.nota("Sin el pivote, cada bandeja se regaría <b>una vez cada 96 soles</b>."),
-    d:[["Tipo","goteo de baja altura (LESA)"],["Por qué no aspersión","límite de polvo 0.1 mg/m³"],["Goteros","2 por bandeja · 24 en el anillo"],["Gira con","el anillo de cultivo"],["Retención","costra de musgo + micorrizas ×10"],["Vigilancia","una MFC en riego→bandeja"]],
-    f:"PLAN-MAESTRO-BIOMARS.md §4.4 (R11 · riego eficiente) · lámina P-01 del equipo" },
-
-  f_riego: { sub:"CONDUCTO VERDE · CÁMARA B → PIVOTE", tit:"Riego del cultivo",
-    txt:"Esta línea lleva digestato diluido y el agua recuperada del lavado hasta la <b>unión rotativa</b> del eje. De ahí baja al colector anular que gira con las bandejas y termina en los goteros.<br><br>En cada punto donde el agua cambia de recipiente hay una <b>MFC</b> vigilando que no entre nada tóxico — y avisa antes de que el daño se vea.",
-    d:[["Qué transporta","digestato diluido + agua recuperada"],["De dónde","cámara B"],["A dónde","unión rotativa del pivote"],["A cuántas bandejas","12 · 24 goteros"],["Vigilancia","una MFC por trasvase"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3–4.4" },
-
-  f_biogas: { sub:"CONDUCTO ROJO · CÁMARA B → GASÓMETRO", tit:"Biogás",
-    txt:"Metano al <b>60 %</b> saliendo de la cámara metanogénica. Sube a la <b>campana flotante</b> — ese domo verde que ves subir y bajar es el almacén: sube cuando el digestor produce y baja cuando el módulo consume.<br><br>Con 2 kg de sólidos volátiles al día salen unos <b>10 MJ ≈ 2.9 kWh</b>. No alimentan un hábitat entero. Alimentan este módulo, y sobre todo guardan calor para la noche marciana o para la tormenta que apague los paneles.<br><br>Lánzale una tormenta y mira bajar la campana: eso es el colchón térmico gastándose.",
-    viz: VIZ.barra("A DÓNDE VAN LOS 2.9 kWh/DÍA", [[34, "#D2622F"], [26, "#E9AE52"], [40, "#63A9D1"]], "carrusel y bombas · luz", "colchón térmico"),
-    d:[["Qué transporta","biogás · ~60 % metano"],["De dónde","cámara B · metanogénica"],["A dónde","campana flotante → colchón térmico"],["Rendimiento","0.24 m³ por kg seco"],["Poder calorífico","~35.8 MJ/m³"],["Total","≈10 MJ/día ≈ 2.9 kWh"]], f:"PLAN-MAESTRO-BIOMARS.md §4.3 · guía FAO de biodigestores" },
-
-  f_proteina: { sub:"CONDUCTO AMARILLO · S3 → AVIARIO", tit:"Proteína — aquí se cierra el anillo",
-    txt:"Este es <b>el tubo que cierra el círculo</b>, y conviene señalarlo con el dedo cuando se explique.<br><br>Lleva larva viva del larvario al comedero de las codornices. Es decir: <b>la codorniz produce el residuo que alimenta a la larva, y la larva se convierte en la proteína que alimenta a la codorniz.</b><br><br>Lo único que entra de fuera de este bucle es la fracción de grano de la ración. Cada punto porcentual que le bajemos a esa fracción son kilos que no hay que lanzar desde la Tierra.",
-    viz: VIZ.cadena("EL BUCLE CERRADO", [["codorniz", "#96633A"], ["estiércol", "#96633A"], ["larva", "#E9AE52"], ["proteína", "#E9AE52"], ["codorniz", "#96633A"]]) + VIZ.nota("Lo único que entra de fuera del anillo es <b>la fracción de grano</b>."),
-    d:[["Qué transporta","larva viva · proteína y grasa"],["De dónde","S3 · larvario"],["A dónde","comedero del aviario"],["Qué cierra","residuo animal → proteína animal"],["Entrada externa","solo la fracción de grano"],["Por qué importa","menos grano = menos masa de lanzamiento"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2" },
-
-  f_estiercol: { sub:"TOLVA CAFÉ · AVIARIO → BANDEJA", tit:"Estiércol dirigido",
-    txt:"Esto no es una tubería: es una <b>tolva</b>. El estiércol cae por gravedad desde la rejilla del aviario directamente sobre la bandeja que está pasando debajo.<br><br>No hay bomba, no hay motor y no hay nada que se pueda tapar. La bandeja recibe una carga fuerte y corta, y después no vuelve a ver estiércol en <b>56 soles</b>.<br><br>Alta intensidad, corta duración, descanso largo: es la definición de manual del pastoreo rotacional, y aquí la cumple la geometría sola.",
-    d:[["Qué transporta","estiércol fresco de codorniz"],["De dónde","rejilla del aviario · S2"],["A dónde","la bandeja en turno"],["Cómo","gravedad · sin bomba"],["Aves","24"],["Descanso después","56 soles"]], f:"PLAN-MAESTRO-BIOMARS.md §4.2" },
+  atmosfera: {
+    sub: "LITERATURA · MARTE",
+    tit: "Una atmósfera que necesita procesamiento",
+    txt: "La atmósfera exterior no es respirable. Capturar y acondicionar CO₂ o N₂ exige equipos y energía; no se contabiliza como suministro gratuito.",
+    d: [["Presión superficial", "~6 mbar"], ["Cabina", "presurizada y separada del proceso"]],
+    f: "INVESTIGACION-MARTE.md §2 · contexto planetario",
+    pasos: ["exterior", "captación por diseñar", "cabina aislada"]
+  },
+  gravedad: {
+    sub: "LITERATURA / PENDIENTE",
+    tit: "Gravedad parcial",
+    txt: "La masa y la inercia no desaparecen al reducirse el peso. La productividad, reproducción y manejo de organismos en Marte siguen sin validarse.",
+    d: [["Gravedad de cálculo", "3.71 m/s²"], ["Biología a 0.38 g", "pendiente"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["masa", "peso menor", "validación pendiente"]
+  },
+  radiacion: {
+    sub: "LITERATURA / HIPÓTESIS",
+    tit: "Protección del hábitat",
+    txt: "El talud dibujado es una propuesta de protección. No hay espesor ni transporte de radiación calculados para acreditar seguridad. La resistencia de un musgo no protege al resto del sistema.",
+    d: [["Referencia superficial", "~0.7 mSv/d, depende del escenario"], ["Blindaje", "sin dimensionar"]],
+    f: "INVESTIGACION-MARTE.md §2 · docs/madrid/AUDITORIA.md",
+    pasos: ["radiación exterior", "envolvente", "dosis interior pendiente"]
+  },
+  regolito: {
+    sub: "LITERATURA LOCAL / CÁLCULO",
+    tit: "Perclorato: seguir toda la masa",
+    txt: "Phoenix es un emplazamiento, no una concentración universal. P1 aplica escenarios al volumen completo del cartucho. Lavar transfiere sales al agua; no las destruye.",
+    d: [["Cartucho nominal", "~110 kg de sustrato"], ["ClO₄⁻ nominal supuesto", "~550 g al 0.5 %"], ["Lavado inicial", "proceso ISRU externo por diseñar"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["regolito", "lavado inicial", "salmuera retenida"]
+  },
+  polvo: {
+    sub: "ESCENARIO ILUSTRATIVO",
+    tit: "El polvo afecta primero a la energía",
+    txt: "El hábitat se representa cerrado. El fallo propuesto es polvo exterior → suministro eléctrico reducido → menos luz interior → respuesta del cultivo. La simulación anterior de pérdidas prefijadas está retirada.",
+    d: [["Duración ilustrativa", "21 soles"], ["Pérdida de alimento", "debe calcularse, no fijarse"], ["NASA Rev. F V2 6253", "<0.1 mg/m³; alcance ≤30 días"]],
+    f: "docs/madrid/AUDITORIA.md C7/C10 · matriz N-05",
+    pasos: ["polvo exterior", "energía", "luz", "cultivo"]
+  },
+  agua: {
+    sub: "LITERATURA / PENDIENTE",
+    tit: "Recuperar agua requiere tratamiento",
+    txt: "El agua recuperada de un proceso no es potable ni apta para riego por defecto. Hay que medir residual de perclorato, salinidad y calidad microbiológica; contabilizar purgas y reposición.",
+    d: [["Transpiración nominal P1", "~8.2 L/d"], ["Agua potable humana", "circuito separado"], ["Recuperación", "eficiencia pendiente"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["agua de proceso", "control de calidad", "riego o retención"]
+  },
+  comms: {
+    sub: "LITERATURA / DISEÑO",
+    tit: "Operación local con demora",
+    txt: "El retardo Tierra–Marte impide depender de intervención remota inmediata. El aislamiento de un lote debe ser determinista y mantenerse cuando falta una autorización.",
+    d: [["Retardo aproximado", "3–22 min por trayecto"], ["Mando seguro", "local, no depende de IA"]],
+    f: "INVESTIGACION-MARTE.md §2 · MISION §5H",
+    pasos: ["muestra", "decisión local", "registro"]
+  },
+  valles: {
+    sub: "ILUSTRACIÓN PLANETARIA",
+    tit: "De planeta a módulo",
+    txt: "El globo y el terreno son procedurales. Los rasgos planetarios orientan el recorrido, pero no son topografía medida del lugar del módulo. La transición cambia de escala.",
+    d: [["Valles Marineris", "~4 000 km, referencia"], ["Terreno del módulo", "ilustrativo"]],
+    f: "INVESTIGACION-MARTE.md §2",
+    pasos: ["planeta", "cambio de escala", "módulo"]
+  },
+  sitio: {
+    sub: "GEOMETRÍA CALCULADA",
+    tit: "Módulo agrícola complementario",
+    txt: "Un anillo de cartuchos conserva la rotación del sustrato bajo estaciones fijas. El módulo aporta sólo una fracción de la dieta; no es un hábitat completo ni sostiene por sí solo a seis personas.",
+    d: [["Área de cultivo", "4.00 m² nominales"], ["Cobertura calórica P1", "~2.6 % nominal, régimen productivo"], ["Horizonte", "539 días ≈525 soles"]],
+    f: "docs/madrid/P2-GEOMETRIA.md · geometría nominal, equipos esquemáticos",
+    pasos: ["regeneración", "cultivo", "alimento complementario"],
+    accion: "habitat"
+  },
+  aviario: {
+    sub: "LITERATURA TERRESTRE / SUPUESTO",
+    tit: "Aviario de codornices",
+    txt: "Se proponen 24 hembras. Los datos publicados son terrestres y no validan este aviario ni una misión marciana. La depresión sería respecto al compartimento presurizado adyacente, no al exterior. El dibujo no acredita volumen ni bienestar animal.",
+    d: [["Primer huevo publicado", "50.8 d"], ["Ración publicada", "32.1 g/ave/d"], ["Ración importada P1", "~0.77 kg/d"], ["Postura nominal supuesta", "0.75 huevo/ave/d"]],
+    f: "PMC10113653, tablas 6–8 · P1 §4",
+    pasos: ["ración externa", "aves", "huevo y estiércol"]
+  },
+  larvario: {
+    sub: "LITERATURA / HIPÓTESIS",
+    tit: "Procesamiento con larvas",
+    txt: "BSF es un animal. El frass y la biomasa larvaria requieren control sanitario. P1 reparte el residuo antes del digestor: no se cuenta la misma masa íntegra en ambas rutas. La reintegración a la dieta de aves está pendiente.",
+    d: [["Residuo al digestor", "~0.053 kg SV/d de estiércol"], ["Rastrojo nominal", "~0.044 kg MS/d"], ["Ruta a alimento", "cerrada hasta validación sanitaria"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["estiércol", "larvas", "frass retenido"]
+  },
+  digestor: {
+    sub: "HIPÓTESIS DE DISEÑO D3",
+    tit: "Digestión separada de la salmuera",
+    txt: "Se separa el reactor de perclorato del digestor metanogénico. Un estudio con M. barkeri observó menor producción de metano con 10–20 mM de perclorato; no demuestra el comportamiento de nuestro consorcio. Volúmenes, residencia, arranque y tratamiento de gases siguen pendientes.",
+    d: [["CH₄ nominal calculado", "~0.024 m³/d"], ["Energía química", "~0.240 kWh/d"], ["Electricidad bruta supuesta", "~0.096 kWh/d antes de auxiliares"], ["Dimensiones dibujadas", "esquemáticas, no dimensionado"]],
+    f: "P1 §5–6 · Harris et al. 2021, doi:10.1038/s41598-021-91882-0",
+    pasos: ["residuo asignado", "digestor", "gas y digestato retenido"]
+  },
+  musgo: {
+    sub: "HIPÓTESIS",
+    tit: "Cobertura superficial experimental",
+    txt: "Se estudia como cobertura del sustrato. El color verde no demuestra ausencia de percloratos ni patógenos. Ningún lote se autoriza por el aspecto del musgo o la señal de una MFC.",
+    d: [["Control de polvo", "por ensayar"], ["Inocuidad", "requiere análisis"], ["Liberación", "S8, autorización trazable"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["cobertura", "muestreo", "análisis obligatorio"]
+  },
+  cultivo: {
+    sub: "LITERATURA TERRESTRE / CÁLCULO",
+    tit: "Tres cultivos, ciclos diferentes",
+    txt: "El cálculo reparte el área entre camote, frijol y rábano; no supone tres monocultivos ocupando el área completa. Los ciclos de BVAD son referencias bajo condiciones determinadas. El policultivo y el sustrato no están validados.",
+    d: [["Camote / frijol", "85 días terrestres, referencia BVAD"], ["Rábano", "25 días terrestres, referencia BVAD"], ["Tramo de cultivo", "96 soles ≈98.6 días"], ["Alimento vegetal P1", "~117 kcal/d nominales"]],
+    f: "BVAD Rev2, tablas 4-89 a 4-91 · P1",
+    pasos: ["lote autorizado", "luz y agua", "cosecha"]
+  },
+  lavado: {
+    sub: "HIPÓTESIS D4 / CÁLCULO",
+    tit: "Tratamiento inicial fuera del módulo",
+    txt: "El volumen completo de sustrato requiere tratamiento inicial. S1 representa reacondicionamiento, no la descontaminación automática de todo el cartucho en ocho soles. La salmuera permanece aislada hasta analizarla.",
+    d: [["Lavado nominal inicial", "~4.4 m³ para 20 cartuchos"], ["Relación líquido/sólido", "2, sólo escenario ilustrativo"], ["Cloruro y purgas", "balance pendiente"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["ISRU inicial", "control de sustrato", "S1 reacondicionamiento"]
+  },
+  mfc: {
+    sub: "HIPÓTESIS / PENDIENTE",
+    tit: "Control con autorización explícita",
+    txt: "La MFC puede ser una señal experimental de actividad, pero no identifica por sí sola contaminantes. La muestra de S7 necesita un resultado y criterios de aceptación definidos antes de liberar S8. Falta de datos significa retención.",
+    d: [["ClO₄⁻ / patógenos", "umbral y laboratorio pendientes"], ["MFC", "selectividad y consumo por medir"], ["Compuerta", "bloqueada sin autorización"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["muestra S7", "resultado trazable", "S8 libera o retiene"]
+  },
+  carrusel: {
+    sub: "GEOMETRÍA CALCULADA",
+    tit: "El mismo cartucho cambia de etapa",
+    txt: "Un solo anillo elimina el trasvase entre sectores de formas distintas. Una vuelta son 160 soles; hay 152 soles fuera del aviario si cada estación dura ocho. El tiempo sin deposición no demuestra regeneración ni inocuidad.",
+    d: [["Anillo", "20 cartuchos idénticos"], ["Posiciones", "8 regeneración + 12 cultivo"], ["Paso", "18° cada 8 soles nominales"], ["Mantenimiento", "ruta, cargas e interferencias pendientes"]],
+    f: "docs/madrid/P2-GEOMETRIA.md · geometría nominal, equipos esquemáticos",
+    pasos: ["S1–S8", "C1–C12", "regreso a S1"]
+  },
+  panel: {
+    sub: "CÁLCULO / SUPUESTOS",
+    tit: "El módulo consume energía externa",
+    txt: "La iluminación nominal de P1 demanda unos 13.6 kWh/d. El biogás aporta energía química, que requiere conversión; no cubre esa demanda. Bombas, ventilación, control y térmica siguen sin cerrar.",
+    d: [["Iluminación", "~13.6 kWh eléctricos/d"], ["Biogás", "~0.240 kWh químicos/d"], ["Balance neto completo", "pendiente"], ["Paneles dibujados", "ilustrativos, sin dimensionar"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["suministro del hábitat", "luminarias", "cultivo"]
+  },
+  f_salmuera: {
+    sub: "RUTA AISLADA · S1 → REACTOR",
+    tit: "Salmuera retenida",
+    txt: "La ruta azul termina en el reactor separado. No existe conexión automática de esa salida al digestor o al riego. Reducir perclorato produce cloruro; no elimina la necesidad de controlar salinidad y purgas.",
+    d: [["Fluido", "agua de lavado + sales"], ["Salida", "retención y análisis pendientes"], ["Calidad de riego", "no demostrada"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["S1", "reactor separado", "retención"]
+  },
+  f_frass: {
+    sub: "RUTA · S3 → DIGESTOR",
+    tit: "Residuo asignado al digestor",
+    txt: "El tubo representa una interfaz de proceso; no demuestra bombeabilidad del rastrojo o del frass. Pretratamiento y dosificación requieren diseño. Los residuos humanos no están incluidos en el balance nominal.",
+    d: [["Bases diferentes", "kg SV de estiércol / kg MS de rastrojo"], ["SV estiércol", "~0.053 kg/d"], ["MS rastrojo", "~0.044 kg/d"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["larvario", "fracción residual", "digestor"]
+  },
+  f_inoculo: {
+    sub: "RUTA CONDICIONADA · RETENCIÓN → S4",
+    tit: "Digestato por controlar",
+    txt: "El digestato se retiene para tratamiento y análisis. La salida al sustrato queda cerrada mientras no existan criterios y evidencia sanitaria; su aspecto no acredita inocuidad.",
+    d: [["Salida a cultivo", "bloqueada por falta de evidencia"], ["NPK / sales / patógenos", "pendientes"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["digestor", "retención sanitaria", "S4 condicionado"]
+  },
+  riego: {
+    sub: "DISEÑO / GEOMETRÍA",
+    tit: "Goteo sobre colector giratorio",
+    txt: "Cada cartucho lleva sus goteros. La bomba y la dosificación operan con un reloj independiente del indexado; girar cada ocho soles no sustituye el riego cotidiano. Caudal y tratamiento sanitario siguen por dimensionar.",
+    d: [["Goteros instalados", "2 por cartucho; 40 nominales"], ["Agua", "circuito de proceso, no potable"], ["Fallo de bomba", "disminuye el agua disponible"]],
+    f: "docs/madrid/P2-GEOMETRIA.md · geometría nominal, equipos esquemáticos",
+    pasos: ["depósito controlado", "unión rotativa", "goteros"]
+  },
+  f_riego: {
+    sub: "RUTA · DEPÓSITO → PIVOTE",
+    tit: "Agua de riego acondicionada",
+    txt: "La alimentación de riego parte del depósito de agua controlada; no recibe salmuera o digestato sin tratar. El acondicionamiento y la liberación sanitaria son interfaces pendientes, separadas del circuito humano.",
+    d: [["Entrada nominal", "agua externa acondicionada"], ["Recuperación local", "pendiente"], ["Calidad", "no certificada por MFC"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["agua acondicionada", "depósito", "pivote"]
+  },
+  f_biogas: {
+    sub: "RUTA · DIGESTOR → GASÓMETRO",
+    tit: "Gas contenido, sin llama en cabina",
+    txt: "El gas se almacena y deriva a aprovechamiento externo al compartimento humano, con equipo y limpieza por diseñar. El PCI usado en P1 necesita fijar condiciones de presión y temperatura. La campana no representa una reserva térmica validada.",
+    d: [["Producción nominal CH₄", "~0.024 m³/d"], ["Energía química P1", "~0.240 kWh/d"], ["Almacenamiento / conversión", "por dimensionar"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["digestor", "gasómetro", "equipo exterior pendiente"]
+  },
+  f_proteina: {
+    sub: "RUTA PROPUESTA · CERRADA",
+    tit: "Biomasa larvaria retenida",
+    txt: "La biomasa larvaria requiere control sanitario antes de usarla como alimento. No se descuenta ración importada por esta ruta no validada.",
+    d: [["Reintegración a aves", "pendiente"], ["Ración P1", "importada completa"], ["Sanidad", "laboratorio y supervisión"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["larvas", "retención y análisis", "aves sólo si se autoriza"]
+  },
+  f_estiercol: {
+    sub: "RUTA · AVIARIO → CARTUCHO",
+    tit: "Deposición controlada",
+    txt: "La tolva dirige el residuo. Puede atascarse y necesita limpieza, contención y cierre. Un atasco del anillo debe detener la deposición sobre un mismo lote; la geometría sola no garantiza la dosis.",
+    d: [["Carga", "por medir"], ["Tiempo fuera del aviario", "152 soles nominales"], ["Separación sanitaria", "pendiente"]],
+    f: "docs/madrid/P1-INGENIERIA.md · config/milpa360.parameters.json · cálculos, no mediciones",
+    pasos: ["aves", "tolva con cierre", "cartucho"]
+  }
 };
+for (const f of Object.values(FICHAS)) f.viz = VIZ.cadena("MECANISMO PROPUESTO", f.pasos.map(p => [p, "#63A9D1"]));
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1177,7 +1268,7 @@ let texRego, texAve, texCasco, texCubierta, texMusgo, texSolar, texHuevo;
 let hojaCamote, hojaLegum, hojaRabano;
 const clicables = [];
 const anclas = [];                                    // etiquetas fijas del hábitat
-let carrusel, aviario, antorcha, digestorA, digestorB, luzAntorcha;
+let carrusel, aviario, digestorA, digestorB;
 let gasometro, bandejaHuevos, bandejaLarvas, goteros;
 const codornices = [], flujos = [], focosCultivo = [];
 
@@ -1527,10 +1618,10 @@ function construirHabitat(){
   /* forro interior, un tono más frío, para que el corte tenga espesor */
   malla(new T.CylinderGeometry(R_CASCO - 0.07, R_CASCO - 0.07, H_CASCO, 72, 1, true, CIL_INI, A_LARGO),
     M.cascoIn, [0, H_CASCO / 2, 0], cascoGrp);
-  /* cúpula superior */
-  const domoCasco = malla(new T.SphereGeometry(R_CASCO, 72, 26, ESF_INI, A_LARGO, 0, Math.PI * 0.5),
+  /* Techo nominal a H_CASCO: el casquete anterior excedía la cota de P2. */
+  const techo = malla(new T.CircleGeometry(R_CASCO, 72, A_PARED, A_LARGO),
     M.casco, [0, H_CASCO, 0], cascoGrp);
-  domoCasco.scale.y = 0.42;                      // casquete rebajado, no media esfera
+  techo.rotation.x = Math.PI / 2;
   /* costillas: el toro se pre-rota en la geometría para que el grupo solo gire en Y */
   const geoCost = new T.TorusGeometry(R_CASCO + 0.04, 0.05, 8, 90, A_LARGO);
   geoCost.rotateX(-Math.PI / 2);                 // pasa a barrer de +X hacia −Z
@@ -1576,19 +1667,16 @@ function construirHabitat(){
   }
   clicable(malla(new T.CylinderGeometry(0.09, 0.13, 1.5, 18), M.acero, [0, 0.75, 0]), "carrusel");
 
-  /* ── biodigestor de dos cámaras, en el núcleo ── */
-  const dig = new T.Group(); dig.position.set(0, CUBIERTA, 0); gHabitat.add(dig);
-  digestorB = malla(new T.CylinderGeometry(0.40, 0.42, 0.72, 36), M.verde, [0, 0.36, 0], dig);
-  malla(new T.TorusGeometry(0.40, 0.03, 8, 36), M.acero, [0, 0.71, 0], dig).rotation.x = Math.PI / 2;
-  malla(new T.TorusGeometry(0.41, 0.026, 8, 36), M.acero, [0, 0.16, 0], dig).rotation.x = Math.PI / 2;
-  digestorA = malla(new T.CylinderGeometry(0.27, 0.27, 0.40, 30), M.verde2, [0, 0.93, 0], dig);
-  malla(new T.TorusGeometry(0.27, 0.026, 8, 30), M.acero, [0, 1.12, 0], dig).rotation.x = Math.PI / 2;
-  /* bajante de la cámara A a la B: A protege a B, la metanogénesis se inhibe con perclorato */
-  const baj = malla(new T.CylinderGeometry(0.032, 0.032, 0.46, 10), M.cobre, [0.36, 0.80, 0.16], dig);
-  baj.rotation.z = 0.36;
-  malla(new T.CylinderGeometry(0.05, 0.05, 0.08, 12), M.acero, [0, 1.14, 0], dig);
+  /* Equipos esquemáticos separados. B17: volumen útil y mantenimiento pendientes. */
+  const dig = new T.Group(); dig.position.set(-0.22, CUBIERTA, 0); gHabitat.add(dig);
+  digestorB = malla(new T.CylinderGeometry(0.30, 0.32, 0.72, 36), M.verde, [0, 0.36, 0], dig);
   marcarSubarbol(dig, "digestor");
-
+  const sal = new T.Group(); sal.position.set(0.42, CUBIERTA, 0.20); gHabitat.add(sal);
+  digestorA = malla(new T.CylinderGeometry(0.17, 0.17, 0.72, 30), M.azul, [0, 0.36, 0], sal);
+  marcarSubarbol(sal, "f_salmuera");
+  const deposito = malla(new T.CylinderGeometry(0.14, 0.14, 0.54, 20), M.azul,
+    [0.30, CUBIERTA + 0.27, -0.40]);
+  clicable(deposito, "f_riego");
   /* filtración de agua: cilindros azules del lado opuesto */
   const aFilt = A_PARED + 1.45;
   const filt = new T.Group();
@@ -1634,12 +1722,6 @@ function construirHabitat(){
       pl.position.set(0, -0.10, 0); g.add(pl);
     }
   }
-  antorcha = malla(new T.ConeGeometry(0.10, 0.30, 14), M.llama, [0, 1.62, 0], null, false);
-  clicable(antorcha, "digestor");
-  luzAntorcha = new T.PointLight(0xFF7A3C, 2.2, 4.5, 2);
-  luzAntorcha.position.set(0, 1.62, 0);
-  gHabitat.add(luzAntorcha);
-
   /* ── aviario fijo sobre S2 ── */
   aviario = new T.Group();
   const pAv = enAngulo(R_MED, 1, N_POS);
@@ -1692,7 +1774,7 @@ function construirHabitat(){
     bandejaHuevos.userData.huevos.push(h);
   }
   placa(texturaPlaca([{ t: "RECOLECCIÓN DE HUEVO", s: 0.28, esp: 0.05 },
-                      { t: "~16/día · 68 % de postura · ≈11 900 en la misión", s: 0.17,
+                      { t: "DATOS TERRESTRES · PRODUCCIÓN POR VALIDAR", s: 0.17,
                         c: "#E4D7B4", esp: 0.01 }],
                      { w: 760, h: 150, fondo: "#0E1317", barra: "#E8DFC8", y0: 0.42 }),
         0.42, 0.083, [0.46, 0.60, 0], 0, aviario, -0.35);
@@ -1730,7 +1812,7 @@ function construirHabitat(){
       bandejaLarvas.push(l);
     }
     placa(texturaPlaca([{ t: "LARVARIO · Hermetia illucens", s: 0.26, esp: 0.03 },
-                        { t: "reduce 44–82 % de materia seca", s: 0.17, c: "#F0D49A", esp: 0.01 }],
+                        { t: "frass y larvas · control sanitario pendiente", s: 0.17, c: "#F0D49A", esp: 0.01 }],
                        { w: 760, h: 150, fondo: "#0E1317", barra: "#E9AE52", y0: 0.42 }),
           0.40, 0.079, [0, 0.78, 0], 0, gLarv, -0.35);
   }
@@ -1790,7 +1872,7 @@ function construirHabitat(){
     const rm = (r0 + r1) / 2;
     for (let i = 0; i < n; i++){
       const g = new T.Group();
-      g.rotation.y = i / n * TAU;                  // el sector ya nace centrado en el eje X
+      g.rotation.y = -i / n * TAU;                  // el sector ya nace centrado en el eje X
       grupo.add(g);
       malla(GEO.marco, M.acero, [0, Y_MARCO, 0], g);
       const sustrato = malla(GEO.suelo, M.sustrato.clone(),
@@ -1895,7 +1977,7 @@ function construirHabitat(){
     for (let i = 0; i < N_POS; i++){
       for (const [rr, dz] of [[R0 + 0.16, -0.13], [R1 - 0.16, 0.13]]){
         const g = new T.Group();
-        g.rotation.y = i / N_POS * TAU;
+        g.rotation.y = -i / N_POS * TAU;
         gr.add(g);
         const x = rr, z = dz;
         const bo = malla(new T.CylinderGeometry(0.016, 0.012, 0.045, 8), M.acero,
@@ -1944,7 +2026,7 @@ function construirHabitat(){
     const mat = new T.MeshStandardMaterial({ map: tex, roughness: 0.36, metalness: 0.55 });
     const tubo = malla(geo, mat, null, null, false);
     tubo.castShadow = true;
-    flujos.push({ tex, v: velocidad === undefined ? 0.22 : velocidad, mat, tubo, ficha });
+    flujos.push({ bloqueado: ["f_inoculo", "f_proteina"].includes(ficha), tex, v: velocidad === undefined ? 0.22 : velocidad, mat, tubo, ficha });
     if (ficha){
       clicable(tubo, ficha);
       /* un tubo de 2 cm es casi imposible de atinar con el dedo: se le añade un volumen
@@ -1953,6 +2035,10 @@ function construirHabitat(){
         new T.MeshBasicMaterial({ visible: false }));
       gHabitat.add(zona);
       clicable(zona, ficha);
+    }
+    if (["f_inoculo", "f_proteina"].includes(ficha)) {
+      const p = curva.getPoint(0.8);
+      clicable(malla(new T.BoxGeometry(0.09, 0.09, 0.09), M.oscuro, [p.x, p.y, p.z]), ficha);
     }
     return tubo;
   }
@@ -1984,7 +2070,7 @@ function construirHabitat(){
 
   /* 4 · VERDE — digestato al riego: sube a la unión rotativa del pivote, en el eje */
   conducto(C_ABONO, [
-    V(wB.x, wB.y + 0.34, wB.z + 0.30), V(wB.x, Y_COL - 0.10, wB.z + 0.36),
+    V(0.30, CUBIERTA + 0.54, -0.40), V(0.30, Y_COL - 0.10, -0.40),
     enColector(2.6), enColector(3.4),
     V(0.22, Y_COL - 0.02, 0.10), V(0.10, CUBIERTA + 1.34, 0)], 0.017, 0.22, "f_riego");
 
@@ -2015,9 +2101,9 @@ function construirHabitat(){
   gasometro.position.set(wB.x, wB.y + 0.38, wB.z);
   gasometro.userData.y0 = wB.y + 0.38;
   gHabitat.add(gasometro);
-  malla(new T.CylinderGeometry(0.365, 0.365, 0.30, 32, 1, true), M.verde2, [0, 0.15, 0], gasometro);
-  malla(new T.SphereGeometry(0.365, 32, 12, 0, TAU, 0, Math.PI * 0.42), M.verde2, [0, 0.30, 0], gasometro);
-  malla(new T.TorusGeometry(0.365, 0.022, 6, 32), M.acero, [0, 0.02, 0], gasometro).rotation.x = Math.PI / 2;
+  malla(new T.CylinderGeometry(0.29, 0.29, 0.30, 32, 1, true), M.verde2, [0, 0.15, 0], gasometro);
+  malla(new T.SphereGeometry(0.29, 32, 12, 0, TAU, 0, Math.PI * 0.42), M.verde2, [0, 0.30, 0], gasometro);
+  malla(new T.TorusGeometry(0.29, 0.022, 6, 32), M.acero, [0, 0.02, 0], gasometro).rotation.x = Math.PI / 2;
   marcarSubarbol(gasometro, "digestor");
 
   /* ═══ ROTULADO — la información va pintada sobre el equipo ═══ */
@@ -2040,19 +2126,21 @@ function construirHabitat(){
   }
 
   /* tanques rotulados, como en la lámina del equipo */
-  bandaRotulo(0.423, 0.30, wB.y - 0.10, -0.62, 1.5,
+  const rotB = bandaRotulo(0.323, 0.30, wB.y - 0.10, -0.62, 1.5,
     texturaPlaca([{ t: "BIODIGESTOR", s: 0.30, esp: 0.10 },
-                  { t: "CÁMARA B · METANOGÉNICA", s: 0.15, c: "#9FE0B4", esp: 0.06 }],
+                  { t: "METANOGÉNESIS · DISEÑO PENDIENTE", s: 0.15, c: "#9FE0B4", esp: 0.06 }],
                  { w: 640, h: 200, fondo: "#1D3A2C", barra: "#7FBB72", y0: 0.40 }), null);
-  bandaRotulo(0.276, 0.22, wA.y + 0.06, -0.62, 1.7,
-    texturaPlaca([{ t: "CÁMARA A · ANÓXICA", s: 0.24, esp: 0.08 },
-                  { t: "ClO₄⁻ → Cl⁻ + O₂", s: 0.20, c: "#8FD4E8", esp: 0.04 }],
+  rotB.position.x = wB.x; rotB.position.z = wB.z;
+  const rotA = bandaRotulo(0.176, 0.22, wA.y + 0.06, -0.62, 1.7,
+    texturaPlaca([{ t: "REACTOR SEPARADO", s: 0.24, esp: 0.08 },
+                  { t: "SALMUERA · SALIDA RETENIDA", s: 0.20, c: "#8FD4E8", esp: 0.04 }],
                  { w: 640, h: 180, fondo: "#16323C", barra: "#63A9D1", y0: 0.40 }), null);
 
+  rotA.position.x = wA.x; rotA.position.z = wA.z;
   /* rótulo exterior del casco: identidad del módulo */
   bandaRotulo(R_CASCO + 0.055, 0.46, 1.44, A_PARED + 1.05, 1.15,
     texturaPlaca([{ t: "MILPA-360", s: 0.34, mono: false, esp: 0.06 },
-                  { t: "BIOMARS CHIAPAS · MÓDULO DE SOPORTE VITAL", s: 0.11, c: "#9FB0BE", esp: 0.07 }],
+                  { t: "BIOMARS CHIAPAS · MÓDULO AGRÍCOLA", s: 0.11, c: "#9FB0BE", esp: 0.07 }],
                  { w: 900, h: 200, fondo: "#F2F4F6", borde: "#8A959E", barra: "#D2622F",
                    y0: 0.44 }), cascoGrp);
   bandaRotulo(R_CASCO + 0.055, 0.30, 0.62, A_PARED + 2.65, 0.85,
@@ -2062,11 +2150,11 @@ function construirHabitat(){
 
   /* placas de estación al borde de la cubierta: dicen qué pasa en cada una */
   const TXT_EST = [
-    ["S1", "LAVADO DEL REGOLITO", "salmuera → cámara A", "#63A9D1"],
+    ["S1", "LAVADO DEL REGOLITO", "salmuera → reactor separado", "#63A9D1"],
     ["S2", "AVIARIO · CODORNIZ", "24 aves · estiércol dirigido", "#96633A"],
     ["S3", "LARVARIO · H. illucens", "frass + proteína", "#E9AE52"],
     ["S4", "DESCANSO + INÓCULO", "cóctel biológico", "#7FBB72"],
-    ["S5", "MUSGO · S. caninervis", "costra y semáforo", "#4E8A3C"],
+    ["S5", "MUSGO · S. caninervis", "cobertura experimental", "#4E8A3C"],
     ["S6", "CONSOLIDACIÓN", "sella la superficie", "#5A6A76"],
     ["S7", "MUESTREO", "ClO₄⁻, conductividad, patógenos", "#E8EEF3"],
     ["S8", "COMPUERTA DE LIBERACIÓN", "a cultivo sólo con análisis", "#8A5334"],
@@ -2176,7 +2264,7 @@ $("cerrar").onclick = () => { ficha.classList.add("oculto"); fichaActual = null;
 /* riel: telemetría del hábitat o datos del planeta */
 const filas = [];
 function rielHabitat(){
-  $("riel-titulo").textContent = "ANILLO INTERIOR · DESCANSO";
+  $("riel-titulo").textContent = "ANILLO ÚNICO · LOTES";
   const c = $("riel-cuerpo");
   c.innerHTML = `<table><thead><tr><th>Bandeja</th><th>Estación</th><th>Sin estiércol</th></tr></thead>
     <tbody id="tele"></tbody></table>
@@ -2201,7 +2289,7 @@ const DATOS_PLANETA = [
   ["agua",      "Agua",             "hielo SWIM", true],
   ["comms",     "Retardo a la Tierra","3 – 22 min"],
   ["valles",    "Temperatura media","−63 °C", true],
-  ["sitio",     "Sitio del hábitat","10 m²", true],
+  ["sitio",     "Módulo agrícola",GEOM.areas.cultivo.toFixed(2)+" m² cultivo", true],
 ];
 function rielPlaneta(){
   $("riel-titulo").textContent = "MARTE · DATOS DUROS";
@@ -2411,7 +2499,7 @@ function bucle(ahora){
   const avance = paso + suavizado;
 
   if (S.vista === "habitat"){
-    carrusel.grupo.rotation.y = avance / N_POS * TAU;
+    carrusel.grupo.rotation.y = -avance / N_POS * TAU;
 
     /* UN solo recorrido sobre las 20 posiciones. El estado se INTERPOLA entre posición y
        posición — nada aparece ni desaparece de golpe cuando el carrusel avanza un paso.
@@ -2479,7 +2567,7 @@ function bucle(ahora){
        En tormenta el biogás corre más rápido — es el que sostiene el colchón térmico. */
     flujos.forEach((fl, k) => {
       const v = (fl.ficha === "f_biogas" && enTormenta) ? fl.v * 2.4 : fl.v;
-      fl.tex.offset.x -= dt * v;
+      if (!fl.bloqueado && S.play) fl.tex.offset.x -= dt * v;
     });
 
     /* gasómetro de campana: sube con lo que produce el digestor, baja con lo que se consume */
@@ -2514,11 +2602,6 @@ function bucle(ahora){
       q.rotation.y = q.userData.a + 1.6 + Math.sin(t * 0.7 + i) * 0.45;
       q.children[1].position.y = 0.108 - Math.max(0, Math.sin(t * 1.7 + i * 2)) * 0.028;
     });
-
-    /* antorcha de biogás */
-    antorcha.scale.y = 1 + Math.sin(t * 8) * 0.18;
-    antorcha.material.opacity = enTormenta ? 0.95 : 0.78;
-    luzAntorcha.intensity = 2.0 + Math.sin(t * 8) * 0.5;
 
     /* luces de cultivo: se apagan sin sol */
     focosCultivo.forEach(o => {
