@@ -20,7 +20,7 @@ scene = bpy.data.scenes.new('MILPA360_S5')
 bpy.context.window.scene = scene
 scene['estado'] = 'Visualización nominal. B15-B19 pendientes. No ensayos físicos.'
 scene['fuente'] = 'config/milpa360.parameters.json + escena Three160 evaluada'
-scene['revision'] = 'S5 / ' + geom['_fuente']
+scene['revision'] = 'V2 visual / ' + geom['_fuente']
 scene.unit_settings.system = 'METRIC'
 scene.unit_settings.scale_length = 1
 materials, meshes = {}, {}
@@ -58,7 +58,11 @@ for key, value in data['geometrias'].items():
         for loop in mesh.loops:
             i = loop.vertex_index*2
             layer.data[loop.index].uv = value['uv'][i:i+2]
-    mesh.update(); meshes[key] = mesh
+    mesh.update()
+    if value.get('normales'):
+        for polygon in mesh.polygons: polygon.use_smooth = True
+        mesh.normals_split_custom_set_from_vertices(list(zip(*[iter(value['normales'])]*3)))
+    meshes[key] = mesh
 rotation = Matrix.Rotation(math.pi/2, 4, 'X')
 for value in data['objetos']:
     # Material por objeto: las instancias pueden compartir malla con diferentes tintes.
@@ -89,8 +93,8 @@ camera=bpy.data.objects.new('Camara-S5',bpy.data.cameras.new('Camara-S5'))
 scene.collection.objects.link(camera);camera.location=(7.5,5.4,6.4)
 camera.rotation_euler=(Vector((0,0,.9))-camera.location).to_track_quat('-Z','Y').to_euler()
 camera.data.type='ORTHO';camera.data.ortho_scale=8.4;scene.camera=camera
-scene.render.engine='CYCLES';scene.cycles.samples=24;scene.cycles.use_denoising=True
-scene.render.resolution_x=1600;scene.render.resolution_y=1200;scene.render.resolution_percentage=100
+scene.render.engine='CYCLES';scene.cycles.samples=48;scene.cycles.use_denoising=True
+scene.render.resolution_x=1920;scene.render.resolution_y=1440;scene.render.resolution_percentage=100
 scene.render.image_settings.file_format='PNG';scene.render.filepath=str(OUT/'blender-S5.png')
 scene.view_settings.view_transform='AgX'
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'MILPA360-S5.blend'),compress=True)
@@ -106,7 +110,7 @@ assert max(abs(a-b) for a,b in zip(floor.dimensions, floor2.dimensions)) < 1e-5
 assert len([o for o in verify.objects if o.type=='MESH']) == len(data['objetos']), (len(verify.objects),len(data['objetos']))
 report={'fuente_sha256':hashlib.sha256((OUT/'escena-three.json').read_bytes()).hexdigest(),
         'config_sha256':hashlib.sha256((ROOT/'config/milpa360.parameters.json').read_bytes()).hexdigest(),
-        'blender':bpy.app.version_string,'sol':data['sol'],'mallas':len(data['objetos']),
+        'revision_visual':'V2','blender':bpy.app.version_string,'sol':data['sol'],'mallas':len(data['objetos']),
         'piso_diametro_m':floor.dimensions.x,'piso_z_m':max_z,'base_piso_z_m':min_z,
         'reimportacion_glb':'recuento y dimensiones del piso coinciden a 1e-5 m',
         'limite':'Sólo mallas exportadas; no tolerancia física, resistencia ni interferencias completas.'}

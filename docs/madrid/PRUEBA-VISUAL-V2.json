@@ -1,0 +1,19 @@
+{
+  "fecha": "2026-09-21T08:23:40.417Z",
+  "navegador": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/148.0.7778.96",
+    "revision": "@8625e066febc721e015ea99842da12901eb7ed73",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/148.0.0.0 Safari/537.36",
+    "jsVersion": "14.8.178.14"
+  },
+  "idiomas": [
+    "es",
+    "en"
+  ],
+  "controles": "recorrido, fichas, inspección, comparación, acceso, atlas, móvil, teclado y reducción de movimiento",
+  "estado_conservado": true,
+  "errores": [],
+  "solicitudesHTTP": 0,
+  "limite": "SwiftShader; no prueba del equipo del evento ni validación física"
+}

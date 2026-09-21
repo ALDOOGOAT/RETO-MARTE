@@ -40,14 +40,15 @@ with zipfile.ZipFile(archive) as z:
     manifest=json.loads(z.read('docs/madrid/MANIFIESTO-S5.json'))
     for n,h in manifest['sha256'].items():
         assert hashlib.sha256(z.read(n)).hexdigest()==h,n
-    for n in ('prototipo-3d/milpa360-simulador.html','prototipo-3d/milpa360-acceso.html'):
+    for n in ('prototipo-3d/milpa360-simulador.html','prototipo-3d/milpa360-acceso.html','visuales/atlas-marciano.html'):
         parser=Links();parser.feed(z.read(n).decode())
         for link in parser.links:
             target=resolve(n,link)
             assert target is None or target in names,(n,link)
     checked_links=0
     for n in ('docs/madrid/P5-DEFENSA.md','docs/madrid/CIERRE-ACUMULADO.md',
-              'docs/madrid/CALCULOS-CIERRE.md','docs/madrid/B19-ACCESO.md'):
+              'docs/madrid/CALCULOS-CIERRE.md','docs/madrid/B19-ACCESO.md',
+              'docs/madrid/MEJORA-VISUAL-BILINGUE.md'):
         for link in re.findall(r'\[[^\]]+\]\(([^)]+)\)',z.read(n).decode()):
             target=resolve(n,link)
             assert target is None or target in names,(n,link,target)
@@ -79,19 +80,22 @@ with zipfile.ZipFile(archive) as z:
     assert template.attrib['width']==f'{view[2]}mm' and template.attrib['height']==f'{view[3]}mm','Plantilla sin escala métrica 1:1'
     g=json.loads(z.read('config/milpa360.geometria.json'))
     old=json.loads(__import__('subprocess').check_output(['git','show','589ca5b:config/milpa360.geometria.json'],cwd=ROOT))
-    # Reutilizar BLEND/GLB sólo si la geometría sigue idéntica; versiones separadas.
+    # Acabados V2 exportados de nuevo; la geometría nominal conserva las cotas S5.
     current=g.copy()
     assert current['_fuente']=='config/milpa360.parameters.json v'+manifest['revision_calculos']
     old['_fuente']=current['_fuente']  # Sólo cambió el identificador de revisión de parámetros.
     assert old==current,'Cambio geométrico exige regenerar Blender y capturas'
+    blender=json.loads(z.read('outputs/madrid-s5/VERIFICACION-BLENDER.json'))
+    assert blender['revision_visual']=='V2'
+    assert blender['config_sha256']==hashlib.sha256(z.read('config/milpa360.parameters.json')).hexdigest()
     browser_evidence=None
     if len(sys.argv)>1:
         # Pasar únicamente la carpeta usada realmente por ambos verificadores Chrome.
         tested=Path(sys.argv[1])
-        app_files=[n for n in names if n.startswith('prototipo-3d/')]
+        app_files=[n for n in names if n.startswith(('prototipo-3d/','visuales/'))]
         for n in app_files:
             assert (tested/n).read_bytes()==z.read(n),f'Demo distinta de la probada: {n}'
-        reports=['docs/madrid/PRUEBA-P3-NAVEGADOR.json','docs/madrid/PRUEBA-B19-NAVEGADOR.json']
+        reports=['docs/madrid/PRUEBA-P3-NAVEGADOR.json','docs/madrid/PRUEBA-B19-NAVEGADOR.json','docs/madrid/PRUEBA-VISUAL-V2.json']
         for n in reports:
             r=json.loads(z.read(n))
             assert not r['errores'] and r['solicitudesHTTP']==0,n
@@ -100,7 +104,7 @@ with zipfile.ZipFile(archive) as z:
     z.extractall(clean)
     result=dict(archivo=str(archive),archivos_sha256=len(manifest['sha256']),
         enlaces_documentales=checked_links,paginas_memoria=len(reader.pages),
-        diapositivas=9,afirmaciones=len(rows)-1,geometria_blender_reutilizable=True,
+        diapositivas=9,afirmaciones=len(rows)-1,geometria_blender_regenerada="V2",
         carpeta_limpia=str(clean),navegador=browser_evidence,
         limite='Integridad digital. La revisión visual se registra aparte; no acredita ensayo físico, revisión independiente ni rendimiento del equipo del evento.')
     (ROOT/'tmp/madrid-s5').mkdir(exist_ok=True,parents=True)

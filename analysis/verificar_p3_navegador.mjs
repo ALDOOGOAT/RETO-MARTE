@@ -28,6 +28,71 @@ try {
   await cdp('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});
   await cdp('Network.setBlockedURLs',{urls:['http://*','https://*']});
   await cdp('Emulation.setDeviceMetricsOverride',{width:1920,height:1080,deviceScaleFactor:1,mobile:false});
+  if(process.env.MILPA_VISUAL_V2==='1'){
+    const base=process.env.MILPA_DEMO_DIR?path.resolve(process.env.MILPA_DEMO_DIR,'..'):raiz;
+    const dir=path.join(raiz,'docs/madrid/capturas-v2');await mkdir(dir,{recursive:true});
+    const cap=async n=>{await new Promise(r=>setTimeout(r,350));const im=await cdp('Page.captureScreenshot',{format:'png'});await writeFile(path.join(dir,n+'.png'),Buffer.from(im.data,'base64'));};
+    await cdp('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
+    await cdp('Page.navigate',{url:pathToFileURL(path.join(base,'prototipo-3d/milpa360-simulador.html')).href+'?play=0&lang=es'});
+    await esperar('typeof refsHab!=="undefined" && refsHab && !document.getElementById("carga")');
+    assert.equal(await evaluar('FICHAS.agua.d[0][1]'), '6.30 L/d');
+    await cap('planeta-es');
+    const state=await evaluar('JSON.stringify(modelo.estado)');
+    await evaluar('MILPA_I18N.set("en")');
+    assert.equal(await evaluar('document.documentElement.lang'),'en');
+    assert.equal(await evaluar('FICHAS.agua.tit'),'Recover water and check its quality');
+    assert.equal(await evaluar('JSON.stringify(modelo.estado)'),state);
+    await cap('planeta-en');
+    await evaluar('aplicarVista("habitat");');
+    await new Promise(r=>setTimeout(r,800));await cap('habitat-en');
+    await evaluar('mostrarPaso(2)');await cap('recorrido-en');
+    assert.equal(await evaluar('$("tour-next").textContent'),'Next');
+    await evaluar('$("tour-next").click()');assert.equal(await evaluar('pasoRecorrido'),3);
+    await evaluar('$("cerrar").click();pasoRecorrido=-1;abrirTecnica();');
+    await cap('tecnica-en');
+    const inventario={tecnica:await evaluar('$("ficha").innerText')};
+    assert.ok(!inventario.tecnica.includes('gas almacenado'),'Telemetría sin traducir');
+    await evaluar('$("lote-elegido").value="L07";$("tipo-fallo").value="atasco";MILPA_I18N.set("es");MILPA_I18N.set("en")');
+    assert.equal(await evaluar('$("lote-elegido").value'),'L07');
+    assert.equal(await evaluar('$("tipo-fallo").value'),'atasco');
+
+    await evaluar('abrirComparacion()');inventario.comparacion=await evaluar('$("ficha").innerText');
+    await evaluar('$("cmp-inicio").value="30";MILPA_I18N.set("es");MILPA_I18N.set("en")');
+    assert.equal(await evaluar('$("cmp-inicio").value'),'30');
+
+    await evaluar('MILPA_I18N.set("es");$("cerrar").click();aplicarVista("habitat")');await cap('habitat-es');
+    await cdp('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:false});
+    await cap('movil-es');
+    assert.equal(await evaluar('document.documentElement.scrollWidth<=innerWidth+1'),true);
+    await evaluar('MILPA_I18N.set("en");mostrarPaso(0)');await cap('movil-en');
+    const focus=await evaluar('(()=>{lienzo.focus();return document.activeElement.id})()');assert.equal(focus,'lienzo');
+    const theta=await evaluar('orbe.theta');await evaluar('lienzo.dispatchEvent(new KeyboardEvent("keydown",{key:"ArrowRight",bubbles:true}))');assert.ok(await evaluar('orbe.theta')>theta);
+    await evaluar('$("ayuda-reducir").checked=true;$("ayuda-reducir").dispatchEvent(new Event("change"))');assert.equal(await evaluar('S.play||!S.reducido'),false);
+    await cdp('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
+    await cdp('Page.navigate',{url:pathToFileURL(path.join(base,'prototipo-3d/milpa360-acceso.html')).href+'?lang=en'});
+    await esperar('typeof B19!=="undefined"');await cap('acceso-en');
+    assert.equal(await evaluar('document.getElementById("siguiente").textContent'),'Lock ring');
+    await evaluar('document.getElementById("siguiente").click()');
+    assert.equal(await evaluar('B19.estudio.estado.fase'),1);
+    await evaluar('MILPA_I18N.set("es")');assert.equal(await evaluar('B19.estudio.estado.fase'),1);await cap('acceso-es');
+    inventario.acceso=await evaluar('document.body.innerText');
+    await cdp('Page.navigate',{url:pathToFileURL(path.join(base,'visuales/atlas-marciano.html')).href+'?lang=es'});
+    await esperar('document.getElementById("coverage")?.textContent.includes("2.46")');await cap('atlas-es');
+    await evaluar('MILPA_I18N.set("en")');assert.equal(await evaluar('document.querySelector("h1").textContent'),'Life, on another world.');await cap('atlas-en');
+    await evaluar('document.getElementById("retardo").value="22";signal();document.getElementById("demora").scrollIntoView({behavior:"instant"})');
+    assert.equal(await evaluar('document.getElementById("vuelta").value'),'44 min');await cap('atlas-delay-en');
+    await evaluar(`document.querySelector('[data-process="cultivo"]').click();document.getElementById("ciclo").scrollIntoView({behavior:"instant"})`);
+    assert.equal(await evaluar('document.querySelectorAll(".ring path.active").length'),12);await cap('atlas-cycle-en');
+    await cdp('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:false});
+    await evaluar('document.getElementById("retorno").scrollIntoView({behavior:"instant"})');await cap('atlas-mobile-en');
+    assert.equal(await evaluar('document.documentElement.scrollWidth<=innerWidth+1'),true);
+    const v=await evaluar('document.getElementById("retardo").value');await evaluar('MILPA_I18N.set("es")');assert.equal(await evaluar('document.getElementById("retardo").value'),v);
+
+    assert.deepEqual(errores,[]);assert.deepEqual(peticiones.filter(u=>/^https?:/.test(u)),[]);
+    await writeFile(path.join(dir,'inventario-texto.json'),JSON.stringify(inventario,null,2));
+    const report={fecha:new Date().toISOString(),navegador:await cdp('Browser.getVersion'),idiomas:['es','en'],controles:'recorrido, fichas, inspección, comparación, acceso, atlas, móvil, teclado y reducción de movimiento',estado_conservado:true,errores,solicitudesHTTP:0,limite:'SwiftShader; no prueba del equipo del evento ni validación física'};
+    await writeFile(path.join(raiz,'docs/madrid/PRUEBA-VISUAL-V2.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
+  }else
   if(process.env.MILPA_SOLO_ACCESO==='1'){
     const html=path.join(process.env.MILPA_DEMO_DIR||path.join(raiz,'prototipo-3d'),'milpa360-acceso.html');
     await cdp('Page.navigate',{url:pathToFileURL(html).href});
@@ -131,17 +196,20 @@ try {
   const fichaErrores=await evaluar(`Object.keys(FICHAS).filter(k=>{abrirFicha(k);return !document.getElementById('f-viz').textContent;})`);assert.deepEqual(fichaErrores,[]);
   await evaluar('document.getElementById("cerrar").click()');
   await evaluar('document.getElementById("b-recorrido").click()');
-  assert.ok((await evaluar('document.getElementById("f-tit").textContent')).includes('Módulo'));
+  assert.equal(await evaluar('fichaActual'),'sitio');
+  assert.equal(await evaluar('document.getElementById("f-tit").textContent'),await evaluar('FICHAS.sitio.tit'));
   await evaluar('document.getElementById("cerrar").click()');
   console.log('Chrome: controles y geometría verificados');
   }
   const hardware=await evaluar(`(()=>{const gl=renderer.getContext(),ext=gl.getExtension('WEBGL_debug_renderer_info');return {three:THREE.REVISION,renderer:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):'no disponible',pantalla:[innerWidth,innerHeight],dpr:devicePixelRatio};})()`);
-  const fps=await evaluar('new Promise(resolve=>{let n=0;const inicio=performance.now();function contar(){if(++n===30)resolve(30000/(performance.now()-inicio));else requestAnimationFrame(contar);}requestAnimationFrame(contar);})');
+  // Ventana temporal: exigir 30 fotogramas puede agotar CDP con SwiftShader.
+  const rendimiento=await evaluar('new Promise(resolve=>{let n=0,raf;const inicio=performance.now();function contar(){n++;raf=requestAnimationFrame(contar);}raf=requestAnimationFrame(contar);setTimeout(()=>{cancelAnimationFrame(raf);const ms=performance.now()-inicio;resolve({fotogramas:n,duracionMs:ms,fps:n*1000/ms});},5000);})');
   assert.equal(hardware.three,'160');
   const capturas=path.join(raiz,'docs/madrid/capturas');await mkdir(capturas,{recursive:true});
-  const poses={hero:'vista=habitat&ui=0&sol=62&theta=-0.62&phi=1.08&dist=10.4&play=0',planta:'vista=habitat&ui=0&piso=0&casco=0&sol=62&theta=-1.5708&phi=0.12&dist=11.5&play=0',nucleo:'vista=habitat&ui=0&piso=0&sol=62&theta=-0.78&phi=1.16&dist=5.4&play=0',tormenta:'vista=habitat&ui=0&sol=62&storm=1&play=0&theta=-0.62&phi=1.04&dist=10',planeta:'ui=0&theta=-0.62&phi=1.30&dist=18.5&play=0',tecnica:'vista=habitat&play=0&sol=62'};
+  const poses={hero:'vista=habitat&ui=0&sol=62&theta=-0.62&phi=1.08&dist=10.4&play=0',planta:'vista=habitat&ui=0&piso=0&casco=0&sol=62&theta=-1.5708&phi=0.12&dist=11.5&play=0',nucleo:'vista=habitat&ui=0&piso=0&sol=62&theta=-0.78&phi=1.16&dist=5.4&play=0',tormenta:'vista=habitat&ui=0&sol=62&storm=1&play=0&theta=-0.62&phi=1.04&dist=10',planeta:'ui=0&theta=0.95&phi=1.30&dist=18.5&play=0',tecnica:'vista=habitat&play=0&sol=62'};
   poses.explosion='vista=habitat&ui=0&sol=62&theta=-0.62&phi=1.10&dist=12.4&play=0&explosion=1';
-  for(const [nombre,q] of Object.entries(poses)){
+  // Revalidar una extracción sin volver a renderizar las capturas ya revisadas.
+  for(const [nombre,q] of Object.entries(process.env.MILPA_SIN_CAPTURAS==='1'?{}:poses)){
     await cdp('Page.navigate',{url:url+'?'+q});await esperar('typeof refsHab!=="undefined"&&refsHab&&!document.getElementById("carga")');
     await evaluar('camara.position.copy(new THREE.Vector3(mira.x+orbe.dist*Math.sin(orbe.phi)*Math.cos(orbe.theta),mira.y+orbe.dist*Math.cos(orbe.phi),mira.z+orbe.dist*Math.sin(orbe.phi)*Math.sin(orbe.theta)))');
     if(nombre==='tecnica')await evaluar('abrirTecnica()');
@@ -152,7 +220,7 @@ try {
     if(nombre==='hero'&&process.env.MILPA_EXPORT_GLB==='1'){
       // Exportación de mallas ya evaluadas; Blender aplica el cambio Y-arriba → Z-arriba.
       // Sin un segundo motor ni un cargador añadido a la demo offline.
-      const largo=await evaluar(`(()=>{gHabitat.updateMatrixWorld(true);const geometrias={},materiales={},texturas={},objetos=[];gHabitat.traverseVisible(o=>{if(!o.isMesh||!o.material.visible||Array.isArray(o.material))return;const g=o.geometry,m=o.material;if(!g.attributes.position)return;if(!geometrias[g.uuid])geometrias[g.uuid]={pos:Array.from(g.attributes.position.array),uv:g.attributes.uv?Array.from(g.attributes.uv.array):null,index:g.index?Array.from(g.index.array):null};if(!materiales[m.uuid]){materiales[m.uuid]={color:m.color.toArray(),metal:m.metalness||0,rough:m.roughness??1,alpha:m.opacity,map:m.map?.uuid};if(m.map&&!texturas[m.map.uuid]&&m.map.image?.toDataURL)texturas[m.map.uuid]={png:m.map.image.toDataURL('image/png'),repeat:m.map.repeat.toArray()};}const add=(matrix,nombre)=>objetos.push({nombre,geometria:g.uuid,material:m.uuid,matrix:matrix.toArray()});if(o.isInstancedMesh){for(let i=0;i<o.count;i++){const mat=new THREE.Matrix4();o.getMatrixAt(i,mat);add(o.matrixWorld.clone().multiply(mat),(o.name||'pieza')+'-'+i);}}else add(o.matrixWorld,o.name||'pieza');});globalThis.mallasExport=JSON.stringify({tipo:'Mallas nominales Three160, no CAD ni fabricación',parametros:GEOM,sol:modelo.estado.sol,geometrias,materiales,texturas,objetos});return mallasExport.length;})()`);
+      const largo=await evaluar(`(()=>{gHabitat.updateMatrixWorld(true);const geometrias={},materiales={},texturas={},objetos=[];gHabitat.traverseVisible(o=>{if(!o.isMesh||!o.material.visible||Array.isArray(o.material))return;const g=o.geometry,m=o.material;if(!g.attributes.position)return;if(!geometrias[g.uuid])geometrias[g.uuid]={pos:Array.from(g.attributes.position.array),normales:g.attributes.normal?Array.from(g.attributes.normal.array):null,uv:g.attributes.uv?Array.from(g.attributes.uv.array):null,index:g.index?Array.from(g.index.array):null};if(!materiales[m.uuid]){materiales[m.uuid]={color:m.color.toArray(),metal:m.metalness||0,rough:m.roughness??1,alpha:m.opacity,map:m.map?.uuid};if(m.map&&!texturas[m.map.uuid]&&m.map.image?.toDataURL)texturas[m.map.uuid]={png:m.map.image.toDataURL('image/png'),repeat:m.map.repeat.toArray()};}const add=(matrix,nombre)=>objetos.push({nombre,geometria:g.uuid,material:m.uuid,matrix:matrix.toArray()});if(o.isInstancedMesh){for(let i=0;i<o.count;i++){const mat=new THREE.Matrix4();o.getMatrixAt(i,mat);add(o.matrixWorld.clone().multiply(mat),(o.name||'pieza')+'-'+i);}}else add(o.matrixWorld,o.name||'pieza');});globalThis.mallasExport=JSON.stringify({tipo:'Mallas nominales Three160, no CAD ni fabricación',parametros:GEOM,sol:modelo.estado.sol,geometrias,materiales,texturas,objetos});return mallasExport.length;})()`);
       await mkdir(path.join(raiz,'outputs/madrid-s5'),{recursive:true});
       const salida=path.join(raiz,'outputs/madrid-s5/escena-three.json');await writeFile(salida,'');
       console.log('Exportando '+largo+' caracteres en bloques');
@@ -162,7 +230,7 @@ try {
   }
   assert.deepEqual(errores,[],'Errores de consola');
   assert.deepEqual(peticiones.filter(u=>/^https?:/.test(u)),[],'La demo solicita Internet');
-  const informe={fecha:new Date().toISOString(),prueba:'Chrome headless, red deshabilitada, file://',browser:await cdp('Browser.getVersion'),cpu:os.cpus()[0].model,plataforma:os.platform(),...hardware,cotas,piso,fps30Frames:fps,limite:'SwiftShader por software; NO prueba del equipo del evento',controles:process.env.MILPA_SOLO_CAPTURAS==='1'?'omitidos; sólo capturas':'pausa, avance, reset, fallos, cuarentena, vistas, fichas, despiece, selección y comparación comprobados',errores,solicitudesHTTP:0};
+  const informe={fecha:new Date().toISOString(),prueba:'Chrome headless, red deshabilitada, file://',browser:await cdp('Browser.getVersion'),cpu:os.cpus()[0].model,plataforma:os.platform(),...hardware,cotas,piso,rendimiento,limite:'SwiftShader por software; NO prueba del equipo del evento',controles:process.env.MILPA_SOLO_CAPTURAS==='1'?'omitidos; sólo capturas':'pausa, avance, reset, fallos, cuarentena, vistas, fichas, despiece, selección y comparación comprobados',errores,solicitudesHTTP:0};
   await writeFile(path.join(raiz,'docs/madrid/PRUEBA-P3-NAVEGADOR.json'),JSON.stringify(informe,null,2)+'\n');
   console.log(JSON.stringify(informe,null,2));
   }

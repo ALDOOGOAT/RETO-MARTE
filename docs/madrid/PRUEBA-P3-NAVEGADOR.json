@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-09-21T07:22:12.641Z",
+  "fecha": "2026-09-21T08:32:26.986Z",
   "prueba": "Chrome headless, red deshabilitada, file://",
   "browser": {
     "protocolVersion": "1.3",
@@ -34,7 +34,11 @@
     "cara": -8.940696724635266e-10,
     "terreno": -0.08
   },
-  "fps30Frames": 0.8759737908641392,
+  "rendimiento": {
+    "fotogramas": 5,
+    "duracionMs": 5019,
+    "fps": 0.9962143853357243
+  },
   "limite": "SwiftShader por software; NO prueba del equipo del evento",
   "controles": "pausa, avance, reset, fallos, cuarentena, vistas, fichas, despiece, selección y comparación comprobados",
   "errores": [],

@@ -1,0 +1,10 @@
+{
+  "fecha": "2026-09-21T08:18:33.429566+00:00",
+  "blender": "5.2.0 LTS",
+  "addon": "1.6 / protocolo 5",
+  "operacion": "GLB V2 importado por Blender MCP",
+  "escena_anterior_preservada": "MILPA360_S5_REVISION",
+  "escena_nueva": "MILPA360_V2_REVISION",
+  "mallas": 1267,
+  "limite": "Importación en aplicación comprobada. Archivo BLEND de entrega guardado por el generador background; no se sobrescribió la sesión abierta."
+}

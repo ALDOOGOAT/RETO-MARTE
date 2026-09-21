@@ -3,10 +3,13 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MILPA-360 · estudio de acceso B19</title>
 <link rel="stylesheet" href="vendor/fuentes.css">
+<script src="milpa360-idiomas.js"></script><script src="milpa360-traducciones.js"></script>
 <style>
 :root{color-scheme:dark;font-family:Archivo,Arial,sans-serif;background:#0c151c;color:#e3eceb}*{box-sizing:border-box}body{margin:0}header{padding:22px 28px;border-bottom:1px solid #34454b;display:flex;justify-content:space-between;gap:20px}h1{font-size:25px;margin:5px 0}a{color:#91d4de}small,.mono{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#adc3c8}main{display:grid;grid-template-columns:360px 1fr;min-height:calc(100vh - 96px)}aside{padding:24px;overflow:auto;max-height:calc(100vh - 96px)}h2{font-size:21px}p{line-height:1.55}button{font:inherit;background:#233943;color:#edf5f3;border:1px solid #50616a;border-radius:4px;padding:11px 14px;cursor:pointer}button:hover{background:#365465}button:focus-visible,a:focus-visible{outline:3px solid #f9bb6e;outline-offset:3px}button:disabled{opacity:.4;cursor:not-allowed}.acciones{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}#siguiente{background:#cf692f;color:#fff;border-color:#f4a371}.metricas{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}.metricas strong{display:block;font-size:23px;margin-bottom:5px}.metricas span{font-size:12px;color:#adc3c8}.nota{border-left:3px solid #d8904a;padding-left:12px;font-size:14px}#escena{position:relative;min-width:0;min-height:550px;background:radial-gradient(ellipse at center,#263d46,#101d27)}canvas{display:block;width:100%;height:100%;touch-action:none}.vistas{position:absolute;top:20px;left:20px;display:flex;gap:8px}.leyenda{position:absolute;bottom:18px;left:20px;right:20px;font-size:13px;line-height:1.5;background:#102028e8;padding:12px;color:#b9d1d8}.estado{color:#ffd499;min-height:45px}ol{padding-left:22px;line-height:1.7}#pasos .activo{color:#ffc47e;font-weight:700}@media(max-width:850px){main{grid-template-columns:1fr}aside{max-height:none}#escena{height:70vh;grid-row:1}header{padding:15px;flex-wrap:wrap}}
 </style>
-<header><div><small>BIOMARS CHIAPAS / INGENIERÍA / B19</small><h1>Un acceso que pueda recorrerse</h1></div><a href="milpa360-simulador.html?vista=habitat&play=0">Volver al módulo S5</a></header>
+<link rel="stylesheet" href="milpa360-interfaz.css">
+<body class="acceso">
+<header><div><small>BIOMARS CHIAPAS / INGENIERÍA / B19</small><h1>Un acceso que pueda recorrerse</h1></div><a data-preserve-language href="milpa360-simulador.html?vista=habitat&play=0">Volver al módulo S5</a><div class="tools"><div class="lang-switch" role="group" aria-label="Idioma"><button data-language="es" aria-pressed="true">ES</button><button data-language="en" aria-pressed="false">EN</button></div></div></header>
 <main><aside>
 <small>CANDIDATA DIGITAL · NO APROBADA PARA FABRICACIÓN</small>
 <h2 id="fase">Anillo ensamblado</h2><p id="explicacion"></p>
@@ -29,29 +32,37 @@
 const datos=MILPA_DATOS, a=datos.acceso, g=datos.geometria, p=a.parametros, r=a.resultados;
 const estudio=new MILPA.AccesoServicio(datos), $=id=>document.getElementById(id), T=THREE;
 const escena=new T.Scene(), renderer=new T.WebGLRenderer({antialias:true,alpha:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setClearColor(0,0);$('escena').prepend(renderer.domElement);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.setClearColor(0,0);$('escena').prepend(renderer.domElement);
 const camara=new T.PerspectiveCamera(40,1,.05,80), mira=new T.Vector3(1.1,.5,0);
 escena.add(new T.HemisphereLight(0xdbefff,0x334549,2.2));
-const luz=new T.DirectionalLight(0xffdcc0,3);luz.position.set(0,7,5);escena.add(luz);
-const material=(color,alpha=1)=>new T.MeshStandardMaterial({color,roughness:.65,metalness:.18,transparent:alpha<1,opacity:alpha,side:T.DoubleSide});
-const mat={casco:material(0x849c9c,.23),metal:material(0x7b959c),suelo:material(0x384947),cart:material(0x788b74),carga:material(0xd58044),azul:material(0x68cddd,.19),ruta:material(0x398ba6),claro:material(0xd7e4df),oscuro:material(0x172932)};
-function box(nombre,x,y,z,w,h,d,m,parent=escena){const o=new T.Mesh(new T.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.name=nombre;parent.add(o);return o;}
-function poly(nombre,points,top,depth,m,parent=escena){const s=new T.Shape(points.map(([x,z])=>new T.Vector2(x,z)));const geo=new T.ExtrudeGeometry(s,{depth,bevelEnabled:false});geo.rotateX(Math.PI/2);const o=new T.Mesh(geo,m);o.position.y=top;o.name=nombre;parent.add(o);return o;}
-function rotulo(texto,x,z,w,rot=-Math.PI/2){const c=document.createElement('canvas');c.width=1024;c.height=160;const ctx=c.getContext('2d');ctx.fillStyle='#152832';ctx.fillRect(0,0,1024,160);ctx.fillStyle='#e6eeed';ctx.font='bold 55px Arial';ctx.textAlign='center';ctx.fillText(texto,512,100);const t=new T.CanvasTexture(c);const m=new T.MeshBasicMaterial({map:t,side:T.DoubleSide});const o=new T.Mesh(new T.PlaneGeometry(w,w*160/1024),m);o.position.set(x,.012,z);o.rotation.x=rot;escena.add(o);return o;}
+const luz=new T.DirectionalLight(0xffead5,3.2);luz.position.set(-1,7,4);luz.castShadow=true;luz.shadow.mapSize.set(1024,1024);Object.assign(luz.shadow.camera,{left:-7,right:7,top:7,bottom:-7});luz.shadow.normalBias=.025;escena.add(luz);const fill=new T.DirectionalLight(0x83badb,1.8);fill.position.set(4,4,-5);escena.add(fill);
+const material=(color,alpha=1)=>new T.MeshStandardMaterial({color,roughness:.4,metalness:.34,transparent:alpha<1,opacity:alpha,side:T.DoubleSide});
+const mat={casco:material(0x9fbdc7,.13),metal:material(0x9db2ba),suelo:material(0x5c4335),cart:material(0xc2d0c9),carga:material(0xe0a676),azul:material(0x68cddd,.19),ruta:material(0x398ba6),claro:material(0xd7e4df),oscuro:material(0x172932)};
+function box(nombre,x,y,z,w,h,d,m,parent=escena){const o=new T.Mesh(new T.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.name=nombre;o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;}
+function poly(nombre,points,top,depth,m,parent=escena){const s=new T.Shape(points.map(([x,z])=>new T.Vector2(x,z)));const geo=new T.ExtrudeGeometry(s,{depth,bevelEnabled:false});geo.rotateX(Math.PI/2);const o=new T.Mesh(geo,m);o.position.y=top;o.name=nombre;o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;}
+const etiquetasTextura=[];
+function rotulo(texto,x,z,w,rot=-Math.PI/2){const c=document.createElement('canvas');c.width=1024;c.height=160;const ctx=c.getContext('2d');
+ const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;
+ function pintar(){ctx.fillStyle='#152832';ctx.fillRect(0,0,1024,160);ctx.fillStyle='#e6eeed';ctx.font='bold 55px Archivo';ctx.textAlign='center';ctx.fillText(MILPA_I18N.t(texto),512,100,960);t.needsUpdate=true;}
+ etiquetasTextura.push(pintar);pintar();const m=new T.MeshBasicMaterial({map:t,side:T.DoubleSide});const o=new T.Mesh(new T.PlaneGeometry(w,w*160/1024),m);o.position.set(x,.028,z);o.rotation.x=rot;escena.add(o);return o;}
+
 const R=g.casco.radio,fin=R+p.longitud_vestibulo,altura=g.casco.altura;
-const piso=new T.Mesh(new T.CylinderGeometry(R,R,.08,100),mat.oscuro);piso.position.y=-.04;escena.add(piso);
+const piso=new T.Mesh(new T.CylinderGeometry(R,R,.08,100),mat.oscuro);piso.position.y=-.04;piso.receiveShadow=true;escena.add(piso);
 const mediaPuerta=p.ancho_portal_carga/2,angulo=Math.asin(mediaPuerta/R);
 const pared=new T.Mesh(new T.CylinderGeometry(R,R,altura,100,1,true,Math.PI/2+angulo,Math.PI*2-2*angulo),mat.casco);pared.position.y=altura/2;escena.add(pared);
 box('piso-vestibulo',R+p.longitud_vestibulo/2,-.04,0,p.longitud_vestibulo,.08,p.ancho_vestibulo,mat.oscuro);
 const cuello=Math.sqrt(R*R-mediaPuerta*mediaPuerta);
 box('cuello', (cuello+R)/2,-.04,0,R-cuello,.08,p.ancho_portal_carga,mat.oscuro);
 for(const s of [-1,1])box('pared-vestibulo',R+p.longitud_vestibulo/2,altura/2,s*p.ancho_vestibulo/2,p.longitud_vestibulo,altura,.035,mat.casco);
-const nucleo=new T.Mesh(new T.CylinderGeometry(g.pasillo.r_equipos_max,g.pasillo.r_equipos_max,altura,48),mat.metal);nucleo.position.y=altura/2;escena.add(nucleo);
+const nucleo=new T.Mesh(new T.CylinderGeometry(g.pasillo.r_equipos_max,g.pasillo.r_equipos_max,altura,48),mat.metal);nucleo.position.y=altura/2;nucleo.material=material(0x7398ad,.14);escena.add(nucleo);nucleo.add(new T.LineSegments(new T.EdgesGeometry(nucleo.geometry,35),new T.LineBasicMaterial({color:0x6f94a7})));rotulo('NÚCLEO · RESERVA',0,0,1.05);
 const carros=[],guias=[];
 for(let i=0;i<g.anillo.n;i++){
  const grupo=new T.Group();grupo.name='cartucho-'+i;escena.add(grupo);carros.push(grupo);
  const mov=a.retirados.includes(i),m=mov?mat.carga:mat.cart;
- poly('envolvente-cartucho-'+i,a.poligonos[i],g.casco.cubierta,g.cartucho.altura_caja,m,grupo);
+ const pieza=poly('envolvente-cartucho-'+i,a.poligonos[i],g.casco.cubierta,g.cartucho.altura_caja,m,grupo);
+ const edges=new T.LineSegments(new T.EdgesGeometry(pieza.geometry,30),new T.LineBasicMaterial({color:mov?0xf7d4a6:0x67808c}));pieza.add(edges);
+ const cx=a.poligonos[i].reduce((s,p)=>s+p[0],0)/a.poligonos[i].length,cz=a.poligonos[i].reduce((s,p)=>s+p[1],0)/a.poligonos[i].length;
+ poly('sustrato-ilustrativo-'+i,a.poligonos[i].map(([x,z])=>[cx+(x-cx)*.88,cz+(z-cz)*.85]),g.casco.cubierta+.003,.008,mat.suelo,grupo);
  const centro=i*Math.PI*2/g.anillo.n-a.gate_rad,sector=g.anillo.sector_grados*Math.PI/180;
  // Casete segmentado candidato: guías, traviesa y riego desacoplables.
  for(const radio of [g.anillo.r0+.06,g.anillo.r1-.06]){
@@ -122,6 +133,7 @@ function dibujar(t){const dt=Math.min(.1,(t-ultimo)/1000||0);ultimo=t;const s=es
  humano.position.x=s.ocupado?r.persona_x_interior_m:fin-.38;
  renderer.render(escena,camara);requestAnimationFrame(dibujar);
 }
+addEventListener('milpa-language',()=>{etiquetasTextura.forEach(fn=>fn());actualizar();MILPA_I18N.apply();});
 actualizar();resize();requestAnimationFrame(dibujar);
 globalThis.B19={estudio,carros,escena,renderer,camara,accion,datos,actualizar};
 </script></html>

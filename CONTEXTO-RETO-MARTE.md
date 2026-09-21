@@ -370,3 +370,14 @@ actualizados; Blender/GLB reutilizados tras comprobar geometría idéntica a S5.
 La autorrevisión digital no cierra B14–B19 ni sustituye ensayos, reglas de Madrid,
 cotizaciones, revisión independiente o prueba de GPU/proyector. E4 ya dispone de
 plantilla métrica 1:1 y hoja de registro vacía; no se simulan resultados humanos.
+
+
+### Revisión visual V2 · 21 sep 2026
+
+El usuario priorizó los modelos y su lectura en español/inglés. La demo y B19 comparten
+estilo e idioma local; el atlas reutiliza las fichas y cifras vigentes. Navegación guiada,
+inspección técnica, calidad gráfica y teclado mantienen las decisiones de ingeniería.
+Mapa global: [NASA/JPL-Caltech, Viking](https://science.nasa.gov/3d-resources/mars/),
+procesado USGS; JPEG original y hash en `prototipo-3d/vendor/CREDITOS-MARTE.md`. No es
+DEM ni selección validada de sitio. El terreno cercano al módulo sigue siendo ilustrativo.
+Véase `docs/madrid/MEJORA-VISUAL-BILINGUE.md` para alcance, pruebas y límites de la revisión.

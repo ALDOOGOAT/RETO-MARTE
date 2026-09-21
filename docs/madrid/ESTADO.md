@@ -1,79 +1,75 @@
 # ESTADO · preparación para Madrid
 
-**Sesión:** cierre acumulado S0–S5/B19 y verificación digital S6. **Fecha:** 21 sep 2026.
-**Rama:** `preparacion-madrid-p1`; base `bd3eb2f`. El commit que contiene este archivo
-identifica el checkpoint. Push autorizado en esta rama, sin force-push.
-**Aceptación:** candidata digital revisada; ingeniería, validación física y cierre
-independiente S6 parciales. No hay evidencia para declarar «cero pendientes».
+**Sesión:** revisión visual V2 después del cierre acumulado S0–S5/B19.
+**Fecha:** 21 sep 2026. **Rama:** `preparacion-madrid-p1`; base `9552f04`.
+El commit que contiene este archivo identifica el checkpoint. Push autorizado en esta rama.
+**Aceptación:** candidata digital para revisión. La mejora visual no cierra ingeniería,
+validación física, presupuesto ni condiciones finales de Madrid.
 
-## Decisiones ejecutadas
+## Decisiones vigentes
 
-El usuario delegó preferencias de diseño. D1/D2 quedan ratificadas: arquitectura B,
-20 cartuchos, ocho estaciones y doce de cultivo; horizonte de diseño 539 días y
-caso de superficie 355 días. B10 deja de ser espera de aprobación interna.
-La defensa sigue separando tratamiento de salmuera, metanogénesis y cultivo; ningún
-lote se autoriza por color de musgo, MFC o animación. Los umbrales analíticos requieren
-método, matriz y revisión competente.
+Aldo pidió priorizar todos los modelos activos y facilitar su presentación en español
+e inglés. Se conserva arquitectura B: 20 cartuchos idénticos, ocho estaciones de
+regeneración y doce posiciones de cultivo, Ø4.56 m, piso 0 y cama 0.62 m. La
+configuración dimensional y `milpa360-modelo.js` no cambiaron en V2. B19 mantiene
+su vestíbulo como candidata separada; no se incorpora como acceso aceptado.
 
-Se elige entrega digital offline como base de Madrid, con maqueta manual 1:10
-opcional según recursos. No se comprometió gasto ni se presentó solicitud oficial.
-El piloto exploratorio de riego en Tuxtla queda ratificado, sin fingir sitio, operador
-o cosechas disponibles. Los cambios no se atribuyen a retroalimentación inexistente.
+Siguen D1/D2, provisiones completas sin descontar cosechas, reservas de 30 días y
+separación de salmuera/metanogénesis. El aporte nominal es 2.46% de kcal; 25.26 kWh/d
+es un subtotal eléctrico con hipótesis y cargas omitidas. Las decisiones y límites
+acumulados están en `CIERRE-ACUMULADO.md` y `CALCULOS-CIERRE.md`. El piloto Tuxtla
+permanece exploratorio, sin sitio, operador ni datos inventados.
 
-Para supervivencia se provisiona dieta completa, sin descontar cosechas, huevos ni
-biogás supuestos. Se añaden 30 días de reserva como decisión revisable. El inventario
-de 539 + 30 días resulta en 8,159.46 kg de alimento humano empacado y 438.36 kg de
-ración animal. El empaque ya está incluido; no se suma otra vez el arranque.
-No constituye un menú nutricional ni un balance completo del hábitat.
+## Cambios entregados
 
-## Resultados y archivos
+El simulador organiza Marte, módulo, acceso y atlas en una navegación común. Añade
+introducción breve, recorrido de cinco pasos, vistas rápidas, ayuda, teclado,
+pantalla completa, calidad gráfica y adaptación móvil. Las fichas distinguen datos
+publicados, cálculos, propuestas y escenarios. La inspección agrupa información
+avanzada y permite conservar lote/fallo/escenario al cambiar idioma.
 
-`CIERRE-ACUMULADO.md` dispone individualmente B1–B19, con responsable y evidencia
-necesaria; incorpora decisiones, fallos, antecedentes y autorrevisión. `cierre_acumulado.py`
-reutiliza P1/P2/P4 y genera JSON, `CALCULOS-CIERRE.md` y plantilla P07 de E4. La nueva
-configuración mantiene unidades, evidencia y escenarios, sin convertir nulos en ceros.
+`milpa360-contenido.js` comparte las cifras vigentes entre ambos idiomas y atlas.
+Se sustituyeron valores históricos incrustados: 6.30 L/d de transpiración, 10.48 kWh/d
+de luz y 0.199 kWh/d de biogás químico, entre otros. `milpa360-idiomas.js`,
+`milpa360-traducciones.js` y `milpa360-interfaz.css` mantienen traducción local y estilo
+común. ES/EN cubre controles, fichas, mensajes y rótulos del modelo. Las fuentes,
+memoria y deck conservan español; no se presenta una traducción documental completa.
 
-El subtotal eléctrico nominal calculado es 25.26 kWh/d: luz, auxiliares y térmica
-sensible del casco. Excluye vestíbulo, ISRU, deshumidificación y otras cargas; sus
-potencias, U y temperaturas son hipótesis. No acredita energía total ni autonomía.
-El inventario de cultivo de 40 L daría 6.35 días sin condensación/reposición bajo ET
-nominal; no incluye humanos, animales, purgas ni disponibilidad de la bomba.
+El módulo incorpora materiales y acabados de equipos, juntas, bridas e instrumentación
+esquemática. Se corrigieron rótulos invertidos al mirar el dorso de las placas. B19
+muestra con mayor claridad cargas, reserva del núcleo y pasos de la maniobra. El
+atlas reemplaza la antigua calculadora simplificada de blindaje por límites explícitos,
+retardo interactivo y una explicación del ciclo y aporte alimentario.
 
-Se cuantificó el lavado inicial de todo el sustrato y la estequiometría ideal Cl/DQO.
-Son sensibilidad y equivalentes químicos, no dosis, cinética ni descontaminación
-demostrada. El estudio de tres posiciones amplía la garganta, pero necesita otro
-depósito y 269.6 kg nominales sin útil: no se adopta por una apertura mayor.
-B19 conserva dos casetes como candidata; sus 0.916 m dependen de herrajes supuestos.
-P07, P06 y `ensayos/datos-acceso.csv` preparan el ensayo humano sin carga.
+El globo usa el JPEG Viking de NASA/JPL-Caltech procesado por USGS, archivado con
+URL, fecha, crédito y SHA-256. Los marcadores se ajustan a las UV de SphereGeometry;
+son referencias aproximadas, no cartografía de precisión ni selección validada de sitio.
+El terreno local sigue siendo ilustrativo. `COMPARACION-VISUAL-V2.html` conserva
+capturas anteriores y actuales. No se instalaron dependencias innecesarias.
 
-Memoria, PPTX/PDF y vídeo se actualizaron. BLEND/GLB conservan geometría S5: la
-comparación contra `589ca5b` sólo encuentra cambio de identificador de revisión.
-El vestíbulo B19 sigue como estudio separado. CONTEXTO, matriz, afirmaciones y
-continuidad apuntan a esta revisión, conservando los antecedentes históricos.
+## Verificación y archivos de presentación
 
-## Evidencia y verificación
+Pasaron los tests P3/B19 y geometría. Chrome verificó controles, fallos, inventarios,
+cambio de idioma, formularios, móvil, teclado y atlas sin red. Las pruebas y capturas
+están en `PRUEBA-P3-NAVEGADOR.json`, `PRUEBA-B19-NAVEGADOR.json` y
+`PRUEBA-VISUAL-V2.json`; no hay errores de consola ni solicitudes HTTP en esos recorridos.
+Los tres recorridos pasaron desde extracción limpia; S6 coteja los archivos del paquete.
+SwiftShader es renderizado por software; no acredita el objetivo de 30 FPS del evento.
 
-Pasaron P0, P1/P2, geometría Three, mecánica P4 y pruebas de estados P3/B19. Se
-comprobó que P1 falla si falta jsonschema. Se corrigieron la omisión del visor B19
-en S5 y los enlaces externos dañados por el generador PDF. Ambos visores pasaron
-Chrome sin red desde extracción limpia: cero errores y cero solicitudes HTTP.
-SwiftShader midió aproximadamente 0.88 FPS; no es prueba de la GPU del evento.
+Blender 5.2/MCP está conectado. La exportación conserva normales y texturas; reimportar
+el GLB verificó 1,267 mallas y cotas del piso a 1e-5 m de tolerancia digital. Se añadió
+`MILPA360_V2_REVISION` en la aplicación, conservando `MILPA360_S5_REVISION`.
+El generador guarda BLEND/GLB y render; no sobrescribe la sesión abierta del usuario.
+Memoria de diez páginas, nueve diapositivas y respaldo de 300 segundos se sincronizan
+con los nuevos visuales. Manifiestos SHA-256 y verificador S6 identifican la entrega.
 
-Se verificaron hashes y enlaces del paquete, 103 afirmaciones con 16 columnas,
-nueve diapositivas, PDF renderizados y vídeo de 300 segundos decodificado completo.
-La revisión visual no detectó recortes de contenido. La matriz conserva 27 obligatorios:
-uno cumplido con evidencia documental, 24 parciales, uno pendiente y uno por confirmar.
+## Siguiente acción exacta
 
-Se leyeron la dinámica oficial, NASA Vol.2 §8.3–8.4, compartimentos MELiSSA y resumen/
-reivindicaciones 1–6 de WO2018035314A1. No es búsqueda exhaustiva ni dictamen de novedad.
-GitHub confirma repositorio público; no acredita cuándo cambió su visibilidad.
-
-## Próxima acción exacta
-
-Leer el registro B1–B19 antes de repetir tareas. Ejecutar `python3 analysis/cierre_acumulado.py`
-y `npm test --prefix prototipo-3d` al modificar parámetros. Completar ingeniería
-B14–B19 con envolventes, cargas, selección de componentes y prueba E4; incorporar
-reglamento, recursos, cotizaciones y datos cuando lleguen. La revisión independiente,
-ensayo de pitch y prueba de GPU/proyector siguen abiertos. No repetir la auditoría
-completa ni cambiar estados para alcanzar 100%. Los cinco archivos preexistentes
-del usuario permanecen intactos y fuera del commit.
+Abrir `prototipo-3d/milpa360-simulador.html`, elegir ES/EN y ensayar el recorrido ante
+una persona que no conozca el proyecto. Medir GPU/proyector y legibilidad reales.
+Después continuar B14–B19 y ensayo E4 según `CIERRE-ACUMULADO.md`; incorporar reglas,
+recursos, cotizaciones y mediciones cuando existan. No repetir S0–S5 ni volver a
+instalar Blender. La matriz mantiene 27 obligatorios: uno documental con evidencia,
+24 parciales, uno pendiente y uno por confirmar. Los cinco archivos preexistentes del
+usuario conservan sus hashes y quedan fuera del commit. La revisión independiente y
+la aceptación física siguen abiertas.

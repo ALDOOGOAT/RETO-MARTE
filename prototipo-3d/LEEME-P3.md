@@ -1,9 +1,20 @@
 # MILPA-360 · demostrador P3 sin Internet
 
 Abra `milpa360-simulador.html` en Chrome. No necesita servidor ni instalar npm.
-Conserve a su lado `milpa360-modelo.js`, `milpa360-datos.js` y toda la carpeta `vendor/`.
+Conserve todos los archivos `milpa360-*.js`, `milpa360-interfaz.css` y `vendor/`.
+El ZIP conserva también `visuales/atlas-marciano.html` y la documentación enlazada.
 
-- **Planeta / Hábitat:** cambia de escala; planeta y terreno son ilustraciones procedurales.
+**ES / EN** traduce interfaz, fichas, mensajes y rótulos 3D sin Internet. También puede
+abrir con `?lang=en`; el idioma pasa a los enlaces entre visores. Las fuentes y los
+PDF técnicos conservan su idioma original. Cambiar idioma conserva lotes y controles.
+
+**Iniciar recorrido** muestra cinco pasos. Puede cerrar cualquier ficha para explorar
+libremente. El menú de calidad permite reducir sombras y resolución; ayuda incluye
+teclado, pantalla completa y reducción de movimiento. El atlas incluye contexto y
+controles de retardo/proceso. Las cifras de las fichas provienen de los mismos balances.
+
+- **Marte / Módulo:** cambia de escala. El globo usa una imagen Viking NASA/JPL-Caltech
+  procesada por USGS, sin elevación. El terreno del módulo es ilustrativo.
 - **Pausar / Reiniciar:** la pausa detiene el modelo; reiniciar recrea el escenario completo.
 - **Tormenta:** escenario de menos electricidad para luz, no fuga de polvo al cultivo.
 - **Inspección técnica:** planta/lateral ortográficas, casco en corte, reducción de movimiento,
@@ -45,6 +56,7 @@ python3 analysis/verificar_geometria.py
 node analysis/verificar_p3.cjs
 node --experimental-websocket analysis/verificar_p3_navegador.mjs
 MILPA_SOLO_ACCESO=1 node --experimental-websocket analysis/verificar_p3_navegador.mjs
+MILPA_VISUAL_V2=1 node --experimental-websocket analysis/verificar_p3_navegador.mjs
 python3 analysis/empaquetar_p3.py
 ```
 

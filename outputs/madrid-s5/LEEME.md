@@ -7,8 +7,9 @@ equivale a revisión independiente ni a medición en el equipo de Madrid.
 
 **Corte acumulado 21 sep:** consultar `../../docs/madrid/CIERRE-ACUMULADO.md` y
 `../../docs/madrid/CALCULOS-CIERRE.md`. D1/D2 ratificadas; provisiones completas y auxiliares calculados.
-BLEND/GLB conservan la geometría S5 de `589ca5b`, sin cambios dimensionales en esta
-revisión. B19 es estudio separado y su vestíbulo no forma parte de esas mallas.
+BLEND/GLB se regeneran con el acabado V2 desde Three.js, con normales y texturas
+de la escena. Las dimensiones nominales conservan S5. B19 es estudio separado y su
+vestíbulo no forma parte de esas mallas.
 
 ## Abrir
 
@@ -18,9 +19,11 @@ revisión. B19 es estudio separado y su vestíbulo no forma parte de esas mallas
 - `RESPALDO-PITCH-S5.mp4`: 300 segundos, sin audio, para narración en vivo. No es grabación
   de ensayo ni vídeo oficial final. Los tiempos coinciden con el guion provisional.
 - `../../prototipo-3d/milpa360-simulador.html`: demo local, sin Internet; abrir con Chrome.
+  Selector ES/EN local, recorrido guiado, teclado y menú de calidad.
   Órbita por arrastre y rueda. Inspección técnica permite planta/lateral, resaltar lote,
   fallos y despiece visual; reanudar vuelve al ensamblaje. El movimiento no valida biología.
-- `../../docs/madrid/COMPARACION-S3-S5.html`: comparación interactiva con las mismas poses.
+- `../../docs/madrid/COMPARACION-VISUAL-V2.html`: comparación antes/después de V2.
+- `../../visuales/atlas-marciano.html`: atlas interactivo ES/EN, también sin conexión.
 - `../../prototipo-3d/milpa360-acceso.html`: maniobra B19 y prueba de pérdida de energía.
 - `../../prototipo/planos/madrid/P07-plantilla-E4.svg`: plantilla métrica sin carga; verificar escala impresa.
 - `MILPA360-S5.blend`: escena editable en Blender 5.2; texturas empaquetadas, unidades m.
@@ -32,7 +35,10 @@ revisión. B19 es estudio separado y su vestíbulo no forma parte de esas mallas
 
 Todos los rótulos de equipos esquemáticos conservan límites. El mayor corte del casco,
 la separación de ensamblaje y la posición de cámaras son herramientas de inspección.
-El paisaje es procedural. Ninguna imagen representa topografía ni maqueta construida.
+El terreno del módulo es procedural. El mapa global de Marte es imagen Viking,
+sin elevación; créditos en `../../prototipo-3d/vendor/CREDITOS-MARTE.md`. Las capturas
+y renders no son fotografías de maqueta construida. PDF/deck conservan texto español;
+la traducción local corresponde a los modelos interactivos y al atlas.
 
 ## Reproducir desde la raíz del repo
 
@@ -63,8 +69,9 @@ S6 imprime una carpeta de extracción limpia. Para comprobar ambos visores sobre
 ella, ejecutar los verificadores con `MILPA_DEMO_DIR=/ruta/extraida/prototipo-3d`:
 `node --experimental-websocket analysis/verificar_p3_navegador.mjs` y
 `MILPA_SOLO_ACCESO=1 node --experimental-websocket analysis/verificar_p3_navegador.mjs`.
-Tras ambos resultados correctos, reempaquetar e invocar `verificar_entrega_s6.py`
-con `/ruta/extraida` como argumento: coteja que la aplicación empaquetada sea idéntica
+Ejecutar además `MILPA_VISUAL_V2=1` con el mismo verificador para ES/EN y atlas.
+Tras los tres resultados correctos, reempaquetar e invocar S6 con
+`/ruta/extraida` como argumento: coteja que la aplicación empaquetada sea idéntica
 a la probada. El FPS de SwiftShader no verifica el objetivo de GPU del evento.
 
 El finalizador del PPTX comprueba estructura, tamaño, tabla y fuentes, y reabre el

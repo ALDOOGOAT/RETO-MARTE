@@ -158,3 +158,18 @@ su conexión requiere la cuenta del usuario y no se ha confirmado. Mientras tant
 documentación y presupuestos se preparan localmente. No instalar Gmail/Calendar ni
 otros conectores sin una tarea concreta. No hay compilador LaTeX comprobado: las ecuaciones
 ya están en Markdown/LaTeX; S5 exportó la memoria con ReportLab instalado, sin necesitar otro MCP.
+
+
+## 7. Prioridad visual V2 · 21 sep 2026
+
+Aldo pidió priorizar ahora todos los modelos activos y la UI/UX bilingüe. La revisión
+se ejecuta sobre `9552f04`, sin reabrir las dimensiones ni inventar validación física.
+El alcance y evidencias quedan en `MEJORA-VISUAL-BILINGUE.md`: Marte con mapa Viking,
+módulo con acabados/materiales, acceso B19, atlas, recorrido, ES/EN local y exportación
+Blender/GLB. La comparación está en `COMPARACION-VISUAL-V2.html`.
+
+No repetir la instalación de herramientas: Three160, Chrome, Blender 5.2/MCP y los
+runtimes locales cubren esta entrega. No se requieren servicios externos para traducir.
+Las siguientes sesiones deben conservar estos controles, contenidos y parámetros
+compartidos. Continuar ingeniería/ensayos B14–B19 desde ESTADO; comprobar proyector/GPU
+con el equipo real. El pulido visual no modifica la aceptación del sistema físico.
