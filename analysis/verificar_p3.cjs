@@ -1,6 +1,7 @@
 // node analysis/verificar_p3.cjs — contratos de estado y conservación, sin dependencias.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+process.chdir(require('node:path').resolve(__dirname,'..'));
 assert.ok(fs.existsSync('prototipo-3d/milpa360-modelo.js'), 'Falta el modelo independiente del render');
 const { Modelo, comparar } = require('../prototipo-3d/milpa360-modelo.js');
 const datos = require('../prototipo-3d/milpa360-datos.js');

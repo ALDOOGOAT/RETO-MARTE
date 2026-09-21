@@ -11,7 +11,7 @@ mecanismo funcione: son la geometría nominal dibujada a escala.
 
 ---
 
-## 0. Decisiones cerradas en P2
+## 0. Decisiones adoptadas en P2; aceptación física pendiente
 
 | # | Decisión | Estado |
 |---|---|---|
@@ -20,20 +20,21 @@ mecanismo funcione: son la geometría nominal dibujada a escala.
 
 ### Por qué B y no otra
 
-No es una preferencia: es la única opción evaluada que resuelve los **dos bloqueos de P0**
-(acceso y trasvase) sin agrandar el módulo.
+P2 priorizó conservar la rotación del sustrato y eliminar el trasvase entre anillos.
+**S0 reabre la aceptación del acceso:** la holgura en planta no resuelve B15–B19.
+Esta comparación no demuestra una solución mecánica ni una optimización exhaustiva.
 
 | | Actual | A | **B** | B′ | C |
 |---|---:|---:|---:|---:|---:|
 | Ø casco | 4.56 | 6.05 | **4.56** | 6.61 | 4.56 |
 | Huella (m²) | 16.3 | 28.7 | **16.3** | 34.3 | 16.3 |
 | Cultivo (m²) | 6.26 | 6.26 | **4.00** | 6.17 | 4.00 |
-| Acceso | **no** | sí | **sí** | sí | sí |
-| Trasvase | **sin resolver** | **sin resolver** | **resuelto** | resuelto | manual |
+| Pasillo nominal en planta (no valida acceso) | **no** | sí | **sí** | sí | sí |
+| Trasvase entre anillos | **sin resolver** | **sin resolver** | **eliminado** | eliminado | manual |
 
-- **A está dominada:** cuesta 28.7 m² de huella (+76 %) para conservar el área de cultivo
+- **A se descarta en esta comparación:** cuesta 28.7 m² de huella (+76 %) para conservar el área de cultivo
   y **sigue sin resolver el trasvase**. Se descarta.
-- **B′ es un mal cambio:** duplica la huella (16.3 → 34.3 m²) para recuperar 2.17 m² de
+- **B′ no se prioriza con los criterios actuales:** duplica la huella (16.3 → 34.3 m²) para recuperar 2.17 m² de
   cultivo, que a productividad nominal valen ~64 kcal/d. Un módulo presurizado no se
   agranda por eso.
 - **C rompe el diferenciador.** Mover el aviario sobre un riel es mover al animal, que es
@@ -46,7 +47,7 @@ No es una preferencia: es la única opción evaluada que resuelve los **dos bloq
   es** la propuesta de valor. Se paga poco por resolver dos bloqueos.
 
 **Lo que B conserva íntegro:** la rotación invertida, las 12 etapas de cultivo simultáneas
-(resiliencia por desfase), el digestor encadenado y el retorno a Chiapas. Cambia la **forma**,
+(hipótesis de resiliencia por desfase), el digestor encadenado y el retorno a Chiapas. Cambia la **forma**,
 no el principio.
 
 ### Por qué 539 d
@@ -163,7 +164,7 @@ la lámina P-02 marca esa holgura con «¿?» y no se afirma que el dosel pase b
 | Comprobación | Resultado | |
 |---|---|---|
 | Huella del cartucho | 0.641 × 0.617 m (envolvente rectangular) | |
-| Pasa de frente por el pasillo | 0.641 < 0.90 m | ✓ margen 259 mm |
+| Ancho nominal frente al pasillo | 0.641 < 0.90 m | margen 259 mm; ruta pendiente |
 | Diagonal (girarlo en el pasillo) | 0.890 vs 0.90 m | **10 mm nominales; giro sin verificar** |
 | Alcance necesario desde el pasillo | 0.60 m | **= el alcance supuesto. Sin margen** |
 

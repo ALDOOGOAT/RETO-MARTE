@@ -178,7 +178,7 @@ Sustituir parte de la ración con larvas podría cambiar el signo. Está sin cua
 Cómo leer la tabla:
 
 - **El plan decía 2 kg SV/d y 2.864 kWh/d químicos.** El estiércol de 24 codornices aporta unas 14 veces menos SV, y el biogás nominal queda 12 veces por debajo.
-- **Se retira el «colchón térmico».** La iluminación entrega ~0.57 kW medios que acaban como calor, así que el módulo necesita **refrigeración**, no respaldo térmico de biogás. El biogás equivale a ~10 W medios.
+- **Se retira el «colchón térmico».** La iluminación entrega ~0.57 kW medios de carga interna y el biogás equivale a ~10 W medios. **Esto no determina por sí solo calefacción o refrigeración:** faltan pérdidas por envolvente y condiciones de contorno. La necesidad térmica neta sigue pendiente.
 - **Sin calcular (no son cero):** bombas, ventilación, HEPA, control, calefacción del digestor y carrusel. El módulo es **consumidor neto** de la energía del hábitat.
 
 Fuentes leídas:

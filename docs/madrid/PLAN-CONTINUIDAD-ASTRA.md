@@ -4,26 +4,32 @@
 
 **Especificación principal:** [`MISION-MADRID-MILPA360.md`](../../MISION-MADRID-MILPA360.md), especialmente §5 A–O y §6. **Checkpoint vigente:** [`ESTADO.md`](ESTADO.md). No copiar el prompt largo de P0 como instrucción nueva: P0 ya tiene commit. Este plan conserva la intención del prompt y la aplica al trabajo restante.
 
-## 1. Dónde estamos realmente
+## 1. Dónde estamos realmente · actualización 20 sep 2026
 
-| Paquete | Resultado verificable en el repositorio | Alcance y brecha |
+| Paquete | Estado verificable | Brecha vigente |
 |---|---|---|
-| **P0 · auditoría** `7ea6b3f` | [`AUDITORIA.md`](AUDITORIA.md), [`matriz-requisitos.md`](matriz-requisitos.md), [`registro-afirmaciones.csv`](registro-afirmaciones.csv) y `analysis/p0_verificacion.py` | Auditoría documental y cálculos sobre el diseño antiguo; B1–B9 siguen abiertos en distinta medida. No hay ensayo físico. |
-| **P1 · ingeniería** `508f30a` | [`P1-INGENIERIA.md`](P1-INGENIERIA.md), configuración y esquema, `analysis/milpa360_p1.py` | Balances y escenarios calculados, no medidos. D3–D7 son propuestas técnicas o de discurso; faltan consumos, inventarios, sanidad y fuentes clave. |
-| **P2 · geometría** `e8ffad4` | [`P2-GEOMETRIA.md`](P2-GEOMETRIA.md), `analysis/milpa360_p2.py`, geometría generada, P-02/P-03 y simulador de un anillo | **Cerrado como paquete documental/digital**, no como mecanismo físico validado. D1 y D2 se adoptaron para construir y requieren ratificación del equipo (B10). Faltan huella de equipos fijos, holgura vertical, manipulación y estructura (B15–B18). El Blender anterior es registro histórico, no modelo vigente. |
-| **P3 · simulación y relato** | No iniciado como paquete | Próximo trabajo ejecutable. Animaciones y porcentajes actuales siguen siendo ilustrativos. |
-| **P4 · validación y costes** | No iniciado | No hay mediciones propias ni cotizaciones verificadas suficientes para cerrar el sistema. |
-| **P5 · defensa y entrega** | No iniciado | Deck, memoria y material final deben sincronizarse con el diseño vigente y con las reglas de Madrid cuando lleguen. |
+| P0 · auditoría | `7ea6b3f`, reproducido en S0/S2 | Bloqueos documentales y externos siguen visibles |
+| P1 · ingeniería | `508f30a`, cálculos reutilizados por P3 | Tasas y balances parciales, sin mediciones; se retiró la inferencia de refrigeración sin envolvente |
+| P2 · geometría | `e8ffad4`, corregido por S0 `25f39e4` | **Aceptación mecánica/humana abierta:** B15–B19. Pasillo en planta no prueba mantenimiento |
+| P3 · simulación y relato | S1 `5959333`; S2 en el commit que acompaña este checkpoint | Modelo ilustrativo por lotes, UI técnica, comparación y demo local. Falta prueba de GPU/equipo del evento y calibración física |
+| P4 · validación y costes | Pendiente, siguiente sesión S3 | Resolver primero altura/entrada/mantenimiento B19; datos reales y precios faltantes |
+| P5 · defensa y entrega | Pendiente | El deck y material histórico aún no son la defensa vigente; usar capturas de S2 al integrarlos |
 
-No convertir esta tabla en un porcentaje de avance: los paquetes y la validación física tienen criterios diferentes. Los scripts P0, P1 y P2 pasaron en la sesión que creó `e8ffad4`; el navegador headless y las láminas se reportan como probados en `ESTADO.md`, pero **hay que repetir la prueba de P3 en el equipo de presentación**.
+### Resultado de la revisión S0–S2
 
-### Contradicciones activas que la primera sesión debe clasificar
-
-1. `PLAN-MAESTRO-BIOMARS.md` sigue enseñando 730 soles, dos anillos/56 soles, 2.9 kWh/d y 25 % frente a 100 % como si fueran el diseño vigente. La configuración P2 usa un anillo, 160 soles por vuelta, 152 soles de descanso, 525 soles de horizonte y P1 calcula ~0.24 kWh/d **químicos** nominales. Decidir qué partes del plan se convierten en historial y actualizar sólo las afirmaciones activas que lleguen al jurado.
-2. `prototipo-3d/milpa360-simulador.html` aún contiene fichas de codorniz de 40 días/23 g, dos anillos/56 soles, autosuficiencia energética, musgo como prueba de inocuidad y reactor de perclorato integrado. P1 plantea primer huevo ~50.8 d, ración 32.1 g/ave/d, electricidad externa y reactor de salmuera separado. Corregir fichas, rótulos y flujos **junto al modelo**; una etiqueta nueva sobre una tubería vieja no basta.
-3. `prototipo/planos/P05-biodigestor-perclorato.html` y las imágenes del deck reflejan supuestos anteriores. P-04 se corrigió a mano y puede divergir del JSON. La matriz aún cita 56 soles y geometrías divergentes en algunas filas. Revisar estos artefactos antes de declarar consistencia transversal.
-4. El simulador carga Three.js 0.160 desde CDN; `prototipo-3d/package.json` declara Three.js 0.186. El modo sin Internet está pendiente. Elegir una sola versión que funcione, empaquetarla localmente y probarla **desconectado**; no migrar de motor por costumbre.
-5. Los presupuestos `PRESUPUESTO-MILPA-360.*` y `PRESUPUESTO-CICLO-DE-VIDA.*`, junto con `AGENTS.md`, siguen **sin seguimiento por Git** y son cambios preexistentes del usuario. No hacer `git add -A`, no sobrescribirlos ni presentarlos como costes vigentes: incluyen geometría y ahorros incompatibles con P1/P2. Usarlos como insumo crítico de P4 y conservar los originales.
+- Plan maestro, sistema y memoria anterior identificados como históricos; se conservó el proceso.
+- Fichas corregidas: alimento complementario, electricidad externa, reactor de salmuera separado,
+  musgo/MFC sin autoridad sanitaria, circuitos y válvulas coherentes con esos límites.
+- Holgura mínima corregida de 41 a 29.8 mm. Envolvente de cartucho: margen nominal de unos 10 mm,
+  **sin demostrar maniobra en pasillo curvo**. No hay aceptación de estructura ni ergonomía.
+- **B19 nuevo:** 2.20 m de techo menos 0.62 m de piso =1.58 m libres. La figura de 1.75 m
+  no cabe erguida. El casquete visual anterior añadía 0.96 m sin declarar; se corrigió a la cota nominal.
+- Reloj con paso fijo, sin reinicio implícito al acabar misión. Daño persistente, cuatro fallos,
+  autorización por lote y cuarentena con repuestos finitos. Biología/tiempos de maniobra ilustrativos.
+- Three.js fijado en 0.160.0, fuentes y licencias locales. Prueba funcional sin red y capturas
+  en `docs/madrid/capturas/`; medición con SwiftShader no sustituye al hardware del evento.
+- P04/P05 y deck siguen históricos. La demo P3 tiene su propio ZIP y manifiesto, **no es la entrega P5**.
+- `AGENTS.md` y los cuatro presupuestos preexistentes siguen intactos y sin seguimiento; no usar `git add -A`.
 
 ## 2. Regla de reentrada y decisiones
 
@@ -65,6 +71,19 @@ Al finalizar cada sesión: actualizar `docs/madrid/ESTADO.md` con archivos/commi
 
 ## 5. Mensaje listo para la próxima sesión
 
-> Seleccioné Plan Mode y GPT-6 Astra. Lee `AGENTS.md`, `MISION-MADRID-MILPA360.md` y `docs/madrid/PLAN-CONTINUIDAD-ASTRA.md`; verifica Git y `docs/madrid/ESTADO.md`. P0 (`7ea6b3f`), P1 (`508f30a`) y P2 (`e8ffad4`) ya existen. Revisa **S0** del plan: contradicciones activas y pruebas reproducibles. Ajusta la secuencia si el checkout cambió; no rehagas P0–P2 sin una falla concreta. Al pasar a modo de ejecución, corrige sólo lo necesario para que P3 parta de cifras y mecanismos defendibles; conserva los archivos del usuario sin seguimiento por Git. Ejecuta P3 por S1 y S2 con checkpoints y sin inventar validación física. No hagas push ni publiques. Si falta una decisión o medición, registra el bloqueo exacto y continúa lo independiente. Al cerrar cada sesión informa evidencia, límites y siguiente paso.
+> Lee `MISION-MADRID-MILPA360.md`, este plan y `docs/madrid/ESTADO.md`. Revisa Git y el diff
+> de S0–S2. Ejecuta **S3/P4 con Astra high**, priorizando B19 (altura útil, entrada y mantenimiento),
+> B15–B18 (equipos, dosel, cargas, par y bloqueo) y protocolos de ensayo viables. No marques P2
+> validado por haber generado una malla. Conserva la demo P3 y el principio de rotación del
+> sustrato; compara cambios mínimos del casco/piso/disposición con supuestos y efectos visibles.
+> Si hay una contradicción físico-química decisiva, usa xhigh para esa decisión. No rehagas P0/P1
+> completos. Continúa tareas independientes si faltan mediciones o reglas. Actualiza parámetros,
+> cálculos y geometría sólo con una decisión trazable y vuelve a probar P3. Sin push ni publicación.
 
-**Condición humana que ninguna sesión puede inventar:** reglamento de Madrid, feedback del jurado, delegación, presupuesto máximo, datos de ensayo y ratificación de D1/D2. Solicitarlos cuando hagan falta para cerrar una decisión; no detener por ellos el trabajo digital independiente.
+**Pendiente de S2:** abrir la demo en el hardware que se llevará a Madrid, registrar GPU/navegador,
+probar controles y medir el criterio propuesto de 30 FPS a 1080p. El resultado con renderizado por
+software no confirma ni refuta ese rendimiento con la GPU real.
+
+**Datos humanos que no pueden inventarse:** reglas de Madrid, feedback, delegación, presupuesto,
+recursos de laboratorio, mediciones y ratificación de D1/D2. Se solicitaron durante esta ejecución;
+si aún faltan, conservar el bloqueo exacto y avanzar con lo independiente.

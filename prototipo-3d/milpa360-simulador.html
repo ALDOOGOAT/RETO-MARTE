@@ -1,7 +1,10 @@
+<!doctype html>
+<html lang="es">
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MILPA-360 · Marte</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js" integrity="sha512-vnmn/Qqn6aG0POAc9mIGzjq0IybrvxJXYDafNvp9JSnDGxeF3pbkSqLvf+YGd5ku63pT7sa/jxHn7/d0mU8+tA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="vendor/fuentes.css">
+<script src="vendor/three.min.js"></script>
 <script src="milpa360-datos.js"></script>
 <script src="milpa360-modelo.js"></script>
 <style>
@@ -75,7 +78,7 @@ canvas{display:block;touch-action:none}
 .riel-cuerpo::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
 
 /* telemetría */
-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px;
   font-variant-numeric:tabular-nums}
 th{text-align:left;font-weight:500;font-size:9px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--text-3);padding:9px 0 6px;position:sticky;top:0;background:var(--glass)}
@@ -218,6 +221,19 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
   #transporte.oculto{transform:translateY(14px)}
 }
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+#aviso-modelo{position:fixed;bottom:112px;left:50%;transform:translateX(-50%);max-width:90vw;
+  padding:4px 10px;background:#10171ddd;color:#d1dde5;text-align:center;font-size:12px;pointer-events:none}
+:focus-visible{outline:2px solid #f08348;outline-offset:3px}
+#transporte{flex-wrap:wrap;max-width:calc(100vw - 24px);justify-content:center}
+#ficha{max-height:calc(100vh - 210px)}
+#ficha button,#ficha select,#ficha input{font:inherit}
+#ficha .acciones{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+#ficha select,#ficha input{color:var(--text);background:#15212b;border:1px solid #637886;padding:6px;max-width:100%}
+#ficha label{display:block;margin:9px 0}
+#ficha a{color:#91ceef}
+#ficha .datos-vivos{font-family:var(--mono);font-size:13px;line-height:1.8;color:#d6e4eb}
+@media(max-width:760px){#aviso-modelo{bottom:145px;font-size:10px;width:90vw}#ficha{max-height:calc(100vh - 240px)}.btn{padding:8px;font-size:10px}}
 </style>
 
 <canvas id="lienzo"></canvas>
@@ -250,9 +266,12 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
   <div class="tr-bloque">
     <button class="btn on" id="b-play">PAUSAR</button>
     <button class="btn" id="b-vel">×4</button>
+    <button class="btn" id="b-reset">Reiniciar</button>
   </div>
   <div class="tr-bloque">
     <button class="btn tormenta" id="b-tormenta">TORMENTA DE POLVO · 21 SOLES</button>
+    <button class="btn" id="b-tecnica">Inspección técnica</button>
+    <button class="btn" id="b-recorrido">Recorrido del jurado</button>
   </div>
 </div>
 
@@ -271,6 +290,7 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
   </div>
 </section>
 
+<div id="aviso-modelo">Modelo ilustrativo · autorizaciones simuladas · acceso interior pendiente</div>
 <div id="pista">ARRASTRA PARA ORBITAR · RUEDA PARA ACERCAR · TOCA UN PUNTO</div>
 
 <div id="carga">
@@ -287,9 +307,10 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
 const GEOM = {"casco":{"radio":2.28,"diametro":4.56,"altura":2.2,"cubierta":0.62},"anillo":{"r0":1.58,"r1":2.18,"n":20,"holgura_angular":0.94,"paso_grados":18.0,"sector_grados":16.92,"soles_por_paso":8},"cartucho":{"area":0.33311,"profundidad_sustrato":0.22,"cuerda_exterior":0.6414,"ancho_radial":0.6},"areas":{"cultivo":3.9973,"regeneracion":2.6649,"total":6.6622},"pasillo":{"ancho":0.9,"r_equipos_max":0.68},"mision":{"soles_horizonte":525},"ciclo":{"n_regeneracion":8,"n_cultivo":12}};
 /*P2:GEOM→*/
 
-(() => {
 "use strict";
 const T = THREE, TAU = Math.PI * 2, RAD = Math.PI / 180;
+let semillaVisual = 360;
+function azar(){ semillaVisual=(1664525*semillaVisual+1013904223)>>>0; return semillaVisual/4294967296; }
 const $ = id => document.getElementById(id);
 
 /* ═══════════════════════════════════════════════════════════════
@@ -590,9 +611,9 @@ function texturaCodorniz(){
   const g = c.getContext("2d");
   g.fillStyle = "#A8916F"; g.fillRect(0, 0, S, S);
   for (let i = 0; i < 260; i++){
-    const x = Math.random() * S, y = Math.random() * S, r = 1.4 + Math.random() * 3.4;
-    g.fillStyle = Math.random() < 0.62 ? "rgba(74,55,36,.72)" : "rgba(236,226,206,.55)";
-    g.beginPath(); g.ellipse(x, y, r, r * 0.6, Math.random() * TAU, 0, TAU); g.fill();
+    const x = azar() * S, y = azar() * S, r = 1.4 + azar() * 3.4;
+    g.fillStyle = azar() < 0.62 ? "rgba(74,55,36,.72)" : "rgba(236,226,206,.55)";
+    g.beginPath(); g.ellipse(x, y, r, r * 0.6, azar() * TAU, 0, TAU); g.fill();
   }
   const t = new T.CanvasTexture(c);
   t.colorSpace = T.SRGBColorSpace; t.wrapS = t.wrapT = T.RepeatWrapping;
@@ -667,9 +688,9 @@ function texturaCasco(){
     grad.addColorStop(1, "rgba(150,86,48,.45)");
     g.fillStyle = grad; g.fillRect(0, H * 0.55, W, H * 0.45);
     for (let i = 0; i < 260; i++){                        // salpicado
-      const x = Math.random() * W, y = H * (0.5 + Math.random() * 0.5);
-      g.fillStyle = "rgba(146,84,46," + (0.05 + Math.random() * 0.16).toFixed(2) + ")";
-      g.beginPath(); g.arc(x, y, 1 + Math.random() * 7, 0, TAU); g.fill();
+      const x = azar() * W, y = H * (0.5 + azar() * 0.5);
+      g.fillStyle = "rgba(146,84,46," + (0.05 + azar() * 0.16).toFixed(2) + ")";
+      g.beginPath(); g.arc(x, y, 1 + azar() * 7, 0, TAU); g.fill();
     }
   }, true);
 }
@@ -695,16 +716,16 @@ function texturaMusgo(){
   return lienzoTex(256, 256, (g, W, H) => {
     g.fillStyle = "#3A5C2A"; g.fillRect(0, 0, W, H);
     for (let i = 0; i < 900; i++){
-      const x = Math.random() * W, y = Math.random() * H, r = 1 + Math.random() * 5;
-      const v = Math.random();
+      const x = azar() * W, y = azar() * H, r = 1 + azar() * 5;
+      const v = azar();
       g.fillStyle = v < 0.5 ? "rgba(96,150,62,.55)" : v < 0.85 ? "rgba(52,88,38,.6)"
                                                     : "rgba(140,178,96,.5)";
       g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
     }
     for (let i = 0; i < 40; i++){                         // grietas de desecación
-      g.strokeStyle = "rgba(30,48,22,.5)"; g.lineWidth = 1 + Math.random();
-      g.beginPath(); g.moveTo(Math.random() * W, Math.random() * H);
-      for (let j = 0; j < 4; j++) g.lineTo(Math.random() * W, Math.random() * H);
+      g.strokeStyle = "rgba(30,48,22,.5)"; g.lineWidth = 1 + azar();
+      g.beginPath(); g.moveTo(azar() * W, azar() * H);
+      for (let j = 0; j < 4; j++) g.lineTo(azar() * W, azar() * H);
       g.stroke();
     }
   }, true);
@@ -721,10 +742,10 @@ function texturaHoja(op){
       base.addColorStop(0, "#8C8C8C"); base.addColorStop(0.55, "#B4B4B4"); base.addColorStop(1, "#D2D2D2");
       g.fillStyle = base; g.fillRect(0, 0, W, H);
       for (let i = 0; i < 240; i++){                      // moteado del limbo
-        const a = Math.random() < 0.5 ? "rgba(255,255,255,.10)" : "rgba(0,0,0,.07)";
+        const a = azar() < 0.5 ? "rgba(255,255,255,.10)" : "rgba(0,0,0,.07)";
         g.fillStyle = a;
-        g.beginPath(); g.ellipse(Math.random() * W, Math.random() * H,
-          3 + Math.random() * 14, 2 + Math.random() * 9, Math.random() * TAU, 0, TAU); g.fill();
+        g.beginPath(); g.ellipse(azar() * W, azar() * H,
+          3 + azar() * 14, 2 + azar() * 9, azar() * TAU, 0, TAU); g.fill();
       }
       const borde = g.createRadialGradient(W / 2, H / 2, W * 0.28, W / 2, H / 2, W * 0.62);
       borde.addColorStop(0, "rgba(0,0,0,0)"); borde.addColorStop(1, "rgba(0,0,0,.30)");
@@ -765,20 +786,20 @@ function texturaHuevo(){
     base.addColorStop(0, "#F0E6CC"); base.addColorStop(0.5, "#E4D6B4"); base.addColorStop(1, "#D8C8A4");
     g.fillStyle = base; g.fillRect(0, 0, W, H);
     for (let i = 0; i < 130; i++){                        // manchas grandes
-      const x = Math.random() * W, y = Math.random() * H;
-      const r = 3 + Math.pow(Math.random(), 1.8) * 15;
-      g.fillStyle = Math.random() < 0.62 ? "rgba(66,44,26,.72)" : "rgba(112,78,44,.55)";
+      const x = azar() * W, y = azar() * H;
+      const r = 3 + Math.pow(azar(), 1.8) * 15;
+      g.fillStyle = azar() < 0.62 ? "rgba(66,44,26,.72)" : "rgba(112,78,44,.55)";
       g.beginPath();
       g.moveTo(x + r, y);
       for (let a = 0; a < 9; a++){                        // contorno irregular
-        const ang = a / 9 * TAU, rr = r * (0.55 + Math.random() * 0.65);
+        const ang = a / 9 * TAU, rr = r * (0.55 + azar() * 0.65);
         g.lineTo(x + Math.cos(ang) * rr, y + Math.sin(ang) * rr * 0.8);
       }
       g.closePath(); g.fill();
     }
     for (let i = 0; i < 400; i++){                        // salpicado fino
       g.fillStyle = "rgba(74,50,28,.38)";
-      g.beginPath(); g.arc(Math.random() * W, Math.random() * H, 0.7 + Math.random() * 2, 0, TAU); g.fill();
+      g.beginPath(); g.arc(azar() * W, azar() * H, 0.7 + azar() * 2, 0, TAU); g.fill();
     }
   });
 }
@@ -828,7 +849,9 @@ renderer.toneMappingExposure = 0.86;
 renderer.setClearColor(0x07090C, 1);
 
 const escena = new T.Scene();
-const camara = new T.PerspectiveCamera(38, 1, 0.05, 4000);
+let camara = new T.PerspectiveCamera(38, 1, 0.05, 4000);
+const perspectiva = camara;
+const ortografica = new T.OrthographicCamera(-4,4,4,-4,0.01,100);
 const mira = new T.Vector3();
 const orbe = { theta: -0.62, phi: 1.02, dist: 8.4 };
 
@@ -885,9 +908,9 @@ escena.add(cielo);
 const estGeo = new T.BufferGeometry();
 const NE = 2600, pos = new Float32Array(NE * 3), tam = new Float32Array(NE);
 for (let i = 0; i < NE; i++){
-  const v = new T.Vector3().randomDirection().multiplyScalar(600 + Math.random() * 200);
+  const v = new T.Vector3(azar()*2-1,azar()*2-1,azar()*2-1).normalize().multiplyScalar(600 + azar() * 200);
   pos[i*3] = v.x; pos[i*3+1] = v.y; pos[i*3+2] = v.z;
-  tam[i] = Math.random() < 0.06 ? 2.6 : 0.9 + Math.random();
+  tam[i] = azar() < 0.06 ? 2.6 : 0.9 + azar();
 }
 estGeo.setAttribute("position", new T.BufferAttribute(pos, 3));
 estGeo.setAttribute("size", new T.BufferAttribute(tam, 1));
@@ -1146,6 +1169,14 @@ const FICHAS = {
     pasos: ["aves", "tolva con cierre", "cartucho"]
   }
 };
+FICHAS.retorno={sub:"Propuesta terrestre · por validar en P4",tit:"Un piloto medible en Chiapas",
+  txt:"Proponemos ensayar por separado transferencia con carga, recuperación de agua y aislamiento de un lote. El piloto, el presupuesto y los participantes deben concretarse con el equipo; no hay alianza o resultado experimental confirmado.",
+  d:[["Indicadores propuestos","L recuperados, trabajo por lote, fallos de transferencia"],["Comparación","mismo recurso y carga, con y sin mecanismo"],["B19","altura y mantenimiento todavía sin resolver"]],
+  f:"MISION-MADRID-MILPA360.md §5K–M · P4 pendiente",pasos:["problema local","banco terrestre","medición comparada"]};
+const bn=MILPA_DATOS.balance, pg=MILPA_DATOS.parametros;
+FICHAS.sitio.d=[["Diámetro",GEOM.casco.diametro.toFixed(2)+" m"],["Cultivo",GEOM.areas.cultivo.toFixed(2)+" m²"],["Cobertura nominal P1",(bn.cobertura_kcal*100).toFixed(1)+" % de kcal"],["Horizonte",GEOM.mision.soles_horizonte+" soles"]];
+FICHAS.panel.d=[["Luz nominal P1",bn.luz_kwh.toFixed(1)+" kWh eléctricos/d"],["Biogás P1",bn.biogas_kwh_quimico.toFixed(3)+" kWh químicos/d"],["Auxiliares","pendientes, no son cero"]];
+FICHAS.aviario.d=[["Aves propuestas",pg.aviario.n_aves.valor],["Primer huevo publicado",pg.aviario.edad_primer_huevo.valor+" d"],["Ración publicada",pg.aviario.consumo_alimento.valor+" g/ave/d"],["Ración importada",bn.alimento_kg.toFixed(2)+" kg/d"]];
 for (const f of Object.values(FICHAS)) f.viz = VIZ.cadena("MECANISMO PROPUESTO", f.pasos.map(p => [p, "#63A9D1"]));
 
 
@@ -1542,10 +1573,10 @@ function plantaCamote(){
 function mataMusgo(){
   const g = new T.Group();
   for (let i = 0; i < 14; i++){
-    const a = Math.random() * TAU, r = Math.sqrt(Math.random()) * 0.13;
+    const a = azar() * TAU, r = Math.sqrt(azar()) * 0.13;
     const m = malla(GEO.mota, M.musgo,
-      [Math.cos(a) * r, 0.006 + Math.random() * 0.012, Math.sin(a) * r], g, false);
-    m.scale.set(1.2 + Math.random(), 0.6 + Math.random() * 0.6, 1.2 + Math.random());
+      [Math.cos(a) * r, 0.006 + azar() * 0.012, Math.sin(a) * r], g, false);
+    m.scale.set(1.2 + azar(), 0.6 + azar() * 0.6, 1.2 + azar());
     m.receiveShadow = true;
   }
   return fusionar(g);
@@ -1596,11 +1627,11 @@ function construirHabitat(){
   const geoR = new T.IcosahedronGeometry(1, 0);
   const matR = new T.MeshStandardMaterial({ color: 0x6E3D28, roughness: 0.96, flatShading: true });
   for (let i = 0; i < 90; i++){
-    const a = Math.random() * TAU, r = 5.8 + Math.pow(Math.random(), 0.55) * 40;
-    const s = 0.1 + Math.pow(Math.random(), 2.4) * 0.85;
+    const a = azar() * TAU, r = 5.8 + Math.pow(azar(), 0.55) * 40;
+    const s = 0.1 + Math.pow(azar(), 2.4) * 0.85;
     const roca = malla(geoR, matR, [Math.cos(a) * r, s * 0.34, Math.sin(a) * r]);
-    roca.scale.set(s * (0.8 + Math.random() * 0.6), s * (0.5 + Math.random() * 0.5), s);
-    roca.rotation.set(Math.random(), Math.random() * TAU, Math.random());
+    roca.scale.set(s * (0.8 + azar() * 0.6), s * (0.5 + azar() * 0.5), s);
+    roca.rotation.set(azar(), azar() * TAU, azar());
   }
 
   /* ── talud de regolito: el blindaje contra radiación ── */
@@ -1611,7 +1642,7 @@ function construirHabitat(){
     .rotation.x = -Math.PI / 2;
 
   /* ── casco presurizado, en corte ── */
-  const cascoGrp = new T.Group(); gHabitat.add(cascoGrp);
+  const cascoGrp = new T.Group(); cascoGrp.name="casco"; gHabitat.add(cascoGrp);
   if (Q.get("casco") === "0") cascoGrp.visible = false;   // vista de mecanismo
   const pared = malla(
     new T.CylinderGeometry(R_CASCO, R_CASCO, H_CASCO, 72, 1, true, CIL_INI, A_LARGO),
@@ -1668,6 +1699,12 @@ function construirHabitat(){
     malla(new T.TorusGeometry(ra, 0.012, 6, 72), M.acero, [0, CUBIERTA, 0]).rotation.x = Math.PI / 2;
   }
   clicable(malla(new T.CylinderGeometry(0.09, 0.13, 1.5, 18), M.acero, [0, 0.75, 0]), "carrusel");
+
+  const humano=new T.Group();humano.position.set(1.08,CUBIERTA,-0.40);gHabitat.add(humano);
+  malla(new T.SphereGeometry(0.09,12,8),M.acero,[0,1.66,0],humano);
+  malla(new T.BoxGeometry(0.28,0.52,0.17),M.acero,[0,1.25,0],humano);
+  for(const x of [-0.08,0.08]) malla(new T.CylinderGeometry(0.045,0.055,0.94,8),M.acero,[x,0.49,0],humano);
+  marcarSubarbol(humano,"carrusel"); // referencia 1.75 m; B19 visible con techo a 2.20 m.
 
   /* Equipos esquemáticos separados. B17: volumen útil y mantenimiento pendientes. */
   const dig = new T.Group(); dig.position.set(-0.22, CUBIERTA, 0); gHabitat.add(dig);
@@ -1808,9 +1845,9 @@ function construirHabitat(){
     bandejaLarvas = [];
     for (let i = 0; i < 26; i++){
       const l = malla(geoLarva, matLarva,
-        [(Math.random() - 0.5) * 0.27, 0.652, (Math.random() - 0.5) * 0.19], gLarv, false);
-      l.rotation.set(Math.PI / 2, 0, Math.random() * TAU);
-      l.userData.f = Math.random() * TAU;
+        [(azar() - 0.5) * 0.27, 0.652, (azar() - 0.5) * 0.19], gLarv, false);
+      l.rotation.set(Math.PI / 2, 0, azar() * TAU);
+      l.userData.f = azar() * TAU;
       bandejaLarvas.push(l);
     }
     placa(texturaPlaca([{ t: "LARVARIO · Hermetia illucens", s: 0.26, esp: 0.03 },
@@ -1888,11 +1925,11 @@ function construirHabitat(){
         plantas = new T.Group(); plantas.position.y = Y_SUELO; g.add(plantas);
         const d = r1 - r0;
         /* jitter propio de cada bandeja: doce camas idénticas se notan de inmediato */
-        const jt = () => (Math.random() - 0.5) * 0.055;
+        const jt = () => (azar() - 0.5) * 0.055;
         const pon = (obj, rr, dz) => {
           obj.position.set(rr + jt(), 0, dz + jt());
-          obj.rotation.y = Math.random() * TAU;
-          obj.userData.base = 0.88 + Math.random() * 0.26;   // porte propio de cada mata
+          obj.rotation.y = azar() * TAU;
+          obj.userData.base = 0.88 + azar() * 0.26;   // porte propio de cada mata
           plantas.add(obj); return obj;
         };
         /* Dos matas por especie, no tres: el cartucho de B mide 0.64 × 0.60 m, un 30 % menos
@@ -1986,7 +2023,7 @@ function construirHabitat(){
           [x, Y_RAMAL - 0.012, z], g, false);                     // gotero sobre la cama
         clicable(bo, "riego");
         const gota = malla(geoGota, matGota, [x, Y_RAMAL - 0.04, z], g, false);
-        goteros.push({ gota, y0: Y_RAMAL - 0.035, x, z, fase: Math.random() });
+        goteros.push({ gota, y0: Y_RAMAL - 0.035, x, z, fase: azar() });
       }
     }
   }
@@ -2178,24 +2215,23 @@ function construirHabitat(){
   }
 
   /* rótulo del anillo exterior, sobre la rampa de riego */
-  placa(texturaPlaca([{ t: "ANILLO EXTERIOR · TRÍADA MARCIANA", s: 0.24, esp: 0.05 },
+  placa(texturaPlaca([{ t: "ARCO DE CULTIVO · TRÍADA", s: 0.24, esp: 0.05 },
                       { t: "camote · leguminosa · rábano — 12 bandejas, 12 etapas", s: 0.15,
                         c: "#9FB0BE", esp: 0.01 }],
                      { w: 900, h: 170, fondo: "#0E1317", barra: "#3F7A2E", y0: 0.42 }),
         0.78, 0.145, [Math.cos(2.6) * 1.62, CUBIERTA + 1.22, Math.sin(2.6) * 1.62], Math.PI / 2 - 2.6, null, -0.28);
 
   /* rótulo de la filtración */
-  placa(texturaPlaca([{ t: "FILTRACIÓN DE AGUA", s: 0.26, esp: 0.06 },
-                      { t: "HEPA 99.97 % @0.3 µm + UV", s: 0.17, c: "#8FD4E8", esp: 0.02 }],
+  placa(texturaPlaca([{ t: "AGUA · ACONDICIONAMIENTO", s: 0.26, esp: 0.06 },
+                      { t: "DISEÑO Y CALIDAD POR VALIDAR", s: 0.17, c: "#8FD4E8", esp: 0.02 }],
                      { w: 700, h: 160, fondo: "#0E1317", barra: "#63A9D1", y0: 0.42 }),
         0.60, 0.135, [-0.14, 0.80, 0], Math.PI / 2, filt);
 
   /* ── polvo en suspensión durante la tormenta ── */
   const gp = new T.BufferGeometry(), NP = 1400, pp = new Float32Array(NP * 3);
   for (let i = 0; i < NP; i++){
-    pp[i*3] = (Math.random() - 0.5) * 26;
-    pp[i*3+1] = Math.random() * 7;
-    pp[i*3+2] = (Math.random() - 0.5) * 26;
+    const a=azar()*TAU, r=R_CASCO+0.30+azar()*14;
+    pp[i*3]=Math.cos(a)*r;pp[i*3+1]=azar()*7;pp[i*3+2]=Math.sin(a)*r;
   }
   gp.setAttribute("position", new T.BufferAttribute(pp, 3));
   const polvo = new T.Points(gp, new T.PointsMaterial({ color: 0xD9A87E, size: 0.055,
@@ -2222,6 +2258,7 @@ const S = {
   get tormenta(){ return Math.max(0, modelo.estado.tormentaHasta - modelo.estado.sol); },
   get gas(){ return modelo.estado.gasKWh / MILPA_DATOS.parametros.simulacion.capacidad_gas.valor; },
   play: !reduce && Q.get("play") !== "0", vel:4, transicion:0, destino:null,
+  reducido:reduce, proyeccion:"orbita",
 };
 const VELS = [1, 4, 12];
 let iVel = 1;
@@ -2333,6 +2370,66 @@ $("b-tormenta").onclick = e => {
   e.currentTarget.classList.toggle("on", S.tormenta > 0);
 };
 
+function controles(){
+  $("b-play").textContent=S.sol>=SOLES_MISION?"Misión terminada":S.play?"Pausar":"Reanudar";
+  $("b-play").classList.toggle("on",S.play);
+  $("aviso-modelo").textContent="Ilustrativo · "+(modelo.autorizacionesIlustrativas?"autorizaciones simuladas":"sin autorización de lotes")+" · "+(modelo.estado.bloqueo||"acceso interior pendiente");
+}
+$("b-reset").onclick=()=>{modelo.reiniciar();S.play=false;controles();};
+function vistaTecnica(tipo){
+  S.proyeccion=tipo;camara=tipo==="orbita"?perspectiva:ortografica;medir();
+}
+function abrirTecnica(){
+  abrirFicha("carrusel");fichaActual="tecnica";
+  $("f-sub").textContent="Inspección · cálculos y escenario";
+  $("f-tit").textContent="Seguir un lote y sus recursos";
+  $("f-txt").innerHTML=`<p>${N_POS} cartuchos · Ø ${GEOM.casco.diametro.toFixed(2)} m · cultivo ${GEOM.areas.cultivo.toFixed(2)} m².</p>
+  <p><b>Acceso sin resolver:</b> 1.58 m libres sobre el piso frente a figura de 1.75 m. Equipos, tuberías y cultivos son esquemáticos; B15–B19 pendientes.</p>
+  <div class="acciones"><button class="btn" id="cam-planta">Planta</button><button class="btn" id="cam-lateral">Lateral</button><button class="btn" id="cam-orbita">Órbita</button></div>
+  <label><input type="checkbox" id="casco-visible" ${gHabitat.getObjectByName('casco').visible?'checked':''}> Mostrar casco en corte</label>
+  <label><input type="checkbox" id="menos-movimiento" ${S.reducido?'checked':''}> Reducir movimiento</label>
+  <label>Equipo o flujo <select id="equipo-elegido"><option value="">Elegir ficha</option>${Object.keys(FICHAS).map(k=>`<option value="${k}">${FICHAS[k].tit}</option>`).join('')}</select></label>
+  <label>Lote <select id="lote-elegido">${modelo.estado.lotes.map(l=>`<option>${l.id}</option>`).join('')}</select></label>
+  <div class="datos-vivos" id="datos-vivos"></div>
+  <label>Fallo <select id="tipo-fallo"><option value="bomba">Bomba detenida</option><option value="atasco">Atasco del anillo</option><option value="lote">Lote rechazado en S8</option></select></label>
+  <div class="acciones"><button class="btn" id="aplicar-fallo">Aplicar fallo</button><button class="btn" id="reparar-fallo">Reparar</button><button class="btn" id="aislar-lote">Aislar / sustituir S8</button></div>
+  <p id="mensaje-accion" role="status"></p>
+  <div class="acciones"><button class="btn" id="comparar-siembras">Comparar siembras</button></div>
+  <p><a href="../docs/madrid/P3-SIMULACION.md" target="_blank" rel="noopener">Ecuaciones, fuentes y límites</a></p>`;
+  $("f-viz").innerHTML="";$("f-dl").innerHTML="";$("f-fte").textContent="Geometría calculada; reservas y respuesta de cultivos ilustrativas. Sin mediciones físicas.";
+  for(const tipo of ['planta','lateral','orbita']) $("cam-"+tipo).onclick=()=>vistaTecnica(tipo);
+  $("equipo-elegido").onchange=e=>{if(e.target.value)abrirFicha(e.target.value);};
+  $("casco-visible").onchange=e=>gHabitat.getObjectByName('casco').visible=e.target.checked;
+  $("menos-movimiento").onchange=e=>S.reducido=e.target.checked;
+  const actuar=fn=>{try{fn();$("mensaje-accion").textContent="Estado actualizado; reparación no elimina el daño previo.";}catch(e){$("mensaje-accion").textContent=e.message;}};
+  $("aplicar-fallo").onclick=()=>actuar(()=>modelo.fallar($("tipo-fallo").value));
+  $("reparar-fallo").onclick=()=>actuar(()=>modelo.reparar($("tipo-fallo").value));
+  $("aislar-lote").onclick=()=>actuar(()=>modelo.aislar());
+  $("comparar-siembras").onclick=abrirComparacion;
+}
+function abrirComparacion(){
+  abrirFicha("cultivo");fichaActual="comparacion";$("f-sub").textContent="Banco virtual · parcelas fijas, no cinemática del anillo";
+  $("f-tit").textContent="Comparar con recursos iguales";
+  $("f-txt").innerHTML=`<p>Igual área, biomasa inicial, agua y electricidad. Cada estrategia tiene su control sin fallo. Resultados ilustrativos, sensibles al calendario y a la regla de daño.</p>
+  <label>Inicio (sol) <input id="cmp-inicio" type="number" value="40" min="0" max="160"></label>
+  <label>Duración (soles) <input id="cmp-duracion" type="number" value="21" min="0" max="160"></label>
+  <label>Luz disponible (%) <input id="cmp-luz" type="number" value="25" min="0" max="100"></label>
+  <button class="btn" id="cmp-calcular">Calcular 160 soles</button><div id="cmp-resultado" role="status"></div>`;
+  $("f-viz").innerHTML="";$("f-dl").innerHTML="";
+  const calcular=()=>{try{
+    const r=MILPA.comparar(MILPA_DATOS,{inicio:Number($("cmp-inicio").value),duracion:Number($("cmp-duracion").value),fraccionLuz:Number($("cmp-luz").value)/100,soles:160});
+    $("cmp-resultado").innerHTML='<table><thead><tr><th>Siembra</th><th>Cosecha kcal</th><th>Menos que control</th></tr></thead><tbody>'+['escalonada','sincronizada'].map(k=>`<tr><td>${k}</td><td>${Math.round(r[k].cosechaKcal)}</td><td>${Math.round(r[k].perdidaKcal)} kcal</td></tr>`).join('')+'</tbody></table>'+`<p>Por estrategia: ${r.escalonada.area.toFixed(2)} m² · ${r.escalonada.kWh.toFixed(0)} kWh de luz · ${r.escalonada.aguaL.toFixed(0)} L demandados. No acredita una ventaja experimental.</p>`;
+  }catch(e){$("cmp-resultado").textContent=e.message;}};
+  $("cmp-calcular").onclick=calcular;calcular();
+}
+$("b-tecnica").onclick=abrirTecnica;
+let pasoRecorrido=-1;
+$("b-recorrido").onclick=()=>{
+  const pasos=["sitio","carrusel","digestor","cultivo","retorno"];
+  pasoRecorrido=(pasoRecorrido+1)%pasos.length;abrirFicha(pasos[pasoRecorrido]);
+  $("b-recorrido").textContent=pasoRecorrido===pasos.length-1?"Repetir recorrido":"Siguiente · "+(pasoRecorrido+1)+"/5";
+};
+
 /* cambio de vista, con fundido */
 function cambiarVista(v){
   if (v === S.vista || S.transicion > 0) return;
@@ -2344,7 +2441,7 @@ $("v-planeta").onclick = () => cambiarVista("planeta");
 $("v-habitat").onclick = () => cambiarVista("habitat");
 
 function aplicarVista(v){
-  S.vista = v;
+  S.vista = v;vistaTecnica("orbita");
   $("v-planeta").setAttribute("aria-selected", String(v === "planeta"));
   $("v-habitat").setAttribute("aria-selected", String(v === "habitat"));
   $("transporte").classList.toggle("oculto", v !== "habitat");
@@ -2423,7 +2520,8 @@ function picar(e){
 function medir(){
   const w = innerWidth, h = innerHeight;
   renderer.setSize(w, h, false);
-  camara.aspect = w / h;
+  perspectiva.aspect = w / h;perspectiva.updateProjectionMatrix();
+  ortografica.left=-3.5*w/h;ortografica.right=3.5*w/h;ortografica.top=3.5;ortografica.bottom=-3.5;ortografica.updateProjectionMatrix();
   camara.updateProjectionMatrix();
 }
 addEventListener("resize", medir);
@@ -2474,9 +2572,11 @@ const C_MARCHITO = new T.Color(0x8A7139);
 let anterior = performance.now();
 
 function bucle(ahora){
-  const dt = Math.min(0.05, Math.max(0, (ahora - anterior) / 1000));
+  const elapsed = Math.max(0, (ahora - anterior) / 1000);
+  const dt = Math.min(0.05, elapsed);
   anterior = ahora;
-  const t = ahora / 1000;
+  const dv=S.play&&!S.reducido?dt:0;
+  const t = S.play&&!S.reducido?ahora / 1000:0;
 
   /* ── transición de vista ── */
   if (S.transicion > 0){
@@ -2487,7 +2587,7 @@ function bucle(ahora){
   const fundido = S.transicion > 0 ? 1 - Math.abs(S.transicion - 0.5) * 2 : 0;
 
   /* El render solicita tiempo; el modelo lo integra con paso fijo y termina sin módulo. */
-  if (S.play && S.vista === "habitat") modelo.avanzar(dt * 2.2 * S.vel);
+  if (S.play && S.vista === "habitat") modelo.avanzar(elapsed * 2.2 * S.vel);
   if (S.sol >= SOLES_MISION) S.play = false;
   const enTormenta = S.tormenta > 0;
   const estado = modelo.estado;
@@ -2518,7 +2618,7 @@ function bucle(ahora){
     /* Sólo el agua y el gas tienen inventarios dinámicos; otras rutas no animan caudal. */
     for(const fl of flujos){
       const activa=fl.ficha==="f_biogas"||(fl.ficha==="f_riego"&&!estado.bomba);
-      if(S.play && activa && !fl.bloqueado) fl.tex.offset.x-=dt*fl.v;
+      if(S.play && activa && !fl.bloqueado) fl.tex.offset.x-=dv*fl.v;
     }
     gasometro.position.y = gasometro.userData.y0 + S.gas * 0.26;
 
@@ -2557,16 +2657,17 @@ function bucle(ahora){
     });
 
     /* atmósfera de tormenta */
+    const mezclaAmbiente=S.play&&!S.reducido?1-Math.exp(-dt*8):1;
     const pol = refsHab.polvo;
-    pol.material.opacity += ((enTormenta ? 0.6 : 0) - pol.material.opacity) * 0.05;
-    pol.rotation.y += dt * (enTormenta ? 0.5 : 0.05);
+    pol.material.opacity += ((enTormenta ? 0.6 : 0) - pol.material.opacity) * mezclaAmbiente;
+    pol.rotation.y += dv * (enTormenta ? 0.5 : 0.05);
     const dest = enTormenta ? CIELO_TORM : CIELO_MARTE;
-    cieloUnif.cenit.value.lerp(dest.cenit, 0.05);
-    cieloUnif.horiz.value.lerp(dest.horiz, 0.05);
-    cieloUnif.suelo.value.lerp(dest.suelo, 0.05);
+    cieloUnif.cenit.value.lerp(dest.cenit, mezclaAmbiente);
+    cieloUnif.horiz.value.lerp(dest.horiz, mezclaAmbiente);
+    cieloUnif.suelo.value.lerp(dest.suelo, mezclaAmbiente);
     cieloUnif.mezclaEspacio.value += (0 - cieloUnif.mezclaEspacio.value) * 0.07;
-    sol.intensity += ((enTormenta ? 0.32 : 2.3) - sol.intensity) * 0.05;
-    hemi.intensity += ((enTormenta ? 0.38 : 0.72) - hemi.intensity) * 0.05;
+    sol.intensity += ((enTormenta ? 0.32 : 2.3) - sol.intensity) * mezclaAmbiente;
+    hemi.intensity += ((enTormenta ? 0.38 : 0.72) - hemi.intensity) * mezclaAmbiente;
     dispersion.intensity += (0 - dispersion.intensity) * 0.08;
     estrellas.material.uniforms.op.value += (0 - estrellas.material.uniforms.op.value) * 0.08;
 
@@ -2579,8 +2680,8 @@ function bucle(ahora){
 
   } else {
     /* ── planeta ── */
-    marte.rotation.y += dt * 0.058;
-    nubePolvo.rotation.y += dt * 0.034;
+    marte.rotation.y += dv * 0.058;
+    nubePolvo.rotation.y += dv * 0.034;
     cieloUnif.mezclaEspacio.value += (1 - cieloUnif.mezclaEspacio.value) * 0.07;
     estrellas.material.uniforms.op.value += (0.95 - estrellas.material.uniforms.op.value) * 0.05;
     sol.intensity += (2.6 - sol.intensity) * 0.05;
@@ -2601,8 +2702,8 @@ function bucle(ahora){
     mira.y + orbe.dist * Math.cos(orbe.phi),
     mira.z + orbe.dist * Math.sin(orbe.phi) * Math.sin(orbe.theta)
   );
-  camara.position.lerp(objetivo, S.transicion > 0 ? 0.10 : 0.22);
-  camara.lookAt(mira);
+  if(S.proyeccion==='orbita') {camara.up.set(0,1,0);camara.position.lerp(objetivo,S.reducido?1:S.transicion>0?0.10:0.22);camara.lookAt(mira);}
+  else {camara.up.set(0,S.proyeccion==='planta'?0:1,S.proyeccion==='planta'?-1:0);camara.position.set(S.proyeccion==='planta'?0:8,S.proyeccion==='planta'?10:1.4,0.001);camara.lookAt(0,S.proyeccion==='planta'?0:1.4,0);}
   sol.target.position.copy(mira); sol.target.updateMatrixWorld();
 
   /* ── etiquetas proyectadas ── */
@@ -2651,6 +2752,11 @@ function bucle(ahora){
   mostrarRiel.style.display = riel.classList.contains("oculto") ? "" : "none";
 
   renderer.toneMappingExposure = 1.05 * (1 - fundido * 0.96);
+  controles();
+  if(fichaActual==='tecnica' && $("datos-vivos")){
+    const e=modelo.estado,l=e.lotes.find(l=>l.id===$("lote-elegido").value);
+    $("datos-vivos").textContent=`Agua: ${e.aguaL.toFixed(1)} L · gas almacenado: ${e.gasKWh.toFixed(3)} kWh químicos · luz acumulada: ${e.electricidadKWh.toFixed(1)} kWh. Cosecha vegetal: ${e.cosechaKg.toFixed(2)} kg. Cuarentena: ${e.cuarentena.length}; repuestos: ${e.repuestos.length}. `+(l?`${l.id}: ${ESTACIONES[l.pos][0]}, ${l.calidad}; historial: ${l.historial.slice(-3).map(h=>h.evento+' (sol '+h.sol.toFixed(1)+')').join('; ')}`:'Lote retirado; abrir de nuevo la lista.');
+  }
   renderer.render(escena, camara);
   requestAnimationFrame(bucle);
 }
@@ -2686,6 +2792,6 @@ function bucle(ahora){
 })();
 
 /* deja pintar la pantalla de carga antes de generar las texturas */
-requestAnimationFrame(() => setTimeout(iniciar, 30));
-})();
+document.fonts.ready.then(() => requestAnimationFrame(() => setTimeout(iniciar, 30)));
 </script>
+</html>

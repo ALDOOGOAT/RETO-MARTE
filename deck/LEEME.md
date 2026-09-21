@@ -1,5 +1,6 @@
 > **Material histórico del hackathon.** El texto y las capturas anteriores a S2
-> no constituyen la defensa vigente de Madrid. P5 debe sincronizar afirmaciones,
+> no constituyen la defensa vigente de Madrid. Las capturas P3 nuevas están en
+> `../docs/madrid/capturas/` (anillo único); P5 debe sincronizar afirmaciones,
 > deck compilado y guion. No republicar automáticamente.
 
 # Deck · pitch de 5 minutos

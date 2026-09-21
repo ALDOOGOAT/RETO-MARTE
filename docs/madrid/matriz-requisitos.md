@@ -26,11 +26,11 @@ requisito es estructural y el diseño lo satisface por construcción. No signifi
 | RU-P2-01 | Mecanismo que «tome el 100% de esos residuos de la Parte 1» (excremento, agua sucia) | p.1 | UNACH 2026 | Obligatorio | Tratamiento | Balance por flujo: generado → captado → tratado → recuperado útil → descarte controlado | P1: estiércol de 0.06–0.17 kg SV/d y ruta aviario → larvas → digestor sin doble conteo (CALC) | parcial | **Se conserva el literal.** Interpretación operacional por confirmar (B5). El PLAN amplía el alcance a aguas negras y rastrojo | Ing. Soporte Vital |
 | RU-P2-02 | Convertir esos residuos en **energía (biogás)** | p.1 | UNACH 2026 | Obligatorio | Digestor | Cálculo con base de sustrato coherente (SV/MS/húmedo), luego ensayo | P1: 0.12–0.46 kWh/d químicos con fuentes leídas (el plan decía 2.864) | parcial | Producto demostrativo de la Parte 2, no fuente de energía: 0.3–1.5 % del consumo de iluminación | Ing. Soporte Vital |
 | RU-P2-03 | …y en **abono para las plantas** | p.1 | UNACH 2026 | Obligatorio | Larvario · Digestor | Caracterización de NPK, sales y patógenos; criterio sanitario de reintegración | Estiércol de codorniz con 5.21 % N (Diola 2024, base seca); frass y digestato sin caracterizar | parcial | Sin criterios sanitarios ni caracterización propia | Científico Planetario |
-| RU-P2-04 | «puede ser un biodigestor o compostaje con microorganismos» | p.1 | UNACH 2026 | **Ejemplo** | Tratamiento | Revisión documental | D3: digestor y reactor de salmuera separados; BSF (P1) | cumplido con evidencia (documental) | Ninguna sobre la elección; la viabilidad está en RU-P2-02/03 | — |
+| RU-P2-04 | «puede ser un biodigestor o compostaje con microorganismos» | p.1 | UNACH 2026 | **Ejemplo** | Tratamiento | Revisión documental | D3: digestor y reactor de salmuera separados; BSF (P1) | cumplido con evidencia | Ninguna sobre la elección; la viabilidad está en RU-P2-02/03 | — |
 | RU-P3-01 | Usar la energía y el abono de la Parte 2 para alimentar la zona de cultivo | p.2 | UNACH 2026 | Obligatorio | Cultivo | Balance de energía por subsistema; ruta digestato → riego con dosis | Tuberías f_biogas y f_riego (ILUS) | parcial | S0 retira colchón térmico y llama; conversión útil y auxiliares siguen sin dimensionar | Ing. Soporte Vital |
 | RU-P3-02 | «Propón sensores baratos, mezclar varios cultivos resistentes, o un riego muy eficiente» | p.2 | UNACH 2026 | **Ejemplo** (medios sugeridos) | Cultivo · Control | Especificación y prueba | Goteo sobre pivote; policultivo; MFC (HIP) | parcial | Sin caudal de riego, PPFD/DLI ni validación de la MFC | UX/UI + Ing. Soporte Vital |
-| RU-P3-03 | Producción de alimento **estable** aunque el clima sea difícil | p.2 | UNACH 2026 | Obligatorio | Cultivo | Modelo por estados con recursos iguales; siembra escalonada frente a sincronizada | Regla programada de 25/33 % reversible (ILUS, AUD C10) | pendiente | Resultado programado, no modelado; falta el mecanismo polvo → energía → clima interior | Ing. Soporte Vital |
-| RU-RC-01 | P1 → P2 → P3 encadenadas; «No se aceptan proyectos que resuelvan solo una parte» | p.2 | UNACH 2026 | Obligatorio (eliminatorio) | Sistema | Revisión de interfaces | PLAN §4 y §7: las tres partes están conectadas por diseño | cumplido con evidencia (documental) | Flujos sin cuantificar (ver RU-02) | CEO |
+| RU-P3-03 | Producción de alimento **estable** aunque el clima sea difícil | p.2 | UNACH 2026 | Obligatorio | Cultivo | Modelo por estados con recursos iguales; siembra escalonada frente a sincronizada | P3: estado persistente, fallos y comparación con igual recurso (ILUS); pruebas Node/Chrome | parcial | Regla de daño no calibrada; falta térmica y validación agronómica | Ing. Soporte Vital |
+| RU-RC-01 | P1 → P2 → P3 encadenadas; «No se aceptan proyectos que resuelvan solo una parte» | p.2 | UNACH 2026 | Obligatorio (eliminatorio) | Sistema | Revisión de interfaces | PLAN §4 y §7: las tres partes están conectadas por diseño | cumplido con evidencia | Flujos sin cuantificar (ver RU-02) | CEO |
 | RU-E1 | Entregable: diseño del sistema animal-vegetal (cómo se conectan las tres partes) | p.2 | UNACH 2026 | Obligatorio | Memoria · Prototipo | Revisión documental con geometría única | P2-GEOMETRIA.md; P02–P03 generadas; simulador con anillo único | parcial | P02/P03 y anillo derivan del JSON; documentos y láminas antiguos señalados como históricos. Mantenimiento y altura sin resolver (B15–B19) | UX/UI |
 | RU-E2 | Entregable: cómo se convierte el residuo en energía y abono | p.2 | UNACH 2026 | Obligatorio | Memoria | Revisión documental y cálculos | PLAN §4.3; P05 | parcial | Base energética; tratamiento del perclorato sobre el 11.4 % del volumen (C4) | Científico Planetario |
 | RU-E3 | Entregable: cómo la zona de cultivo resiste el clima extremo | p.2 | UNACH 2026 | Obligatorio | Memoria | Revisión documental y modelo | PLAN §4.4 | parcial | Falta la cadena causal de protección (envolvente, térmica, luz) | Científico Planetario |
@@ -118,9 +118,9 @@ Criterios, requisitos de Madrid y referencias NASA van aparte porque no son requ
 
 | Estado | Nº | % de 27 |
 |---|---:|---:|
-| cumplido con evidencia (documental) | 1 (RU-RC-01) | 4 % |
-| parcial | 21 | 78 % |
-| pendiente | 4 | 15 % |
+| cumplido con evidencia | 1 (RU-RC-01) | 4 % |
+| parcial | 22 | 81 % |
+| pendiente | 3 | 11 % |
 | por confirmar con organizador | 1 (G-06) | 4 % |
 | no aplicable justificado | 0 | 0 % |
 

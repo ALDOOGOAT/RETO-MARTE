@@ -1,6 +1,6 @@
 # P3 · Modelo y demostrador digital
 
-**Revisión:** S1, 20 sep 2026. Modelo ilustrativo; no gemelo digital validado.
+**Revisión:** S1/S2, 20 sep 2026. Modelo ilustrativo; no gemelo digital validado.
 **Base:** P0 `7ea6b3f`, P1 `508f30a`, P2 `e8ffad4`, correcciones S0 `25f39e4`.
 Los datos salen de `config/milpa360.parameters.json`; `analysis/milpa360_p3.py`
 reutiliza los balances P1 y el generador P2 para exportar `milpa360-datos.js`.
@@ -99,6 +99,37 @@ reinicio, bloqueo sin autorización, cuarentena/repuestos, sequía persistente, 
 mecánica, inventarios no negativos y cierre numérico de agua/gas/sustrato. También comprueba
 recursos y biomasa inicial iguales y sensibilidad a duración e intensidad del fallo.
 
-**S1 digital verificada; S2 pendiente de navegador/offline/capturas.** La cantidad conservada
-de sustrato no implica densidad medida ni cierre de los balances biológicos. B1–B19 siguen
-abiertos según `ESTADO.md`. P4 dimensionará equipos y protocolos; no se fabricaron resultados.
+## Integración S2 y prueba sin Internet
+
+La interfaz conserva el motor Three.js 0.160.0 y añade recorrido guiado, vistas ortográficas,
+selección de lotes/fichas mediante controles nativos, inventarios, fallos, reinicio y menos
+movimiento. El polvo se representa fuera del casco; las pérdidas siguen el modelo causal.
+La figura humana de 1.75 m hace visible B19. El casco en corte es una herramienta visual.
+
+Three.js, fuentes tipográficas y licencias están en `prototipo-3d/vendor/`. La demo abre con
+`file://` sin servidor ni npm; instrucciones en [LEEME-P3.md](../../prototipo-3d/LEEME-P3.md).
+El empaquetador genera `entregas/madrid-p3.zip` y verifica cada archivo con SHA-256.
+No es el paquete final P5; el deck anterior sigue histórico hasta su revisión.
+
+```bash
+node --experimental-websocket analysis/verificar_p3_navegador.mjs
+python3 analysis/empaquetar_p3.py
+```
+
+La prueba usa Chrome headless con CDP y WebSocket nativo de Node, sin dependencias nuevas.
+También se ejecutó contra una carpeta limpia extraída del ZIP, con red deshabilitada.
+Comprobó pausa, avance, reinicio, fallos, cuarentena, correspondencia de mallas con estaciones,
+vistas, fichas, recorrido y comparación: cero errores y cero solicitudes HTTP.
+Las seis capturas reales del navegador están en `capturas/` y se revisaron visualmente.
+Son renders digitales, no fotografías de maqueta ni evidencia de desempeño biológico.
+
+[PRUEBA-P3-NAVEGADOR.json](PRUEBA-P3-NAVEGADOR.json) registra Chrome 148, 1920×1080,
+CPU i7-13620H y SwiftShader: **1.26 FPS en 30 fotogramas con render por software**.
+La medición inicial de 90 fotogramas excedió el límite del verificador; se redujo a 30
+sin cambiar el render. El objetivo propuesto de 30 FPS debe medirse con la GPU del evento.
+Este resultado no confirma ni refuta su rendimiento. **S2 conserva esa aceptación pendiente.**
+
+S1 y la integración digital S2 están verificadas con los límites descritos. La cantidad
+conservada de sustrato no implica densidad medida ni cierre de balances biológicos.
+B1–B19 siguen abiertos según `ESTADO.md`. S3/P4 debe priorizar B19, equipos, mecánica
+y protocolos; no se fabricaron mediciones, cotizaciones ni resultados sanitarios.

@@ -1,0 +1,25 @@
+{
+  "fecha": "2026-09-21T03:45:37.928Z",
+  "prueba": "Chrome headless, red deshabilitada, file://",
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/148.0.7778.96",
+    "revision": "@8625e066febc721e015ea99842da12901eb7ed73",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/148.0.0.0 Safari/537.36",
+    "jsVersion": "14.8.178.14"
+  },
+  "cpu": "13th Gen Intel(R) Core(TM) i7-13620H",
+  "plataforma": "linux",
+  "three": "160",
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "pantalla": [
+    1920,
+    1080
+  ],
+  "dpr": 1,
+  "fps30Frames": 1.2578299916982927,
+  "limite": "SwiftShader por software; NO prueba del equipo del evento",
+  "controles": "pausa, avance, reset, fallos, cuarentena, vistas, fichas y comparación comprobados",
+  "errores": [],
+  "solicitudesHTTP": 0
+}
