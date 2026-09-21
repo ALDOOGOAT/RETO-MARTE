@@ -132,7 +132,8 @@ Este resultado no confirma ni refuta su rendimiento. **S2 conserva esa aceptaci�
 
 S1 y la integración digital S2 están verificadas con los límites descritos. La cantidad
 conservada de sustrato no implica densidad medida ni cierre de balances biológicos.
-B1–B19 siguen abiertos según `ESTADO.md`. S3/P4 documenta B19, equipos, mecánica
+El estado individual B1–B19 está en `CIERRE-ACUMULADO.md`; B10 ya fue ratificado.
+S3/P4 documenta B19, equipos, mecánica
 y protocolos; no se fabricaron mediciones, cotizaciones ni resultados sanitarios.
 
 ## Corrección S3 de dimensiones

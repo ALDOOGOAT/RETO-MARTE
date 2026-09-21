@@ -1,6 +1,6 @@
 {
   "meta": {
-    "version": "S5-B19-2026-09-21",
+    "version": "S5-CIERRE-2026-09-21",
     "fecha": "2026-09-21",
     "rama": "preparacion-madrid-p1",
     "descripcion": "Fuente única de parámetros de MILPA-360. Simulador, planos, tablas y cálculos deben leer de aquí.",
@@ -950,6 +950,149 @@
         "evidencia": "supuesto",
         "fuente": "docs/madrid/P4-MECANICA-ENSAYOS.md · S3",
         "nota": "Reserva para pared/aislamiento, no espesor resistente."
+      }
+    },
+    "cierre": {
+      "dias_reserva": {
+        "valor": 30,
+        "unidad": "d",
+        "evidencia": "decision_equipo",
+        "fuente": "docs/madrid/CIERRE-ACUMULADO.md · 21 sep 2026",
+        "nota": "Reserva adicional de planificación; no garantía de supervivencia."
+      },
+      "fotoperiodo_h": {
+        "valor": 16,
+        "unidad": "h/d",
+        "evidencia": "decision_equipo",
+        "fuente": "docs/madrid/CIERRE-ACUMULADO.md · 21 sep 2026",
+        "nota": "Horario elegido para estimar potencia, condicionado a especie/variedad."
+      },
+      "bomba_W": {
+        "valor": 20,
+        "unidad": "W",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/CIERRE-ACUMULADO.md · 21 sep 2026",
+        "nota": "Reserva de potencia; falta bomba y curva.",
+        "escenarios": {
+          "conservador": 40,
+          "nominal": 20,
+          "favorable": 10
+        }
+      },
+      "bomba_h_d": {
+        "valor": 1,
+        "unidad": "h/d",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/CIERRE-ACUMULADO.md · 21 sep 2026",
+        "nota": "Servicio supuesto; faltan caudal y pérdidas.",
+        "escenarios": {
+          "conservador": 2,
+          "nominal": 1,
+          "favorable": 0.5
+        }
+      },
+      "ventilacion_W": {
+        "valor": 90,
+        "unidad": "W",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/CIERRE-ACUMULADO.md · 21 sep 2026",
+        "nota": "Ventilación/HEPA agregados sin selección.",
+        "escenarios": {
+          "conservador": 180,
+          "nominal": 90,
+          "favorable": 40
+        }
+      },
+      "control_W": {
+        "valor": 10,
+        "unidad": "W",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/CIERRE-ACUMULADO.md · 21 sep 2026",
+        "nota": "Control y sensores sin BOM final.",
+        "escenarios": {
+          "conservador": 20,
+          "nominal": 10,
+          "favorable": 5
+        }
+      },
+      "calefaccion_digestor_W": {
+        "valor": 40,
+        "unidad": "W",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/CIERRE-ACUMULADO.md · 21 sep 2026",
+        "nota": "Reserva eléctrica; falta envolvente del reactor.",
+        "escenarios": {
+          "conservador": 100,
+          "nominal": 40,
+          "favorable": 15
+        }
+      },
+      "eficiencia_accionamiento": {
+        "valor": 0.3,
+        "unidad": "fracción",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/CIERRE-ACUMULADO.md · 21 sep 2026",
+        "nota": "Motor/reductor sin seleccionar.",
+        "escenarios": {
+          "conservador": 0.2,
+          "nominal": 0.3,
+          "favorable": 0.5
+        }
+      },
+      "U_casco": {
+        "valor": 0.2,
+        "unidad": "W/m2/K",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/CIERRE-ACUMULADO.md · 21 sep 2026",
+        "nota": "Transmitancia supuesta; sin puentes térmicos.",
+        "escenarios": {
+          "conservador": 0.5,
+          "nominal": 0.2,
+          "favorable": 0.1
+        }
+      },
+      "temperatura_interior": {
+        "valor": 22,
+        "unidad": "°C",
+        "evidencia": "decision_equipo",
+        "fuente": "docs/madrid/CIERRE-ACUMULADO.md · 21 sep 2026",
+        "nota": "Escenario del recinto; no consigna de todas las especies."
+      },
+      "temperatura_exterior": {
+        "valor": -60,
+        "unidad": "°C",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/CIERRE-ACUMULADO.md · 21 sep 2026",
+        "nota": "Escenario constante; no emplazamiento validado.",
+        "escenarios": {
+          "conservador": -90,
+          "nominal": -60,
+          "favorable": -20
+        }
+      },
+      "COP_frio": {
+        "valor": 2.5,
+        "unidad": "1",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/CIERRE-ACUMULADO.md · 21 sep 2026",
+        "nota": "Frío sensible supuesto; no HVAC seleccionado.",
+        "escenarios": {
+          "conservador": 1.5,
+          "nominal": 2.5,
+          "favorable": 3
+        }
+      },
+      "eficiencia_calor_gas": {
+        "valor": 0.5,
+        "unidad": "fracción",
+        "evidencia": "supuesto",
+        "fuente": "docs/madrid/CIERRE-ACUMULADO.md · 21 sep 2026",
+        "nota": "Techo de calor útil externo, sin crédito eléctrico.",
+        "escenarios": {
+          "conservador": 0.3,
+          "nominal": 0.5,
+          "favorable": 0.7
+        }
       }
     },
     "simulacion": {

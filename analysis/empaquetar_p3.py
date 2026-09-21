@@ -9,12 +9,13 @@ archivos+=[raiz/'docs/madrid'/n for n in ('P1-INGENIERIA.md','P2-GEOMETRIA.md','
 archivos+=[raiz/n for n in ('MISION-MADRID-MILPA360.md','INVESTIGACION-MARTE.md','CONTEXTO-RETO-MARTE.md')]
 archivos+=list((raiz/'docs/madrid/capturas').glob('*.png'))
 archivos+=list((raiz/'docs/madrid/capturas-b19').glob('*.png'))
-archivos+=[raiz/'docs/madrid'/n for n in ('B19-ACCESO.md','PRUEBA-B19-NAVEGADOR.json','P5-DEFENSA.md')]
+archivos+=[raiz/'docs/madrid'/n for n in ('B19-ACCESO.md','PRUEBA-B19-NAVEGADOR.json','P5-DEFENSA.md','CIERRE-ACUMULADO.md','CALCULOS-CIERRE.md')]
 archivos+=list((raiz/'docs/madrid/ensayos').glob('*.csv'))
 # Documentos con enlaces a cálculos: se incluyen fuentes y láminas necesarias para regenerar.
 archivos+=list((raiz/'analysis').glob('*.py'))+list((raiz/'analysis').glob('*.cjs'))+list((raiz/'analysis').glob('*.mjs'))
 archivos+=list((raiz/'prototipo/planos').glob('*.html'))+[raiz/'prototipo/planos/_estilo.css']
 archivos+=list((raiz/'prototipo/planos/madrid').glob('*.html'))
+archivos+=list((raiz/'prototipo/planos/madrid').glob('*.svg'))
 registros={str(p.relative_to(raiz)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(set(archivos))}
 manifiesto=raiz/'docs/madrid/MANIFIESTO-P3.json'
 manifiesto.write_text(json.dumps({'tipo':'P3 offline, no entrega final P5','sha256':registros},ensure_ascii=False,indent=2)+'\n')

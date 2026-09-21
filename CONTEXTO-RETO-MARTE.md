@@ -1,5 +1,10 @@
 # CONTEXTO — Reto Marte UNACH 2026 / Mars Challenge
 
+> **Preparación Madrid, corte vigente 21 sep:** [ESTADO](docs/madrid/ESTADO.md) y
+> [cierre B1–B19](docs/madrid/CIERRE-ACUMULADO.md). Las secciones 1–11 conservan
+> el contexto del hackathon: aplicar las correcciones de auditoría y matriz de Madrid
+> antes de citar cifras, cupos o requisitos NASA. El anillo vigente tiene 20 cartuchos.
+
 > Documento de contexto para llegar preparado al evento. Recopila las bases oficiales
 > (3 PDFs entregados), el reto temático, los datos técnicos de ECLSS y el riesgo de
 > salud conductual de NASA (link solicitado). Última actualización: 2026-09-03.
@@ -345,3 +350,23 @@ mecánica, presión, dosel ni rescate. La referencia de diseño se leyó en
 [NASA Vol. 2, §8.3–8.4](https://www.nasa.gov/reference/8-0-architecture-vol-2/).
 B19 permanece parcial; el paquete S5 `589ca5b` conserva su revisión y no adopta aún
 este vestíbulo. La escena nueva es un estudio funcional con reservas geométricas.
+
+## Cierre acumulado y verificación digital · 21 sep 2026
+
+[CIERRE-ACUMULADO.md](docs/madrid/CIERRE-ACUMULADO.md) sustituye las esperas genéricas
+por decisiones y evidencia pendiente B1–B19. D1/D2 están ratificadas por delegación
+del responsable. Se elige defensa digital offline como base y maqueta manual opcional.
+Los [cálculos](docs/madrid/CALCULOS-CIERRE.md) añaden dieta completa más reserva,
+auxiliares/térmica, agua, lavado inicial y estequiometría ideal. El subtotal nominal
+25.26 kWh/d tiene cargas excluidas y parámetros supuestos; no demuestra autonomía.
+
+La comparación inicial leyó WO2018035314A1 (resumen y reivindicaciones 1–6) y los
+compartimentos MELiSSA de ESA; fuentes, consultas y límites están en el cierre.
+El cultivo en carrusel y la recuperación biológica tienen antecedentes. La identidad
+y autorización de lotes es una hipótesis para comparar, no una patente demostrada.
+
+Ambos visores pasaron controles sin red desde carpeta limpia. Memoria/deck/vídeo
+actualizados; Blender/GLB reutilizados tras comprobar geometría idéntica a S5.
+La autorrevisión digital no cierra B14–B19 ni sustituye ensayos, reglas de Madrid,
+cotizaciones, revisión independiente o prueba de GPU/proyector. E4 ya dispone de
+plantilla métrica 1:1 y hoja de registro vacía; no se simulan resultados humanos.

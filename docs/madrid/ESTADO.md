@@ -1,81 +1,79 @@
 # ESTADO · preparación para Madrid
 
-**Sesión:** continuación S5/P5, estudio B19. **Fecha:** 21 sep 2026.
-**Rama:** `preparacion-madrid-p1`; base S5 `589ca5b`. El commit de este checkpoint
-identifica la revisión B19. Push de checkpoints autorizado, sin force-push.
-**Aceptación:** B19 parcial; B15–B18, pruebas físicas, reglas finales y S6 abiertos.
+**Sesión:** cierre acumulado S0–S5/B19 y verificación digital S6. **Fecha:** 21 sep 2026.
+**Rama:** `preparacion-madrid-p1`; base `bd3eb2f`. El commit que contiene este archivo
+identifica el checkpoint. Push autorizado en esta rama, sin force-push.
+**Aceptación:** candidata digital revisada; ingeniería, validación física y cierre
+independiente S6 parciales. No hay evidencia para declarar «cero pendientes».
 
-## Resultado revisable
+## Decisiones ejecutadas
 
-`B19-ACCESO.md` documenta la candidata de dos casetes extraíbles. El nuevo visor
-`prototipo-3d/milpa360-acceso.html`, enlazado desde inspección técnica, permite
-bloquear, declarar presión compatible como escenario, aislar, extraer, estacionar,
-habilitar paso, entrar, salir y restituir el anillo. Muestra carga, guías segmentadas,
-ramales desconectables, depósitos, puertas y reserva humana. Los apoyos y ruedas
-son ilustrativos; no hay componentes seleccionados ni capacidad demostrada.
+El usuario delegó preferencias de diseño. D1/D2 quedan ratificadas: arquitectura B,
+20 cartuchos, ocho estaciones y doce de cultivo; horizonte de diseño 539 días y
+caso de superficie 355 días. B10 deja de ser espera de aprobación interna.
+La defensa sigue separando tratamiento de salmuera, metanogénesis y cultivo; ningún
+lote se autoriza por color de musgo, MFC o animación. Los umbrales analíticos requieren
+método, matriz y revisión competente.
 
-El estudio es independiente del reloj biológico. Conserva identidad y masa de los
-dos lotes, y no cuenta producción mientras se inspecciona la maniobra. Al cortar
-energía durante traslado congela el progreso; restaurarla exige orden explícita
-para continuar. Con ocupación interior se rechazan órdenes que muevan la carga,
-cierren acceso o liberen el pasador. La salida desde puertas abiertas funciona
-sin electricidad en el modelo. La retención mecánica correspondiente sigue pendiente.
+Se elige entrega digital offline como base de Madrid, con maqueta manual 1:10
+opcional según recursos. No se comprometió gasto ni se presentó solicitud oficial.
+El piloto exploratorio de riego en Tuxtla queda ratificado, sin fingir sitio, operador
+o cosechas disponibles. Los cambios no se atribuyen a retroalimentación inexistente.
 
-La configuración `acceso_servicio` concentra los supuestos; el cálculo reutiliza
-P2 y alimenta JSON, datos de navegador, tabla del informe y plano P06. Se conservaron
-el casco nominal y las 20 posiciones. P1/P2/P3/P4 se regeneraron y el modelo agrícola
-conserva sus resultados; cambió la revisión y se añadió la candidata, sin sustituir
-dimensiones de régimen por las de mantenimiento.
+Para supervivencia se provisiona dieta completa, sin descontar cosechas, huevos ni
+biogás supuestos. Se añaden 30 días de reserva como decisión revisable. El inventario
+de 539 + 30 días resulta en 8,159.46 kg de alimento humano empacado y 438.36 kg de
+ración animal. El empaque ya está incluido; no se suma otra vez el arranque.
+No constituye un menú nutricional ni un balance completo del hábitat.
 
-## Hallazgos que cambian la decisión
+## Resultados y archivos
 
-**H1 · margen frágil:** dos posiciones dan 0.97649 m de cuerda. Con herrajes
-supuestos de 30 mm/lado quedan 0.91649 m, sólo 16.49 mm sobre el objetivo de 0.90 m.
-Con 40 mm quedan 0.89649 m. El máximo geométrico es 38.25 mm por lado antes de
-justificar tolerancias. No es ancho certificado ni permite inferir rescate asistido.
+`CIERRE-ACUMULADO.md` dispone individualmente B1–B19, con responsable y evidencia
+necesaria; incorpora decisiones, fallos, antecedentes y autorrevisión. `cierre_acumulado.py`
+reutiliza P1/P2/P4 y genera JSON, `CALCULOS-CIERRE.md` y plantilla P07 de E4. La nueva
+configuración mantiene unidades, evidencia y escenarios, sin convertir nulos en ceros.
 
-**H2 · espacio adicional:** el vestíbulo de 3.0 × 2.2 m más cuello añade 6.663 m²
-(40.8% de la huella circular) y 14.66 m³ interiores. La longitud del conjunto es
-6.76 m. Faltan estructura, espesores exteriores, masa, acondicionamiento y presupuesto.
-Su puerta conduce al hábitat presurizado; no se dimensionó una esclusa EVA.
+El subtotal eléctrico nominal calculado es 25.26 kWh/d: luz, auxiliares y térmica
+sensible del casco. Excluye vestíbulo, ISRU, deshumidificación y otras cargas; sus
+potencias, U y temperaturas son hipótesis. No acredita energía total ni autonomía.
+El inventario de cultivo de 40 L daría 6.35 días sin condensación/reposición bajo ET
+nominal; no incluye humanos, animales, purgas ni disponibilidad de la bomba.
 
-**H3 · carga:** ambos cartuchos suman 179.7 kg nominales, con intervalo de escenarios
-139.8–219.7 kg. Casetes, útil y parte de la biomasa no están incluidos; su masa es
-`null`, no cero. No se propone izado manual. El dimensionado de apoyos, frenos,
-acoples y extracción sigue siendo trabajo mecánico con datos reales.
+Se cuantificó el lavado inicial de todo el sustrato y la estequiometría ideal Cl/DQO.
+Son sensibilidad y equivalentes químicos, no dosis, cinética ni descontaminación
+demostrada. El estudio de tres posiciones amplía la garganta, pero necesita otro
+depósito y 269.6 kg nominales sin útil: no se adopta por una apertura mayor.
+B19 conserva dos casetes como candidata; sus 0.916 m dependen de herrajes supuestos.
+P07, P06 y `ensayos/datos-acceso.csv` preparan el ensayo humano sin carga.
 
-**H4 · cultivo:** permanecen 2.5715 m² dentro y 0.5143 m² fuera durante mantenimiento.
-No se conserva automáticamente la producción de doce recipientes. Un servicio
-prolongado necesita duración, luz, riego, pérdidas y ciclo; aquí no se inventan.
+Memoria, PPTX/PDF y vídeo se actualizaron. BLEND/GLB conservan geometría S5: la
+comparación contra `589ca5b` sólo encuentra cambio de identificador de revisión.
+El vestíbulo B19 sigue como estudio separado. CONTEXTO, matriz, afirmaciones y
+continuidad apuntan a esta revisión, conservando los antecedentes históricos.
 
-## Verificaciones y fuentes
+## Evidencia y verificación
 
-El cálculo comprueba barridos traslacionales completos mediante polígonos convexos
-conservadores y SAT, vecinos, separación entre cargas, portal y depósitos. Incluye
-un obstáculo entre extremos como autocomprobación. La reserva humana Ø0.80 × 2.00 m
-es un supuesto de cribado; dosel e instalaciones reales no están verificados.
+Pasaron P0, P1/P2, geometría Three, mecánica P4 y pruebas de estados P3/B19. Se
+comprobó que P1 falla si falta jsonschema. Se corrigieron la omisión del visor B19
+en S5 y los enlaces externos dañados por el generador PDF. Ambos visores pasaron
+Chrome sin red desde extracción limpia: cero errores y cero solicitudes HTTP.
+SwiftShader midió aproximadamente 0.88 FPS; no es prueba de la GPU del evento.
 
-Pasaron verificaciones de geometría, mallas Three, mecánica P4 y pruebas del modelo
-agrícola. Las pruebas B19 cubren secuencia, presión desconocida, estados rechazados
-sin mutación, conservación, corte durante traslado, ocupación, salida sin energía
-y ausencia de rearranque automático. Chrome verificó controles, retorno y vista
-móvil sin errores ni solicitudes HTTP. Capturas e informe en `capturas-b19/` y
-`PRUEBA-B19-NAVEGADOR.json`. No acredita rendimiento del hardware del evento.
-Se repitió B19 desde el ZIP extraído en carpeta limpia, con red deshabilitada;
-pasaron los controles y se revisaron visualmente el plano y las capturas.
+Se verificaron hashes y enlaces del paquete, 103 afirmaciones con 16 columnas,
+nueve diapositivas, PDF renderizados y vídeo de 300 segundos decodificado completo.
+La revisión visual no detectó recortes de contenido. La matriz conserva 27 obligatorios:
+uno cumplido con evidencia documental, 24 parciales, uno pendiente y uno por confirmar.
 
-Se leyó NASA Vol.2 web §8.3–8.4 sobre rutas, acceso asistido y puertas, con fuente
-en B19. Se añadieron cuatro afirmaciones trazables. La matriz mantiene 27 obligatorios:
-uno con evidencia documental, 24 parciales, uno pendiente y uno por confirmar.
+Se leyeron la dinámica oficial, NASA Vol.2 §8.3–8.4, compartimentos MELiSSA y resumen/
+reivindicaciones 1–6 de WO2018035314A1. No es búsqueda exhaustiva ni dictamen de novedad.
+GitHub confirma repositorio público; no acredita cuándo cambió su visibilidad.
 
-## Continuidad exacta
+## Próxima acción exacta
 
-Reproducir `python3 analysis/milpa360_acceso.py`, `python3 analysis/milpa360_p3.py`
-y `npm test --prefix prototipo-3d`. El ZIP P3 incluye el estudio actualizado. El paquete
-S5, PDF/PPTX/BLEND/GLB de `589ca5b`, conserva su corte; no adopta aún el vestíbulo.
-
-**Siguiente acción:** cerrar envolventes de herrajes/útil/dosel y disponibilidad de
-espacio presurizado; preparar plantilla 1:1 sin carga y revisión del banco con carga.
-Si faltan esos datos, comparar tres posiciones o disposición abierta/fija con los
-costes espaciales ya calculados. Ratificar arquitectura antes de reexportar S5.
-S6 sigue pendiente. Los cinco archivos preexistentes del usuario permanecen intactos.
+Leer el registro B1–B19 antes de repetir tareas. Ejecutar `python3 analysis/cierre_acumulado.py`
+y `npm test --prefix prototipo-3d` al modificar parámetros. Completar ingeniería
+B14–B19 con envolventes, cargas, selección de componentes y prueba E4; incorporar
+reglamento, recursos, cotizaciones y datos cuando lleguen. La revisión independiente,
+ensayo de pitch y prueba de GPU/proyector siguen abiertos. No repetir la auditoría
+completa ni cambiar estados para alcanzar 100%. Los cinco archivos preexistentes
+del usuario permanecen intactos y fuera del commit.

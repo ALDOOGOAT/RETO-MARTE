@@ -13,6 +13,7 @@ const out=path.join(root,'outputs/madrid-s5'),tmp=path.join(root,'tmp/madrid-s5/
 await fs.mkdir(tmp,{recursive:true});await fs.mkdir(out+'/diapositivas',{recursive:true});
 for(const f of ['Bodoni Moda','Archivo','IBM Plex Mono'])resolvePresentationFont({fontFamily:f});
 const d=createRequire(import.meta.url)(root+'/prototipo-3d/milpa360-datos.js');
+const cierre=JSON.parse(await fs.readFile(root+'/config/milpa360.cierre.json','utf8'));
 const memory=await fs.readFile(root+'/docs/madrid/P5-DEFENSA.md','utf8');
 const notes=memory.split('## 8. Guion')[1].split('## 9.')[0].split(/### /).slice(1);
 const p=Presentation.create({slideSize:{width:1280,height:720}});
@@ -27,7 +28,7 @@ function slide(title,i,source){
   text(s,title,56,74,1170,90,54,'Bodoni Moda');
   text(s,String(i).padStart(2,'0')+' / 09',1110,663,115,30,17,'IBM Plex Mono',C.muted);
   text(s,'Concepto y cálculo · sin validación física',56,663,940,30,17,'Archivo',C.muted);
-  s.speakerNotes.textFrame.setText((notes[i-1]||'')+'\n\nTrazabilidad: '+source+'\nRevisión base P4-S3-2026-09-20; capturas S5. B15-B19 abiertos.');
+  s.speakerNotes.textFrame.setText((notes[i-1]||'')+'\n\nTrazabilidad: '+source+'\nCierre acumulado 21 sep 2026: CALCULOS-CIERRE.md y CIERRE-ACUMULADO.md. Capturas geométricas S5 reutilizadas; B15-B19 no aceptados físicamente.');
   return s;
 }
 async function photo(s,name,x,y,w,h){
@@ -59,11 +60,11 @@ s=slide('Alimento complementario, energía externa',5,'milpa360_p1.py; MILPA_DAT
 text(s,(d.balance.cobertura_kcal*100).toFixed(2)+'%',56,182,410,140,108,'Bodoni Moda',C.green);
 text(s,'de las kcal de seis personas',56,330,560,50,30);
 text(s,Math.round(d.balance.kcal_total)+' kcal/d entre huevo y vegetales\n0.7704 kg/d de ración animal importada',56,409,600,110,26);
-text(s,d.balance.luz_kwh.toFixed(2)+' kWh eléctricos/d',719,205,510,65,34);
-text(s,'Sólo iluminación',719,280,500,45,26,'Archivo',C.muted);
+text(s,cierre.energia.nominal.subtotal_modelado_electrico_kWh_d.toFixed(2)+' kWh eléctricos/d',719,205,510,65,34);
+text(s,'Subtotal del escenario modelado',719,280,500,45,25,'Archivo',C.muted);
 text(s,d.balance.biogas_kwh_quimico.toFixed(3)+' kWh químicos/d',719,389,510,65,34,'Archivo',C.rust);
 text(s,'Biogás antes de conversión',719,466,500,50,26,'Archivo',C.muted);
-text(s,'Régimen supuesto; arranque, fallos, auxiliares y térmica por cerrar.',56,581,1130,55,24,'Archivo',C.rust);
+text(s,d.balance.luz_kwh.toFixed(2)+' kWh/d son luz. Auxiliares y térmica con supuestos; faltan cargas.',56,581,1130,55,24,'Archivo',C.rust);
 s=slide('Evidencia disponible',6,'Pruebas P1/P2/P3/P4; VERIFICACION-BLENDER.json; ensayos CSV sin mediciones');
 text(s,'Verificado digitalmente',56,196,570,50,33,'Archivo',C.green);
 text(s,'Cálculos y geometría\nEstado reproducible\nDemo sin Internet',56,279,550,160,30);

@@ -2,7 +2,13 @@
 
 **Estado:** defensa provisional. B15–B19, ensayos físicos, presupuesto cerrado,
 formato de Madrid y prueba en equipo del evento siguen pendientes. No es una
-entrega oficial aprobada ni un sistema validado. S6 será una revisión independiente.
+entrega oficial aprobada ni un sistema validado. La revisión digital de cierre no
+equivale a revisión independiente ni a medición en el equipo de Madrid.
+
+**Corte acumulado 21 sep:** consultar `../../docs/madrid/CIERRE-ACUMULADO.md` y
+`../../docs/madrid/CALCULOS-CIERRE.md`. D1/D2 ratificadas; provisiones completas y auxiliares calculados.
+BLEND/GLB conservan la geometría S5 de `589ca5b`, sin cambios dimensionales en esta
+revisión. B19 es estudio separado y su vestíbulo no forma parte de esas mallas.
 
 ## Abrir
 
@@ -15,6 +21,8 @@ entrega oficial aprobada ni un sistema validado. S6 será una revisión independ
   Órbita por arrastre y rueda. Inspección técnica permite planta/lateral, resaltar lote,
   fallos y despiece visual; reanudar vuelve al ensamblaje. El movimiento no valida biología.
 - `../../docs/madrid/COMPARACION-S3-S5.html`: comparación interactiva con las mismas poses.
+- `../../prototipo-3d/milpa360-acceso.html`: maniobra B19 y prueba de pérdida de energía.
+- `../../prototipo/planos/madrid/P07-plantilla-E4.svg`: plantilla métrica sin carga; verificar escala impresa.
 - `MILPA360-S5.blend`: escena editable en Blender 5.2; texturas empaquetadas, unidades m.
   Elegir escena `MILPA360_S5`. El archivo conserva también la escena inicial del proceso.
 - `MILPA360-S5.glb`: mallas para visualización; no CAD sólido ni planos de fabricación.
@@ -32,13 +40,16 @@ El paisaje es procedural. Ninguna imagen representa topografía ni maqueta const
 python3 analysis/milpa360_p1.py
 python3 analysis/milpa360_p2.py
 python3 analysis/milpa360_p4.py
+python3 analysis/milpa360_acceso.py
 python3 analysis/milpa360_p3.py
+python3 analysis/cierre_acumulado.py
 MILPA_EXPORT_GLB=1 node --experimental-websocket analysis/verificar_p3_navegador.mjs
 /home/aldo/.local/bin/blender -b --python "$PWD/analysis/blender_s5.py"
 /home/aldo/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node analysis/deck_s5.mjs
 /home/aldo/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python analysis/documentos_s5.py --planos
 python3 analysis/video_s5.py
 python3 analysis/empaquetar_s5.py
+/home/aldo/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python analysis/verificar_entrega_s6.py
 ```
 
 Las rutas de runtime son las comprobadas en este equipo; en otro equipo se adaptan.
@@ -48,6 +59,14 @@ de 1e-5 m en la prueba del piso: **no tolerancia de fabricación**. Los tanques 
 adquieren capacidad certificada por exportarlos. `escena-three.json` y PNG de texturas
 son intermedios regenerables; el BLEND/GLB incluye las texturas necesarias.
 
+S6 imprime una carpeta de extracción limpia. Para comprobar ambos visores sobre
+ella, ejecutar los verificadores con `MILPA_DEMO_DIR=/ruta/extraida/prototipo-3d`:
+`node --experimental-websocket analysis/verificar_p3_navegador.mjs` y
+`MILPA_SOLO_ACCESO=1 node --experimental-websocket analysis/verificar_p3_navegador.mjs`.
+Tras ambos resultados correctos, reempaquetar e invocar `verificar_entrega_s6.py`
+con `/ruta/extraida` como argumento: coteja que la aplicación empaquetada sea idéntica
+a la probada. El FPS de SwiftShader no verifica el objetivo de GPU del evento.
+
 El finalizador del PPTX comprueba estructura, tamaño, tabla y fuentes, y reabre el
 archivo con Artifact Tool. No se probó en PowerPoint nativo. Fuentes Bodoni Moda,
 Archivo e IBM Plex Mono disponibles con OFL en `prototipo-3d/vendor/`; instalarlas si
@@ -55,5 +74,5 @@ el programa de presentación las sustituye. El PDF/MP4 conserva la apariencia.
 
 No subir el ZIP a la convocatoria sin revisión del equipo y reglas finales. El
 manifiesto SHA-256 identifica exactamente los archivos de esta candidata; no prueba
-requisitos físicos ni sustituye S6. Los presupuestos históricos del usuario no forman
+requisitos físicos ni sustituye revisión independiente. Los presupuestos históricos del usuario no forman
 parte del paquete de defensa vigente.

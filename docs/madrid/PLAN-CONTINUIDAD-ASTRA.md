@@ -1,10 +1,17 @@
 # Continuidad para Astra · MILPA-360 rumbo a Madrid
 
-**Corte técnico revisado:** S5/B19, 21 sep 2026, rama `preparacion-madrid-p1`, base S5 `589ca5b`. **Este archivo es un relevo de trabajo, no una validación científica ni una orden para ejecutar tareas en segundo plano.** Al retomar, verificar otra vez HEAD, fecha, rama, estado de Git, herramientas, fuentes y reglas de la final.
+**Corte técnico revisado:** cierre acumulado S5/B19 sobre `bd3eb2f`, 21 sep 2026, rama `preparacion-madrid-p1`. **Este archivo es un relevo de trabajo, no una validación científica ni una orden para ejecutar tareas en segundo plano.** Al retomar, verificar otra vez HEAD, fecha, rama, estado de Git, herramientas, fuentes y reglas de la final.
+
+**Prioridad de esta actualización:** [CIERRE-ACUMULADO.md](CIERRE-ACUMULADO.md) da la
+disposición individual B1–B19. El usuario delegó decisiones: D1/D2 están ratificadas,
+sin volver a pedir aprobación interna. Entregable base digital; maqueta manual opcional.
+Se calcularon provisiones completas, auxiliares/térmica, agua, Cl/DQO y alternativa de
+tres cartuchos. B19 conserva dos casetes como candidata digital; tres no resuelve depósito.
+P07 prepara E4. Las brechas físicas/de ingeniería permanecen y no se ocultan como aprobadas.
 
 **Especificación principal:** [`MISION-MADRID-MILPA360.md`](../../MISION-MADRID-MILPA360.md), especialmente §5 A–O y §6. **Checkpoint vigente:** [`ESTADO.md`](ESTADO.md). No copiar el prompt largo de P0 como instrucción nueva: P0 ya tiene commit. Este plan conserva la intención del prompt y la aplica al trabajo restante.
 
-## 1. Dónde estamos realmente · actualización 20 sep 2026
+## 1. Dónde estamos realmente · actualización 21 sep 2026
 
 | Paquete | Estado verificable | Brecha vigente |
 |---|---|---|
@@ -13,7 +20,7 @@
 | P2 · geometría | `e8ffad4`, corregido por S0 `25f39e4` | **Aceptación mecánica/humana abierta:** B15–B19. Pasillo en planta no prueba mantenimiento |
 | P3 · simulación y relato | S1 `5959333`; S2 `e23bb12`; correcciones geométricas S3 | Modelo ilustrativo por lotes, UI técnica, comparación y demo local. Falta prueba de GPU/equipo del evento y calibración física |
 | P4 · validación y costes | S3/S4 documentales ejecutadas; hoja con fórmulas y caso Tuxtla | Presupuestos preliminares; faltan B6, cotizaciones, sitio/operador y datos físicos. P4 no cerrado |
-| P5 · defensa y entrega | Candidata S5: memoria/Concepto, PPTX/PDF, guion, preguntas, vídeo y Blender/GLB | B15–B19, ensayo humano, formato Madrid y S6 pendientes; no es entrega aprobada |
+| P5 · defensa y entrega | Candidata S5 actualizada: memoria/Concepto, PPTX/PDF, guion, preguntas, vídeo y Blender/GLB; verificación digital S6 ejecutada | B14–B19, ensayo humano, formato Madrid y revisión independiente S6 pendientes; no es entrega aprobada |
 
 ### Resultado de la revisión S0–S5
 
@@ -56,7 +63,7 @@
 - Reproducir `python3 analysis/p0_verificacion.py`, `python3 analysis/milpa360_p1.py` y `python3 analysis/milpa360_p2.py`; comprobar `git diff` después del generador. Repetir fuente original sólo donde una afirmación vigente sea crítica, esté en disputa o haya cambiado. No rehacer P0/P1 enteros por haber recibido el prompt original.
 - Abrir un **registro breve de hallazgos priorizados** dentro de `ESTADO.md` o el documento del paquete correspondiente: afirmación, archivo, fuente/cálculo, impacto, decisión y prueba. Resolver primero contradicciones que podrían hacer falsa la defensa; después añadir funciones.
 - Mantener como fronteras separadas **concepto marciano**, **demostrador terrestre**, **hábitat completo** y **módulo agrícola**. Etiquetar cada dato como requisito, literatura, cálculo, hipótesis, escenario ilustrativo, medición propia o pendiente. Nunca convertir una animación o una fórmula en ensayo.
-- D1/D2 permiten continuar, pero B10 necesita ratificación humana. B1–B6 requieren reglamento, feedback, recursos y decisiones del equipo; B15–B18 requieren datos de dosel/equipos/mecánica. Registrar el dato exacto faltante y avanzar con lo independiente.
+- D1/D2 están ratificadas por delegación del usuario (B10 cerrado como decisión). B1–B6 requieren evidencias de reglamento, feedback y recursos; B15–B18 requieren datos de dosel/equipos/mecánica. Ver el registro individual actualizado antes de repetir una solicitud.
 
 ## 3. Sesiones de trabajo después de la recarga
 
@@ -90,20 +97,23 @@ Al finalizar cada sesión: actualizar `docs/madrid/ESTADO.md` con archivos/commi
 
 ## 5. Mensaje listo para la próxima sesión
 
-> Lee `ESTADO.md`, `B19-ACCESO.md`, este plan y `P4-MECANICA-ENSAYOS.md`.
+> Lee `ESTADO.md`, `CIERRE-ACUMULADO.md`, `B19-ACCESO.md` y este plan.
 > Verifica Git y reproduce `python3 analysis/milpa360_acceso.py` y `npm test --prefix prototipo-3d`.
 > El estudio de dos casetes, depósito y enclavamientos ya existe; no repetirlo.
+> D1/D2 ya están ratificadas. Provisiones, escenarios energéticos y alternativa de tres
+> posiciones están calculados. P07 y `ensayos/datos-acceso.csv` preparan E4 sin resultados.
 > Continúa **B19 y B15–B18** cerrando la envolvente real de herrajes/útil/dosel y el
 > espacio presurizado disponible. El límite geométrico es 38.25 mm de intrusión por lado
 > para mantener 0.90 m, antes de justificar tolerancias y población. Confirmar el coste de
-> añadir 6.66 m². Si no hay esos datos, comparar documentalmente con tres posiciones o
-> una disposición abierta/fija; no declarar elegida la candidata por pasar el caso nominal.
-> Preparar plantilla 1:1 con cargas vacías y revisión mecánica para el banco con carga;
-> registrar maniobra normal y rescate. No convertir el vestíbulo en esclusa EVA por etiqueta.
+> añadir 6.66 m². Tres posiciones sólo tienen comparación de apertura/carga; falta depósito
+> y trayectoria. No adoptarlas por ese cálculo. La disposición abierta/fija es respaldo.
+> Incorporar mediciones de E4 y revisión mecánica para el banco con carga; registrar
+> maniobra normal y rescate. No convertir el vestíbulo en esclusa EVA por etiqueta.
 > Mantén detalles y controles S5; actualiza configuración, geometría, balances, memoria
 > y capturas si cambia el diseño. Sin datos físicos, documenta el pendiente con precisión.
-> Después prepara **S6**: revisión independiente acotada si el usuario la autoriza,
-> reglas Madrid, ensayo humano cronometrado y prueba de GPU/proyector del evento.
+> **S6 digital ya se ejecutó**: demo offline desde carpeta limpia, hashes, enlaces y
+> revisión visual. Completar revisión independiente acotada si se autoriza, reglas Madrid,
+> ensayo humano cronometrado y prueba de GPU/proyector del evento. No repetir S0–S5 completos.
 > El vídeo S5 es un respaldo sin audio para narrar, no el vídeo oficial aprobado.
 > Incorpora mediciones, recursos y cotizaciones si llegan. No comprar ni publicar;
 > push permitido únicamente para checkpoints revisados de esta rama.
@@ -114,7 +124,7 @@ probar controles y medir el criterio propuesto de 30 FPS a 1080p. El resultado c
 software no confirma ni refuta ese rendimiento con la GPU real.
 
 **Datos humanos que no pueden inventarse:** reglas de Madrid, feedback, delegación, presupuesto,
-recursos de laboratorio, mediciones y ratificación de D1/D2. Se solicitaron durante esta ejecución;
+recursos de laboratorio y mediciones. D1/D2 ya fueron ratificadas por delegación. Se solicitaron evidencias durante esta ejecución;
 si aún faltan, conservar el bloqueo exacto y avanzar con lo independiente.
 
 ## 6. Dirección visual autorizada por el usuario · 20 sep 2026

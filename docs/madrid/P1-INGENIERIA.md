@@ -1,3 +1,5 @@
+> **Corte vigente 21 sep:** D1/D2 ratificadas por delegación; ver [cierre acumulado](CIERRE-ACUMULADO.md).
+> Reservas completas y auxiliares/térmica están en [cálculos actuales](CALCULOS-CIERRE.md).
 > **Actualización S3:** se conserva aquí el estudio P1 y sus tablas del corte anterior.
 > `milpa360_p1.py` ya descuenta el reborde del cartucho B: 3.086 m² cultivables.
 > Usar los resultados regenerados en `milpa360-datos.js` y [P4/S3](P4-MECANICA-ENSAYOS.md)
@@ -18,12 +20,12 @@ Cada cifra lleva su tipo de evidencia en el JSON. Los escenarios **conservador /
 
 | # | Decisión propuesta | Estado | Por qué, en una línea |
 |---|---|---|---|
-| D1 | **Arquitectura B:** un solo anillo de 20 cartuchos idénticos contra el casco, pasillo central y estaciones fijas | **Pendiente de aprobación del equipo** | Elimina el trasvase entre piezas distintas y deja un pasillo nominal. La entrada al pasillo y evacuación siguen abiertas (B19); no se acredita acceso completo. |
-| D2 | Horizonte de diseño en superficie de **539 días** (DRA 5.0) y escenario de bases de **≈355 días** | Pendiente de aprobación y de confirmación del organizador | Las bases hablan de ~2 años en total; 730 soles en superficie más los tránsitos dan 3.1 años (§2) |
+| D1 | **Arquitectura B:** un solo anillo de 20 cartuchos idénticos contra el casco, pasillo central y estaciones fijas | **Ratificada por delegación, 21 sep** | Elimina el trasvase entre piezas distintas y deja un pasillo nominal. La entrada al pasillo y evacuación siguen abiertas (B19); no se acredita acceso completo. |
+| D2 | Horizonte de diseño en superficie de **539 días** (DRA 5.0) y escenario de bases de **≈355 días** | Ratificada por delegación; confirmación del organizador pendiente | Las bases hablan de ~2 años en total; 730 soles en superficie más los tránsitos dan 3.1 años (§2) |
 | D3 | La salmuera de perclorato va a un **reactor separado**, no a una cámara del digestor metanogénico | Propuesta técnica | La salmuera calculada (20–40 mM) está en o por encima del rango que inhibe a los metanógenos (§6) |
 | D4 | La **desintoxicación inicial** del regolito es un proceso ISRU **fuera del módulo**; el módulo solo verifica y reacondiciona | Propuesta técnica | Un lavado inicial pide 1.8–13 m³ de agua según el escenario (§6) |
 | D5 | El musgo deja de ser «semáforo de seguridad». La liberación de un lote a cultivo exige **análisis** | Propuesta técnica | Un indicador más tolerante que el cultivo da falsos «apto» (AUD C4) |
-| D6 | El biogás se presenta como **producto de la Parte 2**, no como fuente de energía | Propuesta de discurso | Aporta 0.3–1.5 % de lo que consume la iluminación (§5) |
+| D6 | Biogás de la Parte 2 con aprovechamiento térmico externo por estudiar; sin crédito eléctrico para abastecimiento | Actualizada en CIERRE-ACUMULADO, 21 sep | La energía útil requiere equipo, eficiencia y auxiliares; no acredita autosuficiencia |
 | D7 | La **cobertura alimentaria** se comunica como 2–3 % de las kcal, con valor de alimento fresco y proteína | Propuesta de discurso | Es lo que da el cálculo con BVAD y USDA (§4) |
 
 Nada de esto abandona el concepto clasificado: el sustrato sigue girando bajo estaciones biológicas fijas y las tres partes siguen encadenadas.
@@ -97,7 +99,7 @@ Evaluación cualitativa (sin puntuaciones numéricas):
 
 **Recomendación: B.**
 
-- Resuelve los dos bloqueos de P0 (acceso y trasvase) sin cambiar el diámetro ni el principio.
+- Elimina el trasvase entre anillos; crea un pasillo nominal. La aceptación del acceso se reabrió en S0 y continúa en B19.
 - Perder área cuesta poco en alimento: la cobertura nominal baja de 3.0 % a 2.6 % de las kcal (§4).
 - Si el equipo exige conservar el área, B′ lo logra con Ø 6.61 m.
 - **C es el respaldo** si el presupuesto mecánico del demostrador no alcanza.
@@ -257,7 +259,7 @@ Supuesto crítico: sólidos excretados = 0.20 / 0.25 / 0.30 × ración. **Falta 
 - Consumos de bombas, ventilación, HEPA y calefacción del digestor; envolvente térmica.
 - Micronutrientes: vitamina C, K, folato. Es el argumento original del plan y sigue sin calcular.
 - Sanidad de reintegración de frass, digestato y larvas.
-- Aprobación del equipo de D1–D2 y confirmación del organizador (B1–B5).
+- D1–D2 ratificadas por delegación el 21 sep; confirmación del organizador (B1–B5) pendiente.
 
 ## 10. Fuentes nuevas leídas en P1
 

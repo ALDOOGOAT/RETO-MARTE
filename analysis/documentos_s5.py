@@ -2,6 +2,7 @@
 Usa ReportLab instalado en el runtime de Codex; no modifica los planos históricos.
 """
 import html, json, re, subprocess, sys, tempfile
+from urllib.parse import urlparse
 from pathlib import Path
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
@@ -32,7 +33,8 @@ for name in ('Heading1','Heading2','Heading3'): styles[name].keepWithNext=True
 styles.add(ParagraphStyle('Cell',fontName='Deja',fontSize=8,leading=11))
 def markup(s):
     s=html.escape(s)
-    s=re.sub(r'\[([^\]]+)\]\(([^)]+)\)',lambda m:f'<a href="../../docs/madrid/{m[2]}" color="#26667c">{m[1]}</a>',s)
+    # Conservar URL externas: prefijarlas rompía las fuentes del PDF.
+    s=re.sub(r'\[([^\]]+)\]\(([^)]+)\)',lambda m:f'<a href="{m[2] if urlparse(m[2]).scheme or m[2].startswith("#") else "../../docs/madrid/"+m[2]}" color="#26667c">{m[1]}</a>',s)
     return re.sub(r'\*\*(.+?)\*\*',r'<b>\1</b>',s)
 story=[];lines=source.splitlines();i=0
 while i<len(lines):

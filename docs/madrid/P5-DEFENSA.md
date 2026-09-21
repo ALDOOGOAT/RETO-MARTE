@@ -1,7 +1,7 @@
 # MILPA-360 · memoria y defensa para revisión
 
 BioMars Chiapas · Aldo Fabio Contreras Marroquín · S5, 21 sep 2026 UTC.
-Base de ingeniería: P4-S3-2026-09-20. Base Git de esta integración: a24a687.
+Base geométrica S3/S5; cierre acumulado sobre `bd3eb2f`, 21 sep 2026.
 **Versión de trabajo. Formato de Madrid, acceso B19 y validación física pendientes.**
 
 ## 1. Resumen de la propuesta
@@ -38,7 +38,9 @@ un porcentaje de validación científica ni una probabilidad de ganar.
 La frontera agrícola recibe electricidad, agua acondicionada, semillas, materiales,
 ración de aves y sustrato pretratado. El hábitat aporta servicios que aún deben
 dimensionarse. ISRU incluye extracción y descontaminación inicial fuera del módulo.
-Las provisiones iniciales cubren arranque y la alimentación no producida. Las heces
+Por decisión de esta revisión, las provisiones cubren toda la dieta durante superficie
+más 30 días de reserva, sin descontar cosecha no validada. El arranque ya está incluido.
+Los cálculos logísticos están en [CALCULOS-CIERRE.md](CALCULOS-CIERRE.md). Las heces
 humanas están fuera del caso nominal y no se contabilizan como recurso gratuito.
 
 Fuentes de requisitos y páginas: [matriz-requisitos.md](matriz-requisitos.md).
@@ -76,7 +78,7 @@ El despiece de pantalla separa grupos para verlos: no representa una maniobra re
 | Candidata | Qué resuelve | Qué falta / decisión |
 |---|---|---|
 | Cruce elevado a 0.80 m, techo 2.90 m | 2.10 m sobre puente | Choca con dosel y estaciones; aumenta envolvente. No adoptada |
-| Sector de servicio desmontable de dos posiciones | Abertura angular nominal de 36°: cuerda interior 0.976 m antes de estructura | Extraer unos 180 kg de cartuchos, retirar guía, depósito exterior, esclusa y enclavamientos. Preferida para estudiar, sin adoptar |
+| Sector de servicio desmontable de dos posiciones | Abertura angular nominal de 36°: cuerda interior 0.976 m antes de estructura | Visor B19 y depósito calculados; 0.916 m con herrajes supuestos. Vestíbulo conectado al hábitat, no esclusa EVA. Sin aceptación física |
 | Carrusel abierto o recipientes fijos | Evita cruzar un anillo continuo | Cambia transporte, número de posiciones y ciclo. Alternativa si falla el sector desmontable |
 
 La cifra 0.976 m = 2 × 1.58 × sin(18°) es geométrica. No equivale a ancho útil de
@@ -89,7 +91,10 @@ La candidata desmontable requiere carrusel detenido y bloqueo mecánico independ
 del software, entrada sólo después de retirar obstáculos, y ruta que permanezca
 abierta durante toda ocupación, incluso al fallar energía. Se necesita una revisión
 de seguridad y un diseño medido del útil de extracción. S5 conserva la geometría
-vigente y señala la intercepción del anillo; **B19 sigue abierto**.
+vigente y señala la intercepción del anillo; **B19 sigue parcial**. El estudio completo,
+con recorridos, cortes de energía y depósito, está en [B19-ACCESO.md](B19-ACCESO.md).
+La comparación de tres posiciones no se adopta: da 1.335 m con 50 mm por lado,
+pero necesita almacenar unos 270 kg y resolver otra maniobra.
 
 ### Envolventes B15–B18
 
@@ -122,6 +127,12 @@ Energía química del gas = volumen de CH4 × PCI / 3.6. La electricidad depende
 eficiencia y auxiliares. La luz se calcula a partir de PPFD, fotoperiodo, superficie
 y eficacia de luminaria; no se escala energía por una animación. La comparación
 con nominal es sensible a rendimiento, fracción comestible, fotones y ciclos.
+
+El cierre acumulado agrega escenarios de auxiliares y térmica sensible. Su subtotal
+nominal es 25.26 kWh/d con supuestos de U, temperaturas, potencias y COP. No es
+demanda total dimensionada: excluye vestíbulo, ISRU, metabolismo y deshumidificación.
+El abastecimiento eléctrico recibe cero crédito del biogás hasta seleccionar equipos.
+Las ecuaciones, sensibilidad y reservas están en [CALCULOS-CIERRE.md](CALCULOS-CIERRE.md).
 
 Los residuos se reparten entre rutas antes de estimar productos. Materia húmeda,
 materia seca y sólidos volátiles no se intercambian. La misma masa no aporta a la
@@ -214,7 +225,11 @@ La hipótesis diferencial es vincular historia del lote, tratamiento y autorizac
 con aislamiento para limitar contaminación cruzada. Debe compararse contra sistemas
 más simples. MELiSSA y otros ciclos biológicos son antecedentes, no avales del equipo.
 No se declara patente ni originalidad absoluta. Una revisión profesional de propiedad
-industrial y cronología de divulgación sigue pendiente; el repositorio ya es público.
+industrial sigue pendiente. Se documentaron metadatos GitHub y una comparación inicial
+con las reivindicaciones 1–6 de [WO2018035314A1](https://patents.google.com/patent/WO2018035314A1/en)
+y procesos [MELiSSA](https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Melissa/Closed_Loop_Compartments).
+El carrusel de cultivo tiene antecedentes. La posible ventaja de autorización y aislamiento
+debe medirse. Ver [CIERRE-ACUMULADO.md](CIERRE-ACUMULADO.md) para decisiones, fallos y B1–B19.
 
 ## 8. Guion provisional de cinco minutos
 
@@ -255,8 +270,9 @@ y fallos, pero todavía no están calibradas con cultivos reales.
 Con los supuestos terrestres actuales, huevo y vegetales suman unas 447 kilocalorías
 al día: 2.46 por ciento de lo necesario para seis personas. Las aves consumen
 ración importada. La iluminación requiere unas 10.48 kilovatios hora eléctricos
-al día. El biogás aporta 0.199 kilovatios hora químicos; no es electricidad neta.
-Por eso necesitamos provisiones y energía externa. El valor a investigar está en
+al día; al añadir auxiliares y térmica supuestos, el escenario suma unos 25.26,
+todavía con cargas excluidas. El biogás aporta 0.199 kilovatios hora químicos.
+Reservamos la dieta completa sin descontar cosechas no validadas. El valor a investigar está en
 alimento fresco y recuperación controlada, con sus costes medidos.
 
 ### 2:55–3:25 · Lámina 6 · Qué se verificó
@@ -301,9 +317,10 @@ mantenimiento frente a recipientes fijos; la comparación física está pendient
 La extracción de mantenimiento necesita un útil y una ruta diseñados. Los rodillos
 dibujados sólo explican el soporte propuesto, no son componentes seleccionados.
 
-**¿Cómo entra una persona?** Hoy no hay ruta de entrada y evacuación completa.
-El anillo interrumpe el paso. Se estudia un sector desmontable con bloqueo del
-carrusel y espacio de depósito, sujeto a ingeniería y revisión de seguridad.
+**¿Cómo entra una persona?** B19 representa dos casetes que salen a un vestíbulo
+presurizado y dejan un paso calculado de 0.916 m con los herrajes supuestos.
+Su maniobra y salida sin energía están probadas digitalmente. Herrajes reales,
+resistencia y evacuación asistida siguen sin verificar; no se declara acceso seguro.
 
 **¿Alimenta a seis personas?** El nominal calculado cubre 2.46% de sus kcal, en
 régimen productivo supuesto; el arranque y el resto necesitan provisiones externas.
@@ -334,8 +351,8 @@ y precios públicos fechados, pero no un total de compra ni una estimación de v
 suficientemente respaldados.
 
 **¿Qué es nuevo?** Se plantea evaluar control e historial por lote asociados al
-carrusel y al aislamiento. Conectar organismos no demuestra novedad: faltan
-comparación de antecedentes por mecanismo y revisión profesional.
+carrusel y al aislamiento. La comparación inicial ya identifica carruseles y ciclos
+biológicos previos; falta búsqueda exhaustiva por mecanismo y revisión profesional.
 
 **¿Qué demostraron?** Funcionamiento digital, cálculos y geometría bajo supuestos.
 No se han documentado ensayos físicos, inocuidad, productividad marciana ni seguridad.
@@ -348,16 +365,17 @@ No se han documentado ensayos físicos, inocuidad, productividad marciana ni seg
 | 3: 20 cartuchos, área, escala | parameters.json; milpa360_p2.py; P-02/P-03 | Cálculo geométrico |
 | 3: masa / acceso | milpa360_p4.py; mecánica S3; §3 de esta memoria | Cálculo / pendiente |
 | 4: retención, daño y fallos | milpa360-modelo.js; verificar_p3.cjs | Prueba digital |
-| 5: alimento y energía | milpa360_p1.py; balance en milpa360-datos.js | Cálculo con literatura |
+| 5: alimento y energía | milpa360_p1.py; cierre_acumulado.py; milpa360.cierre.json | Cálculo con literatura/supuestos |
 | 6: pruebas / ensayos | PRUEBA-P3-NAVEGADOR.json; protocolos y CSV vacíos | Digital / pendiente físico |
 | 7: piloto | P4-PRESUPUESTO-CHIAPAS.md §caso; no resultados | Propuesta |
 | 8: presupuesto | presupuesto_s4.mjs; JSON; XLSX S4 | Estimación parcial |
-| 9: novedad y siguiente prueba | Registro de afirmaciones; antecedentes P0/P1 | Hipótesis |
+| 9: novedad y siguiente prueba | Registro de afirmaciones; CIERRE-ACUMULADO §5 | Hipótesis |
 
 ## 11. Fuentes y reproducción
 
-Esta integración reutiliza fuentes leídas y registradas en P0/P1/S4; no presenta una
-revisión bibliográfica nueva. El CSV conserva URLs, páginas y condiciones. Fuentes
+Esta integración reutiliza fuentes leídas y registradas en P0/P1/S4 y añade la lectura
+acotada de antecedentes y web oficial documentada en CIERRE-ACUMULADO. No es una
+revisión sistemática. El CSV conserva URLs, páginas y condiciones. Fuentes
 decisivas: NASA BVAD Rev.2, tablas 4-86 y 4-89 a 4-91; DRA 5.0 §4; NASA-STD-3001
 Vol.2 Rev.F, requisito V2 7003 y alcance V2 6253; PMC10113653, tablas 5–8; USDA
 FoodData Central; estudio doi:10.1038/s41598-021-91882-0; INEGI CA2022 Chiapas p.15.
@@ -370,4 +388,5 @@ Los scripts de S5 y el LEEME del paquete detallan exportación y verificación.
 No ejecutar todos los generadores sin revisar el diff. La configuración y su esquema
 son la fuente dimensional; los archivos oficiales y versiones del hackathon se conservan.
 La demo, el archivo Blender, los planos y la memoria son entregables digitales.
-P5 queda abierto hasta validar brechas de aceptación; S6 será el cierre independiente.
+P5 queda abierto hasta validar brechas de aceptación. S6 digital se verificó; faltan
+revisión independiente, ensayo humano y prueba en el equipo del evento.

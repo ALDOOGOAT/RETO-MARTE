@@ -18,8 +18,8 @@ ESCENARIOS = ("conservador", "nominal", "favorable")
 def validar():
     try:
         import jsonschema
-    except ImportError:
-        return "SIN VALIDAR (pip install jsonschema)"
+    except ImportError as exc:
+        raise RuntimeError("No se generan resultados sin validar: instalar jsonschema en el entorno de cálculo.") from exc
     esquema = json.loads((RAIZ / "config" / "milpa360.parameters.schema.json").read_text(encoding="utf-8"))
     jsonschema.validate(CFG, esquema)
     for g, ps in CFG["parametros"].items():
@@ -213,7 +213,7 @@ def main():
                 ("transpiracion_L", "Transpiración a condensar", "{:.1f}", "L/d")):
             fila(nombre, [x[clave] for x in R], fmt, u)
         fila("Biogás eléctrico / iluminación", [x["biogas_kwh_electrico"] / x["luz_kwh"] for x in R], "{:.2%}")
-        print("  Otros consumos (bombas, ventilación, HEPA, control, calefacción del digestor, carrusel): NO CALCULADOS — no son cero.")
+        print("  Auxiliares/térmica fuera de este subtotal P1; escenarios de B en analysis/cierre_acumulado.py. Las cargas excluidas no son cero.")
 
     n = res[("B", "nominal")]
     print(f"\n  Comparación con el plan: 2 kg SV/d y 2.864 kWh/d químicos frente a {n['estiercol_sv']:.3f} kg SV/d generados "

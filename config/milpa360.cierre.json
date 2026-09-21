@@ -1,0 +1,207 @@
+{
+  "version": "S5-CIERRE-2026-09-21",
+  "tipo": "Cálculo condicionado; no medición ni diseño de fabricación",
+  "reservas": [
+    {
+      "superficie_d": 355,
+      "reserva_d": 30,
+      "alimento_humano_kcal": 7010850,
+      "alimento_humano_kg": 5520.900000000001,
+      "alimento_aves_kg": 296.60400000000004,
+      "credito_por_cosecha_kg": 0,
+      "agua_potable_flujo_minimo_L_d": 15.0
+    },
+    {
+      "superficie_d": 539,
+      "reserva_d": 30,
+      "alimento_humano_kcal": 10361490,
+      "alimento_humano_kg": 8159.46,
+      "alimento_aves_kg": 438.35760000000005,
+      "credito_por_cosecha_kg": 0,
+      "agua_potable_flujo_minimo_L_d": 15.0
+    }
+  ],
+  "energia": {
+    "conservador": {
+      "luz_kWh_d": 14.887434417463805,
+      "bomba_kWh_d": 0.08,
+      "ventilacion_kWh_d": 4.32,
+      "control_kWh_d": 0.48,
+      "digestor_kWh_d": 2.4,
+      "indexado_kWh_d": 1.0410981514365377e-05,
+      "auxiliares_kWh_d": 7.280010410981515,
+      "transmision_casco_kWh_d": 86.25653299422454,
+      "calefaccion_espacio_kWh_d": 64.08908816577923,
+      "frio_sensible_kWh_d": 0,
+      "electricidad_HVAC_sensible_kWh_d": 64.08908816577923,
+      "subtotal_modelado_electrico_kWh_d": 86.25653299422456,
+      "pico_simultaneo_sin_HVAC_kW": 1.2916632258598268,
+      "biogas_calor_potencial_kWh_d": 0.029101368011511274,
+      "credito_biogas_electrico_kWh_d": 0,
+      "subtotal_modelado_por_sol_kWh": 88.62858765156574
+    },
+    "nominal": {
+      "luz_kWh_d": 10.476342738215267,
+      "bomba_kWh_d": 0.02,
+      "ventilacion_kWh_d": 2.16,
+      "control_kWh_d": 0.24,
+      "digestor_kWh_d": 0.96,
+      "indexado_kWh_d": 2.6609742586059454e-06,
+      "auxiliares_kWh_d": 3.3800026609742586,
+      "transmision_casco_kWh_d": 25.260841805451474,
+      "calefaccion_espacio_kWh_d": 11.404496406261948,
+      "frio_sensible_kWh_d": 0,
+      "electricidad_HVAC_sensible_kWh_d": 11.404496406261948,
+      "subtotal_modelado_electrico_kWh_d": 25.260841805451474,
+      "pico_simultaneo_sin_HVAC_kW": 0.817439588447075,
+      "biogas_calor_potencial_kWh_d": 0.09968325139245962,
+      "credito_biogas_electrico_kWh_d": 0,
+      "subtotal_modelado_por_sol_kWh": 25.955514955101393
+    },
+    "favorable": {
+      "luz_kWh_d": 9.42870846439374,
+      "bomba_kWh_d": 0.005,
+      "ventilacion_kWh_d": 0.96,
+      "control_kWh_d": 0.12,
+      "digestor_kWh_d": 0.36,
+      "indexado_kWh_d": 2.6851319563023466e-07,
+      "auxiliares_kWh_d": 1.4450002685131955,
+      "transmision_casco_kWh_d": 6.4692399745668405,
+      "calefaccion_espacio_kWh_d": 0,
+      "frio_sensible_kWh_d": 4.404468758340095,
+      "electricidad_HVAC_sensible_kWh_d": 1.4681562527800318,
+      "subtotal_modelado_electrico_kWh_d": 12.341864985686968,
+      "pico_simultaneo_sin_HVAC_kW": 0.6594291672943411,
+      "biogas_calor_potencial_kWh_d": 0.283652622075854,
+      "credito_biogas_electrico_kWh_d": 0,
+      "subtotal_modelado_por_sol_kWh": 12.68126627279336
+    }
+  },
+  "agua": {
+    "transpiracion_L_d": 6.3023544548763635,
+    "reposicion_por_ET_L_d": 1.2604708909752724,
+    "autonomia_inventario_sin_reposicion_d": 31.734171956204825,
+    "autonomia_sin_condensador_ni_reposicion_d": 6.3468343912409635,
+    "reserva_72h_ET_L": 3.7814126729258173,
+    "reserva_72h_sin_condensador_L": 18.90706336462909,
+    "limite": "No incluye limpieza, purga, agua animal ni consumo humano; una bomba fallada puede impedir usar el depósito."
+  },
+  "sustrato": [
+    {
+      "escenario": "conservador",
+      "sustrato_kg": 2036.6010283090482,
+      "perclorato_inicial_kg": 20.366010283090482,
+      "lavado_L": {
+        "1": 2036.6010283090482,
+        "3": 6109.8030849271445,
+        "5": 10183.00514154524
+      },
+      "cloruro_estequiometrico_kg": 7.259678879191127,
+      "demanda_teorica_DQO_kg": 13.106331403899354,
+      "limite": "Estado inicial supuesto; reducción ideal completa, sin cinética, eficiencia ni dosis operativa."
+    },
+    {
+      "escenario": "nominal",
+      "sustrato_kg": 1697.1675235908733,
+      "perclorato_inicial_kg": 8.485837617954367,
+      "lavado_L": {
+        "1": 1697.1675235908733,
+        "3": 5091.50257077262,
+        "5": 8485.837617954367
+      },
+      "cloruro_estequiometrico_kg": 3.02486619966297,
+      "demanda_teorica_DQO_kg": 5.460971418291398,
+      "limite": "Estado inicial supuesto; reducción ideal completa, sin cinética, eficiencia ni dosis operativa."
+    },
+    {
+      "escenario": "favorable",
+      "sustrato_kg": 1357.7340188726987,
+      "perclorato_inicial_kg": 5.430936075490795,
+      "lavado_L": {
+        "1": 1357.7340188726987,
+        "3": 4073.2020566180963,
+        "5": 6788.670094363493
+      },
+      "cloruro_estequiometrico_kg": 1.9359143677843005,
+      "demanda_teorica_DQO_kg": 3.4950217077064942,
+      "limite": "Estado inicial supuesto; reducción ideal completa, sin cinética, eficiencia ni dosis operativa."
+    }
+  ],
+  "acceso": [
+    {
+      "posiciones": 2,
+      "paso_bruto_m": 0.9764937022248336,
+      "paso_con_50mm_por_lado_m": 0.8764937022248336,
+      "area_cultivo_restante_m2": 2.5714659448346566,
+      "carga_nominal_sin_util_kg": 179.71675235908734,
+      "almacenamiento_verificado": true
+    },
+    {
+      "posiciones": 3,
+      "paso_bruto_m": 1.4346099791769673,
+      "paso_con_50mm_por_lado_m": 1.3346099791769672,
+      "area_cultivo_restante_m2": 2.314319350351191,
+      "carga_nominal_sin_util_kg": 269.575128538631,
+      "almacenamiento_verificado": false
+    }
+  ],
+  "reactores": {
+    "conservador": {
+      "st_kg_d": 0.079164290001576,
+      "sv_kg_d": 0.043591987325497204,
+      "caudal_m3_d": 0.0026388096667192,
+      "hrt_d": 40,
+      "volumen_util_m3": 0.105552386668768,
+      "volumen_total_m3": 0.14073651555835734,
+      "OLR_kgSV_m3_d": 0.41298912039092417,
+      "diametro_interior_m": 0.5,
+      "altura_cilindro_m": 0.7167651879885442,
+      "diametro_reserva_m": 0.56,
+      "volumen_salmuera_m3": null,
+      "caudal_agua_adicional_m3_d": null
+    },
+    "nominal": {
+      "st_kg_d": 0.1064344712025216,
+      "sv_kg_d": 0.08216121062214336,
+      "caudal_m3_d": 0.002128689424050432,
+      "hrt_d": 30,
+      "volumen_util_m3": 0.06386068272151296,
+      "volumen_total_m3": 0.08514757696201729,
+      "OLR_kgSV_m3_d": 1.2865695623774696,
+      "diametro_interior_m": 0.5,
+      "altura_cilindro_m": 0.4336530485056845,
+      "diametro_reserva_m": 0.56,
+      "volumen_salmuera_m3": null,
+      "caudal_agua_adicional_m3_d": null
+    },
+    "favorable": {
+      "st_kg_d": 0.13370465240346718,
+      "sv_kg_d": 0.09662751560242704,
+      "caudal_m3_d": 0.0016713081550433398,
+      "hrt_d": 20,
+      "volumen_util_m3": 0.033426163100866796,
+      "volumen_total_m3": 0.04456821746782239,
+      "OLR_kgSV_m3_d": 2.8907749690218356,
+      "diametro_interior_m": 0.5,
+      "altura_cilindro_m": 0.22698406767355164,
+      "diametro_reserva_m": 0.56,
+      "volumen_salmuera_m3": null,
+      "caudal_agua_adicional_m3_d": null
+    },
+    "envolvente": {
+      "st_kg_d": 0.13370465240346718,
+      "sv_kg_d": 0.09662751560242704,
+      "caudal_m3_d": 0.004456821746782239,
+      "hrt_d": 40,
+      "volumen_util_m3": 0.17827286987128957,
+      "volumen_total_m3": 0.2376971598283861,
+      "OLR_kgSV_m3_d": 0.5420203066915942,
+      "diametro_interior_m": 0.5,
+      "altura_cilindro_m": 1.210581694258942,
+      "diametro_reserva_m": 0.56,
+      "volumen_salmuera_m3": null,
+      "caudal_agua_adicional_m3_d": null
+    }
+  },
+  "area_casco_termica_m2": 64.17896800165516
+}

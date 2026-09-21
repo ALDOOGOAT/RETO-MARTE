@@ -1,3 +1,5 @@
+> **Corte vigente 21 sep:** D1/D2 ratificadas; B15–B19 siguen como brechas físicas/de ingeniería,
+> con disposición exacta en [cierre acumulado](CIERRE-ACUMULADO.md). P07 prepara el ensayo E4.
 > **Revisión S3:** piso y cama separados; superficie útil descontando reborde 35 mm.
 > Valores vigentes: cartucho 0.25715 m² útiles (0.33311 de huella), cultivo 3.086 m²,
 > total de sustrato 5.143 m²; masa nominal 84.9 kg/cartucho sin tara. Piso 0, cama 0.62,
@@ -24,8 +26,8 @@ mecanismo funcione: son la geometría nominal dibujada a escala.
 
 | # | Decisión | Estado |
 |---|---|---|
-| **D1** | **Arquitectura B**: un anillo de 20 cartuchos idénticos en Ø 4.56 m, pasillo central | **Tomada.** Pendiente de ratificación del equipo (B10) |
-| **D2** | **Horizonte de diseño 539 d** (DRA 5.0); caso nominal del concurso ≈355 d | **Tomada.** Pendiente de ratificación (B10) y de confirmación del organizador (B1) |
+| **D1** | **Arquitectura B**: un anillo de 20 cartuchos idénticos en Ø 4.56 m, pasillo central | **Ratificada por delegación, 21 sep.** B10 cerrado como decisión, no validación |
+| **D2** | **Horizonte de diseño 539 d** (DRA 5.0); caso nominal del concurso ≈355 d | **Ratificada por delegación, 21 sep.** Confirmación del organizador (B1) pendiente |
 
 ### Por qué B y no otra
 

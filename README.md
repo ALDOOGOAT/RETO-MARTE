@@ -1,5 +1,14 @@
 # 🚀 Reto Marte UNACH 2026 - Guía para el Equipo
 
+## Preparación para Madrid · versión vigente
+
+Estado y próximos pasos: [ESTADO.md](docs/madrid/ESTADO.md).
+Decisiones y pendientes B1–B19: [CIERRE-ACUMULADO.md](docs/madrid/CIERRE-ACUMULADO.md).
+Abrir [simulador offline](prototipo-3d/milpa360-simulador.html) o
+[estudio de acceso B19](prototipo-3d/milpa360-acceso.html).
+La [memoria vigente](docs/madrid/P5-DEFENSA.md) reemplaza las cifras del plan del hackathon.
+Lo que sigue conserva el proceso local; no acredita reglas particulares de Madrid.
+
 ¡Bienvenidos al equipo! Esta es nuestra hoja de ruta oficial para el **Mars Challenge 2026 (The Grand Jam)**, edición Chiapas. Aquí encontrarán el reto exacto que debemos resolver, nuestros roles y el plan de acción fase por fase.
 
 ## 🎯 Nuestro Reto: Reto Unificado (Elemento Tierra)
@@ -33,7 +42,8 @@ Fase 10 · limitaciones · checklist de entregables y agenda Día 2.
 ---
 
 ## 👥 Roles del Equipo (6 integrantes)
-*Nota: Las reglas oficiales sugieren equipos de máximo 5, pero como somos 6, dividiremos la carga de trabajo estratégicamente.*
+*La guía menciona equipos de 3, 4 o 5 sin establecer ahí un máximo literal. Se conservan
+las autorías de los seis integrantes; delegación y presentadores de Madrid requieren confirmación.*
 
 1. **CEO / Director Ejecutivo:** Mantiene la visión estratégica, coordina los tiempos y toma decisiones finales en caso de empate.
 2. **CMO / Director de Producto:** "La voz del usuario". Se asegura de que la solución realmente sirva para un astronauta. Lidera la definición del problema.
