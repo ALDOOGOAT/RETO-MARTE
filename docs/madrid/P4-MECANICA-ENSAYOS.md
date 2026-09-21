@@ -227,3 +227,8 @@ node --experimental-websocket analysis/verificar_p3_navegador.mjs
 B6/B7, B15–B19 requieren recursos/datos, ruta completa y selección mecánica. S4 puede avanzar
 con una lista preliminar y tres presupuestos separados, sin comprar ni dar cantidades finales
 al diseño marciano. El rediseño visual profundo queda pautado en continuidad tras este hito.
+
+**Continuación S4:** [costes y piloto Chiapas](P4-PRESUPUESTO-CHIAPAS.md) ya separa la
+maqueta 1:10, el piloto terrestre y recursos marcianos con fórmulas y pendientes visibles.
+Ninguno equivale al coste cerrado de un banco mecánico E1 a carga real: requiere diseño y
+cotización propios. S5 es el siguiente bloque de integración; los ensayos siguen sin datos.

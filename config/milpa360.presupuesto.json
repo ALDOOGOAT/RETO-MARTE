@@ -1,0 +1,72 @@
+{
+  "revision": "P4-S4-2026-09-20",
+  "fecha_consulta": "2026-09-20",
+  "moneda": "MXN",
+  "limite_equipo_mxn": null,
+  "contingencia": 0.20,
+  "nota_contingencia": "Preferencia provisional de planificación por fabricación y transporte sin cerrar; no cubre partidas desconocidas ni constituye intervalo de confianza. Aplicar sólo cuando la base esté completa.",
+  "iva_general": 0.16,
+  "fuente_iva": "https://wwwmat.sat.gob.mx/articulo/19848/articulo-1",
+  "nota": "Precios públicos, no cotizaciones. Cantidades propuestas, no compras. Recursos propios, donados y prestados pendientes de inventario. Los tres alcances son independientes y no se suman.",
+  "precios": [
+    {"id":"PR01","pieza":"Filamento PLA ECO 1 kg","proveedor":"3DMarket","sku":"PLA ECO; SKU no publicado","precio":299,"iva":"Excluido","tasa":0.16,"url":"https://www.3dmarket.mx/p/filamento-pla-economico-azul/","nota":"Contado; 1.75 mm. No incluye impresión, soportes ni energía. Cantidad por confirmar con laminado.","alternativa":"Servicio de impresión con material incluido; cotizar sin sumar también PR01."},
+    {"id":"PR02","pieza":"UNO CH340 USB-C con cable","proveedor":"Lionchip","sku":"497","precio":139.20,"iva":"Incluido","tasa":null,"url":"https://www.lionchipmexico.com/product-page/placa-uno-ch340-entrada-tipo-c-mega328p-con-cable-compatible-con-arduino-ide","nota":"Control local sin depender de WiFi; candidato, falta firmware y prueba de interfaces.","alternativa":"PR05 ESP32; sustituir, no sumar. Revisar niveles lógicos."},
+    {"id":"PR03","pieza":"Motor 17HS3401S NEMA17","proveedor":"Lionchip","sku":"458","precio":172.84,"iva":"Incluido","tasa":null,"url":"https://www.lionchipmexico.com/product-page/17hs3401s-nema-17-motor-a-pasos-3-6kg-cm","nota":"Sólo maqueta. Título 3.6 kg/cm y ficha 290 mN m discrepan; no seleccionar por ese par. Medir carga, reducción y temperatura.","alternativa":"NEMA17 Teckali: https://www.teckali.com/productos/motor-a-pasos-nema-17/ ; 267 con símbolo $, moneda/IVA y modelo por confirmar; no integrado en sumas."},
+    {"id":"PR04","pieza":"Driver A4988","proveedor":"Lionchip","sku":"361","precio":45.24,"iva":"Incluido","tasa":null,"url":"https://www.lionchipmexico.com/product-page/a4988-controlador-motor-de-pasos","nota":"Candidato; ajustar corriente y disipación. No acciona el carrusel de 1.98 t.","alternativa":"Indexado manual; si se motoriza, cotizar segundo driver compatible."},
+    {"id":"PR05","pieza":"ESP32 NodeMCU USB-C","proveedor":"Lionchip","sku":"503","precio":172.84,"iva":"Incluido","tasa":null,"url":"https://www.lionchipmexico.com/product-page/tarjeta-de-desarrollo-nodemcu-tipo-c-esp32-wifi-bluetooth-esp-32","nota":"Alternativa de controlador; no presupuestada simultáneamente con UNO.","alternativa":"PR02; para S4 no se necesita conexión a Google ni nube."},
+    {"id":"PR06","pieza":"Microbomba 2.5–6 V","proveedor":"Steren","sku":"MOT-300","precio":49,"iva":"Por confirmar","tasa":null,"url":"https://www.steren.com.mx/micro-bomba-de-agua-con-flujo-de-80-120-l-h.html","nota":"Precio público unitario sin mayoreo. Hmáx 1 m; caudal real depende de altura/pérdidas. IVA no explícito en ficha; contrato no lo aclara para este importe.","alternativa":"Depósito elevado y válvula manual para banco; no prueba automatización."},
+    {"id":"PR07","pieza":"Báscula 5 kg, resolución 1 g","proveedor":"Steren","sku":"MED-400","precio":399,"iva":"Por confirmar","tasa":null,"url":"https://www.steren.com.mx/bascula-digital-gramera-cinetica-hasta-5-kg.html","nota":"Resolución desde 15 g; verificar con masas patrón. Pesar agua en alícuotas, no una cubeta de 20 L ni cartucho real.","alternativa":"Balanza de laboratorio prestada, disponibilidad y calibración por confirmar."},
+    {"id":"PR08","pieza":"Cubeta multiusos 18.92 L","proveedor":"The Home Depot México","sku":"140348 / 05GLHDMX","precio":119,"iva":"Por confirmar","tasa":null,"url":"https://www.homedepot.com.mx/p/the-home-depot-cubeta-multiusos-de-1892-l-the-home-depot-05glhdmx-140348","nota":"Referencia mostrada con CP 04870; precio/entrega Chiapas pendientes. Ficha contradice material; sólo recogida de drenaje no alimentario hasta aclararlo.","alternativa":"Depósitos documentados de material compatible de proveedor local; cotizar."}
+  ],
+  "presupuestos": {
+    "Madrid": {
+      "alcance":"Maqueta 1:10 del concepto vigente, 20 cartuchos + 2 repuestos, agua limpia e inventarios ilustrativos. No valida mecánica a carga real.",
+      "partidas":[
+        ["D01","Cartuchos y piezas impresas","PR01",2,"kg","Base","Geometría B a 1:10; consumo supuesto hasta laminar; incluye 22 cartuchos y accesorios.","cartucho/anillo; P02/P03"],
+        ["D02","Control local","PR02",1,"pieza","Motor","Registro de posición y bloqueo ilustrativo.","control; S1–S8"],
+        ["D03","Accionamiento maqueta","PR03",1,"pieza","Motor","Ensayar con carga real de la maqueta antes de seleccionar.","anillo"],
+        ["D04","Control de motor","PR04",1,"pieza","Motor","Refrigeración y corriente por verificar.","anillo"],
+        ["D05","Agua limpia demostrativa","PR06",1,"pieza","Agua","Circuito a baja altura; no para reactor ni circuito sanitario.","colector de riego"],
+        ["D06","Medición de agua","PR07",1,"pieza","Agua","Alícuotas hasta 5 kg; calibración separada.","E2"],
+        ["D07","Base, casco en corte y soporte",null,1,"conjunto","Base","Ø nominal 456 mm; material y espesores tras plano S5; soporte no presurizado.","casco/piso"],
+        ["D08","Correa, reducción, apoyos y bloqueo",null,1,"conjunto","Motor","Geometría/mecanismo pendientes; incluir guardas y finales de carrera.","anillo; E1"],
+        ["D09","Alimentación, cableado y protecciones",null,1,"conjunto","Motor","Fuentes aisladas 12 V y 5 V según cargas; corte manual y caja.","control"],
+        ["D10","Tubos, recipientes y aislamiento",null,1,"conjunto","Agua","Compatibles con agua; 2 recipientes desmontables y válvula manual; longitud por plano.","S1; riego; E3"],
+        ["D11","Fabricación e impresión",null,null,"h","Base","Horas de máquina sin material, electricidad separada; cotizar después de laminar.","22 cartuchos"],
+        ["D12","Montaje, firmware y pruebas",null,null,"h","Base","Registrar horas voluntarias y tarifa de reemplazo; no asumir coste cero.","E1–E3"],
+        ["D13","Instrumentos y calibración",null,1,"servicio","Base","Calibre, masas patrón y comprobación eléctrica; préstamo por confirmar.","E1–E3"],
+        ["D14","Impresión gráfica y embalaje",null,1,"conjunto","Base","Caja amortiguada, placas y manual; tamaño final pendiente S5.","entrega Madrid"],
+        ["D15","Recursos digitales y energía",null,null,"h","Base","Equipo de presentación, edición/exportación y electricidad: inventario y coste atribuible pendientes.","P3/P5"],
+        ["D16","Envío Lionchip",null,1,"pedido","Motor","Un cargo consolidado D02–D04; dirección y plazo pendientes.","logística"],
+        ["D17","Envío 3DMarket",null,1,"pedido","Base","Un cargo por pedido de material; no repetir por kilogramo.","logística"],
+        ["D18","Envío Steren",null,1,"pedido","Agua","Un cargo D05–D06; no asumir promoción ni stock local.","logística"],
+        ["D19","Envío de fabricación y embalaje",null,1,"lote","Base","Cotizar consolidado local, declarar recogida confirmada si procede.","logística"]
+      ]
+    },
+    "Chiapas": {
+      "alcance":"Piloto exploratorio en huerto periurbano de Tuxtla Gutiérrez, sitio sin confirmar: 3 pares independientes, riego manual frente a goteo y aislamiento por lote. No incluye módulo presurizado ni animales.",
+      "partidas":[
+        ["C01","Control y registro offline","PR02",1,"pieza","CAPEX","Un controlador para tres circuitos separados; actuadores y firmware adicionales.","control terrestre"],
+        ["C02","Bombas de baja altura","PR06",3,"pieza","CAPEX","Una por réplica con goteo; aforar y medir altura antes de seleccionar.","riego E2"],
+        ["C03","Recogida de drenajes","PR08",6,"pieza","CAPEX","Una cubeta por unidad; no reutilizar drenaje en cultivo en esta fase.","drenaje E2"],
+        ["C04","Pesaje de entradas y cosecha","PR07",1,"pieza","CAPEX","Alícuotas; balanza de mayor capacidad sólo si la tarea lo requiere.","E2"],
+        ["C05","Recipientes de cultivo",null,6,"pieza","CAPEX","Igual área y profundidad; material apto documentado, drenaje individual; dimensión tras sitio.","unidades U1–U6"],
+        ["C06","Depósitos de entrada y tuberías",null,3,"conjunto","CAPEX","Tres circuitos independientes con filtro, goteros y válvula de corte; incluir regadera control.","E2/E3"],
+        ["C07","Electrónica, fuentes y protección",null,1,"conjunto","CAPEX","Tres canales de potencia y bloqueo manual; separar electricidad de salpicaduras.","control"],
+        ["C08","Instalación y firmware",null,null,"h","CAPEX","Horas y tarifa por cotizar; incluir registro de operación y entrenamiento.","piloto"],
+        ["C09","Sustrato y semillas",null,1,"lote","OPEX","Un ciclo exploratorio de rábano; misma variedad/lote, masa y manejo; cantidad tras área útil.","U1–U6"],
+        ["C10","Agua de aporte",null,null,"m3","OPEX","Volumen medido; tarifa según recibo/suministro; no agua gratis supuesta.","E2"],
+        ["C11","Electricidad",null,null,"kWh","OPEX","Medir bombas/control durante un ciclo; tarifa según recibo.","E2"],
+        ["C12","Operación y mantenimiento",null,null,"h","OPEX","Cronometrar riego, limpieza y registro; valorar trabajo voluntario por separado.","piloto"],
+        ["C13","Revisión agronómica y análisis",null,1,"servicio","OPEX","Verificar agua, sustrato y criterio de cosecha; laboratorio/mentor aún no comprometidos.","validación"],
+        ["C14","Calibración y control de medida",null,1,"servicio","OPEX","Masas patrón, volumen patrón y registro de incertidumbre; resolución no es exactitud.","E2"],
+        ["C15","Consumibles y reposición",null,1,"lote","OPEX","Filtros, etiquetas, limpieza y repuestos definidos tras ensayo; no duplicar equipos iniciales.","E2/E3"],
+        ["C16","Espacio e infraestructura",null,1,"ciclo","OPEX","Sitio, sombreado y agua disponibles por confirmar; no asumir cesión gratuita.","Tuxtla"],
+        ["C17","Envío Lionchip",null,1,"pedido","CAPEX","Independiente de Madrid; si se compra junto, repartir un solo flete documentado.","logística"],
+        ["C18","Envío Steren",null,1,"pedido","CAPEX","C02/C04 en un pedido; destino y promoción pendientes.","logística"],
+        ["C19","Envío Home Depot",null,1,"pedido","CAPEX","Seis recipientes; volumen embalado y precio Tuxtla por confirmar.","logística"],
+        ["C20","Fletes de insumos y montaje",null,1,"lote","OPEX","Consolidar cargos locales por proveedor; no duplicar C17–C19.","logística"]
+      ]
+    }
+  }
+}

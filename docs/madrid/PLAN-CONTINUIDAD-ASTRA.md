@@ -1,6 +1,6 @@
 # Continuidad para Astra · MILPA-360 rumbo a Madrid
 
-**Corte técnico revisado:** S3, 20 sep 2026, rama `preparacion-madrid-p1`, base S2 `e23bb12`. **Este archivo es un relevo de trabajo, no una validación científica ni una orden para ejecutar tareas en segundo plano.** Al retomar, verificar otra vez HEAD, fecha, rama, estado de Git, herramientas, fuentes y reglas de la final.
+**Corte técnico revisado:** S4, 20 sep 2026, rama `preparacion-madrid-p1`, base S3 `b71a1b8`. **Este archivo es un relevo de trabajo, no una validación científica ni una orden para ejecutar tareas en segundo plano.** Al retomar, verificar otra vez HEAD, fecha, rama, estado de Git, herramientas, fuentes y reglas de la final.
 
 **Especificación principal:** [`MISION-MADRID-MILPA360.md`](../../MISION-MADRID-MILPA360.md), especialmente §5 A–O y §6. **Checkpoint vigente:** [`ESTADO.md`](ESTADO.md). No copiar el prompt largo de P0 como instrucción nueva: P0 ya tiene commit. Este plan conserva la intención del prompt y la aplica al trabajo restante.
 
@@ -12,10 +12,10 @@
 | P1 · ingeniería | `508f30a`, cálculos reutilizados por P3 | Tasas y balances parciales, sin mediciones; se retiró la inferencia de refrigeración sin envolvente |
 | P2 · geometría | `e8ffad4`, corregido por S0 `25f39e4` | **Aceptación mecánica/humana abierta:** B15–B19. Pasillo en planta no prueba mantenimiento |
 | P3 · simulación y relato | S1 `5959333`; S2 `e23bb12`; correcciones geométricas S3 | Modelo ilustrativo por lotes, UI técnica, comparación y demo local. Falta prueba de GPU/equipo del evento y calibración física |
-| P4 · validación y costes | S3 documental ejecutada; siguiente S4 | Cálculos y protocolos en P4-MECANICA-ENSAYOS.md; sin mediciones físicas, entrada completa ni precios cerrados |
+| P4 · validación y costes | S3/S4 documentales ejecutadas; hoja con fórmulas y caso Tuxtla | Presupuestos preliminares; faltan B6, cotizaciones, sitio/operador y datos físicos. P4 no cerrado |
 | P5 · defensa y entrega | Pendiente | El deck y material histórico aún no son la defensa vigente; usar las capturas vigentes tras la corrección S3 al integrarlos |
 
-### Resultado de la revisión S0–S3
+### Resultado de la revisión S0–S4
 
 - Plan maestro, sistema y memoria anterior identificados como históricos; se conservó el proceso.
 - Fichas corregidas: alimento complementario, electricidad externa, reactor de salmuera separado,
@@ -34,6 +34,10 @@
 - Three.js fijado en 0.160.0, fuentes y licencias locales. Prueba funcional sin red y capturas
   en `docs/madrid/capturas/`; medición con SwiftShader no sustituye al hardware del evento.
 - P04/P05 y deck siguen históricos. La demo P3 tiene su propio ZIP y manifiesto, **no es la entrega P5**.
+- S4 separa Madrid (19 partidas), Chiapas (20) y recursos de Marte. Ocho referencias públicas,
+  sin cotizaciones; fiscalidad, fabricación, inventario y fletes faltantes no se convierten en cero.
+  `P4-PRESUPUESTO-CHIAPAS.md` define piloto exploratorio de riego/aislamiento en Tuxtla, sin
+  sitio ni resultados confirmados. Los presupuestos históricos no prueban ROI ni ahorro de comida.
 - `AGENTS.md` y los cuatro presupuestos preexistentes siguen intactos y sin seguimiento; no usar `git add -A`.
 
 ## 2. Regla de reentrada y decisiones
@@ -76,16 +80,18 @@ Al finalizar cada sesión: actualizar `docs/madrid/ESTADO.md` con archivos/commi
 
 ## 5. Mensaje listo para la próxima sesión
 
-> Lee `MISION-MADRID-MILPA360.md`, este plan, `ESTADO.md` y `P4-MECANICA-ENSAYOS.md`.
-> Verifica Git y el checkpoint S3. Ejecuta **S4/P4**, con Terra medium para hoja y precios y
-> Astra high para hipótesis: lista preliminar del demostrador, tres presupuestos separados,
-> fuentes de precios/IVA/envío y un caso concreto de Chiapas. Los presupuestos previos del
-> usuario son borradores intactos, no cotizaciones. No declares cerrado el diseño marciano:
-> B19 requiere una ruta completa, B15–B18 equipos/dosel/estructura y B7 pesajes.
-> Si hay datos humanos nuevos, intégralos en S3 y vuelve a probar P3. Mantén las cifras S3
-> (3.086 m² útiles) y distingue maqueta pequeña de banco a carga real. No repitas P0/P1.
-> Después aplica la dirección visual de §6 al integrar S5; no adelantes el acabado a decisiones
-> mecánicas aún no resueltas. No comprar ni publicar. Push sólo de checkpoints revisados.
+> Lee `MISION-MADRID-MILPA360.md`, este plan, `ESTADO.md`, `P4-MECANICA-ENSAYOS.md`
+> y `P4-PRESUPUESTO-CHIAPAS.md`. Verifica Git y el checkpoint S4. Continúa **S5/P5**,
+> Astra high para decisiones e integración y Sol medium para pulido delimitado, según disponibilidad.
+> Primero trata B19 (entrada/evacuación completa) y las envolventes B15–B18 que cambien geometría.
+> Aplica la mejora visual profunda de §6 con Blender/Three, sin ocultar brechas mecánicas; conserva
+> poses antes/después. Sin datos físicos, avanza tareas independientes y rotula lo pendiente.
+> Integra memoria modular, Documento Concepto, planos, deck, guion provisional, preguntas y vídeo.
+> Usa cifras S3/S4: cultivo útil 3.086 m²; sólo 2.46% kcal; energía externa; presupuestos incompletos.
+> Si llegan presupuesto/inventario, cotizaciones o mediciones, actualiza S4/S3 y verifica dependencias.
+> La maqueta 1:10 no valida E1 a carga real. No repitas P0/P1 ni modifiques borradores históricos.
+> Verifica exportaciones, dimensiones, fuentes, offline y legibilidad; deja prueba de GPU pendiente
+> si no está el equipo del evento. No comprar ni publicar. Push sólo de checkpoints revisados.
 
 
 **Pendiente de S2:** abrir la demo en el hardware que se llevará a Madrid, registrar GPU/navegador,

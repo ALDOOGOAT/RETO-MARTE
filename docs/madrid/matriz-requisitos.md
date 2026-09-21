@@ -35,7 +35,7 @@ requisito es estructural y el diseño lo satisface por construcción. No signifi
 | RU-E2 | Entregable: cómo se convierte el residuo en energía y abono | p.2 | UNACH 2026 | Obligatorio | Memoria | Revisión documental y cálculos | P1/S3: energía química calculada y salmuera separada; P05 histórico | parcial | Falta dimensionar tratamiento inicial de todo el volumen, salmuera y acondicionamiento del digestato | Científico Planetario |
 | RU-E3 | Entregable: cómo la zona de cultivo resiste el clima extremo | p.2 | UNACH 2026 | Obligatorio | Memoria | Revisión documental y modelo | PLAN §4.4 | parcial | Falta la cadena causal de protección (envolvente, térmica, luz) | Científico Planetario |
 | RU-E4 | Entregable: explicación simple de por qué, si falla una parte, falla todo | p.2 | UNACH 2026 | Obligatorio | Memoria | Revisión documental; tiempos calculados | PLAN §7 (cascada con 16, 24 y 30–40 soles) | parcial | Tiempos sin cálculo ni fuente; sin reservas ni modo degradado | Ing. Soporte Vital |
-| RU-T-01 | Retorno: en Chiapas, ganadería extensiva que degrada el suelo, residuos avícolas y porcícolas en el agua, clima que afecta café y maíz | p.2 | UNACH 2026 | Obligatorio (junto con G-C9) | Retorno | Caso piloto concreto con indicador base | PLAN §9 con cifras de prensa y SEMARNAT (PUB secundario) | parcial | Sin piloto ni indicador base; maíz poco desarrollado; fuentes primarias sin leer | CMO + Científico Planetario |
+| RU-T-01 | Retorno: en Chiapas, ganadería extensiva que degrada el suelo, residuos avícolas y porcícolas en el agua, clima que afecta café y maíz | p.2 | UNACH 2026 | Obligatorio (junto con G-C9) | Retorno | Caso piloto concreto con indicador base | S4 propone huerto Tuxtla y comparación de riego; INEGI CA2022 lámina 15 leída | parcial | Sitio/operador y línea base pendientes; banco hidráulico no valida tratamiento pecuario ni café/maíz | CMO + Científico Planetario |
 
 ## B · Marco general (`EL RETO .pdf`, organizador global; Guía Anexo A p.32)
 
@@ -75,7 +75,7 @@ El jurado evalúa estos criterios; no se «cumplen». El estado refleja la **pre
 | G-C6 | Validez: problemática respaldada con datos; pertinente, viable, implementable | p.31 | Guía TGJ 2026 | Criterio | Documentación | Registro de afirmaciones depurado | P0 inicial | parcial | G-08 | Ing. Soporte Vital |
 | G-C7 | Relevancia técnica: viable en el contexto de Marte | p.31 | Guía TGJ 2026 | Criterio | Sistema | Balances, normativa aplicable y límites | — | pendiente | C4, C5, C6, C7 | Ing. Soporte Vital |
 | G-C8 | Presentación clara y convincente en 5 minutos | p.31 | Guía TGJ 2026 | Criterio | Presentación | Ensayos cronometrados ante personas ajenas | Deck actual | parcial | G-04 | Comunicaciones |
-| G-C9 | Retorno a la humanidad: contribución significativa a la Tierra | p.31 | Guía TGJ 2026 | Criterio | Retorno | Caso piloto con indicador base | PLAN §9 | parcial | RU-T-01 | CMO |
+| G-C9 | Retorno a la humanidad: contribución significativa a la Tierra | p.31 | Guía TGJ 2026 | Criterio | Retorno | Caso piloto con indicador base | P4-PRESUPUESTO-CHIAPAS.md §5; comparación y presupuesto preliminares | parcial | RU-T-01: sin línea base ni resultados reales | CMO |
 
 ## E · Final de Madrid (organizador internacional)
 

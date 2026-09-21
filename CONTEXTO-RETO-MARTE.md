@@ -281,3 +281,27 @@ NASA V2 8013/8014 exige analizar la ruta/tarea; no se adopta una cota universal 
 Se leyó OCHMO-HB-004 Rev.A en las secciones registradas en ese documento. Estos estudios no
 certifican el módulo ni cambian las bases originales. S4 tratará costes; S5 la mejora visual
 profunda autorizada y la integración de defensa, según [continuidad](docs/madrid/PLAN-CONTINUIDAD-ASTRA.md).
+
+## Actualización Madrid S4 · costes y retorno terrestre · 20 sep 2026
+
+Los presupuestos vigentes son preliminares y separados: maqueta Madrid, piloto Chiapas y
+recursos del concepto marciano. La hoja con fórmulas, ocho referencias públicas fechadas,
+IVA/fletes faltantes e inventario pendiente está documentada en
+[P4/S4](docs/madrid/P4-PRESUPUESTO-CHIAPAS.md). No hay total cerrado ni retorno económico
+demostrado. Los presupuestos anteriores conservan su valor de historial, sin actuar como
+cotizaciones del diseño actual.
+
+**Caso propuesto, no alianza confirmada:** huerto periurbano de Tuxtla Gutiérrez, seis unidades
+exploratorias de rábano en tres pares independientes, riego manual frente a goteo con medición
+y aislamiento por lote. Línea base aún desconocida: L de agua nueva/kg de cosecha utilizable,
+minutos/kg, energía y supervivencia. Primero se prueba con agua limpia; no se incorpora
+residuo pecuario ni se declara tratamiento sanitario demostrado. La revisión agronómica,
+sitio/operador, variedad y duración hasta cosecha están pendientes. Este banco no demuestra
+las tres partes del Reto Unificado ni operación marciana.
+
+**Dato publicado:** INEGI, Censo Agropecuario 2022, Chiapas, lámina 15 del
+[PDF de resultados definitivos](https://www.inegi.org.mx/contenidos/programas/ca/2022/doc/ca2022_rdCHS.pdf):
+1,649,917 ha agrícolas de unidades activas; 73,796 de riego (4.5%) y 1,576,121 de temporal
+(95.5%). Se leyó la lámina original. Es contexto estatal, no línea base del piloto de Tuxtla
+ni prueba de ahorro por goteo. Las fuentes de precios y la tasa fiscal empleada están
+registradas con sus condiciones en S4; no se convierten cifras públicas en cotizaciones.
