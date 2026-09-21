@@ -76,3 +76,15 @@ son ilustraciones del demostrador, no fotografías de maqueta ni topografía med
 Objetivo propuesto: 30 FPS a 1920×1080. Falta medirlo con la GPU, navegador y equipo reales
 que se llevarán a Madrid. El informe headless con SwiftShader registra pruebas funcionales y
 rendimiento por software; no debe extrapolarse al equipo del evento.
+
+## Detalle V3
+
+En la ficha del aviario, **Ver aves de cerca / Inspect birds** encuadra las aves.
+En móvil cierra el panel para dejar visible el modelo. **Perspectiva / Perspective**
+vuelve al conjunto. El cambio de idioma conserva el estado. Las siete figuras son
+ilustrativas; espacio y bienestar para la población propuesta siguen por validar.
+
+Prueba local de tipografía, anatomía representada, móvil y recorrido: ejecutar
+`MILPA_GPU=1 MILPA_REFINAMIENTO_V3=1 node --experimental-websocket analysis/verificar_p3_navegador.mjs`.
+La RTX de este equipo requirió `MILPA_VISIBLE=1` y las variables PRIME documentadas
+en `../docs/madrid/MEJORA-VISUAL-BILINGUE.md`. No se detectó proyector conectado.

@@ -1,4 +1,71 @@
-# Revisión visual y bilingüe · 21 sep 2026
+# Revisión visual y bilingüe · V2 y V3 · 21 sep 2026
+
+## Refinamiento V3 sobre e6c989b
+
+Solicitud: mejorar realismo de carteles, estructura y aves, y comprobar el recorrido
+en ambos idiomas. Los apartados posteriores conservan el registro V2.
+
+- **38 rótulos, 65 líneas:** ajuste de fuente sin deformar glifos; proporción de la
+  textura igual a la superficie física; márgenes, contraste en placas claras,
+  tipografía Archivo para nombres e IBM Plex Mono para códigos. Bastidores de chapa,
+  tornillos, soportes al piso y panel de presentación con pedestal. Se corrige el
+  orden de rotación de las placas inclinadas. Ambas caras se leen sin reflejo.
+- **Estructura:** ménsulas para luminarias, carteles unidos a sus equipos, rejilla
+  abierta del aviario y apoyos fijos fuera del cartucho. Son detalles de visualización;
+  cargas, dosel, sellos, sanidad y tolerancias de fabricación siguen sin validar.
+- **Codornices:** cuerpo, pecho moteado, alas plegadas, cola corta, patas con dedos,
+  ojos y pico; cuello articulado para mover la cabeza completa. Siete figuras
+  ilustrativas, no evidencia de espacio suficiente para las 24 aves propuestas.
+  Las piezas se identifican por ave en la exportación. La referencia fotográfica
+  principal es [Kyoto City Zoo, Coturnix japonica](https://zoo.city.kyoto.lg.jp/zoo/animals/c_japonica),
+  consultada el 21 sep 2026. Se crearon mallas y texturas procedurales propias; la foto
+  no se distribuye como textura ni como recurso del proyecto.
+- **Inspección:** botón «Ver aves de cerca / Inspect birds». En móvil cierra la ficha
+  y encuadra el aviario para poder verlo. «Perspectiva» recupera la vista general.
+- **Fluidez:** rocas instanciadas, rejilla y conjuntos estáticos fusionados por material,
+  conservando las fichas; sombras en caché con actualización a 10 Hz durante el
+  movimiento. La cámara mantiene la frecuencia del renderizado.
+
+### Verificación V3
+
+`PRUEBA-REFINAMIENTO-V3.json` comprueba márgenes y proporción de todas las placas
+en ES/EN, carga de fuentes, apoyo de las aves, aproximación con teclado, vista móvil
+y los cinco pasos de ambos recorridos. Las cotas nominales y el modelo de proceso
+conservan sus pruebas. No se añadieron dependencias ni servicios de traducción.
+
+En este portátil se detectaron Intel RPL-P y RTX 4060 Laptop, con pantalla interna
+2560 × 1440 y sin proyector conectado. La muestra inicial V3 con Intel en Chrome
+headless dio 24.12 FPS en detalle alto y 23.12 sin sombras a 1920 × 1080. No son
+mediciones del proyector ni una garantía de fluidez constante. Evidencia conservada
+en `RENDIMIENTO-V3-INTEL.json`.
+
+La RTX no creó contexto WebGL en el primer intento headless; sí funcionó con Chrome
+en ventana X11 y un perfil temporal aislado. La primera muestra de ocho segundos
+dio 72.46 FPS en detalle alto y 67.55 sin sombras. Los resultados de la comprobación
+final desde carpeta limpia quedaron en `PRUEBA-REFINAMIENTO-V3.json`: 134.75 FPS
+en detalle alto y 146.58 sin sombras, ocho segundos por modo. La variación entre
+ejecuciones es grande; son muestras breves, no rendimiento mínimo garantizado ni
+prueba de que el ajuste de calidad causó la diferencia.
+
+Una ejecución inicial en ventana visible encontró otra ficha abierta al comprobar
+el idioma y terminó sin completar la prueba. La repetición íntegra con el mismo
+código pasó. No se atribuye la causa a una interacción externa sin evidencia ni se
+oculta ese intento; los resultados finales corresponden a la ejecución completada.
+
+Comando de prueba en este portátil (abre y cierra su propia ventana):
+
+```sh
+__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia \
+MILPA_VISIBLE=1 MILPA_GPU=1 MILPA_REFINAMIENTO_V3=1 \
+node --experimental-websocket analysis/verificar_p3_navegador.mjs
+```
+
+El [guion bilingüe](RECORRIDO-BILINGUE.md) permite practicar con una persona ajena al
+equipo. El recorrido automático pasó; el ensayo humano, el proyector y los ensayos
+físicos mantienen su estado pendiente. La comparación enlazada más abajo conserva
+su ruta histórica `COMPARACION-VISUAL-V2.html` y muestra ahora V2 frente a V3.
+
+## Registro de V2
 
 Autorizada por Aldo: priorizar ahora la presentación visual y la claridad de todos los
 modelos activos. No cambia las decisiones dimensionales ni la aceptación física.

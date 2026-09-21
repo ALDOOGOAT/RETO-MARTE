@@ -1,0 +1,10 @@
+{
+  "fecha": "2026-09-21T09:06:44.544948+00:00",
+  "blender": "5.2.0 LTS",
+  "operacion": "Importación GLB V3 por Blender MCP",
+  "escena_anterior_preservada": "MILPA360_V2_REVISION",
+  "escena_nueva": "MILPA360_V3_REVISION",
+  "mallas": 1242,
+  "piezas_aves": 63,
+  "limite": "Modelo de visualización; no se guardó encima de la sesión abierta. BLEND de entrega generado en proceso separado."
+}

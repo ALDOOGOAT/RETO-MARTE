@@ -1,0 +1,1689 @@
+{
+  "fecha": "2026-09-21T09:14:53.100Z",
+  "navegador": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/148.0.7778.96",
+    "revision": "@8625e066febc721e015ea99842da12901eb7ed73",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+    "jsVersion": "14.8.178.14"
+  },
+  "modo": "ventana X11",
+  "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2, OpenGL 4.5.0)",
+  "pantalla": [
+    1920,
+    1080
+  ],
+  "dpr": 1,
+  "cpu": "13th Gen Intel(R) Core(TM) i7-13620H",
+  "rotulado": {
+    "es": [
+      {
+        "aspecto": 5.0602409638554215,
+        "ancho": 1024,
+        "alto": 202,
+        "lineas": [
+          {
+            "texto": "RECOLECCIÓN DE HUEVO",
+            "px": 57,
+            "ancho": 740.8231201171875,
+            "max": 839.6800000000001,
+            "y": 77.43,
+            "alto": 202
+          },
+          {
+            "texto": "DATOS TERRESTRES · PRODUCCIÓN POR VALIDAR",
+            "px": 33,
+            "ancho": 834.7564697265625,
+            "max": 839.6800000000001,
+            "y": 136.57,
+            "alto": 202
+          }
+        ]
+      },
+      {
+        "aspecto": 5.063291139240507,
+        "ancho": 1024,
+        "alto": 202,
+        "lineas": [
+          {
+            "texto": "LARVARIO · Hermetia illucens",
+            "px": 53,
+            "ancho": 755.7703857421875,
+            "max": 839.6800000000001,
+            "y": 76.93,
+            "alto": 202
+          },
+          {
+            "texto": "frass y larvas · control sanitario pendiente",
+            "px": 34,
+            "ancho": 669.6625366210938,
+            "max": 839.6800000000001,
+            "y": 134.57,
+            "alto": 202
+          }
+        ]
+      },
+      {
+        "aspecto": 1.6150000000000002,
+        "ancho": 1024,
+        "alto": 634,
+        "lineas": [
+          {
+            "texto": "BIODIGESTOR",
+            "px": 117,
+            "ancho": 837.4765625,
+            "max": 839.6800000000001,
+            "y": 185.12,
+            "alto": 634
+          },
+          {
+            "texto": "METANOGÉNESIS",
+            "px": 93,
+            "ancho": 833.6594848632812,
+            "max": 839.6800000000001,
+            "y": 334.5,
+            "alto": 634
+          },
+          {
+            "texto": "DISEÑO PENDIENTE",
+            "px": 82,
+            "ancho": 825.2481689453125,
+            "max": 839.6800000000001,
+            "y": 466.38,
+            "alto": 634
+          }
+        ]
+      },
+      {
+        "aspecto": 1.3599999999999999,
+        "ancho": 1024,
+        "alto": 753,
+        "lineas": [
+          {
+            "texto": "REACTOR SEPARADO",
+            "px": 77,
+            "ancho": 837.0525512695312,
+            "max": 839.6800000000001,
+            "y": 323.645,
+            "alto": 753
+          },
+          {
+            "texto": "SALMUERA · SALIDA RETENIDA",
+            "px": 53,
+            "ancho": 829.599365234375,
+            "max": 839.6800000000001,
+            "y": 441.355,
+            "alto": 753
+          }
+        ]
+      },
+      {
+        "aspecto": 5.8374999999999995,
+        "ancho": 1024,
+        "alto": 175,
+        "lineas": [
+          {
+            "texto": "MILPA-360",
+            "px": 60,
+            "ancho": 316.73968505859375,
+            "max": 839.6800000000001,
+            "y": 71.875,
+            "alto": 175
+          },
+          {
+            "texto": "BIOMARS CHIAPAS · MÓDULO AGRÍCOLA",
+            "px": 19,
+            "ancho": 387.0674133300781,
+            "max": 839.6800000000001,
+            "y": 123.625,
+            "alto": 175
+          }
+        ]
+      },
+      {
+        "aspecto": 6.615833333333334,
+        "ancho": 1024,
+        "alto": 155,
+        "lineas": [
+          {
+            "texto": "TRIPULACIÓN 6 · 525 SOLES",
+            "px": 34,
+            "ancho": 472.765869140625,
+            "max": 839.6800000000001,
+            "y": 60.575,
+            "alto": 155
+          },
+          {
+            "texto": "Ø 4.56 m × 2.2 m · 5.14 m² DE CARTUCHO",
+            "px": 23,
+            "ancho": 453.4639892578125,
+            "max": 839.6800000000001,
+            "y": 99.92500000000001,
+            "alto": 155
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S1",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 80.1,
+            "alto": 320
+          },
+          {
+            "texto": "LAVADO DEL REGOLITO",
+            "px": 70,
+            "ancho": 833.0965576171875,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "salmuera → reactor separado",
+            "px": 45,
+            "ancho": 628.1112060546875,
+            "max": 839.6800000000001,
+            "y": 246.4,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S2",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 75.1,
+            "alto": 320
+          },
+          {
+            "texto": "AVIARIO · CODORNIZ",
+            "px": 80,
+            "ancho": 835.978271484375,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "24 aves · estiércol dirigido",
+            "px": 45,
+            "ancho": 555.7509765625,
+            "max": 839.6800000000001,
+            "y": 251.4,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S3",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 77.1,
+            "alto": 320
+          },
+          {
+            "texto": "LARVARIO · H. illucens",
+            "px": 76,
+            "ancho": 831.3504638671875,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "frass + proteína",
+            "px": 45,
+            "ancho": 332.3706359863281,
+            "max": 839.6800000000001,
+            "y": 249.4,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S4",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 78.6,
+            "alto": 320
+          },
+          {
+            "texto": "DESCANSO + INÓCULO",
+            "px": 73,
+            "ancho": 839.1820068359375,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "cóctel biológico",
+            "px": 45,
+            "ancho": 340.92059326171875,
+            "max": 839.6800000000001,
+            "y": 247.9,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S5",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 76.1,
+            "alto": 320
+          },
+          {
+            "texto": "MUSGO · S. caninervis",
+            "px": 78,
+            "ancho": 839.2028198242188,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "cobertura experimental",
+            "px": 45,
+            "ancho": 499.6358947753906,
+            "max": 839.6800000000001,
+            "y": 250.4,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S6",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 72.1,
+            "alto": 320
+          },
+          {
+            "texto": "CONSOLIDACIÓN",
+            "px": 86,
+            "ancho": 744.4007568359375,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "sella la superficie",
+            "px": 45,
+            "ancho": 370.6656494140625,
+            "max": 839.6800000000001,
+            "y": 254.4,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S7",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 72.1,
+            "alto": 320
+          },
+          {
+            "texto": "MUESTREO",
+            "px": 86,
+            "ancho": 501.2937927246094,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "ClO₄⁻, conductividad, patógenos",
+            "px": 45,
+            "ancho": 693.0911865234375,
+            "max": 839.6800000000001,
+            "y": 254.4,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S8",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 86.6,
+            "alto": 320
+          },
+          {
+            "texto": "COMPUERTA DE LIBERACIÓN",
+            "px": 57,
+            "ancho": 834.08984375,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "a cultivo sólo con análisis",
+            "px": 45,
+            "ancho": 543.8709716796875,
+            "max": 839.6800000000001,
+            "y": 239.9,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 4.588235294117647,
+        "ancho": 1024,
+        "alto": 223,
+        "lineas": [
+          {
+            "texto": "ARCO DE CULTIVO",
+            "px": 62,
+            "ancho": 569.2008056640625,
+            "max": 839.6800000000001,
+            "y": 83.695,
+            "alto": 223
+          },
+          {
+            "texto": "camote · leguminosa · rábano",
+            "px": 40,
+            "ancho": 558.1595458984375,
+            "max": 839.6800000000001,
+            "y": 150.305,
+            "alto": 223
+          }
+        ]
+      },
+      {
+        "aspecto": 4.444444444444444,
+        "ancho": 1024,
+        "alto": 230,
+        "lineas": [
+          {
+            "texto": "AGUA · ACONDICIONAMIENTO",
+            "px": 55,
+            "ancho": 827.3516845703125,
+            "max": 839.6800000000001,
+            "y": 87.45,
+            "alto": 230
+          },
+          {
+            "texto": "DISEÑO Y CALIDAD POR VALIDAR",
+            "px": 39,
+            "ancho": 647.9940795898438,
+            "max": 839.6800000000001,
+            "y": 150.55,
+            "alto": 230
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 01",
+            "px": 100,
+            "ancho": 722.0819091796875,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 02",
+            "px": 100,
+            "ancho": 722.0819091796875,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 03",
+            "px": 100,
+            "ancho": 722.0819091796875,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 04",
+            "px": 100,
+            "ancho": 722.181884765625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 05",
+            "px": 100,
+            "ancho": 721.9818725585938,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 06",
+            "px": 100,
+            "ancho": 722.0819091796875,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 07",
+            "px": 100,
+            "ancho": 722.0819091796875,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 08",
+            "px": 100,
+            "ancho": 722.0819091796875,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 09",
+            "px": 100,
+            "ancho": 721.9818725585938,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 10",
+            "px": 100,
+            "ancho": 722.0819091796875,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 11",
+            "px": 100,
+            "ancho": 722.181884765625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 12",
+            "px": 100,
+            "ancho": 722.181884765625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 13",
+            "px": 100,
+            "ancho": 722.181884765625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 14",
+            "px": 100,
+            "ancho": 722.2818603515625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 15",
+            "px": 100,
+            "ancho": 722.0819091796875,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 16",
+            "px": 100,
+            "ancho": 722.181884765625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 17",
+            "px": 100,
+            "ancho": 722.181884765625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 18",
+            "px": 100,
+            "ancho": 722.181884765625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 19",
+            "px": 100,
+            "ancho": 722.0819091796875,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTUCHO 20",
+            "px": 100,
+            "ancho": 722.0819091796875,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 5,
+        "ancho": 1024,
+        "alto": 205,
+        "lineas": [
+          {
+            "texto": "ENTRADA / EVACUACIÓN PENDIENTE",
+            "px": 45,
+            "ancho": 836.4379272460938,
+            "max": 839.6800000000001,
+            "y": 77.825,
+            "alto": 205
+          },
+          {
+            "texto": "B19 · EL ANILLO INTERCEPTA EL PASO",
+            "px": 35,
+            "ancho": 664.5237426757812,
+            "max": 839.6800000000001,
+            "y": 132.175,
+            "alto": 205
+          }
+        ]
+      },
+      {
+        "aspecto": 4.818181818181818,
+        "ancho": 1024,
+        "alto": 213,
+        "lineas": [
+          {
+            "texto": "MILPA-360 · CORTE DE INSPECCIÓN",
+            "px": 47,
+            "ancho": 836.23095703125,
+            "max": 839.6800000000001,
+            "y": 80.045,
+            "alto": 213
+          },
+          {
+            "texto": "Ø 4.56 m · FIGURA 1.75 m · V3",
+            "px": 38,
+            "ancho": 540.171630859375,
+            "max": 839.6800000000001,
+            "y": 137.455,
+            "alto": 213
+          }
+        ]
+      }
+    ],
+    "en": [
+      {
+        "aspecto": 5.0602409638554215,
+        "ancho": 1024,
+        "alto": 202,
+        "lineas": [
+          {
+            "texto": "EGG COLLECTION",
+            "px": 57,
+            "ancho": 517.331298828125,
+            "max": 839.6800000000001,
+            "y": 76.93,
+            "alto": 202
+          },
+          {
+            "texto": "EARTH DATA · YIELD TO VALIDATE",
+            "px": 34,
+            "ancho": 572.9296875,
+            "max": 839.6800000000001,
+            "y": 136.57,
+            "alto": 202
+          }
+        ]
+      },
+      {
+        "aspecto": 5.063291139240507,
+        "ancho": 1024,
+        "alto": 202,
+        "lineas": [
+          {
+            "texto": "LARVAE · Hermetia illucens",
+            "px": 53,
+            "ancho": 695.29736328125,
+            "max": 839.6800000000001,
+            "y": 76.93,
+            "alto": 202
+          },
+          {
+            "texto": "frass and larvae · sanitary control pending",
+            "px": 34,
+            "ancho": 670.8525390625,
+            "max": 839.6800000000001,
+            "y": 134.57,
+            "alto": 202
+          }
+        ]
+      },
+      {
+        "aspecto": 1.6150000000000002,
+        "ancho": 1024,
+        "alto": 634,
+        "lineas": [
+          {
+            "texto": "BIODIGESTER",
+            "px": 118,
+            "ancho": 834.7322387695312,
+            "max": 839.6800000000001,
+            "y": 189.12,
+            "alto": 634
+          },
+          {
+            "texto": "METHANOGENESIS",
+            "px": 85,
+            "ancho": 833.1703491210938,
+            "max": 839.6800000000001,
+            "y": 335,
+            "alto": 634
+          },
+          {
+            "texto": "DESIGN PENDING",
+            "px": 82,
+            "ancho": 727.1761474609375,
+            "max": 839.6800000000001,
+            "y": 462.88,
+            "alto": 634
+          }
+        ]
+      },
+      {
+        "aspecto": 1.3599999999999999,
+        "ancho": 1024,
+        "alto": 753,
+        "lineas": [
+          {
+            "texto": "SEPARATE REACTOR",
+            "px": 79,
+            "ancho": 835.7340698242188,
+            "max": 839.6800000000001,
+            "y": 317.645,
+            "alto": 753
+          },
+          {
+            "texto": "BRINE · OUTLET ON HOLD",
+            "px": 65,
+            "ancho": 833.8207397460938,
+            "max": 839.6800000000001,
+            "y": 442.355,
+            "alto": 753
+          }
+        ]
+      },
+      {
+        "aspecto": 5.8374999999999995,
+        "ancho": 1024,
+        "alto": 175,
+        "lineas": [
+          {
+            "texto": "MILPA-360",
+            "px": 60,
+            "ancho": 316.73968505859375,
+            "max": 839.6800000000001,
+            "y": 71.875,
+            "alto": 175
+          },
+          {
+            "texto": "BIOMARS CHIAPAS · AGRICULTURAL MODULE",
+            "px": 19,
+            "ancho": 434.38995361328125,
+            "max": 839.6800000000001,
+            "y": 123.625,
+            "alto": 175
+          }
+        ]
+      },
+      {
+        "aspecto": 6.615833333333334,
+        "ancho": 1024,
+        "alto": 155,
+        "lineas": [
+          {
+            "texto": "CREW 6 · 525 SOLS",
+            "px": 34,
+            "ancho": 317.9332275390625,
+            "max": 839.6800000000001,
+            "y": 60.575,
+            "alto": 155
+          },
+          {
+            "texto": "Ø 4.56 m × 2.2 m · 5.14 m² OF CARTRIDGES",
+            "px": 23,
+            "ancho": 474.1410217285156,
+            "max": 839.6800000000001,
+            "y": 99.92500000000001,
+            "alto": 155
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S1",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 72.1,
+            "alto": 320
+          },
+          {
+            "texto": "REGOLITH WASH",
+            "px": 86,
+            "ancho": 737.3412475585938,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "brine → separate reactor",
+            "px": 45,
+            "ancho": 525.3759765625,
+            "max": 839.6800000000001,
+            "y": 254.4,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S2",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 72.1,
+            "alto": 320
+          },
+          {
+            "texto": "AVIARY · QUAIL",
+            "px": 86,
+            "ancho": 660.5432739257812,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "24 birds · directed manure",
+            "px": 45,
+            "ancho": 552.7359619140625,
+            "max": 839.6800000000001,
+            "y": 254.4,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S3",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 72.6,
+            "alto": 320
+          },
+          {
+            "texto": "LARVAE · H. illucens",
+            "px": 85,
+            "ancho": 832.8154907226562,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "frass + protein",
+            "px": 45,
+            "ancho": 306.27056884765625,
+            "max": 839.6800000000001,
+            "y": 253.9,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S4",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 72.1,
+            "alto": 320
+          },
+          {
+            "texto": "REST + INOCULUM",
+            "px": 86,
+            "ancho": 797.3056640625,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "biological mixture",
+            "px": 45,
+            "ancho": 381.82568359375,
+            "max": 839.6800000000001,
+            "y": 254.4,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S5",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 73.1,
+            "alto": 320
+          },
+          {
+            "texto": "MOSS · S. caninervis",
+            "px": 84,
+            "ancho": 830.5931396484375,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "experimental cover",
+            "px": 45,
+            "ancho": 411.70574951171875,
+            "max": 839.6800000000001,
+            "y": 253.4,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S6",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 72.1,
+            "alto": 320
+          },
+          {
+            "texto": "CONSOLIDATION",
+            "px": 86,
+            "ancho": 730.6557006835938,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "surface cover",
+            "px": 45,
+            "ancho": 291.91552734375,
+            "max": 839.6800000000001,
+            "y": 254.4,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S7",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 72.1,
+            "alto": 320
+          },
+          {
+            "texto": "SAMPLING",
+            "px": 86,
+            "ancho": 464.74383544921875,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "ClO₄⁻, conductivity, pathogens",
+            "px": 45,
+            "ancho": 646.7724609375,
+            "max": 839.6800000000001,
+            "y": 254.4,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 3.2,
+        "ancho": 1024,
+        "alto": 320,
+        "lineas": [
+          {
+            "texto": "S8",
+            "px": 58,
+            "ancho": 69.60009765625,
+            "max": 839.6800000000001,
+            "y": 72.1,
+            "alto": 320
+          },
+          {
+            "texto": "RELEASE GATE",
+            "px": 86,
+            "ancho": 665.2172241210938,
+            "max": 839.6800000000001,
+            "y": 166.5,
+            "alto": 320
+          },
+          {
+            "texto": "to crops only after analysis",
+            "px": 45,
+            "ancho": 569.4310302734375,
+            "max": 839.6800000000001,
+            "y": 254.4,
+            "alto": 320
+          }
+        ]
+      },
+      {
+        "aspecto": 4.588235294117647,
+        "ancho": 1024,
+        "alto": 223,
+        "lineas": [
+          {
+            "texto": "CROP ARC",
+            "px": 62,
+            "ancho": 329.3550109863281,
+            "max": 839.6800000000001,
+            "y": 83.695,
+            "alto": 223
+          },
+          {
+            "texto": "sweet potato · legume · radish",
+            "px": 40,
+            "ancho": 564.99951171875,
+            "max": 839.6800000000001,
+            "y": 150.305,
+            "alto": 223
+          }
+        ]
+      },
+      {
+        "aspecto": 4.444444444444444,
+        "ancho": 1024,
+        "alto": 230,
+        "lineas": [
+          {
+            "texto": "WATER · CONDITIONING",
+            "px": 60,
+            "ancho": 720.6488647460938,
+            "max": 839.6800000000001,
+            "y": 87.45,
+            "alto": 230
+          },
+          {
+            "texto": "DESIGN AND QUALITY TO VALIDATE",
+            "px": 39,
+            "ancho": 693.7190551757812,
+            "max": 839.6800000000001,
+            "y": 153.05,
+            "alto": 230
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 01",
+            "px": 100,
+            "ancho": 744.7818603515625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 02",
+            "px": 100,
+            "ancho": 744.7818603515625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 03",
+            "px": 100,
+            "ancho": 744.7818603515625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 04",
+            "px": 100,
+            "ancho": 744.8818969726562,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 05",
+            "px": 100,
+            "ancho": 744.681884765625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 06",
+            "px": 100,
+            "ancho": 744.7818603515625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 07",
+            "px": 100,
+            "ancho": 744.7818603515625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 08",
+            "px": 100,
+            "ancho": 744.7818603515625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 09",
+            "px": 100,
+            "ancho": 744.681884765625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 10",
+            "px": 100,
+            "ancho": 744.7818603515625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 11",
+            "px": 100,
+            "ancho": 744.8818969726562,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 12",
+            "px": 100,
+            "ancho": 744.8818969726562,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 13",
+            "px": 100,
+            "ancho": 744.8818969726562,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 14",
+            "px": 100,
+            "ancho": 744.9818725585938,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 15",
+            "px": 100,
+            "ancho": 744.7818603515625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 16",
+            "px": 100,
+            "ancho": 744.8818969726562,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 17",
+            "px": 100,
+            "ancho": 744.8818969726562,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 18",
+            "px": 100,
+            "ancho": 744.8818969726562,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 19",
+            "px": 100,
+            "ancho": 744.7818603515625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 3.582,
+        "ancho": 1024,
+        "alto": 286,
+        "lineas": [
+          {
+            "texto": "CARTRIDGE 20",
+            "px": 100,
+            "ancho": 744.7818603515625,
+            "max": 839.6800000000001,
+            "y": 143,
+            "alto": 286
+          }
+        ]
+      },
+      {
+        "aspecto": 5,
+        "ancho": 1024,
+        "alto": 205,
+        "lineas": [
+          {
+            "texto": "ENTRY / EVACUATION PENDING",
+            "px": 51,
+            "ancho": 802.26953125,
+            "max": 839.6800000000001,
+            "y": 77.825,
+            "alto": 205
+          },
+          {
+            "texto": "B19 · THE RING BLOCKS THE PASSAGE",
+            "px": 35,
+            "ancho": 674.9385986328125,
+            "max": 839.6800000000001,
+            "y": 135.175,
+            "alto": 205
+          }
+        ]
+      },
+      {
+        "aspecto": 4.818181818181818,
+        "ancho": 1024,
+        "alto": 213,
+        "lineas": [
+          {
+            "texto": "MILPA-360 · INSPECTION CUTAWAY",
+            "px": 48,
+            "ancho": 839.54052734375,
+            "max": 839.6800000000001,
+            "y": 80.045,
+            "alto": 213
+          },
+          {
+            "texto": "Ø 4.56 m · FIGURE 1.75 m · V3",
+            "px": 38,
+            "ancho": 538.6136474609375,
+            "max": 839.6800000000001,
+            "y": 137.955,
+            "alto": 213
+          }
+        ]
+      }
+    ]
+  },
+  "aves": [
+    {
+      "dimensionesM": [
+        0.1827564914240858,
+        0.13608871820590251,
+        0.17887652835627155
+      ],
+      "baseM": 1.0967110350588336,
+      "cuello": "cuello-articulado",
+      "mallas": 9
+    },
+    {
+      "dimensionesM": [
+        0.19856112194748565,
+        0.12723689812013483,
+        0.09467734302407982
+      ],
+      "baseM": 1.0967110350588336,
+      "cuello": "cuello-articulado",
+      "mallas": 9
+    },
+    {
+      "dimensionesM": [
+        0.16141648713939016,
+        0.13608871820590251,
+        0.19436656566701693
+      ],
+      "baseM": 1.0967110350588336,
+      "cuello": "cuello-articulado",
+      "mallas": 9
+    },
+    {
+      "dimensionesM": [
+        0.11267885816470424,
+        0.13608871820590251,
+        0.2008629484065626
+      ],
+      "baseM": 1.0967110350588336,
+      "cuello": "cuello-articulado",
+      "mallas": 9
+    },
+    {
+      "dimensionesM": [
+        0.1962347010044656,
+        0.12574498064859885,
+        0.1640770213781484
+      ],
+      "baseM": 1.0967110350588336,
+      "cuello": "cuello-articulado",
+      "mallas": 9
+    },
+    {
+      "dimensionesM": [
+        0.20223681435922525,
+        0.13608871820590251,
+        0.12194602610313476
+      ],
+      "baseM": 1.0967110350588336,
+      "cuello": "cuello-articulado",
+      "mallas": 9
+    },
+    {
+      "dimensionesM": [
+        0.1300007242139627,
+        0.13608871820590251,
+        0.20261574549902162
+      ],
+      "baseM": 1.0967110350588336,
+      "cuello": "cuello-articulado",
+      "mallas": 9
+    }
+  ],
+  "mediciones": [
+    {
+      "calidad": "alta",
+      "fotogramas": 1079,
+      "duracionMs": 8007.60000000149,
+      "fps": 134.74699035913372,
+      "llamadas": 1051,
+      "triangulos": 460930
+    },
+    {
+      "calidad": "fluida",
+      "fotogramas": 1173,
+      "duracionMs": 8002.70000000298,
+      "fps": 146.57553075831447,
+      "llamadas": 1055,
+      "triangulos": 461250
+    }
+  ],
+  "errores": [],
+  "solicitudesHTTP": 0,
+  "limite": "GPU local a 1080p; sin proyector conectado ni prueba del equipo de Madrid. Aves y soportes ilustrativos."
+}

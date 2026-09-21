@@ -173,3 +173,14 @@ runtimes locales cubren esta entrega. No se requieren servicios externos para tr
 Las siguientes sesiones deben conservar estos controles, contenidos y parámetros
 compartidos. Continuar ingeniería/ensayos B14–B19 desde ESTADO; comprobar proyector/GPU
 con el equipo real. El pulido visual no modifica la aceptación del sistema físico.
+
+### Refinamiento V3 sobre e6c989b
+
+El usuario pidió carteles, estructura y aves más realistas. Se corrige la escala
+tipográfica, se montan las placas, se reconstruyen las codornices y se añade su vista
+de detalle ES/EN. Se regeneran Blender/GLB y defensa; preservar las revisiones anteriores.
+La prueba local ya incluye GPU Intel y RTX 4060 con Chrome visible: consultar
+`PRUEBA-REFINAMIENTO-V3.json` y `MEJORA-VISUAL-BILINGUE.md`. La pantalla interna no
+sustituye un proyector. `RECORRIDO-BILINGUE.md` prepara el ensayo humano; no se declara
+realizado sin participantes. No repetir la instalación de Blender ni cambiar parámetros
+de ingeniería para justificar acabados visuales.

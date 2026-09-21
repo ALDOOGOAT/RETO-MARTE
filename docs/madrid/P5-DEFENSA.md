@@ -173,7 +173,7 @@ del casco, señal física de acceso pendiente y selección de lote. La explosió
 separa grupos visualmente y pausa el modelo. El paisaje es procedural, no topografía
 de un emplazamiento medido. Las piezas y fotos digitales se rotulan como renders.
 
-### Revisión visual V2
+### Revisión visual V3
 
 Los modelos interactivos y el atlas incorporan selector ES/EN local, navegación por
 procesos, fichas breves con evidencia y datos avanzados desplegables. Las cifras se
@@ -182,11 +182,16 @@ y elecciones de controles. Los rótulos sobre equipos también cambian de idioma
 
 El globo utiliza una imagen Viking NASA/JPL-Caltech procesada por USGS, sin relieve
 medido. La localización del hábitat sigue siendo ilustrativa. El terreno del módulo
-es procedural. La iluminación, materiales y piezas de acabado V2 son representaciones;
+es procedural. La iluminación, materiales y piezas de acabado V3 son representaciones;
 no acreditan selección resistente ni capacidades de equipos. Blender/GLB, capturas y
 materiales de defensa se regeneran desde la misma escena. La candidata de acceso B19
 mantiene sus enclavamientos y se presenta aparte. Véase
 [revisión y comprobaciones](MEJORA-VISUAL-BILINGUE.md).
+
+V3 añade anatomía y movimiento de las aves, 38 rótulos sin deformación tipográfica
+y soportes visibles. Las siete figuras no prueban capacidad para las 24 aves propuestas.
+Se midió la GPU local a 1080p; el proyector y equipo del evento siguen pendientes.
+El [guion bilingüe de la demo](RECORRIDO-BILINGUE.md) acompaña al recorrido automático.
 
 ## 6. Validación terrestre, costes y Chiapas
 

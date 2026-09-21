@@ -1,0 +1,27 @@
+{
+  "fecha": "2026-09-21T08:56:41.122Z",
+  "renderer": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL 4.6)",
+  "pantalla": [
+    1920,
+    1080
+  ],
+  "dpr": 1,
+  "mediciones": [
+    {
+      "calidad": "alta",
+      "fotogramas": 193,
+      "duracionMs": 8000.400000002235,
+      "fps": 24.123793810302743,
+      "llamadas": 1052,
+      "triangulos": 461010
+    },
+    {
+      "calidad": "fluida",
+      "fotogramas": 185,
+      "duracionMs": 8000.20000000298,
+      "fps": 23.12442188944415,
+      "llamadas": 1051,
+      "triangulos": 460930
+    }
+  ]
+}

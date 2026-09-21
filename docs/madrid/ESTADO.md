@@ -1,75 +1,80 @@
 # ESTADO · preparación para Madrid
 
-**Sesión:** revisión visual V2 después del cierre acumulado S0–S5/B19.
-**Fecha:** 21 sep 2026. **Rama:** `preparacion-madrid-p1`; base `9552f04`.
-El commit que contiene este archivo identifica el checkpoint. Push autorizado en esta rama.
-**Aceptación:** candidata digital para revisión. La mejora visual no cierra ingeniería,
-validación física, presupuesto ni condiciones finales de Madrid.
+**Sesión:** refinamiento visual V3 sobre V2 y cierre S0–S5/B19.
+**Fecha:** 21 sep 2026. **Rama:** `preparacion-madrid-p1`; base `e6c989b`.
+El commit que contiene este archivo identifica el checkpoint. Push autorizado.
+**Aceptación:** candidata digital. La presentación visual no cierra validación física,
+condiciones del organizador ni presupuesto.
 
 ## Decisiones vigentes
 
-Aldo pidió priorizar todos los modelos activos y facilitar su presentación en español
-e inglés. Se conserva arquitectura B: 20 cartuchos idénticos, ocho estaciones de
-regeneración y doce posiciones de cultivo, Ø4.56 m, piso 0 y cama 0.62 m. La
-configuración dimensional y `milpa360-modelo.js` no cambiaron en V2. B19 mantiene
-su vestíbulo como candidata separada; no se incorpora como acceso aceptado.
+Aldo pidió mejorar realismo de carteles, estructura y codornices, además de comprobar
+el recorrido bilingüe y la fluidez disponible. Se conserva arquitectura B: veinte
+cartuchos idénticos, ocho estaciones de recuperación y doce posiciones de cultivo,
+Ø4.56 m, piso 0 y cama 0.62 m. La configuración dimensional y el modelo de proceso
+no cambiaron. B19 permanece separado, sin acceso físico aprobado.
 
-Siguen D1/D2, provisiones completas sin descontar cosechas, reservas de 30 días y
-separación de salmuera/metanogénesis. El aporte nominal es 2.46% de kcal; 25.26 kWh/d
-es un subtotal eléctrico con hipótesis y cargas omitidas. Las decisiones y límites
-acumulados están en `CIERRE-ACUMULADO.md` y `CALCULOS-CIERRE.md`. El piloto Tuxtla
-permanece exploratorio, sin sitio, operador ni datos inventados.
+Siguen D1/D2, provisiones completas sin descontar cosechas, reservas de treinta días
+y separación de salmuera/metanogénesis. El aporte nominal es 2.46% de kcal; 25.26 kWh/d
+es un subtotal eléctrico con hipótesis y cargas omitidas. Los límites acumulados están
+en `CIERRE-ACUMULADO.md` y `CALCULOS-CIERRE.md`. La matriz conserva 27 obligatorios:
+uno documental con evidencia, 24 parciales, uno pendiente y uno por confirmar.
 
-## Cambios entregados
+## Cambios entregados en V3
 
-El simulador organiza Marte, módulo, acceso y atlas en una navegación común. Añade
-introducción breve, recorrido de cinco pasos, vistas rápidas, ayuda, teclado,
-pantalla completa, calidad gráfica y adaptación móvil. Las fichas distinguen datos
-publicados, cálculos, propuestas y escenarios. La inspección agrupa información
-avanzada y permite conservar lote/fallo/escenario al cambiar idioma.
+Los 38 rótulos, con 65 líneas, adaptan el tamaño de la fuente y la proporción de su
+textura a la superficie. Se elimina la compresión horizontal de glifos, se centra el
+bloque tipográfico con márgenes y se corrige el contraste sobre placas claras.
+Archivo identifica equipos e IBM Plex Mono códigos. Bastidores, tornillos y apoyos
+hacen explícito cómo se montan los carteles; el orden de rotación conserva la
+inclinación local. Las dos caras se leen sin reflejo.
 
-`milpa360-contenido.js` comparte las cifras vigentes entre ambos idiomas y atlas.
-Se sustituyeron valores históricos incrustados: 6.30 L/d de transpiración, 10.48 kWh/d
-de luz y 0.199 kWh/d de biogás químico, entre otros. `milpa360-idiomas.js`,
-`milpa360-traducciones.js` y `milpa360-interfaz.css` mantienen traducción local y estilo
-común. ES/EN cubre controles, fichas, mensajes y rótulos del modelo. Las fuentes,
-memoria y deck conservan español; no se presenta una traducción documental completa.
+Se añaden ménsulas de luminarias, apoyos fijos del aviario y una rejilla abierta.
+Estos detalles siguen siendo ilustrativos: no acreditan resistencia, tolerancias,
+limpieza, interferencias con cultivos o bienestar animal. Las codornices incorporan
+alas plegadas, plumaje, pecho moteado, patas con dedos, ojos, pico y cuello articulado.
+La referencia visual principal es Kyoto City Zoo; no se distribuyen sus fotografías.
+Las siete figuras no prueban capacidad para las 24 aves propuestas. Las mallas de
+cada ave llevan nombres identificables en la exportación.
 
-El módulo incorpora materiales y acabados de equipos, juntas, bridas e instrumentación
-esquemática. Se corrigieron rótulos invertidos al mirar el dorso de las placas. B19
-muestra con mayor claridad cargas, reserva del núcleo y pasos de la maniobra. El
-atlas reemplaza la antigua calculadora simplificada de blindaje por límites explícitos,
-retardo interactivo y una explicación del ciclo y aporte alimentario.
+La ficha del aviario ofrece «Ver aves de cerca / Inspect birds». En móvil cierra el
+panel y encuadra el conjunto; «Perspectiva» recupera la vista general. Se conservan
+idiomas locales, recorrido, fallos, selección e inventarios. `RECORRIDO-BILINGUE.md`
+prepara el ensayo con una persona ajena al proyecto. Memoria y deck mantienen español.
+La comparación histórica conserva su ruta `COMPARACION-VISUAL-V2.html`, ahora con
+V2 frente a V3 y vistas de detalle de las aves.
 
-El globo usa el JPEG Viking de NASA/JPL-Caltech procesado por USGS, archivado con
-URL, fecha, crédito y SHA-256. Los marcadores se ajustan a las UV de SphereGeometry;
-son referencias aproximadas, no cartografía de precisión ni selección validada de sitio.
-El terreno local sigue siendo ilustrativo. `COMPARACION-VISUAL-V2.html` conserva
-capturas anteriores y actuales. No se instalaron dependencias innecesarias.
+## Pruebas y evidencia
 
-## Verificación y archivos de presentación
+Pasaron determinismo, conservación, cuatro fallos, recuperación y secuencia B19;
+también geometría y cotas. El verificador V3 comprueba fuentes, límites de texto,
+proporción de placas, apoyo de las aves, teclado, vista móvil y los cinco pasos del
+recorrido en ES y EN. Las pruebas offline pasaron desde extracción limpia, con
+correspondencia de archivos mediante S6. Los reportes conservan errores y solicitudes
+HTTP; las pruebas superadas no registran ninguno.
 
-Pasaron los tests P3/B19 y geometría. Chrome verificó controles, fallos, inventarios,
-cambio de idioma, formularios, móvil, teclado y atlas sin red. Las pruebas y capturas
-están en `PRUEBA-P3-NAVEGADOR.json`, `PRUEBA-B19-NAVEGADOR.json` y
-`PRUEBA-VISUAL-V2.json`; no hay errores de consola ni solicitudes HTTP en esos recorridos.
-Los tres recorridos pasaron desde extracción limpia; S6 coteja los archivos del paquete.
-SwiftShader es renderizado por software; no acredita el objetivo de 30 FPS del evento.
+Se detectaron Intel RPL-P y RTX 4060 Laptop, con pantalla interna y sin proyector.
+Intel headless dio aproximadamente 24 FPS en una muestra con el modelo en marcha.
+NVIDIA falló al crear contexto headless, pero funcionó en ventana X11: la primera
+muestra de ocho segundos dio aproximadamente 72 FPS a 1080p en detalle alto; la
+repetición final desde el ZIP limpio registró 134.75. La variación entre muestras
+breves impide tratarlas como rendimiento mínimo sostenido.
+`PRUEBA-REFINAMIENTO-V3.json` registra la comprobación final y `RENDIMIENTO-V3-INTEL.json`
+la muestra Intel. Las condiciones difieren; no es una comparación controlada de GPU.
 
-Blender 5.2/MCP está conectado. La exportación conserva normales y texturas; reimportar
-el GLB verificó 1,267 mallas y cotas del piso a 1e-5 m de tolerancia digital. Se añadió
-`MILPA360_V2_REVISION` en la aplicación, conservando `MILPA360_S5_REVISION`.
-El generador guarda BLEND/GLB y render; no sobrescribe la sesión abierta del usuario.
-Memoria de diez páginas, nueve diapositivas y respaldo de 300 segundos se sincronizan
-con los nuevos visuales. Manifiestos SHA-256 y verificador S6 identifican la entrega.
+Se reducen llamadas de dibujo agrupando conjuntos estáticos e instanciando rocas.
+Las sombras se actualizan a 10 Hz durante el movimiento y la cámara a frecuencia
+completa. Blender regeneró BLEND/GLB y render con GPU. La reimportación verificó
+1,242 mallas y cotas del piso a 1e-5 m de tolerancia digital. MCP añadió
+`MILPA360_V3_REVISION`, conservó V2 y comprobó 63 piezas de aves. No se sobrescribió
+la sesión abierta del usuario. PDFs, deck y vídeo se sincronizaron con las capturas V3; se revisaron visualmente
+las diez páginas y las nueve diapositivas, y se decodificó el vídeo de 300 segundos.
 
 ## Siguiente acción exacta
 
-Abrir `prototipo-3d/milpa360-simulador.html`, elegir ES/EN y ensayar el recorrido ante
-una persona que no conozca el proyecto. Medir GPU/proyector y legibilidad reales.
-Después continuar B14–B19 y ensayo E4 según `CIERRE-ACUMULADO.md`; incorporar reglas,
-recursos, cotizaciones y mediciones cuando existan. No repetir S0–S5 ni volver a
-instalar Blender. La matriz mantiene 27 obligatorios: uno documental con evidencia,
-24 parciales, uno pendiente y uno por confirmar. Los cinco archivos preexistentes del
-usuario conservan sus hashes y quedan fuera del commit. La revisión independiente y
-la aceptación física siguen abiertas.
+Abrir la demo y revisar el aviario, después ensayar `RECORRIDO-BILINGUE.md` con alguien
+ajeno al equipo. Conectar el proyector y medir legibilidad y rendimiento en el equipo
+del evento. Continuar B14–B19/E4 según el cierre acumulado cuando existan recursos,
+reglas, cotizaciones y mediciones. No repetir instalaciones ni auditorías ya resueltas.
+Los cinco archivos preexistentes del usuario conservan sus hashes y quedan fuera del
+commit. Ensayo humano, revisión independiente y aceptación física permanecen abiertos.

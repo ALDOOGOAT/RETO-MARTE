@@ -24,11 +24,11 @@ function text(s,content,x,y,w,h,size=28,font='Archivo',color=C.ink){
 }
 function slide(title,i,source){
   const s=p.slides.add();s.background.fill=C.bg;
-  text(s,'BIOMARS CHIAPAS / MADRID · V2',56,26,900,24,16,'IBM Plex Mono',C.muted);
+  text(s,'BIOMARS CHIAPAS / MADRID · V3',56,26,900,24,16,'IBM Plex Mono',C.muted);
   text(s,title,56,74,1170,90,54,'Bodoni Moda');
   text(s,String(i).padStart(2,'0')+' / 09',1110,663,115,30,17,'IBM Plex Mono',C.muted);
   text(s,'Concepto y cálculo · sin validación física',56,663,940,30,17,'Archivo',C.muted);
-  s.speakerNotes.textFrame.setText((notes[i-1]||'')+'\n\nTrazabilidad: '+source+'\nCierre acumulado 21 sep 2026: CALCULOS-CIERRE.md y CIERRE-ACUMULADO.md. Capturas y Blender regenerados en revisión visual V2; cotas S5 conservadas. B15-B19 no aceptados físicamente.');
+  s.speakerNotes.textFrame.setText((notes[i-1]||'')+'\n\nTrazabilidad: '+source+'\nCierre acumulado 21 sep 2026: CALCULOS-CIERRE.md y CIERRE-ACUMULADO.md. Capturas y Blender regenerados en revisión visual V3; cotas S5 conservadas. B15-B19 no aceptados físicamente.');
   return s;
 }
 async function photo(s,name,x,y,w,h){

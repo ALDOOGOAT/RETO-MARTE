@@ -8,7 +8,10 @@ import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 const raiz=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const perfil=await mkdtemp(path.join(os.tmpdir(),'milpa-chrome-'));
-const chrome=spawn('google-chrome',['--headless=new','--no-sandbox','--allow-file-access-from-files','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-angle=swiftshader','--remote-debugging-port=0','--no-first-run','--no-default-browser-check','--disable-background-networking','--user-data-dir='+perfil,'about:blank'],{stdio:['ignore','ignore','pipe']});
+const gpu=process.env.MILPA_GPU==='1';
+const graficos=gpu?['--enable-gpu','--use-gl=angle','--use-angle=gl']:['--enable-unsafe-swiftshader','--use-angle=swiftshader'];
+const ventana=process.env.MILPA_VISIBLE==='1'?['--ozone-platform=x11','--window-size=1920,1080']:['--headless=new'];
+const chrome=spawn('google-chrome',[...ventana,'--no-sandbox','--allow-file-access-from-files','--disable-dev-shm-usage',...graficos,'--remote-debugging-port=0','--no-first-run','--no-default-browser-check','--disable-background-networking','--user-data-dir='+perfil,'about:blank'],{stdio:['ignore','ignore','pipe']});
 let socket;
 try {
   console.log('Chrome: arranque aislado');
@@ -28,7 +31,55 @@ try {
   await cdp('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});
   await cdp('Network.setBlockedURLs',{urls:['http://*','https://*']});
   await cdp('Emulation.setDeviceMetricsOverride',{width:1920,height:1080,deviceScaleFactor:1,mobile:false});
-  if(process.env.MILPA_VISUAL_V2==='1'){
+  if(process.env.MILPA_REFINAMIENTO_V3==='1'){
+    const base=process.env.MILPA_DEMO_DIR||path.join(raiz,'prototipo-3d');
+    const dir=path.join(raiz,'docs/madrid/capturas-v3');await mkdir(dir,{recursive:true});
+    await cdp('Page.navigate',{url:pathToFileURL(path.join(base,'milpa360-simulador.html')).href+'?vista=habitat&play=0&sol=62'});
+    await esperar('typeof refsHab!=="undefined" && refsHab && !document.getElementById("carga")');
+    const cap=async n=>{await evaluar('new Promise(r=>setTimeout(r,700))');const im=await cdp('Page.captureScreenshot',{format:'png'});await writeFile(path.join(dir,n+'.png'),Buffer.from(im.data,'base64'));};
+    const hardware=await evaluar(`(()=>{const gl=renderer.getContext(),ex=gl.getExtension('WEBGL_debug_renderer_info');return {renderer:ex?gl.getParameter(ex.UNMASKED_RENDERER_WEBGL):'desconocido',pantalla:[innerWidth,innerHeight],dpr:devicePixelRatio};})()`);
+    if(gpu)assert.ok(!/SwiftShader|llvmpipe/i.test(hardware.renderer),'La prueba GPU cayó a software');
+    const rotulado={};
+    for(const lang of ['es','en']){
+      await evaluar(`MILPA_I18N.set('${lang}')`);
+      rotulado[lang]=await evaluar(`rotulos.map(t=>({aspecto:t.userData.aspecto,ancho:t.image.width,alto:t.image.height,lineas:t.userData.lineas}))`);
+      for(const r of rotulado[lang]){
+        assert.ok(Math.abs(r.ancho/r.alto-r.aspecto)<.06,'Proporción deformada');
+        for(const l of r.lineas)assert.ok(l.ancho<=l.max+.1&&l.y-l.px/2>=0&&l.y+l.px/2<=l.alto,'Texto fuera de placa: '+l.texto);
+      }
+    }
+    assert.equal(await evaluar(`document.fonts.check('700 20px Archivo')&&document.fonts.check('600 20px "IBM Plex Mono"')`),true);
+    const aves=await evaluar(`codornices.map(q=>{const b=new THREE.Box3().setFromObject(q),s=b.getSize(new THREE.Vector3());return {dimensionesM:s.toArray(),baseM:b.min.y,cuello:q.userData.cuello.name,mallas:q.getObjectsByProperty('isMesh',true).length};})`);
+    const pisoAve=await evaluar('aviario.localToWorld(new THREE.Vector3(0,.629,0)).y');
+    assert.equal(aves.length,7);for(const a of aves){assert.equal(a.cuello,'cuello-articulado');assert.ok(a.baseM>=pisoAve&&a.baseM-pisoAve<.015);}
+    await evaluar('MILPA_I18N.set("es")');await cap('modulo');
+    await evaluar('abrirFicha("aviario");document.getElementById("ver-aves").click()');
+    assert.equal(await evaluar('S.detalle&&!S.play'),true);await cap('aviario-es');
+    await evaluar('MILPA_I18N.set("en")');assert.equal(await evaluar('document.getElementById("ver-aves").textContent'),'Inspect birds');await cap('aviario-en');
+    await cdp('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:false});
+    await evaluar('document.getElementById("ver-aves").click()');
+    assert.equal(await evaluar('document.documentElement.scrollWidth<=innerWidth+1&&ficha.classList.contains("oculto")'),true);await cap('aviario-movil');
+    await cdp('Emulation.setDeviceMetricsOverride',{width:1920,height:1080,deviceScaleFactor:1,mobile:false});
+    const zoom=await evaluar('orbe.dist');await evaluar('lienzo.dispatchEvent(new KeyboardEvent("keydown",{key:"+",bubbles:true}))');assert.ok(await evaluar('orbe.dist')<zoom);
+    await evaluar('document.getElementById("cerrar").click();orbe.dist=.62;mira.copy(codornices[0].localToWorld(new THREE.Vector3(.01,.11,0)));');await cap('codorniz');
+    await evaluar('vistaTecnica("orbita");MILPA_I18N.set("es");');assert.equal(await evaluar('!!S.detalle'),false);
+    for(const lang of ['es','en'])for(let paso=0;paso<5;paso++){
+      await evaluar(`MILPA_I18N.set('${lang}');mostrarPaso(${paso})`);
+      assert.equal(await evaluar('fichaActual'),await evaluar(`recorrido[${paso}]`));
+      assert.equal(await evaluar('document.getElementById("tour-next").textContent'),lang==='es'?(paso===4?'Terminar recorrido':'Siguiente'):(paso===4?'Finish tour':'Next'));
+    }
+    await evaluar('document.getElementById("cerrar").click();vistaTecnica("orbita");Object.assign(orbe,{theta:-.62,phi:1.02,dist:8.4});mira.set(0,1,0);');
+    const mediciones=[];
+    for(const calidad of ['alta','fluida']){
+      await evaluar(`document.getElementById('calidad').value='${calidad}';document.getElementById('calidad').dispatchEvent(new Event('change'));S.play=true;S.vel=1;`);
+      await evaluar('new Promise(r=>setTimeout(r,1500))');
+      const medida=await evaluar('new Promise(resolve=>{let n=0,raf;const inicio=performance.now();function contar(){n++;raf=requestAnimationFrame(contar);}raf=requestAnimationFrame(contar);setTimeout(()=>{cancelAnimationFrame(raf);const ms=performance.now()-inicio;resolve({fotogramas:n,duracionMs:ms,fps:n*1000/ms,llamadas:renderer.info.render.calls,triangulos:renderer.info.render.triangles});},8000);})');
+      mediciones.push({calidad,...medida});
+    }
+    await evaluar('S.play=false');assert.deepEqual(errores,[]);assert.deepEqual(peticiones.filter(u=>/^https?:/.test(u)),[]);
+    const report={fecha:new Date().toISOString(),navegador:await cdp('Browser.getVersion'),modo:process.env.MILPA_VISIBLE==='1'?'ventana X11':'headless',...hardware,cpu:os.cpus()[0].model,rotulado,aves,mediciones,errores,solicitudesHTTP:0,limite:'GPU local a 1080p; sin proyector conectado ni prueba del equipo de Madrid. Aves y soportes ilustrativos.'};
+    await writeFile(path.join(raiz,'docs/madrid/PRUEBA-REFINAMIENTO-V3.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({...report,rotulado:Object.fromEntries(Object.entries(rotulado).map(([k,v])=>[k,v.length]))},null,2));
+  }else if(process.env.MILPA_VISUAL_V2==='1'){
     const base=process.env.MILPA_DEMO_DIR?path.resolve(process.env.MILPA_DEMO_DIR,'..'):raiz;
     const dir=path.join(raiz,'docs/madrid/capturas-v2');await mkdir(dir,{recursive:true});
     const cap=async n=>{await new Promise(r=>setTimeout(r,350));const im=await cdp('Page.captureScreenshot',{format:'png'});await writeFile(path.join(dir,n+'.png'),Buffer.from(im.data,'base64'));};
@@ -90,7 +141,7 @@ try {
 
     assert.deepEqual(errores,[]);assert.deepEqual(peticiones.filter(u=>/^https?:/.test(u)),[]);
     await writeFile(path.join(dir,'inventario-texto.json'),JSON.stringify(inventario,null,2));
-    const report={fecha:new Date().toISOString(),navegador:await cdp('Browser.getVersion'),idiomas:['es','en'],controles:'recorrido, fichas, inspección, comparación, acceso, atlas, móvil, teclado y reducción de movimiento',estado_conservado:true,errores,solicitudesHTTP:0,limite:'SwiftShader; no prueba del equipo del evento ni validación física'};
+    const report={fecha:new Date().toISOString(),navegador:await cdp('Browser.getVersion'),idiomas:['es','en'],controles:'recorrido, fichas, inspección, comparación, acceso, atlas, móvil, teclado y reducción de movimiento',estado_conservado:true,errores,solicitudesHTTP:0,limite:'Prueba local; no prueba del equipo del evento ni validación física'};
     await writeFile(path.join(raiz,'docs/madrid/PRUEBA-VISUAL-V2.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
   }else
   if(process.env.MILPA_SOLO_ACCESO==='1'){
@@ -230,7 +281,7 @@ try {
   }
   assert.deepEqual(errores,[],'Errores de consola');
   assert.deepEqual(peticiones.filter(u=>/^https?:/.test(u)),[],'La demo solicita Internet');
-  const informe={fecha:new Date().toISOString(),prueba:'Chrome headless, red deshabilitada, file://',browser:await cdp('Browser.getVersion'),cpu:os.cpus()[0].model,plataforma:os.platform(),...hardware,cotas,piso,rendimiento,limite:'SwiftShader por software; NO prueba del equipo del evento',controles:process.env.MILPA_SOLO_CAPTURAS==='1'?'omitidos; sólo capturas':'pausa, avance, reset, fallos, cuarentena, vistas, fichas, despiece, selección y comparación comprobados',errores,solicitudesHTTP:0};
+  const informe={fecha:new Date().toISOString(),prueba:'Chrome headless, red deshabilitada, file://',browser:await cdp('Browser.getVersion'),cpu:os.cpus()[0].model,plataforma:os.platform(),...hardware,cotas,piso,rendimiento,limite:gpu?'GPU local; no prueba del equipo del evento':'SwiftShader por software; NO prueba del equipo del evento',controles:process.env.MILPA_SOLO_CAPTURAS==='1'?'omitidos; sólo capturas':'pausa, avance, reset, fallos, cuarentena, vistas, fichas, despiece, selección y comparación comprobados',errores,solicitudesHTTP:0};
   await writeFile(path.join(raiz,'docs/madrid/PRUEBA-P3-NAVEGADOR.json'),JSON.stringify(informe,null,2)+'\n');
   console.log(JSON.stringify(informe,null,2));
   }

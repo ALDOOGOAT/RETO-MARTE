@@ -637,14 +637,33 @@ function texturaRegolito(S){
 }
 
 /* Plumaje moteado de la codorniz japonesa */
-function texturaCodorniz(){
-  const S = 128, c = document.createElement("canvas"); c.width = c.height = S;
+function texturaCodorniz(zona='dorso'){
+  const S = 512, c = document.createElement("canvas"); c.width = c.height = S;
   const g = c.getContext("2d");
-  g.fillStyle = "#A8916F"; g.fillRect(0, 0, S, S);
-  for (let i = 0; i < 260; i++){
-    const x = azar() * S, y = azar() * S, r = 1.4 + azar() * 3.4;
-    g.fillStyle = azar() < 0.62 ? "rgba(74,55,36,.72)" : "rgba(236,226,206,.55)";
-    g.beginPath(); g.ellipse(x, y, r, r * 0.6, azar() * TAU, 0, TAU); g.fill();
+  let seed=421;const rnd=()=>{seed=(1664525*seed+1013904223)>>>0;return seed/4294967296;};
+  const pecho=zona==='pecho';
+  g.fillStyle=pecho?'#c6b497':'#6f614d';g.fillRect(0,0,S,S);
+  // Plumas irregulares y barbas finas. Sin cuadrícula ni escamas geométricas.
+  for(let fila=-2;fila<33;fila++)for(let col=-2;col<29;col++){
+    const x=col*20+(fila%2)*10+(rnd()-.5)*9, y=fila*17+(rnd()-.5)*8;
+    const w=10+rnd()*6,h=19+rnd()*13;
+    g.save();g.translate(x,y);g.rotate((rnd()-.5)*.34);
+    const grad=g.createLinearGradient(-w,0,w,0);
+    if(pecho){grad.addColorStop(0,'#b4a083');grad.addColorStop(.5,'#d5c5a8');grad.addColorStop(1,'#b4a083');}
+    else {grad.addColorStop(0,'#443b2d');grad.addColorStop(.5,['#95836a','#7e6b50','#a08b67'][Math.floor(rnd()*3)]);grad.addColorStop(1,'#584a36');}
+    g.fillStyle=grad;g.beginPath();g.moveTo(0,-h);
+    g.bezierCurveTo(w,-h,w,h*.3,0,h);g.bezierCurveTo(-w,h*.3,-w,-h,0,-h);g.fill();
+    if(!pecho){
+      g.strokeStyle='rgba(221,205,167,.75)';g.lineWidth=.6+rnd()*1.8;
+      g.beginPath();g.moveTo(0,-h*.9);g.quadraticCurveTo(rnd()*3,0,0,h*.8);g.stroke();
+    } else if(rnd()<.57){
+      g.fillStyle='rgba(55,45,31,.65)';g.beginPath();g.ellipse(0,h*.2,1+rnd()*2,3+rnd()*5,.1,0,TAU);g.fill();
+    }
+    for(let j=0;j<12;j++){
+      const yy=-h*.7+j*h*.12;g.strokeStyle=j%2?'rgba(242,227,192,.19)':'rgba(38,30,22,.2)';g.lineWidth=.6;
+      g.beginPath();g.moveTo(0,yy);g.lineTo(w*.75,yy-h*.17);g.moveTo(0,yy);g.lineTo(-w*.75,yy-h*.17);g.stroke();
+    }
+    g.restore();
   }
   const t = new T.CanvasTexture(c);
   t.colorSpace = T.SRGBColorSpace; t.wrapS = t.wrapT = T.RepeatWrapping;
@@ -666,41 +685,49 @@ const MONO_TEX = "600 %dpx 'IBM Plex Mono', ui-monospace, monospace";
 const SANS_TEX = "700 %dpx Archivo, Helvetica, sans-serif";
 
 /* Chapa rotulada: fondo, filete y una o varias líneas de texto */
-const placasTraducibles=[];
+const placasTraducibles=[], rotulos=[];
 function texturaPlaca(lineas, opt){
   opt = opt || {};
-  const W = opt.w || 512, H = opt.h || 128;
+  const W = Math.max(1024,opt.w||0), H = Math.round(W*(opt.h||128)/(opt.w||512));
+  let tex;
   const pintar=(g) => {
+    const W=g.canvas.width,H=g.canvas.height;
     g.fillStyle = opt.fondo || "#12181E"; g.fillRect(0, 0, W, H);
     if (opt.filete !== false){
       g.strokeStyle = opt.borde || "#5A6A76"; g.lineWidth = Math.max(2, H * 0.028);
       g.strokeRect(g.lineWidth, g.lineWidth, W - g.lineWidth * 2, H - g.lineWidth * 2);
     }
-    if (opt.barra){ g.fillStyle = opt.barra; g.fillRect(0, 0, W, H * 0.10); }
-    let y = H * (opt.y0 !== undefined ? opt.y0 : 0.5);
-    for (const L of lineas){
-      const px = Math.round(H * (L.s || 0.30));
-      g.font = (L.mono === false ? SANS_TEX : MONO_TEX).replace("%d", px);
-      g.fillStyle = L.c || "#E8EEF3";
+    if (opt.barra){ g.fillStyle = opt.barra; g.fillRect(W*.035,H*.10,W*.012,H*.80); }
+    const fondo=new T.Color(opt.fondo||'#12181E');
+    const claro=fondo.r*.2126+fondo.g*.7152+fondo.b*.0722>.45;
+    const margen=W*.09, max=W-margen*2;
+    const filas=lineas.map(L=>{
+      const txt=MILPA_I18N.t(L.t);let px=Math.round(H*(L.s||.26));
+      const font=L.mono===true?MONO_TEX:SANS_TEX;
+      const ancho=()=>{g.font=font.replace('%d',px);return g.measureText(txt).width;};
+      while(ancho()>max&&px>8)px--;
+      return {L,txt,px,ancho:ancho(),font};
+    });
+    const gap=H*.07,total=filas.reduce((n,f)=>n+f.px,0)+gap*(filas.length-1);
+    let y=(H-total)/2;
+    const metrica=[];
+    for(const {L,txt,px,ancho,font} of filas){
+      g.font=font.replace('%d',px);
+      g.fillStyle=claro?'#182b35':L.c||opt.tinta||'#f2f3ed';
       g.textAlign = "center"; g.textBaseline = "middle";
-      if (L.esp){ /* letterspacing manual */
-        const txt = MILPA_I18N.t(L.t), esp = px * L.esp;
-        let total = 0;
-        for (const ch of txt) total += g.measureText(ch).width + esp;
-        total -= esp;
-        g.save();g.translate(W/2,0);g.scale(Math.min(1,W*.90/total),1);
-        let x = -total / 2;
-        for (const ch of txt){ g.textAlign = "left"; g.fillText(ch, x, y); x += g.measureText(ch).width + esp; }
-        g.restore();g.textAlign = "center";
-      } else {
-        g.fillText(MILPA_I18N.t(L.t), W / 2, y, W*.9);
-      }
-      y += px * (L.sig || 1.45);
+      g.fillText(txt,W/2,y+px/2); // Nunca comprimir horizontalmente los glifos.
+      metrica.push({texto:txt,px,ancho,max,y:y+px/2,alto:H});y+=px+gap;
     }
+    if(tex)tex.userData.lineas=metrica;
   };
-  const tex=lienzoTex(W,H,pintar);
+  tex=lienzoTex(W,H,pintar);tex.userData.pintar=pintar;
+  rotulos.push(tex);
   placasTraducibles.push(()=>{pintar(tex.image.getContext('2d'));tex.needsUpdate=true;});
   return tex;
+}
+function ajustarRotulo(tex,aspecto){
+  tex.image.height=Math.max(96,Math.round(tex.image.width/aspecto));
+  tex.userData.aspecto=aspecto;tex.userData.pintar(tex.image.getContext('2d'));tex.needsUpdate=true;
 }
 
 /* Casco: chapas remachadas con polvo acumulado abajo */
@@ -879,6 +906,7 @@ const lienzo = $("lienzo");
 const renderer = new T.WebGLRenderer({ canvas: lienzo, antialias: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));   // 13 luces × 8 Mpx no cabe en el presupuesto
 renderer.shadowMap.enabled = true;
+renderer.shadowMap.autoUpdate = false;
 renderer.shadowMap.type = T.PCFSoftShadowMap;
 renderer.toneMapping = T.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.86;
@@ -1147,6 +1175,11 @@ function mats(){
   M.azul    = new T.MeshStandardMaterial({ color: 0x5397A8, roughness: 0.28, metalness: 0.5 });
   M.cobre   = new T.MeshStandardMaterial({ color: 0xA56A3C, roughness: 0.34, metalness: 0.8 });
   M.ave     = new T.MeshStandardMaterial({ map: texAve, roughness: 0.86, metalness: 0 });
+  M.pecho   = new T.MeshStandardMaterial({map:texturaCodorniz('pecho'),roughness:.95});
+  M.pluma   = new T.MeshStandardMaterial({color:0xc9b088,roughness:.95});
+  M.pico    = new T.MeshStandardMaterial({color:0x665b48,roughness:.62});
+  M.pataAve = new T.MeshStandardMaterial({color:0xad8262,roughness:.8});
+  M.ojoAve  = new T.MeshStandardMaterial({color:0x080a09,roughness:.18});
   M.huevo   = new T.MeshStandardMaterial({ map: texHuevo, roughness: 0.42, metalness: 0 });
   M.rego    = new T.MeshStandardMaterial({ map: texRego, roughness: 1.0, metalness: 0 });
   M.sustrato= new T.MeshStandardMaterial({ color: 0x8A5334, roughness: 1.0, metalness: 0 });
@@ -1403,19 +1436,56 @@ function mataMusgo(){
 
 /* ── codorniz japonesa ── */
 function codorniz(){
-  const g = new T.Group();
-  const cuerpo = malla(new T.SphereGeometry(0.062, 14, 11), M.ave, [0, 0.062, 0], g);
-  cuerpo.scale.set(1.42, 1, 0.92);
-  const cabeza = malla(new T.SphereGeometry(0.034, 12, 10), M.ave, [0.075, 0.108, 0], g);
-  cabeza.scale.set(1.1, 1, 1);
-  malla(new T.ConeGeometry(0.012, 0.032, 7), M.oscuro, [0.107, 0.101, 0], g).rotation.z = -Math.PI / 2;
-  const cola = malla(new T.ConeGeometry(0.03, 0.072, 7), M.ave, [-0.09, 0.072, 0], g);
-  cola.rotation.z = Math.PI / 2 + 0.3; cola.scale.set(1, 1, 0.45);
-  for (const s of [-1, 1]){
-    const p = malla(new T.CylinderGeometry(0.005, 0.005, 0.03, 5), M.oscuro,
-      [0.005, 0.015, s * 0.018], g, false);
-    p.castShadow = true;
+  const g=new T.Group();g.name='codorniz-japonesa';
+  const cuerpo=new T.Group(),cabeza=new T.Group();
+  const ovalo=(padre,mat,pos,esc,rz=0)=>{
+    const o=malla(new T.SphereGeometry(1,24,16),mat,pos,padre);
+    o.scale.set(...esc);o.rotation.z=rz;return o;
+  };
+  const hueso=(a,b,r,mat,padre)=>{
+    const v=new T.Vector3(...b).sub(new T.Vector3(...a));
+    const o=malla(new T.CylinderGeometry(r*.78,r,v.length(),7),mat,
+      a.map((x,i)=>(x+b[i])/2),padre);
+    o.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),v.normalize());return o;
+  };
+  ovalo(cuerpo,M.ave,[-.013,.096,0],[.094,.065,.053],-.10);
+  ovalo(cuerpo,M.pecho,[.034,.082,0],[.057,.057,.049],.15);
+  // Alas recogidas: cubierta sobre las rémiges; cola corta, sin cono ni cresta.
+  for(const s of [-1,1]){
+    ovalo(cuerpo,M.ave,[-.025,.111,s*.045],[.073,.042,.012],.22);
+    for(let i=0;i<5;i++){
+      const pl=ovalo(cuerpo,M.ave,[-.043-i*.006,.096+i*.006,s*(.052+i*.0005)],
+        [.036,.0028,.0018],.30+i*.025);
+      pl.rotation.x=s*.18;
+    }
+    ovalo(cuerpo,M.pecho,[.001,.044,s*.027],[.019,.025,.020]);
+    hueso([0,.047,s*.026],[-.010,.025,s*.027],.004,M.pataAve,cuerpo);
+    hueso([-.010,.025,s*.027],[.007,.008,s*.030],.0035,M.pataAve,cuerpo);
+    for(const dedo of [-1,0,1]){
+      const fin=[.038-(Math.abs(dedo)*.008),.0025,s*.030+dedo*.013];
+      hueso([.007,.006,s*.030],fin,.0022,M.pataAve,cuerpo);
+      hueso(fin,[fin[0]+.004,.0015,fin[2]],.0012,M.pico,cuerpo);
+    }
+    hueso([.007,.006,s*.030],[-.014,.0025,s*.035],.0018,M.pataAve,cuerpo);
   }
+  for(let i=-2;i<=2;i++)ovalo(cuerpo,M.ave,[-.097,.094,i*.008],[.029,.009,.011],-.25);
+  // Pivote anatómico: cuello, cabeza, ojos y pico se mueven juntos.
+  ovalo(cabeza,M.pecho,[.009,.010,0],[.031,.034,.028],-.25);
+  ovalo(cabeza,M.ave,[.031,.037,0],[.036,.032,.027],-.10);
+  ovalo(cabeza,M.pecho,[.052,.020,0],[.022,.018,.023],.12);
+  for(const s of [-1,1]){
+    ovalo(cabeza,M.pluma,[.034,.046,s*.025],[.027,.0023,.0011],.14);
+    ovalo(cabeza,M.pico,[.045,.035,s*.024],[.018,.004,.003],.1);
+    ovalo(cabeza,M.pico,[.044,.036,s*.026],[.0045,.0045,.0013]);
+    ovalo(cabeza,M.ojoAve,[.045,.037,s*.0278],[.0032,.0032,.0018]);
+  }
+  const pico=malla(new T.ConeGeometry(.009,.026,10),M.pico,[.075,.024,0],cabeza);
+  pico.rotation.z=-Math.PI/2-.10;pico.scale.z=.66;
+  const fijo=fusionar(cuerpo);fijo.name='cuerpo-alas-patas';g.add(fijo);
+  const cuello=new T.Group();cuello.name='cuello-articulado';cuello.position.set(.040,.113,0);
+  cuello.add(fusionar(cabeza));g.add(cuello);g.userData.cuello=cuello;
+  g.traverse(o=>{if(o.isMesh)o.castShadow=true;});
+  g.userData.tipo='Representación anatómica ilustrativa; no medición de un ejemplar';
   return g;
 }
 
@@ -1448,14 +1518,16 @@ function construirHabitat(){
   /* rocas dispersas */
   const geoR = new T.IcosahedronGeometry(1, 0);
   const matR = new T.MeshStandardMaterial({ color: 0x6E3D28, roughness: 0.96, flatShading: true });
+  const rocas=new T.InstancedMesh(geoR,matR,90),roca=new T.Object3D();
+  rocas.name='rocas-ilustrativas';rocas.visible=!limpio;rocas.castShadow=true;rocas.receiveShadow=true;gHabitat.add(rocas);
   for (let i = 0; i < 90; i++){
     const a = azar() * TAU, r = 5.8 + Math.pow(azar(), 0.55) * 40;
     const s = 0.1 + Math.pow(azar(), 2.4) * 0.85;
-    const roca = malla(geoR, matR, [Math.cos(a) * r, s * 0.34, Math.sin(a) * r]);
+    roca.position.set(Math.cos(a)*r,s*.34,Math.sin(a)*r);
     roca.scale.set(s * (0.8 + azar() * 0.6), s * (0.5 + azar() * 0.5), s);
     roca.rotation.set(azar(), azar() * TAU, azar());
     roca.position.y=alturaTerreno(roca.position.x,-roca.position.z)+PISO-ESPESOR_PISO_VISUAL+s*.12;
-    roca.visible=!limpio;
+    roca.updateMatrix();rocas.setMatrixAt(i,roca.matrix);
   }
 
   /* ── talud de regolito: el blindaje contra radiación ── */
@@ -1568,15 +1640,18 @@ function construirHabitat(){
       roughness: 0.25 }), [-0.05, 0.04, 0], ctrl, false);
   marcarSubarbol(ctrl, "mfc");
 
-  /* antorcha de biogás sobre el eje */
+  /* Luminarias suspendidas de ménsulas del casco; sin combustión en cabina. */
   for (let i = 0; i < 3; i++){
-    const a = i / 3 * TAU + 0.7;
+    const a = A_PARED+.35+i*1.45;
     const conLuz = i < 2;
     const g = new T.Group();
-    g.position.set(Math.cos(a) * 1.55, 2.04, Math.sin(a) * 1.55);
+    g.position.set(Math.cos(a) * 1.55, H_CASCO-.20, Math.sin(a) * 1.55);
     g.rotation.y = -a;
     gHabitat.add(g);
-    malla(new T.CylinderGeometry(0.014, 0.014, 0.22, 6), M.acero, [0, 0.11, 0], g, false);
+    malla(new T.CylinderGeometry(0.014, 0.014, 0.16, 6), M.acero, [0, 0.08, 0], g, false);
+    const brazoLuz=R_CASCO-.07-1.55;
+    malla(new T.BoxGeometry(brazoLuz,.025,.032),M.costilla,[brazoLuz/2,.16,0],g);
+    malla(new T.BoxGeometry(.02,.10,.10),M.costilla,[brazoLuz,.125,0],g);
     malla(new T.BoxGeometry(0.14, 0.05, 0.44), M.costilla, [0, 0, 0], g, false);
     malla(new T.BoxGeometry(0.11, 0.012, 0.40),
       new T.MeshStandardMaterial({ color: 0xFFF0DC, emissive: 0xFFE0BC, emissiveIntensity: 2.6 }),
@@ -1595,25 +1670,41 @@ function construirHabitat(){
      Se escala el conjunto en vez de retocar veinte cotas a mano.                           */
   aviario.scale.setScalar(0.75);
   gHabitat.add(aviario);
-  const domo = malla(new T.SphereGeometry(0.40, 30, 20, 0, TAU, 0, Math.PI / 2), M.vidrio,
+  const vidrioAviario=M.vidrio.clone();vidrioAviario.opacity=.13;vidrioAviario.roughness=.18;
+  const domo = malla(new T.SphereGeometry(0.40, 36, 24, 0, TAU, 0, Math.PI / 2), vidrioAviario,
     [0, 0.62, 0], aviario, false);
-  malla(new T.CylinderGeometry(0.40, 0.40, 0.028, 30), M.acero, [0, 0.625, 0], aviario);
+  domo.name='cubierta-aviario-ilustrativa';
   malla(new T.TorusGeometry(0.40, 0.022, 6, 30), M.costilla, [0, 0.62, 0], aviario)
     .rotation.x = Math.PI / 2;
-  for (let i = 0; i < 4; i++){
-    const a = i / 4 * TAU + 0.4;
-    malla(new T.CylinderGeometry(0.018, 0.018, 0.66, 8), M.acero,
-      [Math.cos(a) * 0.34, 0.31, Math.sin(a) * 0.34], aviario);
+  for(let i=0;i<3;i++){
+    const arco=malla(new T.TorusGeometry(.402,.006,5,40,Math.PI),M.acero,[0,.62,0],aviario);
+    arco.rotation.y=i*Math.PI/3;
   }
-  /* rejilla del piso: por ahí cae el estiércol a la bandeja */
-  for (let i = -3; i <= 3; i++)
-    malla(new T.BoxGeometry(0.78, 0.008, 0.012), M.acero, [0, 0.625, i * 0.055], aviario, false);
+  // Soporte fijo desde el casco; se retiran las patas que atravesaban la zona del cartucho.
+  const brazoAv=(R_CASCO-.07-R_MED)/.75;
+  for(const s of [-1,1]){
+    malla(new T.BoxGeometry(brazoAv+.18,.035,.045),M.costilla,[brazoAv/2-.09,.59,s*.24],aviario);
+    malla(new T.BoxGeometry(.03,.18,.10),M.costilla,[brazoAv,.60,s*.24],aviario);
+    const hAv=CUBIERTA/.75+.59;
+    malla(new T.BoxGeometry(.025,hAv,.025),M.costilla,[brazoAv,.59-hAv/2,s*.24],aviario);
+    malla(new T.BoxGeometry(.045,.015,.07),M.acero,[brazoAv,-CUBIERTA/.75+.008,s*.24],aviario);
+  }
+  /* Rejilla esquemática abierta: sin disco macizo tapando la caída del residuo. */
+  const rejilla=new T.Group();
+  for(let i=-8;i<=8;i++){
+    const d=i*.044,l=2*Math.sqrt(.375**2-d*d);
+    malla(new T.BoxGeometry(l,.006,.004),M.acero,[0,.625,d],rejilla,false);
+    malla(new T.BoxGeometry(.004,.006,l),M.acero,[d,.625,0],rejilla,false);
+  }
+  aviario.add(fusionar(rejilla));
   for (let i = 0; i < 7; i++){
-    const a = i / 7 * TAU + 0.9, r = 0.13 + (i % 3) * 0.085;
+    const a = i / 7 * TAU + 0.9, r = i===0?0:.225;
     const q = codorniz();
+    let parteAve=0;q.traverse(o=>{if(o.isMesh)o.name='codorniz-'+(i+1)+'-pieza-'+(++parteAve);});
     q.position.set(Math.cos(a) * r, 0.635, Math.sin(a) * r);
-    q.rotation.y = a + 1.6;
+    q.rotation.y = i===0?-.45:a+1.6;
     q.userData.a = a;
+    q.userData.giro=q.rotation.y;
     aviario.add(q); codornices.push(q);
   }
   for (let i = 0; i < 5; i++){
@@ -1642,6 +1733,7 @@ function construirHabitat(){
                         c: "#E4D7B4", esp: 0.01 }],
                      { w: 760, h: 150, fondo: "#0E1317", barra: "#E8DFC8", y0: 0.42 }),
         0.42, 0.083, [0.46, 0.60, 0], 0, aviario, -0.35);
+  malla(new T.BoxGeometry(.018,.13,.018),M.acero,[.46,.525,-.016],aviario);
   marcarSubarbol(aviario, "aviario");
 
   /* ── equipo fijo de cada estación ── */
@@ -1976,6 +2068,7 @@ function construirHabitat(){
 
   /* ═══ ROTULADO — la información va pintada sobre el equipo ═══ */
   function bandaRotulo(radio, alto, y, ang, arco, tex, padre){
+    ajustarRotulo(tex,radio*arco/alto);
     const m = malla(new T.CylinderGeometry(radio, radio, alto, 48, 1, true,
       Math.PI / 2 - ang - arco / 2, arco),
       new T.MeshStandardMaterial({ map: tex, roughness: 0.5, metalness: 0.2,
@@ -1984,11 +2077,21 @@ function construirHabitat(){
     return m;
   }
   function placa(tex, ancho, alto, pos, rotY, padre, inclina){
+    ajustarRotulo(tex,ancho/alto);
     const m = malla(new T.PlaneGeometry(ancho, alto),
-      new T.MeshStandardMaterial({ map: tex, roughness: 0.55, metalness: 0.1,
+      new T.MeshStandardMaterial({ map: tex, roughness: 0.85, metalness: 0,
         side: T.FrontSide }), pos, padre, false);
+    m.name='placa-montada';m.userData.rotulo=tex.uuid;
     // Placa impresa por ambas caras: cada cara se lee sin reflejar el texto.
-    const dorso=new T.Mesh(m.geometry,m.material);dorso.rotation.y=Math.PI;dorso.position.z=-.002;m.add(dorso);
+    const dorso=new T.Mesh(m.geometry,m.material);dorso.rotation.y=Math.PI;dorso.position.z=-.008;m.add(dorso);
+    malla(new T.BoxGeometry(ancho+.012,alto+.012,.006),M.costilla,[0,0,-.004],m,false);
+    const tornillos=new T.InstancedMesh(new T.CylinderGeometry(.003,.003,.0018,6),M.acero,4);
+    const d=new T.Object3D();let i=0;
+    for(const x of [-1,1])for(const y of [-1,1]){
+      d.position.set(x*ancho*.465,y*alto*.43,.0015);d.rotation.x=Math.PI/2;d.updateMatrix();tornillos.setMatrixAt(i++,d.matrix);
+    }
+    m.add(tornillos);
+    m.rotation.order='YXZ';
     m.rotation.y = rotY || 0;
     if (inclina) m.rotation.x = inclina;
     m.receiveShadow = true;
@@ -1997,16 +2100,19 @@ function construirHabitat(){
 
   /* tanques rotulados, como en la lámina del equipo */
   const rotB = bandaRotulo(0.323, 0.30, wB.y - 0.10, -0.62, 1.5,
-    texturaPlaca([{ t: "BIODIGESTOR", s: 0.30, esp: 0.10 },
-                  { t: "METANOGÉNESIS · DISEÑO PENDIENTE", s: 0.15, c: "#9FE0B4", esp: 0.06 }],
+    texturaPlaca([{ t: "BIODIGESTOR", s: 0.25 },
+                  { t: "METANOGÉNESIS", s: 0.17, c: "#C4DABC" },
+                  { t: "DISEÑO PENDIENTE", s: 0.13, c: "#C4DABC" }],
                  { w: 640, h: 200, fondo: "#1D3A2C", barra: "#7FBB72", y0: 0.40 }), null);
   rotB.position.x = wB.x; rotB.position.z = wB.z;
+  gHabitat.updateMatrixWorld(true);digestorB.attach(rotB);
   const rotA = bandaRotulo(0.176, 0.22, wA.y + 0.06, -0.62, 1.7,
     texturaPlaca([{ t: "REACTOR SEPARADO", s: 0.24, esp: 0.08 },
                   { t: "SALMUERA · SALIDA RETENIDA", s: 0.20, c: "#8FD4E8", esp: 0.04 }],
                  { w: 640, h: 180, fondo: "#16323C", barra: "#63A9D1", y0: 0.40 }), null);
 
   rotA.position.x = wA.x; rotA.position.z = wA.z;
+  gHabitat.updateMatrixWorld(true);digestorA.attach(rotA);
   /* rótulo exterior del casco: identidad del módulo */
   bandaRotulo(R_CASCO + 0.055, 0.46, 1.44, A_PARED + 1.05, 1.15,
     texturaPlaca([{ t: "MILPA-360", s: 0.34, mono: false, esp: 0.06 },
@@ -2032,25 +2138,28 @@ function construirHabitat(){
   for (let k = 0; k < N_REG; k++){
     const [cod, nom, sub, col] = TXT_EST[k];
     const tex = texturaPlaca(
-      [{ t: cod + " · " + nom, s: 0.26, esp: 0.05 }, { t: sub, s: 0.17, c: "#9FB0BE", esp: 0.02 }],
+      [{ t:cod,s:.18,mono:true,c:col },{ t:nom,s:.27,mono:false }, { t:sub,s:.14,c:'#becbd0' }],
       { w: 700, h: 160, fondo: "#0E1317", barra: col, y0: 0.42 });
     const a = k / N_POS * TAU;
     const r = R_CASCO - 0.09;
     const g = new T.Group();
-    g.position.set(Math.cos(a) * r, CUBIERTA + 0.16, Math.sin(a) * r);
+    g.position.set(Math.cos(a) * r, PISO, Math.sin(a) * r);
     g.rotation.y = Math.PI / 2 - a;              // la cara del rótulo mira hacia afuera
     gHabitat.add(g);
-    malla(new T.CylinderGeometry(0.012, 0.012, 0.34, 6), M.acero, [0, 0.17, 0], g, false);
-    placa(tex, 0.40, 0.092, [0, 0.35, 0.012], 0, g, -0.34);
+    const hPlaca=CUBIERTA+.34;
+    malla(new T.BoxGeometry(.018,hPlaca,.018),M.acero,[0,hPlaca/2,0],g,false);
+    malla(new T.BoxGeometry(.08,.012,.05),M.costilla,[0,.006,0],g,false);
+    malla(new T.BoxGeometry(.06,.014,.09),M.costilla,[0,hPlaca,-.034],g,false);
+    placa(tex,.48,.15,[0,hPlaca,-.065],0,g,-.18);
     marcarSubarbol(g, ["lavado","aviario","larvario","mfc","musgo","musgo","mfc","cultivo"][k]);
   }
 
   /* rótulo del anillo exterior, sobre la rampa de riego */
-  placa(texturaPlaca([{ t: "ARCO DE CULTIVO · TRÍADA", s: 0.24, esp: 0.05 },
-                      { t: "camote · leguminosa · rábano — 12 bandejas, 12 etapas", s: 0.15,
+  placa(texturaPlaca([{ t: "ARCO DE CULTIVO", s: 0.28 },
+                      { t: "camote · leguminosa · rábano", s: 0.18,
                         c: "#9FB0BE", esp: 0.01 }],
                      { w: 900, h: 170, fondo: "#0E1317", barra: "#3F7A2E", y0: 0.42 }),
-        0.78, 0.145, [Math.cos(2.6) * 1.62, CUBIERTA + 1.22, Math.sin(2.6) * 1.62], Math.PI / 2 - 2.6, null, -0.28);
+        .78,.17,[Math.cos(2.6)*(R_CASCO-.11),1.74,Math.sin(2.6)*(R_CASCO-.11)],-Math.PI/2-2.6,cascoGrp);
 
   /* rótulo de la filtración */
   placa(texturaPlaca([{ t: "AGUA · ACONDICIONAMIENTO", s: 0.26, esp: 0.06 },
@@ -2098,14 +2207,16 @@ function construirHabitat(){
   pernos.name='pernos-ilustrativos';carrusel.grupo.add(pernos);
   marcarSubarbol(baseMecanica,'carrusel');
   // Paneles de servicio del casco, tornillería y juntas con geometría visible.
+  const panelesCasco=new T.Group();
   for(let k=0;k<12;k++){
     const a=A_PARED+(k+.5)/12*A_LARGO, g=new T.Group();
     g.position.set(Math.cos(a)*(R_CASCO-.085),0,Math.sin(a)*(R_CASCO-.085));
-    g.rotation.y=Math.PI/2-a;cascoGrp.add(g);
+    g.rotation.y=Math.PI/2-a;panelesCasco.add(g);
     malla(new T.BoxGeometry(.46,.51,.025),blanco,[0,.42,0],g);
     for(let j=0;j<5;j++)malla(new T.BoxGeometry(.33,.012,.03),M.oscuro,[0,.30+j*.045,-.01],g,false);
     malla(new T.BoxGeometry(.015,H_CASCO-.12,.055),M.costilla,[.255,H_CASCO/2,0],g);
   }
+  const panelesUnidos=fusionar(panelesCasco);panelesUnidos.traverse(o=>{if(o.isMesh)o.castShadow=true;});cascoGrp.add(panelesUnidos);
   for(const a of [A_PARED,A_FIN]){
     const canto=malla(new T.BoxGeometry(.023,H_CASCO,.14),ambar,
       [Math.cos(a)*(R_CASCO-.025),H_CASCO/2,Math.sin(a)*(R_CASCO-.025)],cascoGrp);
@@ -2125,9 +2236,14 @@ function construirHabitat(){
     const brazo=malla(new T.CapsuleGeometry(.035,.48,3,8),blanco,[lado*.20,1.13,0],referencia);
     brazo.rotation.z=lado*.12;
   }
-  placa(texturaPlaca([{t:'SECCIÓN DIGITAL · NO ES HÁBITAT ABIERTO',s:.22,esp:.015},
-    {t:'Ø '+GEOM.casco.diametro.toFixed(2)+' m · FIGURA '+GEOM.casco.altura_figura.toFixed(2)+' m · V2',s:.19,c:'#A8C7D1',esp:.015}],
-    {w:1000,h:170,fondo:'#10222A',barra:'#D2622F',y0:.42}),2.2,.374,[1.55,.15,-2.20],Math.PI/2+.62,null,-.25);
+  const pedestal=new T.Group();pedestal.position.set(1.55,0,-2.20);pedestal.rotation.y=-.40;gHabitat.add(pedestal);
+  for(const x of [-.34,.34]){
+    malla(new T.BoxGeometry(.024,.43,.024),M.costilla,[x,.215,0],pedestal);
+    malla(new T.BoxGeometry(.12,.012,.23),M.oscuro,[x,.006,0],pedestal);
+  }
+  placa(texturaPlaca([{t:'MILPA-360 · CORTE DE INSPECCIÓN',s:.24},
+    {t:'Ø '+GEOM.casco.diametro.toFixed(2)+' m · FIGURA '+GEOM.casco.altura_figura.toFixed(2)+' m · V3',s:.18,c:'#C4D4DB'}],
+    {w:1000,h:170,fondo:'#10222A',barra:'#D2622F'}),1.06,.22,[0,.46,0],0,pedestal,-.30);
 
   /* Acabado visual V2. Detalles esquemáticos, sin capacidad/resistencia atribuida. */
   const detalles=new T.Group();detalles.name='acabado-v2-ilustrativo';gHabitat.add(detalles);
@@ -2159,6 +2275,13 @@ function construirHabitat(){
   const motor=malla(new T.CylinderGeometry(.09,.09,.24,20),M.oscuro,[1.83,.15,-.55],detalles);motor.rotation.z=Math.PI/2;
   for(let j=0;j<7;j++){const aleta=malla(new T.TorusGeometry(.096,.007,6,20),satin,[0,(j-3)*.026,0],motor);aleta.rotation.x=Math.PI/2;}
   marcarSubarbol(detalles,'carrusel');
+  // Compactar sólo conjuntos estáticos de una ficha; conservar selección y animación.
+  for(const grupo of [baseMecanica,detalles]){
+    const originales=new Set();grupo.traverse(o=>originales.add(o));
+    for(let i=clicables.length-1;i>=0;i--)if(originales.has(clicables[i]))clicables.splice(i,1);
+    const unido=fusionar(grupo);grupo.clear();grupo.add(unido);
+    unido.traverse(o=>{if(o.isMesh)o.castShadow=true;});marcarSubarbol(unido,'carrusel');
+  }
 
   // Contorno de lote seleccionado. Es una capa técnica de la pieza, no una etiqueta flotante.
   const seleccion=new T.LineSegments(new T.EdgesGeometry(GEO.marco),new T.LineBasicMaterial({color:0xFFCE76}));
@@ -2238,6 +2361,10 @@ function abrirFicha(clave){
     b.textContent = "ENTRAR AL HÁBITAT →";
     b.onclick = () => cambiarVista("habitat");
     acc.appendChild(b);
+  }
+  if(clave==='aviario'&&S.vista==='habitat'){
+    const b=document.createElement('button');b.className='btn on';b.id='ver-aves';
+    b.textContent='Ver aves de cerca';b.onclick=enfocarAviario;acc.appendChild(b);
   }
   ficha.classList.remove("oculto");
   MILPA_I18N.apply();medir();
@@ -2321,8 +2448,18 @@ function controles(){
 }
 $("b-reset").onclick=()=>{modelo.reiniciar();S.play=false;controles();};
 function vistaTecnica(tipo){
+  if(S.detalle){S.detalle=false;document.body.classList.remove('detalle-ave');mira.set(0,1,0);Object.assign(orbe,{theta:-.62,phi:1.02,dist:8.4});}
   S.proyeccion=tipo;camara=tipo==="orbita"?perspectiva:ortografica;medir();
 }
+function enfocarAviario(){
+  vistaTecnica('orbita');S.detalle=true;document.body.classList.add('detalle-ave');S.play=false;S.explosion=false;
+  aviario.updateWorldMatrix(true,false);
+  mira.copy(aviario.localToWorld(new T.Vector3(0,.78,0)));
+  Object.assign(orbe,{theta:-.46,phi:1.10,dist:innerWidth<700?2.35:1.45});
+  if(innerWidth<700)$('cerrar').click();
+  controles();
+}
+const distanciaMinima=()=>S.vista==='planeta'?7.4:S.detalle ? .48 : 4.2;
 function abrirTecnica(){
   abrirFicha("carrusel");fichaActual="tecnica";
   $("f-sub").textContent="Inspección · cálculos y escenario";
@@ -2406,7 +2543,7 @@ $('pantalla-completa').onclick=async()=>{try{if(document.fullscreenElement)await
 $('calidad').onchange=e=>{const high=e.target.value==='alta';renderer.setPixelRatio(high?Math.min(devicePixelRatio,1.5):1);renderer.shadowMap.enabled=high;renderer.shadowMap.needsUpdate=true;medir();};
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>vistaTecnica(b.dataset.view));
 $('quick-explosion').onclick=()=>{S.explosion=!S.explosion;S.play=false;controles();};
-lienzo.addEventListener('keydown',e=>{const keys=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','=','-'];if(!keys.includes(e.key))return;e.preventDefault();if(e.key==='ArrowLeft')orbe.theta-=.12;if(e.key==='ArrowRight')orbe.theta+=.12;if(e.key==='ArrowUp')orbe.phi=Math.max(.16,orbe.phi-.1);if(e.key==='ArrowDown')orbe.phi=Math.min(1.5,orbe.phi+.1);if(e.key==='+'||e.key==='=')orbe.dist=Math.max(S.vista==='planeta'?7.4:4.2,orbe.dist*.9);if(e.key==='-')orbe.dist=Math.min(50,orbe.dist*1.1);});
+lienzo.addEventListener('keydown',e=>{const keys=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','=','-'];if(!keys.includes(e.key))return;e.preventDefault();if(e.key==='ArrowLeft')orbe.theta-=.12;if(e.key==='ArrowRight')orbe.theta+=.12;if(e.key==='ArrowUp')orbe.phi=Math.max(.16,orbe.phi-.1);if(e.key==='ArrowDown')orbe.phi=Math.min(1.5,orbe.phi+.1);if(e.key==='+'||e.key==='=')orbe.dist=Math.max(distanciaMinima(),orbe.dist*.9);if(e.key==='-')orbe.dist=Math.min(50,orbe.dist*1.1);});
 addEventListener('keydown',e=>{if(e.key==='Escape'){$('cerrar').click();if($('ayuda').open)$('ayuda').close();}});
 
 /* cambio de vista, con fundido */
@@ -2420,6 +2557,7 @@ $("v-planeta").onclick = () => cambiarVista("planeta");
 $("v-habitat").onclick = () => cambiarVista("habitat");
 
 function aplicarVista(v){
+  renderer.shadowMap.needsUpdate=true;
   S.vista = v;document.body.classList.toggle('modo-habitat',v==='habitat');
   actualizarIntroduccion();vistaTecnica("orbita");
   $("v-planeta").setAttribute("aria-selected", String(v === "planeta"));
@@ -2475,7 +2613,7 @@ lienzo.addEventListener("pointerup", e => {
 });
 lienzo.addEventListener("wheel", e => {
   e.preventDefault();
-  const lim = S.vista === "planeta" ? [7.4, 60] : [4.2, 34];
+  const lim = [distanciaMinima(),S.vista==='planeta'?60:34];
   orbe.dist = Math.max(lim[0], Math.min(lim[1], orbe.dist * (1 + Math.sign(e.deltaY) * 0.1)));
 }, { passive: false });
 
@@ -2559,7 +2697,7 @@ const CIELO_MARTE  = { cenit: new T.Color(0x3A3348), horiz: new T.Color(0xC79468
 const CIELO_TORM   = { cenit: new T.Color(0x2A1B12), horiz: new T.Color(0x7A4A26), suelo: new T.Color(0x241009) };
 const cAux = new T.Color(), cAuxB = new T.Color();
 const C_MARCHITO = new T.Color(0x8A7139);
-let anterior = performance.now();
+let anterior = performance.now(), ultimaSombra=0, firmaSombra='';
 
 function bucle(ahora){
   const elapsed = Math.max(0, (ahora - anterior) / 1000);
@@ -2642,9 +2780,8 @@ function bucle(ahora){
 
     /* codornices: picoteo y giro */
     codornices.forEach((q, i) => {
-      q.position.y = 0.635 + Math.sin(t * 2.1 + i) * 0.008;
-      q.rotation.y = q.userData.a + 1.6 + Math.sin(t * 0.7 + i) * 0.45;
-      q.children[1].position.y = 0.108 - Math.max(0, Math.sin(t * 1.7 + i * 2)) * 0.028;
+      q.rotation.y = q.userData.giro + Math.sin(t*.55+i)*.14;
+      q.userData.cuello.rotation.z = -.10-Math.max(0,Math.sin(t*1.45+i*2))*.62;
     });
 
     /* luces de cultivo: se apagan sin sol */
@@ -2755,6 +2892,12 @@ function bucle(ahora){
     const tr=MILPA_I18N.t,pick=MILPA_I18N.pick;
     poner($("datos-vivos"),`${tr('Agua')}: ${e.aguaL.toFixed(1)} L · ${pick('gas almacenado','stored gas')}: ${e.gasKWh.toFixed(3)} ${pick('kWh químicos','chemical kWh')} · ${pick('luz acumulada','cumulative lighting')}: ${e.electricidadKWh.toFixed(1)} kWh. ${pick('Cosecha vegetal','Crop harvest')}: ${e.cosechaKg.toFixed(2)} kg. ${pick('Cuarentena','Quarantine')}: ${e.cuarentena.length}; ${pick('repuestos','spares')}: ${e.repuestos.length}. `+(l?`${l.id}: ${ESTACIONES[l.pos][0]}, ${tr(l.calidad)}; ${pick('historial','history')}: ${l.historial.slice(-3).map(h=>tr(h.evento)+' (sol '+h.sol.toFixed(1)+')').join('; ')}`:pick('Lote retirado; abrir de nuevo la lista.','Batch removed; reopen the list.')));
 
+  }
+  // Sombras de equipos casi estáticos: caché y refresco a 10 Hz durante movimiento.
+  // La cámara sigue a la frecuencia completa; cambiar vista/despiece invalida la caché.
+  const nuevaFirma=[S.vista,S.explosion,S.sol,S.play].join('|');
+  if(nuevaFirma!==firmaSombra&&ahora-ultimaSombra>100){
+    renderer.shadowMap.needsUpdate=true;ultimaSombra=ahora;firmaSombra=nuevaFirma;
   }
   renderer.render(escena, camara);
   requestAnimationFrame(bucle);

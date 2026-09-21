@@ -8,6 +8,7 @@ for p in ['config/*.json','analysis/*.py','analysis/*.cjs','analysis/*.mjs',
           'docs/madrid/*.md','docs/madrid/*.csv','docs/madrid/capturas/*.png',
           'docs/madrid/capturas-s3/*.png','docs/madrid/capturas-b19/*.png','docs/madrid/ensayos/*.csv','docs/madrid/COMPARACION-S3-S5.html',
           'docs/madrid/capturas-v2/*.png','docs/madrid/capturas-s5-previas/*.png','docs/madrid/PRUEBA-VISUAL-V2.json','docs/madrid/COMPARACION-VISUAL-V2.html',
+          'docs/madrid/capturas-v3/*.png','docs/madrid/PRUEBA-REFINAMIENTO-V3.json','docs/madrid/RENDIMIENTO-V3-INTEL.json',
           'visuales/atlas-marciano.html','prototipo-3d/milpa360-interfaz.css',
           'prototipo-3d/vendor/*','prototipo-3d/milpa360-*.js','prototipo-3d/milpa360-simulador.html','prototipo-3d/milpa360-acceso.html',
           'prototipo-3d/LEEME-P3.md','prototipo-3d/package*.json','prototipo/planos/P02*.html',
@@ -27,7 +28,7 @@ records={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for
 manifest=ROOT/'docs/madrid/MANIFIESTO-S5.json'
 manifest.write_text(json.dumps({'estado':'Candidata digital revisada; aceptación física y reglamento Madrid abiertos. Ver CIERRE-ACUMULADO.md.',
  'revision_calculos':json.loads((ROOT/'config/milpa360.parameters.json').read_text())['meta']['version'],
- 'geometria_blender':'V2 regenerada desde la escena actual: materiales y acabados nuevos, mismas cotas nominales. B19 permanece separado.',
+ 'geometria_blender':'V3 regenerada desde la escena actual: materiales y acabados nuevos, mismas cotas nominales. B19 permanece separado.',
  'base_git':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
  'sha256':records},ensure_ascii=False,indent=2)+'\n')
 output=ROOT/'entregas/madrid-s5-revision.zip';output.parent.mkdir(exist_ok=True)

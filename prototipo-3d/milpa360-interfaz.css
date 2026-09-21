@@ -33,3 +33,4 @@ body.inspector-open #introduccion,body.datos-abiertos #introduccion{display:none
 #ficha .cuerpo{overflow:auto;min-height:0}#f-accion:has(#tour-navigation){position:sticky;bottom:-22px;background:#102330;padding:14px 0 20px;z-index:2;border-top:1px solid #375260;margin-top:18px}
 #f-accion .tour-count{margin-bottom:8px}#tour-navigation{margin-top:10px}#ficha input[type=checkbox]{min-height:0;width:16px;height:16px;vertical-align:middle;margin:0 8px 0 0}#ficha label:has(input[type=checkbox]){display:flex;align-items:center;margin:14px 0;min-height:30px;line-height:1.5}
 @media(max-width:800px){#f-accion:has(#tour-navigation){bottom:-17px;padding-bottom:12px}#ficha .cuerpo{max-height:none}#tour-navigation button{min-height:44px}}
+.detalle-ave #introduccion{display:none}

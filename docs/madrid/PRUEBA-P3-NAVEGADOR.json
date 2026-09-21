@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-09-21T08:32:26.986Z",
+  "fecha": "2026-09-21T09:15:18.075Z",
   "prueba": "Chrome headless, red deshabilitada, file://",
   "browser": {
     "protocolVersion": "1.3",
@@ -11,7 +11,7 @@
   "cpu": "13th Gen Intel(R) Core(TM) i7-13620H",
   "plataforma": "linux",
   "three": "160",
-  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "renderer": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL 4.6)",
   "pantalla": [
     1920,
     1080
@@ -35,11 +35,11 @@
     "terreno": -0.08
   },
   "rendimiento": {
-    "fotogramas": 5,
-    "duracionMs": 5019,
-    "fps": 0.9962143853357243
+    "fotogramas": 245,
+    "duracionMs": 5000.300000000745,
+    "fps": 48.997060176382114
   },
-  "limite": "SwiftShader por software; NO prueba del equipo del evento",
+  "limite": "GPU local; no prueba del equipo del evento",
   "controles": "pausa, avance, reset, fallos, cuarentena, vistas, fichas, despiece, selección y comparación comprobados",
   "errores": [],
   "solicitudesHTTP": 0

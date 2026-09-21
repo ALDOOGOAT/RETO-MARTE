@@ -43,7 +43,7 @@ while i<len(lines):
     if s.startswith('# '):
         story.append(Paragraph(markup(s[2:]),styles['Heading1']))
         hero=ROOT/'docs/madrid/capturas/hero.png'
-        if hero.exists(): story += [Spacer(1,12),Image(str(hero),width=510,height=286.875),Paragraph('Render digital V2. Sección de inspección; acceso y equipos por validar.',styles['Cell']),Spacer(1,14)]
+        if hero.exists(): story += [Spacer(1,12),Image(str(hero),width=510,height=286.875),Paragraph('Render digital V3. Sección de inspección; acceso y equipos por validar.',styles['Cell']),Spacer(1,14)]
         i+=1;continue
     if s.startswith('##'):
         level=3 if s.startswith('###') else 2

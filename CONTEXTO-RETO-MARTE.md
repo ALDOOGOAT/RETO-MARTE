@@ -381,3 +381,13 @@ Mapa global: [NASA/JPL-Caltech, Viking](https://science.nasa.gov/3d-resources/ma
 procesado USGS; JPEG original y hash en `prototipo-3d/vendor/CREDITOS-MARTE.md`. No es
 DEM ni selección validada de sitio. El terreno cercano al módulo sigue siendo ilustrativo.
 Véase `docs/madrid/MEJORA-VISUAL-BILINGUE.md` para alcance, pruebas y límites de la revisión.
+
+### Refinamiento visual V3
+
+Carteles montados, fuentes sin deformación y codornices con anatomía y movimiento
+articulado. Referencia visual consultada: [Kyoto City Zoo, codorniz japonesa](https://zoo.city.kyoto.lg.jp/zoo/animals/c_japonica)
+(21 sep 2026); mallas/texturas procedurales propias, sin reutilizar fotografías como
+texturas. Las siete figuras representan el concepto: no validan alojamiento de 24 aves.
+Hay pruebas locales con GPU Intel/RTX 4060, sin proyector conectado. Blender/GLB se
+regeneran como V3 y conservan cotas nominales. La ejecución de los cinco pasos ES/EN
+es una prueba digital; el ensayo humano se prepara con `docs/madrid/RECORRIDO-BILINGUE.md`.

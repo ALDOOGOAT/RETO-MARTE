@@ -1,4 +1,10 @@
 MILPA_I18N.add({
+  "Ver aves de cerca": "Inspect birds",
+  "METANOGÉNESIS": "METHANOGENESIS",
+  "DISEÑO PENDIENTE": "DESIGN PENDING",
+  "ARCO DE CULTIVO": "CROP ARC",
+  "camote · leguminosa · rábano": "sweet potato · legume · radish",
+  "MILPA-360 · CORTE DE INSPECCIÓN": "MILPA-360 · INSPECTION CUTAWAY",
   "Marte": "Mars",
   "Módulo": "Module",
   "Acceso": "Access",
@@ -207,7 +213,7 @@ MILPA_I18N.patterns.push(
  [/^(.*) · en traslado$/,(_,s)=>MILPA_I18N.t(s)+' · moving'],
  [/^(Despiece visual · desplazamientos no operativos|Ilustrativo · autorizaciones simuladas|Ilustrativo · sin autorización de lotes) · (.*)$/,(_,a,b)=>({'Despiece visual · desplazamientos no operativos':'Exploded view · non-operational movements','Ilustrativo · autorizaciones simuladas':'Illustrative · simulated authorization','Ilustrativo · sin autorización de lotes':'Illustrative · no batch authorization'}[a])+' · '+(b==='acceso interior pendiente'?'interior access pending':MILPA_I18N.t(b))],
  [/^([\d.]+) m² cultivo$/,(_,n)=>n+' m² crops'],
- [/^Ø (.*) m · FIGURA (.*) m · (?:S5|V2)$/,(_,a,b)=>`Ø ${a} m · FIGURE ${b} m · V2`],
+ [/^Ø (.*) m · FIGURA (.*) m · (S5|V2|V3)$/,(_,a,b,v)=>`Ø ${a} m · FIGURE ${b} m · ${v}`],
  [/^(\d+) cartuchos · Ø ([\d.]+) m · cultivo ([\d.]+) m²\.$/,(_,n,d,a)=>`${n} cartridges · Ø ${d} m · crops ${a} m².`],
  [/^([\d.]+) m sobre el piso; ([\d.]+) m sobre la cama\. Figura de ([\d.]+) m\. Entrada a través del anillo pendiente\. Equipos, tuberías y cultivos son esquemáticos; B15–B19 pendientes\.$/,(_,a,b,c)=>`${a} m above the floor; ${b} m above the bed. ${c} m reference figure. Access through the ring is pending. Equipment, pipes and crops are schematic; B15–B19 pending.`],
  [/^Por estrategia: (.*) m² · (.*) kWh de luz · (.*) L demandados\. No acredita una ventaja experimental\.$/,(_,a,e,w)=>`Per strategy: ${a} m² · ${e} kWh lighting · ${w} L demanded. Does not establish an experimental advantage.`]

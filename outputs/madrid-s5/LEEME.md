@@ -7,7 +7,7 @@ equivale a revisión independiente ni a medición en el equipo de Madrid.
 
 **Corte acumulado 21 sep:** consultar `../../docs/madrid/CIERRE-ACUMULADO.md` y
 `../../docs/madrid/CALCULOS-CIERRE.md`. D1/D2 ratificadas; provisiones completas y auxiliares calculados.
-BLEND/GLB se regeneran con el acabado V2 desde Three.js, con normales y texturas
+BLEND/GLB se regeneran con el acabado V3 desde Three.js, con normales y texturas
 de la escena. Las dimensiones nominales conservan S5. B19 es estudio separado y su
 vestíbulo no forma parte de esas mallas.
 
@@ -20,9 +20,10 @@ vestíbulo no forma parte de esas mallas.
   de ensayo ni vídeo oficial final. Los tiempos coinciden con el guion provisional.
 - `../../prototipo-3d/milpa360-simulador.html`: demo local, sin Internet; abrir con Chrome.
   Selector ES/EN local, recorrido guiado, teclado y menú de calidad.
+  La ficha del aviario incluye «Ver aves de cerca»; «Perspectiva» vuelve al conjunto.
   Órbita por arrastre y rueda. Inspección técnica permite planta/lateral, resaltar lote,
   fallos y despiece visual; reanudar vuelve al ensamblaje. El movimiento no valida biología.
-- `../../docs/madrid/COMPARACION-VISUAL-V2.html`: comparación antes/después de V2.
+- `../../docs/madrid/COMPARACION-VISUAL-V2.html`: comparación antes/después de V3.
 - `../../visuales/atlas-marciano.html`: atlas interactivo ES/EN, también sin conexión.
 - `../../prototipo-3d/milpa360-acceso.html`: maniobra B19 y prueba de pérdida de energía.
 - `../../prototipo/planos/madrid/P07-plantilla-E4.svg`: plantilla métrica sin carga; verificar escala impresa.
@@ -83,3 +84,15 @@ No subir el ZIP a la convocatoria sin revisión del equipo y reglas finales. El
 manifiesto SHA-256 identifica exactamente los archivos de esta candidata; no prueba
 requisitos físicos ni sustituye revisión independiente. Los presupuestos históricos del usuario no forman
 parte del paquete de defensa vigente.
+
+## Prueba gráfica y ensayo V3
+
+`docs/madrid/PRUEBA-REFINAMIENTO-V3.json` (dos niveles más arriba) registra GPU,
+resolución, duración y FPS de las muestras. `MILPA_GPU=1` usa OpenGL local; para la
+RTX de este portátil funcionó una ventana X11: `__NV_PRIME_RENDER_OFFLOAD=1
+__GLX_VENDOR_LIBRARY_NAME=nvidia MILPA_VISIBLE=1 MILPA_GPU=1 MILPA_REFINAMIENTO_V3=1
+node --experimental-websocket analysis/verificar_p3_navegador.mjs`. El intento
+headless con NVIDIA no creó contexto WebGL. No extrapolar a otro equipo.
+
+El guion está en `../../docs/madrid/RECORRIDO-BILINGUE.md`. La prueba recorre los
+cinco pasos en ES/EN; no reemplaza un ensayo con público o proyector.
