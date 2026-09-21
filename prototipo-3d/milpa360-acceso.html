@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MILPA-360 · estudio de acceso B19</title>
+<link rel="stylesheet" href="vendor/fuentes.css">
+<style>
+:root{color-scheme:dark;font-family:Archivo,Arial,sans-serif;background:#0c151c;color:#e3eceb}*{box-sizing:border-box}body{margin:0}header{padding:22px 28px;border-bottom:1px solid #34454b;display:flex;justify-content:space-between;gap:20px}h1{font-size:25px;margin:5px 0}a{color:#91d4de}small,.mono{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#adc3c8}main{display:grid;grid-template-columns:360px 1fr;min-height:calc(100vh - 96px)}aside{padding:24px;overflow:auto;max-height:calc(100vh - 96px)}h2{font-size:21px}p{line-height:1.55}button{font:inherit;background:#233943;color:#edf5f3;border:1px solid #50616a;border-radius:4px;padding:11px 14px;cursor:pointer}button:hover{background:#365465}button:focus-visible,a:focus-visible{outline:3px solid #f9bb6e;outline-offset:3px}button:disabled{opacity:.4;cursor:not-allowed}.acciones{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}#siguiente{background:#cf692f;color:#fff;border-color:#f4a371}.metricas{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}.metricas strong{display:block;font-size:23px;margin-bottom:5px}.metricas span{font-size:12px;color:#adc3c8}.nota{border-left:3px solid #d8904a;padding-left:12px;font-size:14px}#escena{position:relative;min-width:0;min-height:550px;background:radial-gradient(ellipse at center,#263d46,#101d27)}canvas{display:block;width:100%;height:100%;touch-action:none}.vistas{position:absolute;top:20px;left:20px;display:flex;gap:8px}.leyenda{position:absolute;bottom:18px;left:20px;right:20px;font-size:13px;line-height:1.5;background:#102028e8;padding:12px;color:#b9d1d8}.estado{color:#ffd499;min-height:45px}ol{padding-left:22px;line-height:1.7}#pasos .activo{color:#ffc47e;font-weight:700}@media(max-width:850px){main{grid-template-columns:1fr}aside{max-height:none}#escena{height:70vh;grid-row:1}header{padding:15px;flex-wrap:wrap}}
+</style>
+<header><div><small>BIOMARS CHIAPAS / INGENIERÍA / B19</small><h1>Un acceso que pueda recorrerse</h1></div><a href="milpa360-simulador.html?vista=habitat&play=0">Volver al módulo S5</a></header>
+<main><aside>
+<small>CANDIDATA DIGITAL · NO APROBADA PARA FABRICACIÓN</small>
+<h2 id="fase">Anillo ensamblado</h2><p id="explicacion"></p>
+<div class="acciones"><button id="siguiente">Bloquear anillo</button><button id="anterior" disabled>Volver</button></div>
+<div class="acciones"><button id="energia">Cortar energía</button><button id="continuar" hidden>Continuar traslado</button></div>
+<div class="acciones"><button id="entrar" disabled>Entrar</button><button id="salir" disabled>Salir manualmente</button></div>
+<p id="mensaje" class="estado" role="status" aria-live="polite"></p>
+<div class="metricas" id="metricas"></div>
+<ol id="pasos"><li>Bloqueo mecánico positivo</li><li>Presiones compatibles; aislar y abrir</li><li>Extraer casetes sobre soporte</li><li>Estacionar a ambos lados</li><li>Retener puertas abiertas y entrar</li></ol>
+<p class="nota">Guías y ramales del riego salen con los casetes. El útil y sus apoyos están pendientes de dimensionar. La velocidad de animación no es un tiempo mecánico medido.</p>
+<p class="nota">El vestíbulo conecta con otro volumen presurizado. No muestra una salida directa al exterior marciano. Sellos, fuerzas, presión, sensores y rescate siguen pendientes.</p>
+<p><a href="../docs/madrid/B19-ACCESO.md">Cálculos, límites y próxima decisión</a></p>
+</aside><section id="escena" aria-label="Modelo interactivo de acceso; arrastrar para orbitar">
+<div class="vistas"><button id="orbita">Órbita</button><button id="planta">Planta</button><button id="lateral">Lateral</button></div>
+<div class="leyenda">Naranja: dos casetes de servicio · Azul: reserva de paso y volumen humano · Gris: núcleo reservado.<br>Casco/vestíbulo en corte. Equipos, dosel y rescate requieren envolventes reales. Reloj biológico detenido durante este estudio.</div>
+</section></main>
+<script src="vendor/three.min.js"></script><script src="milpa360-datos.js"></script><script src="milpa360-modelo.js"></script>
+<script>
+'use strict';
+const datos=MILPA_DATOS, a=datos.acceso, g=datos.geometria, p=a.parametros, r=a.resultados;
+const estudio=new MILPA.AccesoServicio(datos), $=id=>document.getElementById(id), T=THREE;
+const escena=new T.Scene(), renderer=new T.WebGLRenderer({antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setClearColor(0,0);$('escena').prepend(renderer.domElement);
+const camara=new T.PerspectiveCamera(40,1,.05,80), mira=new T.Vector3(1.1,.5,0);
+escena.add(new T.HemisphereLight(0xdbefff,0x334549,2.2));
+const luz=new T.DirectionalLight(0xffdcc0,3);luz.position.set(0,7,5);escena.add(luz);
+const material=(color,alpha=1)=>new T.MeshStandardMaterial({color,roughness:.65,metalness:.18,transparent:alpha<1,opacity:alpha,side:T.DoubleSide});
+const mat={casco:material(0x849c9c,.23),metal:material(0x7b959c),suelo:material(0x384947),cart:material(0x788b74),carga:material(0xd58044),azul:material(0x68cddd,.19),ruta:material(0x398ba6),claro:material(0xd7e4df),oscuro:material(0x172932)};
+function box(nombre,x,y,z,w,h,d,m,parent=escena){const o=new T.Mesh(new T.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.name=nombre;parent.add(o);return o;}
+function poly(nombre,points,top,depth,m,parent=escena){const s=new T.Shape(points.map(([x,z])=>new T.Vector2(x,z)));const geo=new T.ExtrudeGeometry(s,{depth,bevelEnabled:false});geo.rotateX(Math.PI/2);const o=new T.Mesh(geo,m);o.position.y=top;o.name=nombre;parent.add(o);return o;}
+function rotulo(texto,x,z,w,rot=-Math.PI/2){const c=document.createElement('canvas');c.width=1024;c.height=160;const ctx=c.getContext('2d');ctx.fillStyle='#152832';ctx.fillRect(0,0,1024,160);ctx.fillStyle='#e6eeed';ctx.font='bold 55px Arial';ctx.textAlign='center';ctx.fillText(texto,512,100);const t=new T.CanvasTexture(c);const m=new T.MeshBasicMaterial({map:t,side:T.DoubleSide});const o=new T.Mesh(new T.PlaneGeometry(w,w*160/1024),m);o.position.set(x,.012,z);o.rotation.x=rot;escena.add(o);return o;}
+const R=g.casco.radio,fin=R+p.longitud_vestibulo,altura=g.casco.altura;
+const piso=new T.Mesh(new T.CylinderGeometry(R,R,.08,100),mat.oscuro);piso.position.y=-.04;escena.add(piso);
+const mediaPuerta=p.ancho_portal_carga/2,angulo=Math.asin(mediaPuerta/R);
+const pared=new T.Mesh(new T.CylinderGeometry(R,R,altura,100,1,true,Math.PI/2+angulo,Math.PI*2-2*angulo),mat.casco);pared.position.y=altura/2;escena.add(pared);
+box('piso-vestibulo',R+p.longitud_vestibulo/2,-.04,0,p.longitud_vestibulo,.08,p.ancho_vestibulo,mat.oscuro);
+const cuello=Math.sqrt(R*R-mediaPuerta*mediaPuerta);
+box('cuello', (cuello+R)/2,-.04,0,R-cuello,.08,p.ancho_portal_carga,mat.oscuro);
+for(const s of [-1,1])box('pared-vestibulo',R+p.longitud_vestibulo/2,altura/2,s*p.ancho_vestibulo/2,p.longitud_vestibulo,altura,.035,mat.casco);
+const nucleo=new T.Mesh(new T.CylinderGeometry(g.pasillo.r_equipos_max,g.pasillo.r_equipos_max,altura,48),mat.metal);nucleo.position.y=altura/2;escena.add(nucleo);
+const carros=[],guias=[];
+for(let i=0;i<g.anillo.n;i++){
+ const grupo=new T.Group();grupo.name='cartucho-'+i;escena.add(grupo);carros.push(grupo);
+ const mov=a.retirados.includes(i),m=mov?mat.carga:mat.cart;
+ poly('envolvente-cartucho-'+i,a.poligonos[i],g.casco.cubierta,g.cartucho.altura_caja,m,grupo);
+ const centro=i*Math.PI*2/g.anillo.n-a.gate_rad,sector=g.anillo.sector_grados*Math.PI/180;
+ // Casete segmentado candidato: guías, traviesa y riego desacoplables.
+ for(const radio of [g.anillo.r0+.06,g.anillo.r1-.06]){
+  const points=Array.from({length:20},(_,j)=>new T.Vector3(radio*Math.cos(centro-sector/2+j*sector/19),.21,radio*Math.sin(centro-sector/2+j*sector/19)));
+  const tubo=new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(points),20,.024,6,false),mat.metal);grupo.add(tubo);guias.push(tubo);
+ }
+ const rm=(g.anillo.r0+g.anillo.r1)/2;
+ const trav=box('travesaño',rm*Math.cos(centro),.15,rm*Math.sin(centro),g.anillo.r1-g.anillo.r0,.07,.06,mat.metal,grupo);trav.rotation.y=-centro;
+ const pts=Array.from({length:20},(_,j)=>new T.Vector3(rm*Math.cos(centro-sector/2+j*sector/19),g.casco.cubierta+.1,rm*Math.sin(centro-sector/2+j*sector/19)));
+ grupo.add(new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts),20,.01,5,false),mat.ruta));
+ // La reserva vertical no inventa un dosel de cultivo validado.
+ if(mov){
+  for(const radio of [g.anillo.r0+.12,g.anillo.r1-.12])for(const signo of [-1,1]){
+   const ang=centro+signo*sector*.28;
+   const rueda=new T.Mesh(new T.SphereGeometry(.06,10,6),mat.metal);rueda.position.set(radio*Math.cos(ang),.06,radio*Math.sin(ang));grupo.add(rueda);
+  }
+  const b=a.poligonos[i],xs=b.map(v=>v[0]),zs=b.map(v=>v[1]),x0=Math.min(...xs),x1=Math.max(...xs),z0=Math.min(...zs),z1=Math.max(...zs);
+  box('reserva-carga-'+i,(x0+x1)/2,(p.altura_carga+g.casco.cubierta)/2,(z0+z1)/2,x1-x0,p.altura_carga-g.casco.cubierta,z1-z0,mat.azul,grupo);
+ }
+}
+for(let j=0;j<2;j++)poly('deposito-'+j,a.depositos[j],.02,.012,mat.carga);
+poly('ruta-reservada',a.ruta,.006,.004,mat.ruta);
+const puertas=[];
+function portal(x,w,nombre){
+ for(const s of [-1,1])box('marco-'+nombre,x,p.altura_portal/2,s*(w/2+.025),.06,p.altura_portal,.05,mat.metal);
+ box('dintel-'+nombre,x,p.altura_portal+.03,0,.06,.06,w+.1,mat.metal);
+ for(const s of [-1,1]){const hoja=box('hoja-'+nombre,x,p.altura_portal/2,s*w/4,.025,p.altura_portal,w/2,mat.casco);puertas.push({hoja,s,w});}
+}
+portal(R+.025,p.ancho_portal_carga,'modulo');portal(fin,p.ancho_puerta_habitat,'habitat');
+// Intrusiones laterales candidatas que determinan la cifra de ancho libre.
+const xGuia=g.anillo.r0*Math.cos(Math.PI*2/g.anillo.n);
+for(const s of [-1,1])box('herraje-lateral',xGuia,.18,s*(r.ancho_bruto_m/2-a.herraje/2),.10,.36,a.herraje,mat.carga);
+const pasador=box('pasador',g.anillo.r1,.27,-.78,.12,.04,.04,mat.claro);
+const humano=new T.Group();humano.name='persona';escena.add(humano);
+const cuerpo=new T.Mesh(new T.CapsuleGeometry(.17,1.20,4,12),mat.claro);cuerpo.position.y=.77;humano.add(cuerpo);
+const cabeza=new T.Mesh(new T.SphereGeometry(.11,12,8),mat.claro);cabeza.position.y=1.64;humano.add(cabeza);
+const reserva=new T.Mesh(new T.CylinderGeometry(p.diametro_persona_equipo/2,p.diametro_persona_equipo/2,p.altura_persona_equipo,32),mat.azul);reserva.position.y=p.altura_persona_equipo/2;humano.add(reserva);
+rotulo('C11',3.02,-1.32,.55);rotulo('C12',3.02,1.32,.55);
+rotulo('HÁBITAT PRESURIZADO',fin-.24,0,.95);rotulo('B19 · CANDIDATA',-.5,-R-.22,1.6);
+let theta=.65,phi=.82,dist=11,arrastre=null,animando=false,ultimo=0;
+function cam(){camara.position.set(mira.x+dist*Math.sin(phi)*Math.cos(theta),mira.y+dist*Math.cos(phi),mira.z+dist*Math.sin(phi)*Math.sin(theta));camara.lookAt(mira);}
+function resize(){const e=$('escena');renderer.setSize(e.clientWidth,e.clientHeight,false);camara.aspect=e.clientWidth/e.clientHeight;camara.updateProjectionMatrix();cam();}
+new ResizeObserver(resize).observe($('escena'));
+renderer.domElement.onpointerdown=e=>{arrastre=[e.clientX,e.clientY];renderer.domElement.setPointerCapture(e.pointerId);};
+renderer.domElement.onpointerup=()=>arrastre=null;
+renderer.domElement.onpointermove=e=>{if(arrastre){theta-=(e.clientX-arrastre[0])*.005;phi=Math.max(.04,Math.min(1.52,phi+(e.clientY-arrastre[1])*.005));arrastre=[e.clientX,e.clientY];cam();}};
+renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();dist=Math.max(6,Math.min(18,dist+e.deltaY*.008));cam();},{passive:false});
+$('orbita').onclick=()=>{theta=.65;phi=.82;dist=11;cam();};$('planta').onclick=()=>{theta=0;phi=.04;dist=12;cam();};$('lateral').onclick=()=>{theta=Math.PI/2;phi=1.45;dist=11;cam();};
+const nombres=['Anillo ensamblado','Anillo bloqueado','Servicios aislados','Casetes extraídos','Carga estacionada','Paso habilitado'];
+const textos=['20 cartuchos. Preparar el acceso antes de permitir ocupación interior.','Pasador mecánico retenido. La presión compatible se declara sólo como condición de este escenario.','Aislar riego, sellar conexiones y abrir puertas al volumen presurizado. Carga apoyada en todo el recorrido.','Desplazamiento radial de 1 m. Todavía no hay paso: los casetes ocupan el centro del vestíbulo.','Desplazamiento lateral de 0.70 m por lado. Retener carga y puertas; revisar la ruta completa.','La salida permanece abierta durante la ocupación. Cortar energía conserva carga, pasador y puerta; la salida se acciona manualmente.'];
+const adelante=['bloquear','aislar','extraer','estacionar','abrir_paso',null],atras=[null,'desbloquear','conectar','insertar','centrar','cerrar_paso'];
+const etiquetas={bloquear:'Bloquear anillo',igualar:'Declarar presión compatible*',aislar:'Aislar y abrir',extraer:'Extraer casetes',estacionar:'Estacionar carga',abrir_paso:'Habilitar paso',desbloquear:'Liberar bloqueo',conectar:'Reconectar e inspeccionar',insertar:'Reinsertar',centrar:'Centrar carga',cerrar_paso:'Cerrar acceso'};
+function siguiente(){return estudio.estado.fase===1&&!estudio.estado.presionIgual?'igualar':adelante[estudio.estado.fase];}
+function accion(k){try{estudio.actuar(k);animando=!!estudio.estado.movimiento&&estudio.estado.energia&&['extraer','estacionar','centrar','insertar'].includes(k);$('mensaje').textContent=k==='igualar'?'*Supuesto del escenario; no lectura de sensores.':k==='cortar_energia'?'Sin energía. La salida sigue disponible si había ocupación.':'Estado actualizado. Sin medición física.';if(matchMedia('(prefers-reduced-motion: reduce)').matches&&animando){estudio.avanzarMovimiento(1);animando=false;}}catch(e){$('mensaje').textContent=e.message;}actualizar();}
+$('siguiente').onclick=()=>accion(siguiente());$('anterior').onclick=()=>accion(atras[estudio.estado.fase]);
+$('entrar').onclick=()=>accion('entrar');$('salir').onclick=()=>accion('salir');
+$('energia').onclick=()=>accion(estudio.estado.energia?'cortar_energia':'restaurar_energia');
+$('continuar').onclick=()=>{if(estudio.estado.energia&&estudio.estado.movimiento){animando=true;actualizar();}};
+$('metricas').innerHTML=[[r.ancho_libre_m.toFixed(3)+' m','paso con herrajes supuestos'],[r.area_adicional_m2.toFixed(2)+' m²','huella adicional'],[r.carga_dos_cartuchos_kg.nominal.toFixed(1)+' kg','dos cartuchos; falta útil'],[r.area_cultivo_en_anillo_m2.toFixed(3)+' m²','cultivo que permanece dentro']].map(([v,k])=>'<div><strong>'+v+'</strong><span>'+k+'</span></div>').join('');
+function actualizar(){const s=estudio.estado;$('fase').textContent=nombres[s.fase]+(s.movimiento?' · en traslado':'');$('explicacion').textContent=textos[s.fase];$('siguiente').textContent=etiquetas[siguiente()]||'Paso preparado';$('siguiente').disabled=!siguiente()||s.ocupado||!!s.movimiento;$('anterior').textContent=etiquetas[atras[s.fase]]||'Volver';$('anterior').disabled=s.fase===0||s.ocupado||!!s.movimiento;$('energia').textContent=s.energia?'Cortar energía':'Restaurar energía';$('entrar').disabled=s.fase!==5||s.ocupado||!s.energia;$('salir').disabled=!s.ocupado;$('continuar').hidden=!s.movimiento||!s.energia||animando;[...$('pasos').children].forEach((li,i)=>li.classList.toggle('activo',s.fase===i+1));}
+function pose(fase){return [fase>=3?p.traslacion_radial:0,fase>=4?p.traslacion_lateral:0];}
+function dibujar(t){const dt=Math.min(.1,(t-ultimo)/1000||0);ultimo=t;const s=estudio.estado;
+ if(animando&&s.movimiento&&s.energia){estudio.avanzarMovimiento(Math.min(1,s.movimiento.progreso+dt/.95));if(!s.movimiento){animando=false;actualizar();}}
+ let [dx,dz]=pose(s.fase);if(s.movimiento){const m=s.movimiento,ini=pose(m.desde),fin=pose(m.hasta);dx=ini[0]+(fin[0]-ini[0])*m.progreso;dz=ini[1]+(fin[1]-ini[1])*m.progreso;}
+ for(let j=0;j<2;j++)carros[a.retirados[j]].position.set(dx,0,(2*j-1)*dz);
+ for(const q of puertas)q.hoja.position.z=q.s*(s.fase>=2?q.w*.75:q.w/4);
+ pasador.material=s.pasador?mat.carga:mat.claro;
+ humano.position.x=s.ocupado?r.persona_x_interior_m:fin-.38;
+ renderer.render(escena,camara);requestAnimationFrame(dibujar);
+}
+actualizar();resize();requestAnimationFrame(dibujar);
+globalThis.B19={estudio,carros,escena,renderer,camara,accion,datos,actualizar};
+</script></html>

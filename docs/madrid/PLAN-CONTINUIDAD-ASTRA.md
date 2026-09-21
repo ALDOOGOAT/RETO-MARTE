@@ -1,6 +1,6 @@
 # Continuidad para Astra · MILPA-360 rumbo a Madrid
 
-**Corte técnico revisado:** S5, 21 sep 2026 UTC, rama `preparacion-madrid-p1`, base S4 `a24a687`. **Este archivo es un relevo de trabajo, no una validación científica ni una orden para ejecutar tareas en segundo plano.** Al retomar, verificar otra vez HEAD, fecha, rama, estado de Git, herramientas, fuentes y reglas de la final.
+**Corte técnico revisado:** S5/B19, 21 sep 2026, rama `preparacion-madrid-p1`, base S5 `589ca5b`. **Este archivo es un relevo de trabajo, no una validación científica ni una orden para ejecutar tareas en segundo plano.** Al retomar, verificar otra vez HEAD, fecha, rama, estado de Git, herramientas, fuentes y reglas de la final.
 
 **Especificación principal:** [`MISION-MADRID-MILPA360.md`](../../MISION-MADRID-MILPA360.md), especialmente §5 A–O y §6. **Checkpoint vigente:** [`ESTADO.md`](ESTADO.md). No copiar el prompt largo de P0 como instrucción nueva: P0 ya tiene commit. Este plan conserva la intención del prompt y la aplica al trabajo restante.
 
@@ -44,9 +44,11 @@
 - S5 incorpora corte de inspección, cartuchos identificables, ménsulas, despiece y selección
   de lote. Se conservaron poses S3/S5 en el comparador. Blender importa mallas reales de
   Three y se verifica reimportación GLB; ninguna exportación acredita resistencia física.
-- B19 sigue abierto. §3 de `P5-DEFENSA.md` compara tres candidatas; sector desmontable de
-  dos posiciones es la preferida para estudiar, aún sin adoptar. No basta quitar dos
-  recipientes: faltan guía, depósito externo, esclusa, enclavamientos y ruta de evacuación.
+- B19 ya tiene estudio paramétrico, P06 y visor de extracción/depósito. El paso candidato
+  es 0.916 m con herrajes supuestos de 30 mm/lado y cae a 0.896 m con 40 mm. El vestíbulo
+  añade 6.66 m² y 14.66 m³; faltan masa de casetes/útil, dosel, fuerzas, sellos y rescate.
+  Las pruebas digitales no cierran B19 ni autorizan fabricación. S5 `589ca5b` queda congelada;
+  el estudio B19 es una candidata aparte, accesible desde inspección técnica.
 
 ## 2. Regla de reentrada y decisiones
 
@@ -88,14 +90,16 @@ Al finalizar cada sesión: actualizar `docs/madrid/ESTADO.md` con archivos/commi
 
 ## 5. Mensaje listo para la próxima sesión
 
-> Lee `ESTADO.md`, `P5-DEFENSA.md` §3, este plan y `P4-MECANICA-ENSAYOS.md`.
-> Verifica Git y la candidata S5 en `outputs/madrid-s5/LEEME.md`.
-> Continúa **S5/P5 por B19 y B15–B18**, Astra high para decisiones; no rehagas las
-> exportaciones ni la auditoría ya disponibles. Comprueba la respuesta del equipo a la
-> propuesta de sector desmontable antes de adoptarla. Desarrolla guía y extracción,
-> depósito de dos cartuchos, esclusa, persona/herramienta y bloqueo durante ocupación.
-> Compara con alternativa mecánicamente simple si no cabe. Ningún fallo energético
-> debe dejar atrapado al operario. No declares resuelto el acceso sólo por su cuerda nominal.
+> Lee `ESTADO.md`, `B19-ACCESO.md`, este plan y `P4-MECANICA-ENSAYOS.md`.
+> Verifica Git y reproduce `python3 analysis/milpa360_acceso.py` y `npm test --prefix prototipo-3d`.
+> El estudio de dos casetes, depósito y enclavamientos ya existe; no repetirlo.
+> Continúa **B19 y B15–B18** cerrando la envolvente real de herrajes/útil/dosel y el
+> espacio presurizado disponible. El límite geométrico es 38.25 mm de intrusión por lado
+> para mantener 0.90 m, antes de justificar tolerancias y población. Confirmar el coste de
+> añadir 6.66 m². Si no hay esos datos, comparar documentalmente con tres posiciones o
+> una disposición abierta/fija; no declarar elegida la candidata por pasar el caso nominal.
+> Preparar plantilla 1:1 con cargas vacías y revisión mecánica para el banco con carga;
+> registrar maniobra normal y rescate. No convertir el vestíbulo en esclusa EVA por etiqueta.
 > Mantén detalles y controles S5; actualiza configuración, geometría, balances, memoria
 > y capturas si cambia el diseño. Sin datos físicos, documenta el pendiente con precisión.
 > Después prepara **S6**: revisión independiente acotada si el usuario la autoriza,

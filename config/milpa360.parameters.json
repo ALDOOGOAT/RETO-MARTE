@@ -1,7 +1,7 @@
 {
   "meta": {
-    "version": "P4-S3-2026-09-20",
-    "fecha": "2026-09-20",
+    "version": "S5-B19-2026-09-21",
+    "fecha": "2026-09-21",
     "rama": "preparacion-madrid-p1",
     "descripcion": "Fuente única de parámetros de MILPA-360. Simulador, planos, tablas y cálculos deben leer de aquí.",
     "convencion_escenarios": "conservador = peor para el beneficio que afirma el sistema (menos alimento o biogás, más masa, más perclorato); favorable = lo contrario. Son escenarios, no probabilidades.",
@@ -265,6 +265,23 @@
         "fuente": "P4-MECANICA-ENSAYOS.md §1, comparación S3",
         "nota": "Holgura nominal de proyecto del cartucho desnudo; no tolerancia numérica ni fabricación."
       }
+    },
+    "acceso_servicio": {
+      "primera_posicion": {"valor": 18, "unidad": "índice desde cero", "evidencia": "supuesto", "fuente": "docs/madrid/B19-ACCESO.md", "nota": "Candidata digital: C11 y C12, sin adoptar como instalación validada."},
+      "posiciones_retiradas": {"valor": 2, "unidad": "cartuchos", "evidencia": "supuesto", "fuente": "docs/madrid/B19-ACCESO.md"},
+      "herraje_lateral": {"valor": 0.03, "unidad": "m", "evidencia": "supuesto", "fuente": "docs/madrid/B19-ACCESO.md", "rango": [0.02, 0.05], "nota": "Intrusión por lado. Sensibilidad obligatoria; no tolerancia de fabricación."},
+      "traslacion_radial": {"valor": 1.0, "unidad": "m", "evidencia": "supuesto", "fuente": "docs/madrid/B19-ACCESO.md"},
+      "traslacion_lateral": {"valor": 0.7, "unidad": "m", "evidencia": "supuesto", "fuente": "docs/madrid/B19-ACCESO.md", "nota": "Cada cartucho se aparca hacia un lado; extracción sin giro."},
+      "margen_deposito": {"valor": 0.04, "unidad": "m", "evidencia": "supuesto", "fuente": "docs/madrid/B19-ACCESO.md", "nota": "Reserva perimetral para bandeja de contención/útil; no masa ni resistencia certificadas."},
+      "ancho_vestibulo": {"valor": 3.0, "unidad": "m", "evidencia": "supuesto", "fuente": "docs/madrid/B19-ACCESO.md", "nota": "Dimensión interior de la candidata, adicional al casco circular."},
+      "longitud_vestibulo": {"valor": 2.2, "unidad": "m", "evidencia": "supuesto", "fuente": "docs/madrid/B19-ACCESO.md", "nota": "Desde tangente exterior del casco hasta conexión con hábitat presurizado."},
+      "ancho_portal_carga": {"valor": 1.5, "unidad": "m", "evidencia": "supuesto", "fuente": "docs/madrid/B19-ACCESO.md"},
+      "ancho_puerta_habitat": {"valor": 1.0, "unidad": "m", "evidencia": "supuesto", "fuente": "docs/madrid/B19-ACCESO.md"},
+      "altura_portal": {"valor": 2.05, "unidad": "m", "evidencia": "supuesto", "fuente": "docs/madrid/B19-ACCESO.md"},
+      "diametro_persona_equipo": {"valor": 0.8, "unidad": "m", "evidencia": "supuesto", "fuente": "docs/madrid/B19-ACCESO.md", "nota": "Envolvente circular de cribado. No representa antropometría de población, traje EVA ni rescate."},
+      "altura_persona_equipo": {"valor": 2.0, "unidad": "m", "evidencia": "supuesto", "fuente": "docs/madrid/B19-ACCESO.md", "nota": "Reserva de cribado, no medición humana."},
+      "altura_carga": {"valor": 1.6, "unidad": "m sobre piso", "evidencia": "supuesto", "fuente": "docs/madrid/B19-ACCESO.md", "nota": "Techo de envolvente candidata del cartucho y contención; dosel real pendiente B15."},
+      "masa_casete_y_util": {"valor": null, "unidad": "kg", "evidencia": "pendiente", "fuente": "docs/madrid/B19-ACCESO.md", "nota": "Incluye segmento de guía, soporte, acoples y útil. No se convierte en cero."}
     },
     "arquitectura": {
       "seleccionada": {

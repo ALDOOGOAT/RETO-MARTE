@@ -28,6 +28,56 @@ try {
   await cdp('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});
   await cdp('Network.setBlockedURLs',{urls:['http://*','https://*']});
   await cdp('Emulation.setDeviceMetricsOverride',{width:1920,height:1080,deviceScaleFactor:1,mobile:false});
+  if(process.env.MILPA_SOLO_ACCESO==='1'){
+    const html=path.join(process.env.MILPA_DEMO_DIR||path.join(raiz,'prototipo-3d'),'milpa360-acceso.html');
+    await cdp('Page.navigate',{url:pathToFileURL(html).href});
+    await esperar('typeof B19!=="undefined"');
+    const dir=path.join(raiz,'docs/madrid/capturas-b19');await mkdir(dir,{recursive:true});
+    const capturar=async nombre=>{const im=await cdp('Page.captureScreenshot',{format:'png'});await writeFile(path.join(dir,nombre+'.png'),Buffer.from(im.data,'base64'));};
+    await capturar('ensamblado');
+    for(const k of ['bloquear','igualar','aislar'])await evaluar(`B19.accion('${k}')`);
+    await evaluar(`B19.accion('extraer')`);
+    await esperar('B19.estudio.estado.movimiento && B19.estudio.estado.movimiento.progreso>0.15');
+    await evaluar(`B19.accion('cortar_energia')`);
+    const detenida=await evaluar('JSON.stringify(B19.estudio.estado)');
+    await new Promise(r=>setTimeout(r,500));
+    assert.equal(await evaluar('JSON.stringify(B19.estudio.estado)'),detenida);
+    await capturar('fallo-traslado');
+    await evaluar(`B19.accion('restaurar_energia')`);
+    assert.equal(await evaluar('B19.estudio.estado.movimiento.progreso'),JSON.parse(detenida).movimiento.progreso);
+    await evaluar(`document.getElementById('continuar').click()`);
+    await esperar('!B19.estudio.estado.movimiento');
+    await evaluar(`B19.accion('estacionar')`);await esperar('!B19.estudio.estado.movimiento');
+    await evaluar(`B19.accion('abrir_paso');B19.accion('entrar');B19.accion('cortar_energia')`);
+    assert.equal(await evaluar('B19.estudio.estado.ocupado'),true);
+    await capturar('ocupado-sin-energia');
+    await evaluar(`document.getElementById('planta').click()`);await capturar('planta');
+    await evaluar(`B19.accion('salir')`);
+    assert.equal(await evaluar('B19.estudio.estado.ocupado'),false);
+    assert.equal(await evaluar('B19.estudio.estado.energia'),false);
+    await evaluar(`B19.accion('restaurar_energia');B19.accion('cerrar_paso');B19.accion('centrar')`);
+    await esperar('!B19.estudio.estado.movimiento');
+    await evaluar(`B19.accion('insertar')`);await esperar('!B19.estudio.estado.movimiento');
+    await evaluar(`B19.accion('conectar');B19.accion('desbloquear')`);
+    assert.equal(await evaluar('B19.estudio.estado.fase'),0);
+    const geometria=await evaluar(`(()=>{B19.escena.updateMatrixWorld(true);return B19.datos.acceso.retirados.map(i=>{const o=B19.carros[i];return {posicion:o.position.toArray(),limites:new THREE.Box3().setFromObject(o).min.toArray().concat(new THREE.Box3().setFromObject(o).max.toArray())};});})()`);
+    assert.ok(geometria.every(o=>o.limites.every(Number.isFinite)&&o.posicion.every(v=>Math.abs(v)<1e-8)));
+    // Vista estrecha: controles en flujo y sin desbordamiento horizontal.
+    await cdp('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:false});
+    await new Promise(r=>setTimeout(r,300));
+    assert.equal(await evaluar('document.documentElement.scrollWidth<=innerWidth+1'),true);
+    await capturar('movil');
+    await cdp('Emulation.setDeviceMetricsOverride',{width:1600,height:1100,deviceScaleFactor:1,mobile:false});
+    const base=process.env.MILPA_DEMO_DIR?path.resolve(process.env.MILPA_DEMO_DIR,'..'):raiz;
+    await cdp('Page.navigate',{url:pathToFileURL(path.join(base,'prototipo/planos/madrid/P06-acceso-servicio.html')).href});
+    await esperar('document.title.includes("P06")');await capturar('plano');
+    assert.deepEqual(errores,[]);assert.deepEqual(peticiones.filter(u=>/^https?:/.test(u)),[]);
+    const informe={fecha:new Date().toISOString(),prueba:'B19 Chrome offline file://',browser:await cdp('Browser.getVersion'),
+      controles:'extracción, paro en traslado, recuperación explícita, estacionamiento, ocupación, salida sin energía, retorno completo y móvil',
+      geometria,errores,solicitudesHTTP:0,limite:'Sólo candidata digital; sin validación física ni prueba de GPU del evento'};
+    await writeFile(path.join(raiz,'docs/madrid/PRUEBA-B19-NAVEGADOR.json'),JSON.stringify(informe,null,2)+'\n');
+    console.log(JSON.stringify(informe,null,2));
+  }else{
   const html=path.join(process.env.MILPA_DEMO_DIR||path.join(raiz,'prototipo-3d'),'milpa360-simulador.html');
   const url=pathToFileURL(html).href;
   await cdp('Page.navigate',{url:url+'?vista=habitat&play=0&sol=62'});
@@ -115,4 +165,5 @@ try {
   const informe={fecha:new Date().toISOString(),prueba:'Chrome headless, red deshabilitada, file://',browser:await cdp('Browser.getVersion'),cpu:os.cpus()[0].model,plataforma:os.platform(),...hardware,cotas,piso,fps30Frames:fps,limite:'SwiftShader por software; NO prueba del equipo del evento',controles:process.env.MILPA_SOLO_CAPTURAS==='1'?'omitidos; sólo capturas':'pausa, avance, reset, fallos, cuarentena, vistas, fichas, despiece, selección y comparación comprobados',errores,solicitudesHTTP:0};
   await writeFile(path.join(raiz,'docs/madrid/PRUEBA-P3-NAVEGADOR.json'),JSON.stringify(informe,null,2)+'\n');
   console.log(JSON.stringify(informe,null,2));
+  }
 } finally {if(socket)socket.close();chrome.kill('SIGTERM');}

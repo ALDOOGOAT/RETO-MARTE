@@ -2478,6 +2478,7 @@ function abrirTecnica(){
   <label>Equipo o flujo <select id="equipo-elegido"><option value="">Elegir ficha</option>${Object.keys(FICHAS).map(k=>`<option value="${k}">${FICHAS[k].tit}</option>`).join('')}</select></label>
   <label>Lote <select id="lote-elegido">${modelo.estado.lotes.map(l=>`<option>${l.id}</option>`).join('')}</select></label>
   <button class="btn" id="seguir-lote">Resaltar cartucho del lote</button>
+  <p><a href="milpa360-acceso.html">Estudiar acceso B19: extracción, depósito y salida sin energía</a></p>
   <div class="datos-vivos" id="datos-vivos"></div>
   <label>Fallo <select id="tipo-fallo"><option value="bomba">Bomba detenida</option><option value="atasco">Atasco del anillo</option><option value="lote">Lote rechazado en S8</option></select></label>
   <div class="acciones"><button class="btn" id="aplicar-fallo">Aplicar fallo</button><button class="btn" id="reparar-fallo">Reparar</button><button class="btn" id="aislar-lote">Aislar / sustituir S8</button></div>

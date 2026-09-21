@@ -188,7 +188,76 @@
     }
     return resultado;
   }
-  const api={Modelo,comparar};
+  // B19: banco de estados de una candidata. No ejecuta el reloj biológico de Modelo.
+  class AccesoServicio {
+    constructor(datos) {
+      comprobar(datos.acceso?.retirados?.length===2,'Falta geometría B19');
+      this.d=datos;
+      this.estado={fase:0,energia:true,presionIgual:false,ocupado:false,movimiento:null,
+        pasador:false,riegoAislado:false,cartuchos:datos.acceso.retirados.map(pos=>({
+          id:'L'+String(pos+1).padStart(2,'0'),pos,ubicacion:'anillo',
+          masaKg:datos.geometria.cartucho.masa_kg.nominal}))};
+    }
+    actuar(accion) {
+      const s=this.estado;
+      if(accion==='cortar_energia') {s.energia=false;return;}
+      if(accion==='restaurar_energia') {s.energia=true;return;}
+      comprobar(!s.movimiento,'Completar o recuperar el traslado antes de otra maniobra');
+      if(accion==='igualar') {
+        comprobar(s.fase===1,'La compatibilidad de presión se declara en el escenario bloqueado');
+        s.presionIgual=true;return;
+      }
+      if(accion==='entrar') {
+        comprobar(s.fase===5&&s.energia&&s.presionIgual&&!s.ocupado,'Entrada bloqueada: preparar paso, presión y energía');
+        s.ocupado=true;return;
+      }
+      if(accion==='salir') {
+        comprobar(s.fase===5&&s.ocupado,'No hay persona dentro');
+        s.ocupado=false;return; // Salida manual: no depende de electricidad.
+      }
+      const pasos={bloquear:[0,1],aislar:[1,2],extraer:[2,3],estacionar:[3,4],
+        abrir_paso:[4,5],cerrar_paso:[5,4],centrar:[4,3],insertar:[3,2],
+        conectar:[2,1],desbloquear:[1,0]};
+      comprobar(Object.hasOwn(pasos,accion),'Acción desconocida');
+      const [desde,hasta]=pasos[accion];
+      comprobar(!s.ocupado&&s.fase===desde,'Secuencia bloqueada: fase incorrecta o persona dentro');
+      if(['extraer','estacionar','centrar','insertar','desbloquear'].includes(accion))
+        comprobar(s.energia,'Sin energía: recuperar alimentación para mover la carga; la salida sigue manual');
+      if(accion==='aislar') comprobar(s.presionIgual,'Presión compatible aún no declarada para el escenario');
+      if(accion==='desbloquear') comprobar(!s.riegoAislado,'Reconectar e inspeccionar antes de liberar el pasador');
+      if(accion==='bloquear') s.pasador=true;
+      if(accion==='aislar') s.riegoAislado=true;
+      if(accion==='conectar') s.riegoAislado=false;
+      if(accion==='desbloquear') {s.pasador=false;s.presionIgual=false;}
+      s.fase=hasta;
+      if(['extraer','estacionar','centrar','insertar'].includes(accion))
+        s.movimiento={desde,hasta,progreso:0};
+      this.ubicaciones();
+      this.verificar();
+    }
+    avanzarMovimiento(fraccion) {
+      const s=this.estado;
+      comprobar(s.movimiento&&s.energia,'Traslado detenido o sin energía');
+      comprobar(Number.isFinite(fraccion)&&fraccion>=s.movimiento.progreso&&fraccion<=1,'Progreso inválido');
+      s.movimiento.progreso=fraccion;
+      if(fraccion===1) s.movimiento=null;
+      this.ubicaciones();this.verificar();
+    }
+    ubicaciones() {
+      const s=this.estado;
+      for(const c of s.cartuchos)c.ubicacion=s.movimiento?'en_traslado':s.fase>=4?'deposito':s.fase===3?'transferencia':'anillo';
+    }
+    verificar() {
+      const s=this.estado;
+      comprobar(s.fase>=0&&s.fase<=5&&Number.isInteger(s.fase),'Fase inválida');
+      comprobar(s.pasador===(s.fase>0),'Pasador incoherente');
+      comprobar(!s.ocupado||(s.fase===5&&s.pasador&&s.riegoAislado),'Ocupación insegura');
+      comprobar(s.cartuchos.every(c=>c.masaKg===this.d.geometria.cartucho.masa_kg.nominal),'La maniobra alteró sustrato');
+      comprobar(new Set(s.cartuchos.map(c=>c.id)).size===2,'Identidades duplicadas');
+      return true;
+    }
+  }
+  const api={Modelo,comparar,AccesoServicio};
   if(typeof module!=='undefined') module.exports=api;
   root.MILPA=api;
 })(globalThis);

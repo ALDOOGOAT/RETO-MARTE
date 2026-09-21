@@ -4,6 +4,8 @@
 > techo 2.20 m. Las tablas y comparación originales de P2 de abajo conservan su corte histórico;
 > resultados actuales en `config/milpa360.geometria.json` y [P4/S3](P4-MECANICA-ENSAYOS.md).
 > Entrada, equipos, resistencia y ergonomía siguen pendientes; ver B19 actualizado.
+> **21 sep · B19:** [candidata de acceso](B19-ACCESO.md), con trayectorias continuas,
+> vestíbulo y depósitos parametrizados en P06/visor. No cambia la aceptación física de P2.
 
 # P2 · Geometría, interferencias y modelo paramétrico — MILPA-360
 

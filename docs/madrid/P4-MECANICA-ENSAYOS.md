@@ -4,6 +4,11 @@
 Resultado de ingeniería preliminar con supuestos. **No hay ensayos físicos ejecutados,
 motor seleccionado, resistencia demostrada ni conformidad NASA.** S4 tratará costes.
 
+**Actualización B19, 21 sep:** [estudio de acceso](B19-ACCESO.md) y P06 desarrollan
+extracción de dos casetes y depósito lateral. Carga nominal conjunta 179.7 kg,
+sin masa de casetes/útiles aún desconocida. Verificados barridos geométricos y estados
+digitales; fuerzas, apoyos, retención, dosel y evacuación asistida siguen pendientes.
+
 ## 1. Decisiones y correcciones verificables
 
 **D8 — separar piso y cama.** P-02 situaba al operario en z=0; el HTML elevaba todo el piso

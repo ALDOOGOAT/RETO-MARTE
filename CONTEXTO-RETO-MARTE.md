@@ -325,3 +325,23 @@ interior antes de descontar estructura, al retirar dos posiciones. Falta depósi
 cartuchos, guía desmontable, esclusa, enclavamientos y revisión de evacuación. No se
 adopta como acceso validado. B15–B18 siguen condicionando dosel, equipos y cargas.
 No se ha realizado ensayo físico; S6 y prueba en equipo/proyector del evento pendientes.
+
+## Actualización B19 · estudio de acceso, 21 sep 2026
+
+La [candidata B19](docs/madrid/B19-ACCESO.md) ya tiene cálculo de barridos continuos,
+[visor de maniobra](prototipo-3d/milpa360-acceso.html), plano P06 y pruebas de estados.
+Dos casetes salen 1 m y se aparcan 0.70 m hacia cada lado en un vestíbulo presurizado.
+Quedan 0.916 m de paso con herrajes supuestos de 30 mm/lado; con 40 mm queda 0.896 m,
+por debajo del objetivo nominal de 0.90 m. Ese objetivo no equivale a norma de evacuación.
+
+La huella aumenta 6.66 m² (40.8% sobre el círculo original) y el volumen interior
+14.66 m³. Son al menos 179.7 kg nominales de carga entre cartuchos; faltan casetes,
+útil y parte de la carga biológica. El estudio mantiene diez cartuchos de cultivo
+dentro durante mantenimiento; no atribuye producción a los retirados.
+
+Se comprobaron bloqueo durante ocupación, paro de traslado, recuperación explícita
+y salida sin energía desde el estado con puertas abiertas. No se ensayó retención
+mecánica, presión, dosel ni rescate. La referencia de diseño se leyó en
+[NASA Vol. 2, §8.3–8.4](https://www.nasa.gov/reference/8-0-architecture-vol-2/).
+B19 permanece parcial; el paquete S5 `589ca5b` conserva su revisión y no adopta aún
+este vestíbulo. La escena nueva es un estudio funcional con reservas geométricas.

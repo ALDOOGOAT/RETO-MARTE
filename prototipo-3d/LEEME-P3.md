@@ -11,6 +11,10 @@ Conserve a su lado `milpa360-modelo.js`, `milpa360-datos.js` y toda la carpeta `
 - **Aislar / sustituir:** acción explícita con repuesto finito y tiempo ilustrativo. No prueba
   que se pueda maniobrar físicamente con la masa real del cartucho ni que el acceso cumpla requisitos.
 - **Comparar siembras:** banco virtual de parcelas fijas; mismo recurso y reglas para ambas.
+- **Estudio B19:** `milpa360-acceso.html`, también enlazado desde inspección técnica.
+  Extraer → estacionar → habilitar paso → entrar/salir. Permite cortar energía durante
+  el traslado y durante ocupación. Restaurar alimentación no reanuda automáticamente.
+  Es una candidata aparte con reloj biológico detenido, no el acceso ya validado del módulo.
 
 Los resultados químicos/sanitarios del recorrido son **simulados**. Para observar la retención
 sin autorización abra `milpa360-simulador.html?vista=habitat&autorizacion=0`.
@@ -25,6 +29,10 @@ La pérdida de alimento no es una predicción agronómica: las leyes de daño so
 La reserva de gas se contabiliza como energía química; su entrada nominal P1 no simula el
 reactor durante fallos. No hay nueva medición física ni cumplimiento NASA demostrado.
 
+La candidata B19 requiere vestíbulo adicional de 6.66 m², 0.916 m de paso con herrajes
+supuestos y unos 180 kg de carga nominal más útiles pendientes. Con herrajes de 40 mm
+por lado no llega al objetivo de 0.90 m. Véase `../docs/madrid/B19-ACCESO.md` y plano P06.
+
 Ecuaciones, unidades, fronteras y evidencia: `../docs/madrid/P3-SIMULACION.md`.
 Los archivos del hackathon señalados como históricos no son la defensa vigente de Madrid.
 
@@ -32,9 +40,11 @@ Los archivos del hackathon señalados como históricos no son la defensa vigente
 
 ```bash
 python3 analysis/milpa360_p3.py
+python3 analysis/milpa360_acceso.py
 python3 analysis/verificar_geometria.py
 node analysis/verificar_p3.cjs
 node --experimental-websocket analysis/verificar_p3_navegador.mjs
+MILPA_SOLO_ACCESO=1 node --experimental-websocket analysis/verificar_p3_navegador.mjs
 python3 analysis/empaquetar_p3.py
 ```
 
