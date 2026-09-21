@@ -248,6 +248,8 @@ def main():
     print(f"  Metanogénesis inhibida con {lim}–20 mM (Sci. Rep. 2021): la salmuera iguala o supera {lim} mM en "
           f"{sum(c >= lim for c in conc_mM)}/3 escenarios → la salmuera no debe entrar al digestor metanogénico")
 
+    return res
+
 
 if __name__ == "__main__":
     main()

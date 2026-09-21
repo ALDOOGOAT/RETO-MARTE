@@ -2,6 +2,8 @@
 <title>MILPA-360 · Marte</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js" integrity="sha512-vnmn/Qqn6aG0POAc9mIGzjq0IybrvxJXYDafNvp9JSnDGxeF3pbkSqLvf+YGd5ku63pT7sa/jxHn7/d0mU8+tA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="milpa360-datos.js"></script>
+<script src="milpa360-modelo.js"></script>
 <style>
 :root{
   --void:#07090C; --glass:rgba(14,18,24,.78); --glass-2:rgba(20,26,33,.86);
@@ -2074,13 +2076,13 @@ function construirHabitat(){
     enColector(2.6), enColector(3.4),
     V(0.22, Y_COL - 0.02, 0.10), V(0.10, CUBIERTA + 1.34, 0)], 0.017, 0.22, "f_riego");
 
-  /* 5 · ROJO — biogás de la cámara B al gasómetro y de ahí al colchón térmico */
-  conducto(C_BIOGAS, [
-    V(wB.x - 0.20, wB.y + 0.40, wB.z + 0.18), V(wB.x - 0.34, Y_COL - 0.06, wB.z + 0.24),
-    enColector(3.6), enColector(4.5),
-    V(Math.cos(4.5) * 1.30, Y_COL - 0.08, Math.sin(4.5) * 1.30),
-    V(Math.cos(4.5) * 1.90, CUBIERTA + 1.44, Math.sin(4.5) * 1.90),
-    V(Math.cos(4.5) * (R_CASCO - 0.22), CUBIERTA + 1.36, Math.sin(4.5) * (R_CASCO - 0.22))], 0.018, 0.22, "f_biogas");
+  /* Gas: digestor → campana; salida a equipo exterior esquemático, sin combustión abierta. */
+  conducto(C_BIOGAS, [V(wB.x-0.22,wB.y+0.20,wB.z),V(wB.x-0.34,wB.y+0.50,wB.z),
+    V(wB.x-0.20,wB.y+0.70,wB.z)],0.018,0.22,"f_biogas");
+  const equipoGas=malla(new T.BoxGeometry(0.45,0.50,0.40),M.oscuro,[-2.75,0.85,-0.65]);
+  clicable(equipoGas,"f_biogas");
+  conducto(C_BIOGAS,[V(wB.x,wB.y+0.75,wB.z),V(-0.5,Y_COL,-0.6),V(-2.30,Y_COL,-0.65),
+    V(-2.75,1.10,-0.65)],0.018,0.22,"f_biogas");
 
   /* 6 · AMARILLO — la proteína cierra el anillo: larvario → comedero del aviario */
   conducto(C_PROTEINA, [
@@ -2209,16 +2211,17 @@ function construirHabitat(){
    ESTADO
    ═══════════════════════════════════════════════════════════════ */
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const modelo = new MILPA.Modelo(MILPA_DATOS, {autorizacionesIlustrativas: Q.get("autorizacion") !== "0"});
+const solInicial = Math.max(0, Math.min(SOLES_MISION, qn("sol", 0)));
+const tramoTormenta = Q.get("storm") === "1" ? Math.min(10, solInicial) : 0;
+modelo.avanzar(solInicial - tramoTormenta);
+if (Q.get("storm") === "1") { modelo.fallar("tormenta"); modelo.avanzar(tramoTormenta); }
 const S = {
   vista: Q.get("vista") === "habitat" ? "habitat" : "planeta",
-  sol: Math.max(0, Math.min(729.9, qn("sol", 0))),
-  play: !reduce && Q.get("play") !== "0",
-  vel: 4,
-  tormenta: Q.get("storm") === "1" ? 21 : 0,
-  perdidas: 0,
-  gas: 0.45,          // carga del gasómetro (0–1)
-  transicion: 0,          // 0..1 mientras cambia de vista
-  destino: null,
+  get sol(){ return modelo.estado.sol; },
+  get tormenta(){ return Math.max(0, modelo.estado.tormentaHasta - modelo.estado.sol); },
+  get gas(){ return modelo.estado.gasKWh / MILPA_DATOS.parametros.simulacion.capacidad_gas.valor; },
+  play: !reduce && Q.get("play") !== "0", vel:4, transicion:0, destino:null,
 };
 const VELS = [1, 4, 12];
 let iVel = 1;
@@ -2266,12 +2269,11 @@ const filas = [];
 function rielHabitat(){
   $("riel-titulo").textContent = "ANILLO ÚNICO · LOTES";
   const c = $("riel-cuerpo");
-  c.innerHTML = `<table><thead><tr><th>Bandeja</th><th>Estación</th><th>Sin estiércol</th></tr></thead>
+  c.innerHTML = `<table><thead><tr><th>Lote</th><th>Etapa</th><th>Estado*</th></tr></thead>
     <tbody id="tele"></tbody></table>
-    <p style="font-size:11.5px;line-height:1.55;color:var(--text-3);margin:13px 0 0">
-    El reto pide fertilizar <b style="color:var(--text-2)">“sin agotar el terreno”</b>. Aquí el descanso
-    no es un procedimiento que alguien pueda olvidar: es geometría. Una bandeja no vuelve a recibir
-    estiércol hasta <b style="color:var(--text-2)">${(N_POS - 1) * SOLES_PASO} soles</b> después.</p>`;
+    <p style="font-size:11.5px;line-height:1.55;color:var(--text-2);margin:13px 0 0">
+    *Demostración con autorizaciones simuladas y cultivos precargados. Ningún análisis real.
+    La regla de daño no está calibrada. S8 retiene el lote sin autorización.</p>`;
   const tb = $("tele"); filas.length = 0;
   for (let i = 0; i < N_POS; i++){
     const tr = document.createElement("tr");
@@ -2327,7 +2329,7 @@ $("b-vel").onclick = e => {
   e.currentTarget.textContent = "×" + S.vel;
 };
 $("b-tormenta").onclick = e => {
-  S.tormenta = S.tormenta > 0 ? 0 : 21;
+  if(S.tormenta>0) modelo.reparar("tormenta"); else modelo.fallar("tormenta");
   e.currentTarget.classList.toggle("on", S.tormenta > 0);
 };
 
@@ -2484,99 +2486,44 @@ function bucle(ahora){
   }
   const fundido = S.transicion > 0 ? 1 - Math.abs(S.transicion - 0.5) * 2 : 0;
 
-  /* ── reloj de misión ── */
-  if (S.play && S.vista === "habitat"){
-    S.sol = (S.sol + dt * 2.2 * S.vel) % SOLES_MISION;
-    if (S.tormenta > 0) S.tormenta = Math.max(0, S.tormenta - dt * 2.2 * S.vel);
-  }
+  /* El render solicita tiempo; el modelo lo integra con paso fijo y termina sin módulo. */
+  if (S.play && S.vista === "habitat") modelo.avanzar(dt * 2.2 * S.vel);
+  if (S.sol >= SOLES_MISION) S.play = false;
   const enTormenta = S.tormenta > 0;
-
-  /* avance discreto con reposo: un paso cada 8 soles */
-  const bruto = S.sol / SOLES_PASO;
-  const paso = Math.floor(bruto);
-  const f = bruto - paso;
-  const suavizado = f < 0.72 ? 0 : (x => x * x * (3 - 2 * x))((f - 0.72) / 0.28);
-  const avance = paso + suavizado;
-
+  const estado = modelo.estado;
   if (S.vista === "habitat"){
-    carrusel.grupo.rotation.y = -avance / N_POS * TAU;
-
-    /* UN solo recorrido sobre las 20 posiciones. El estado se INTERPOLA entre posición y
-       posición — nada aparece ni desaparece de golpe cuando el carrusel avanza un paso.
-       Que el mismo cartucho pase de S8 a C1 sin cambiar de pieza ES el trasvase resuelto. */
-    let perdidas = 0;
-    for (let i = 0; i < N_POS; i++){
-      const pc = (i + avance) % N_POS;                // posición continua sobre el anillo
-      const p0 = Math.floor(pc) % N_POS, p1 = (p0 + 1) % N_POS, ft = pc - Math.floor(pc);
-      const p = Math.round(pc) % N_POS;               // posición para el rótulo
-      const b = carrusel.bandejas[i];
-      cAux.setHex(COL_IN[p0]).lerp(cAuxB.setHex(COL_IN[p1]), ft);
-      b.sustrato.material.color.copy(cAux);
-      b.sustrato.scale.y = mezcla(ALT_IN[p0], ALT_IN[p1], ft) / 0.09;
-
-      /* el musgo solo prospera de S5 a S8, y se retira al entrar en cultivo: es el semáforo,
-         no una prueba — ningún lote pasa a cultivo sin análisis (P1 D5) */
-      const vd = q => q >= 4 && q <= 7 ? sat((q - 3.4) / 2.2) : 0;
-      const verdor = mezcla(vd(p0), vd(p1), ft);
-      for (const m of b.musgo.children) m.scale.setScalar(verdor * 1.25);  // a 0 desaparece sin salto
-      b.costra.material.opacity = verdor;
-      b.costra.material.transparent = true;
-
-      /* tramo de cultivo: posiciones 8–19. La planta crece a lo largo de los 12 pasos y se
-         cosecha encogiendo en los dos últimos; fuera del tramo su escala es cero.          */
-      const t = pc - N_REG;                           // 0 … 12 dentro del cultivo
-      const enCultivo = t >= 0;
-      /* el tope de escala baja con la cuerda del cartucho: con 2.05 la mata se salía del sector */
-      const ESC_MIN = 0.07, ESC_MAX = 1.45;
-      let esc = 0, danada = false;
-      if (enCultivo){
-        const tc = N_CUL - 2;                         // maduración hasta dos pasos del final
-        esc = t <= tc ? ESC_MIN + (t / tc) * (ESC_MAX - ESC_MIN)
-                      : mezcla(ESC_MAX, ESC_MIN, suave(Math.min(1, (t - tc) / 2)));
-        danada = enTormenta && t >= tc - 1.4;         // se pierde lo próximo a cosecha
-        if (danada) perdidas++;
-      }
-      const caida = danada ? 0.62 : 1;
-      b.escY = mezcla(b.escY === undefined ? caida : b.escY, caida, 0.06);
-      /* cada planta se escala por separado: el grupo lleva sus posiciones dentro del sector */
-      for (const pl of b.plantas.children){
-        const e = esc * (pl.userData.base || 1);
-        pl.scale.set(e, e * b.escY, e);
-      }
-      /* la marchitez se interpola en el color, no se cambia de material de golpe */
-      const marchito = danada ? 1 : 0;
-      b.marchitez = mezcla(b.marchitez === undefined ? marchito : b.marchitez, marchito, 0.05);
-      if (b.matVeg) for (const m of b.matVeg)
-        m.color.copy(m.userData.vivo).lerp(C_MARCHITO, b.marchitez);
-
-      /* soles desde la última deposición: S2 es la posición 1, y el cartucho no vuelve a
-         recibir estiércol hasta dar la vuelta entera */
-      const soles = p === 1 ? 0 : ((p - 2 + N_POS) % N_POS) * SOLES_PASO + f * SOLES_PASO;
-      const fl = filas[i];
-      if (fl){
-        fl.pip.style.background = "#" + COL_IN[p].toString(16).padStart(6, "0");
-        fl.est.textContent = ESTACIONES[p][0] + " " + ESTACIONES[p][1].toLowerCase();
-        fl.rest.textContent = soles.toFixed(0) + " sol";
-        fl.rest.className = "rest" + (soles < 8 ? " low" : "");
-        fl.tr.className = p === 1 ? "hot" : "";
+    // Indexado esquemático de 18°: duración mecánica pendiente, no velocidad física.
+    carrusel.grupo.rotation.y = -estado.pasos / N_POS * TAU;
+    for (let i=0;i<N_POS;i++){
+      const lote=estado.lotes[i], p=lote.pos, b=carrusel.bandejas[i];
+      b.sustrato.material.color.setHex(COL_IN[p]);
+      const verdor=p>=4&&p<=7?0.8:0;
+      for (const m of b.musgo.children) m.scale.setScalar(verdor);
+      b.costra.material.opacity=verdor;b.costra.material.transparent=true;
+      const vigor=lote.cultivos.length?lote.cultivos.reduce((a,c)=>a+(c.activa?c.edadD/c.ciclo:0),0)/3:0;
+      const dano=lote.cultivos.length?lote.cultivos.reduce((a,c)=>a+c.dano,0)/3:0;
+      const esc=lote.cultivos.length?0.07+Math.min(1,vigor)*1.38:0;
+      for(const pl of b.plantas.children) pl.scale.set(esc,esc*(1-dano*0.65),esc);
+      if(b.matVeg) for(const m of b.matVeg) m.color.copy(m.userData.vivo).lerp(C_MARCHITO,dano);
+      const fl=filas[i];
+      if(fl){
+        fl.pip.style.background="#"+COL_IN[p].toString(16).padStart(6,"0");
+        fl.tr.children[0].lastChild.textContent=lote.id;
+        fl.est.textContent=ESTACIONES[p][0];
+        fl.rest.textContent=lote.calidad==='rechazado'?'RECHAZADO':p>=N_REG?Math.round(dano*100)+'% daño*':lote.calidad==='apto_ilustrativo'?'apto*':'pendiente';
+        fl.tr.className=lote.calidad==='rechazado'?'hot':'';
       }
     }
-    S.perdidas = perdidas;
 
-    /* flujo dentro de la tubería: el galón corre en el sentido del recurso.
-       En tormenta el biogás corre más rápido — es el que sostiene el colchón térmico. */
-    flujos.forEach((fl, k) => {
-      const v = (fl.ficha === "f_biogas" && enTormenta) ? fl.v * 2.4 : fl.v;
-      if (!fl.bloqueado && S.play) fl.tex.offset.x -= dt * v;
-    });
-
-    /* gasómetro de campana: sube con lo que produce el digestor, baja con lo que se consume */
-    const produccion = 0.055, consumo = enTormenta ? 0.16 : 0.035;
-    S.gas = Math.max(0.06, Math.min(1, S.gas + (produccion - consumo) * dt * S.vel));
+    /* Sólo el agua y el gas tienen inventarios dinámicos; otras rutas no animan caudal. */
+    for(const fl of flujos){
+      const activa=fl.ficha==="f_biogas"||(fl.ficha==="f_riego"&&!estado.bomba);
+      if(S.play && activa && !fl.bloqueado) fl.tex.offset.x-=dt*fl.v;
+    }
     gasometro.position.y = gasometro.userData.y0 + S.gas * 0.26;
 
     /* huevo recogido: la bandeja se llena a lo largo del sol y se vacía al recogerse */
-    const nHuevos = (S.sol % 1) * 12.6;
+    const nHuevos = (S.sol % 1) * 12; // iconos ilustrativos, no contador de producción
     bandejaHuevos.userData.huevos.forEach((h, i) => {
       const e = sat(nHuevos - i);                     // cada huevo entra creciendo
       h.scale.set(e, e * 0.8, e * 0.8);
@@ -2585,7 +2532,7 @@ function bucle(ahora){
     /* goteo: cada gota cae los últimos centímetros y entra al sustrato */
     goteros.forEach((gt, i) => {
       const u = (t * 0.55 + gt.fase) % 1;
-      gt.gota.visible = u < 0.42 && !enTormenta;
+      gt.gota.visible = u < 0.42 && !estado.bomba && S.play;
       gt.gota.position.y = gt.y0 - u * 0.035;
       gt.gota.scale.setScalar(1 - u * 0.6);
     });
@@ -2605,8 +2552,8 @@ function bucle(ahora){
 
     /* luces de cultivo: se apagan sin sol */
     focosCultivo.forEach(o => {
-      if (o.isPointLight) o.intensity = enTormenta ? 0.35 : 1.5;
-      else o.material.emissiveIntensity = enTormenta ? 0.8 : 3.4;
+      if (o.isPointLight) o.intensity = 1.5 * estado.luz;
+      else o.material.emissiveIntensity = 3.4 * estado.luz;
     });
 
     /* atmósfera de tormenta */
@@ -2627,7 +2574,7 @@ function bucle(ahora){
     $("sol-n").textContent = Math.floor(S.sol);
     $("prog-i").style.width = (S.sol / SOLES_MISION * 100).toFixed(1) + "%";
     $("b-tormenta").textContent = enTormenta
-      ? "TORMENTA · " + Math.ceil(S.tormenta) + " SOLES · PIERDE " + Math.round(perdidas / N_CUL * 100) + "%"
+      ? "TORMENTA · " + Math.ceil(S.tormenta) + " SOLES · LUZ " + Math.round(estado.luz*100) + "%"
       : "TORMENTA DE POLVO · 21 SOLES";
 
   } else {
