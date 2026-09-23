@@ -1,5 +1,10 @@
 # ESTADO · preparación para Madrid
 
+> **Actualización visual V6, 23 sep 2026:** [cambios y pruebas](MEJORA-VISUAL-V6.md).
+> Visores del repositorio con estudio, persona y vegetación refinadas, UI adaptable
+> y comprobación digital exportable. No modifica parámetros ni cierra ensayos físicos.
+> El registro V5 que sigue conserva el checkpoint anterior y sus paquetes.
+
 **Sesión:** V5, presentación narrada y mejora de ambos visores.
 **Fecha:** 21 sep 2026. **Rama:** `preparacion-madrid-p1`; base `f3b61e2`.
 El commit que contiene este archivo identifica el checkpoint; push autorizado.

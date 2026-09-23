@@ -28,7 +28,7 @@
 <div class="leyenda"><b>Cobre: carga que se retira. Azul: ruta de paso.</b><br>Vista de corte · espacio presurizado conectado · secuencia por comprobar físicamente.</div>
 </section></main>
 <script src="vendor/three.min.js"></script><script src="milpa360-datos.js"></script><script src="milpa360-modelo.js"></script>
-<script src="milpa360-personas.js"></script><script src="milpa360-guion.js"></script><script src="milpa360-audio.js"></script><script src="milpa360-proyeccion.js"></script>
+<script src="milpa360-personas.js"></script><script src="milpa360-visual.js"></script><script src="milpa360-guion.js"></script><script src="milpa360-audio.js"></script><script src="milpa360-proyeccion.js"></script>
 <script>
 'use strict';
 const datos=MILPA_DATOS, a=datos.acceso, g=datos.geometria, p=a.parametros, r=a.resultados;
@@ -36,6 +36,7 @@ const estudio=new MILPA.AccesoServicio(datos), $=id=>document.getElementById(id)
 const embebido=new URLSearchParams(location.search).get('embebido')==='1';if(embebido)document.body.classList.add('embebido');
 const escena=new T.Scene(), renderer=new T.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.setClearColor(0,0);$('escena').prepend(renderer.domElement);
+escena.environment=MILPA_VISUAL.entorno(renderer);renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
 const camara=new T.PerspectiveCamera(40,1,.05,80), mira=new T.Vector3(1.1,.5,0),miraVisual=mira.clone();
 escena.add(new T.HemisphereLight(0xdbefff,0x334549,1.25));
 const luz=new T.DirectionalLight(0xffead5,3.2);luz.position.set(-1,7,4);luz.castShadow=true;luz.shadow.mapSize.set(1024,1024);Object.assign(luz.shadow.camera,{left:-7,right:7,top:7,bottom:-7});luz.shadow.normalBias=.025;escena.add(luz);const fill=new T.DirectionalLight(0x83badb,1.8);fill.position.set(4,4,-5);escena.add(fill);
@@ -168,7 +169,8 @@ $('continuar').onclick=()=>{if(estudio.estado.energia&&estudio.estado.movimiento
 $('metricas').innerHTML=[[r.ancho_libre_m.toFixed(3)+' m','paso con herrajes supuestos'],[r.area_adicional_m2.toFixed(2)+' m²','huella adicional'],[r.carga_dos_cartuchos_kg.nominal.toFixed(1)+' kg','dos cartuchos; falta útil'],[r.area_cultivo_en_anillo_m2.toFixed(3)+' m²','cultivo que permanece dentro']].map(([v,k])=>'<div><strong>'+v+'</strong><span>'+k+'</span></div>').join('');
 function actualizar(){const s=estudio.estado;$('fase').textContent=MILPA_I18N.t(nombres[s.fase]+(s.movimiento?' · en traslado':''));$('explicacion').textContent=MILPA_I18N.t(textos[s.fase]);$('siguiente').textContent=MILPA_I18N.t(etiquetas[siguiente()]||'Paso preparado');$('siguiente').disabled=!siguiente()||s.ocupado||!!s.movimiento||caminando;$('anterior').textContent=MILPA_I18N.t(etiquetas[atras[s.fase]]||'Volver');$('anterior').disabled=s.fase===0||s.ocupado||!!s.movimiento||caminando;$('energia').textContent=MILPA_I18N.t(s.energia?'Cortar energía':'Restaurar energía');$('entrar').disabled=s.fase!==5||s.ocupado||!s.energia||caminando;$('salir').disabled=!s.ocupado||caminando;$('continuar').hidden=!s.movimiento||!s.energia||animando;[...$('pasos').children].forEach((li,i)=>li.classList.toggle('activo',s.fase===i+1));}
 function pose(fase){return [fase>=3?p.traslacion_radial:0,fase>=4?p.traslacion_lateral:0];}
-function dibujar(t){const dt=Math.min(.05,(t-ultimo)/1000||0);ultimo=t;const s=estudio.estado;
+let ultimaSombraAcceso=0;
+function dibujar(t){if(document.hidden){ultimo=t;requestAnimationFrame(dibujar);return;}const dt=Math.min(.05,(t-ultimo)/1000||0);ultimo=t;const s=estudio.estado;
  cineAcceso.tick(dt);
  const pausado=(cineAcceso.state.activo&&!cineAcceso.state.reproduciendo)||(embebido&&pausaEmbebida);
  const delta=pausado?0:dt;tiempoPersona+=delta;
@@ -186,6 +188,7 @@ function dibujar(t){const dt=Math.min(.05,(t-ultimo)/1000||0);ultimo=t;const s=e
  reserva.position.x=humano.position.x;
  if(s.fase===2&&!s.movimiento)$('siguiente').disabled=puertaVisual<.98;
  if(!pausado)cam(dt);
+ if(t-ultimaSombraAcceso>100){renderer.shadowMap.needsUpdate=true;ultimaSombraAcceso=t;}
  renderer.render(escena,camara);requestAnimationFrame(dibujar);
 }
 addEventListener('milpa-language',()=>{etiquetasTextura.forEach(fn=>fn());actualizar();MILPA_I18N.apply();});

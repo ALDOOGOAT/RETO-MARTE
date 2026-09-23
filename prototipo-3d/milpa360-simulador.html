@@ -11,6 +11,7 @@
 <script src="milpa360-traducciones.js"></script>
 <script src="milpa360-contenido.js"></script>
 <script src="milpa360-personas.js"></script>
+<script src="milpa360-visual.js"></script>
 <script src="milpa360-guion.js"></script>
 <script src="milpa360-audio.js"></script>
 <script src="milpa360-proyeccion.js"></script>
@@ -275,10 +276,11 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
   <button class="primary-action" id="intro-action">Explorar el módulo <span aria-hidden="true">↗</span></button>
   <button class="intro-secondary" id="intro-datos">Conocer el planeta</button>
   <button class="projection-start" id="intro-cine">Proyección con voz</button>
+  <div id="resumen-modelo"><div><strong id="resumen-cartuchos"></strong><span>cartuchos idénticos</span></div><div><strong id="resumen-area"></strong><span>m² de cultivo útil</span></div><button class="estado-concepto" id="estado-concepto">Concepto en evaluación</button></div>
   <p class="intro-foot">Un concepto de BioMars Chiapas.<br>Ciencia, cálculo y preguntas abiertas.</p>
 </section>
-<div id="quick-views" role="group" aria-label="Vistas del modelo"><button id="ver-exterior" aria-pressed="false">Exterior cerrado</button><button id="ver-interior" aria-pressed="true">Interior</button><span class="view-divider"></span><button data-view="orbita">Perspectiva</button><button data-view="planta">Planta</button><button data-view="lateral">Lateral</button><button id="quick-explosion">Despiece</button><button id="giro-camara" aria-pressed="false">Giro 360°</button></div>
-<nav id="ruta-proceso" aria-label="Explorar el proceso"><button data-process="lavado"><small>01</small> Suelo</button><button data-process="aviario"><small>02</small> Animales</button><button data-process="digestor"><small>03</small> Tratamiento</button><button data-process="cultivo"><small>04</small> Cultivo</button><button id="ver-ciencia">Fundamentos</button></nav>
+<div id="quick-views" role="group" aria-label="Vistas del modelo"><button id="ver-exterior" aria-pressed="false">Exterior cerrado</button><button id="ver-interior" aria-pressed="true">Interior</button><span class="view-divider"></span><button data-view="orbita">Perspectiva</button><button data-view="planta">Planta</button><button data-view="lateral">Lateral</button><button id="quick-explosion">Despiece</button><button id="giro-camara" aria-pressed="false">Giro 360°</button><span class="view-divider"></span><button id="ver-entorno" aria-pressed="false">Entorno marciano</button></div>
+
 <div id="estado-vista" role="status" aria-live="polite"></div>
 <div id="vida-vegetal" role="status" aria-live="polite"></div>
 <div id="scene-meta">Mapa Viking · NASA/JPL-Caltech<br>Procesado por USGS · sin elevación</div>
@@ -296,6 +298,8 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
   <div class="riel-cuerpo" id="riel-cuerpo"></div>
 </aside>
 
+<section id="consola" aria-label="Controles del modelo">
+<nav id="ruta-proceso" aria-label="Explorar el proceso"><button data-process="lavado"><small>01</small> Suelo</button><button data-process="aviario"><small>02</small> Animales</button><button data-process="digestor"><small>03</small> Tratamiento</button><button data-process="cultivo"><small>04</small> Cultivo</button><button id="ver-ciencia">Fundamentos</button><button id="ver-validacion">Validar modelo</button></nav>
 <div id="transporte" class="panel oculto">
   <div class="tr-bloque">
     <div id="reloj"><span class="n" id="sol-n">0</span><span class="u">SOL / <span id="sol-tot">—</span></span></div>
@@ -313,6 +317,7 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
   </div>
 </div>
 
+</section>
 <section id="ficha" class="panel oculto">
   <div class="cab">
     <button id="cerrar" aria-label="Cerrar">×</button>
@@ -937,9 +942,9 @@ sol.position.set(46, 30, -14);   // rasante: terminador en el planeta, sombras l
 sol.castShadow = true;
 sol.shadow.mapSize.set(2048, 2048);
 sol.shadow.camera.near = 1; sol.shadow.camera.far = 90;
-sol.shadow.camera.top = sol.shadow.camera.right = 11;
-sol.shadow.camera.bottom = sol.shadow.camera.left = -11;
-sol.shadow.bias = -0.00045; sol.shadow.normalBias = 0.016;
+sol.shadow.camera.top = sol.shadow.camera.right = 6.5;
+sol.shadow.camera.bottom = sol.shadow.camera.left = -6.5;
+sol.shadow.bias = -0.00045; sol.shadow.normalBias = 0.008;
 escena.add(sol);
 const hemi = new T.HemisphereLight(0xD6E4EA, 0x554439, 0.72);
 escena.add(hemi);
@@ -1183,8 +1188,8 @@ function mats(){
   M.vidrio  = new T.MeshPhysicalMaterial({ color: 0xCFE0EC, roughness: 0.08, metalness: 0,
                 transparent: true, opacity: 0.30, clearcoat: 0.9, clearcoatRoughness: 0.06,
                 side: T.DoubleSide, depthWrite: false });
-  M.verde   = new T.MeshStandardMaterial({ color: 0x4C7762, roughness: 0.35, metalness: 0.42 });
-  M.verde2  = new T.MeshStandardMaterial({ color: 0x27523C, roughness: 0.38, metalness: 0.45 });
+  M.verde   = new T.MeshStandardMaterial({ color: 0x668675, roughness: 0.52, metalness: 0.30 });
+  M.verde2  = new T.MeshStandardMaterial({ color: 0x3D6252, roughness: 0.48, metalness: 0.32 });
   M.azul    = new T.MeshStandardMaterial({ color: 0x5397A8, roughness: 0.28, metalness: 0.5 });
   M.cobre   = new T.MeshStandardMaterial({ color: 0xA56A3C, roughness: 0.34, metalness: 0.8 });
   M.ave     = new T.MeshStandardMaterial({ map: texAve, roughness: 0.86, metalness: 0 });
@@ -1195,13 +1200,13 @@ function mats(){
   M.ojoAve  = new T.MeshStandardMaterial({color:0x080a09,roughness:.18});
   M.huevo   = new T.MeshStandardMaterial({ map: texHuevo, roughness: 0.42, metalness: 0 });
   M.rego    = new T.MeshStandardMaterial({ map: texRego, roughness: 1.0, metalness: 0 });
-  M.sustrato= new T.MeshStandardMaterial({ color: 0x8A5334, roughness: 1.0, metalness: 0 });
+  M.sustrato= new T.MeshStandardMaterial({ color: 0x8A5334, map:texRego, bumpMap:texRego, bumpScale:.008, roughness: 1.0, metalness: 0 });
   const hojaMat = (h, col) => new T.MeshStandardMaterial({ color: col, map: h.mapa,
-                bumpMap: h.rel, bumpScale: 0.010, roughness: 0.66, metalness: 0,
+                bumpMap: h.rel, bumpScale: 0.0025, roughness: 0.88, metalness: 0,
                 side: T.DoubleSide });
-  M.hoja    = hojaMat(hojaCamote, 0x39702C);   // camote, verde profundo
-  M.hoja2   = hojaMat(hojaLegum,  0x5A9636);   // leguminosa, verde vivo
-  M.hojaR   = hojaMat(hojaRabano, 0x6BA33C);   // rábano, verde claro
+  M.hoja    = hojaMat(hojaCamote, 0x47783A);   // camote, verde profundo
+  M.hoja2   = hojaMat(hojaLegum,  0x6C9847);   // leguminosa, verde vivo
+  M.hojaR   = hojaMat(hojaRabano, 0x7BA451);   // rábano, verde claro
   M.tallo   = new T.MeshStandardMaterial({ color: 0x4E6B33, roughness: 0.82 });
   M.musgo   = new T.MeshStandardMaterial({ color: 0x4C8438, roughness: 0.94 });
   M.costra  = new T.MeshStandardMaterial({ map: texMusgo, roughness: 0.97, metalness: 0 });
@@ -1280,6 +1285,13 @@ function cerrarHoja(g){
   for (let i = 0; i < uv.count; i++)
     uv.setXY(i, (uv.getX(i) - bb.min.x) / dx, (uv.getY(i) - bb.min.y) / dy);
   uv.needsUpdate = true;
+  // Lámina curvada con nervadura central y borde ondulado; mismas UV normalizadas.
+  const vertices=g.attributes.position;
+  for(let i=0;i<vertices.count;i++){
+    const u=uv.getX(i),v=uv.getY(i),edge=Math.abs(u-.5)*2;
+    vertices.setZ(i,dy*(.12*Math.sin(v*Math.PI)-.10*edge*edge+.025*Math.sin(v*15+u*4)*edge));
+  }
+  vertices.needsUpdate=true;g.computeVertexNormals();
   g.rotateX(-Math.PI / 2);                       // tendida en el plano XZ
   return g;
 }
@@ -1289,8 +1301,10 @@ function geoHoja(largo, ancho, corazon){
   const s = new T.Shape();
   s.moveTo(0, 0);
   if (corazon){
-    s.bezierCurveTo( ancho * 0.98, largo * 0.06,  ancho * 0.74, largo * 0.94,  0, largo);
-    s.bezierCurveTo(-ancho * 0.74, largo * 0.94, -ancho * 0.98, largo * 0.06,  0, 0);
+    s.bezierCurveTo(ancho*.5,-largo*.22,ancho*.95,largo*.20,ancho*.60,largo*.46);
+    s.bezierCurveTo(ancho*.37,largo*.73,ancho*.13,largo*.88,0,largo);
+    s.bezierCurveTo(-ancho*.13,largo*.88,-ancho*.37,largo*.73,-ancho*.60,largo*.46);
+    s.bezierCurveTo(-ancho*.95,largo*.20,-ancho*.5,-largo*.22,0,0);
   } else {
     s.bezierCurveTo( ancho * 0.72, largo * 0.22,  ancho * 0.52, largo * 0.80,  0, largo);
     s.bezierCurveTo(-ancho * 0.52, largo * 0.80, -ancho * 0.72, largo * 0.22,  0, 0);
@@ -1843,6 +1857,7 @@ function construirHabitat(){
      y se enseña lo que toca según la posición en la que esté: al avanzar de S8 a C1 el mismo
      cartucho deja de ser regeneración y pasa a ser cultivo. Ahí está el trasvase resuelto —
      no hay que palear sustrato de un anillo a otro porque no hay dos anillos.              */
+  const prototiposVegetales=[plantaCamote(),plantaLeguminosa(),plantaRabano()];
   function anillo(n, r0, r1){
     const grupo = new T.Group();
     gHabitat.add(grupo);
@@ -1874,12 +1889,12 @@ function construirHabitat(){
         /* Dos matas por especie, no tres: el cartucho de B mide 0.64 × 0.60 m, un 30 % menos
            de cuerda que el sector del anillo exterior anterior. Y son 20 cartuchos con planta
            en vez de 12 — con nueve matas cada uno la escena pasaba de 180 grupos vegetales. */
-        pon(plantaCamote(),     rm + d * 0.29,  0.03);       // al fondo, donde hay más tierra
-        pon(plantaCamote(),     rm + d * 0.25, -0.17);
-        pon(plantaLeguminosa(), rm + d * 0.02,  0.16);       // en medio, fijando nitrógeno
-        pon(plantaLeguminosa(), rm - d * 0.04, -0.13);
-        pon(plantaRabano(),     rm - d * 0.28,  0.11);       // al borde interior, cosecha rápida
-        pon(plantaRabano(),     rm - d * 0.30, -0.06);
+        pon(prototiposVegetales[0].clone(),     rm + d * 0.29,  0.03);       // al fondo, donde hay más tierra
+        pon(prototiposVegetales[0].clone(),     rm + d * 0.25, -0.17);
+        pon(prototiposVegetales[1].clone(), rm + d * 0.02,  0.16);       // en medio, fijando nitrógeno
+        pon(prototiposVegetales[1].clone(), rm - d * 0.04, -0.13);
+        pon(prototiposVegetales[2].clone(),     rm - d * 0.28,  0.11);       // al borde interior, cosecha rápida
+        pon(prototiposVegetales[2].clone(),     rm - d * 0.30, -0.06);
         /* cada bandeja necesita sus propios materiales: la marchitez se interpola,
            no se cambia de golpe, y si compartieran material se marchitarían todas */
         matVeg = [];
@@ -1890,7 +1905,7 @@ function construirHabitat(){
           let c = copia.get(h.material);
           if (!c){
             c = h.material.clone();
-            c.userData = { vivo: c.color.clone() };
+            c.userData = { vivo: c.color.clone(), origen:h.material.uuid };
             copia.set(h.material, c); matVeg.push(c);
           }
           h.material = c;
@@ -1910,6 +1925,7 @@ function construirHabitat(){
     return { grupo, bandejas };
   }
   carrusel = anillo(N_POS, R0, R1);
+  carrusel.actualizarVegetacion=MILPA_VISUAL.vegetacion(carrusel);
   console.assert(carrusel.bandejas.length === N_POS,
     "MILPA-360: deben construirse " + N_POS + " cartuchos");
 
@@ -2057,6 +2073,13 @@ function construirHabitat(){
     V(wB.x-0.20,wB.y+0.70,wB.z)],0.018,0.22,"f_biogas");
   const equipoGas=malla(new T.BoxGeometry(0.45,0.50,0.40),M.oscuro,[-2.75,0.85,-0.65]);
   clicable(equipoGas,"f_biogas");
+  // Bastidor del equipo exterior: apoyo visible hasta el suelo, sin carga acreditada.
+  const apoyoGas=new T.Group();
+  for(const x of [-.17,.17])for(const z of [-.14,.14]){
+    malla(new T.BoxGeometry(.027,.61,.027),M.acero,[-2.75+x,.305,-.65+z],apoyoGas);
+    malla(new T.BoxGeometry(.09,.012,.09),M.oscuro,[-2.75+x,.006,-.65+z],apoyoGas);
+  }
+  const apoyoUnido=fusionar(apoyoGas);gHabitat.add(apoyoUnido);marcarSubarbol(apoyoUnido,'f_biogas');
   conducto(C_BIOGAS,[V(wB.x,wB.y+0.75,wB.z),V(-0.5,Y_COL,-0.6),V(-2.30,Y_COL,-0.65),
     V(-2.75,1.10,-0.65)],0.018,0.22,"f_biogas");
 
@@ -2370,8 +2393,11 @@ function construirHabitat(){
   polvo.name = "polvo";
   gHabitat.add(polvo);
 
+  // Suelo de estudio para leer ensamblajes: una puesta en escena, no parte del hábitat.
+  const sueloEstudio=malla(new T.PlaneGeometry(200,200),new T.MeshStandardMaterial({color:0x0b141b,roughness:.96,envMapIntensity:.15}),[0,-.095,0],gHabitat,false);
+  sueloEstudio.rotation.x=-Math.PI/2;sueloEstudio.receiveShadow=true;sueloEstudio.name='suelo-estudio';sueloEstudio.visible=false;
   if (limpio){ terreno.visible = false; cielo.visible = false; }
-  return { terreno, polvo, exterior, interiores, materialesExterior:[...matsExt.values()], cierre:0 };
+  return { terreno, polvo, exterior, interiores, ambiente:[terreno,rocas,talud,solar,conexion,aviso], sueloEstudio, materialesExterior:[...matsExt.values()], cierre:0 };
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2390,7 +2416,7 @@ const S = {
   get gas(){ return modelo.estado.gasKWh / MILPA_DATOS.parametros.simulacion.capacidad_gas.valor; },
   play: !reduce && Q.get("play") !== "0", vel:4, transicion:0, destino:null,
   reducido:reduce, proyeccion:"orbita",
-  cerrado:Q.get('cerrado')==='1', presentacion:false,
+  cerrado:Q.get('cerrado')==='1', presentacion:false, estudio:Q.get('ambiente')!=='marte',
   explosion:Q.get('explosion')==='1', loteSeguido:null,
 };
 const VELS = [1, 4, 12];
@@ -2533,7 +2559,7 @@ function envolvente(cerrar){
   if(cerrar)$('cerrar').click();
   $('ver-exterior').setAttribute('aria-pressed',String(cerrar));$('ver-interior').setAttribute('aria-pressed',String(!cerrar));
   poner($('estado-vista'),cerrar?'Envolvente completa · acceso en estudio':'Corte de inspección · no es una apertura operativa');
-  actualizarIntroduccion();renderer.shadowMap.needsUpdate=true;
+  actualizarIntroduccion();actualizarAmbiente();renderer.shadowMap.needsUpdate=true;
 }
 function enfocarAviario(){
   if(S.cerrado)envolvente(false);
@@ -2632,6 +2658,7 @@ document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>vistaTecnica(b
 $('quick-explosion').onclick=()=>{if(S.cerrado)envolvente(false);S.explosion=!S.explosion;S.play=false;controles();};
 $('giro-camara').onclick=()=>{S.presentacion=!S.presentacion&&!S.reducido;$('giro-camara').setAttribute('aria-pressed',String(S.presentacion));};
 $('ver-exterior').onclick=()=>envolvente(true);$('ver-interior').onclick=()=>envolvente(false);
+$('ver-entorno').onclick=()=>{S.estudio=!S.estudio;actualizarAmbiente();};
 document.querySelectorAll('[data-process]').forEach(b=>b.onclick=()=>{
   if(S.cerrado)envolvente(false);S.play=false;S.explosion=false;vistaTecnica('orbita');
   const k=b.dataset.process;abrirFicha(k);
@@ -2643,6 +2670,60 @@ function abrirCiencia(){abrirFicha('carrusel');fichaActual='ciencia';$('f-sub').
   $('f-dl').innerHTML='<dt>Área de cultivo</dt><dd>'+GEOM.areas.cultivo.toFixed(3)+' m²</dd><dt>Tipo de evidencia</dt><dd>Cálculo bajo supuestos</dd>';
   $('f-fte').textContent=MILPA_I18N.pick('Área: geometría de sectores. Luz: superficie, horas de iluminación y eficiencia de la lámpara. Los valores son cálculos; necesitan contrastarse con mediciones.','Area: sector geometry. Lighting: growing area, lighting hours and lamp efficiency. These are calculations that need comparison with measurements.');$('f-accion').innerHTML='';MILPA_I18N.apply();}
 $('ver-ciencia').onclick=abrirCiencia;
+new ResizeObserver(([e])=>document.body.style.setProperty('--consola-h',e.contentRect.height+'px')).observe($('consola'));
+/* Comprobaciones del visor y medición local: no representan ensayos físicos. */
+let informeVisual=null,medicionVisual=0;
+function comprobarVisual(){
+  const p=GEO.suelo.attributes.position,idx=GEO.suelo.index;
+  let area=0;const a=new T.Vector3(),b=new T.Vector3(),c=new T.Vector3(),ab=new T.Vector3(),ac=new T.Vector3();
+  for(let j=0;j<(idx?idx.count:p.count);j+=3){
+    a.fromBufferAttribute(p,idx?idx.getX(j):j);b.fromBufferAttribute(p,idx?idx.getX(j+1):j+1);c.fromBufferAttribute(p,idx?idx.getX(j+2):j+2);
+    if([a,b,c].every(v=>Math.abs(v.y-HONDO)<1e-5))area+=ab.subVectors(b,a).cross(ac.subVectors(c,a)).length()/2;
+  }
+  const figura=MILPA_PERSONA(GEOM.casco.altura_figura),bounds=new T.Box3().setFromObject(figura),altura=bounds.max.y-bounds.min.y;
+  const geos=new Set(),mats=new Set(),textures=new Set();
+  figura.traverse(o=>{if(o.isMesh){geos.add(o.geometry);mats.add(o.material);}});
+  geos.forEach(g=>g.dispose());mats.forEach(m=>{if(m.map)textures.add(m.map);m.dispose();});textures.forEach(t=>t.dispose());
+  const materiales=new Set();gHabitat.traverse(o=>{if(o.isMesh)for(const m of Array.isArray(o.material)?o.material:[o.material])materiales.add(m);});
+  return [
+    {id:'cartuchos',es:'Cartuchos en el anillo',en:'Cartridges in the ring',valor:carrusel.bandejas.length,esperado:N_POS,ok:carrusel.bandejas.length===N_POS},
+    {id:'area',es:'Área útil calculada en la malla',en:'Usable area from mesh triangles',valor:+(area*N_CUL).toFixed(4),esperado:GEOM.areas.cultivo,unidad:'m²',ok:Math.abs(area*N_CUL-GEOM.areas.cultivo)<.001},
+    {id:'figura',es:'Altura erguida de la figura',en:'Standing figure height',valor:+altura.toFixed(4),esperado:GEOM.casco.altura_figura,unidad:'m',ok:Math.abs(altura-GEOM.casco.altura_figura)<1e-6},
+    {id:'render',es:'Materiales sin transmisión extra',en:'Materials without an extra transmission pass',valor:[...materiales].filter(m=>m.transmission>0).length,esperado:0,ok:![...materiales].some(m=>m.transmission>0)}
+  ];
+}
+function abrirValidacion(){
+  abrirFicha('carrusel');fichaActual='validacion';
+  const pick=MILPA_I18N.pick;
+  $('f-sub').textContent=pick('Evidencia digital','Digital evidence');$('f-tit').textContent=pick('Qué podemos comprobar','What we can check');
+  $('f-txt').innerHTML='<p class="idea-publico">'+pick('Comprueba la geometría que estás viendo y mide cómo se mueve en este equipo.','Check the geometry on screen and measure how it runs on this device.')+'</p>';
+  const checks=comprobarVisual();
+  $('f-viz').innerHTML='<div class="validation-list">'+checks.map(c=>'<div class="validation-row '+(c.ok?'':'fallo')+'"><span>'+pick(c.es,c.en)+'</span><b>'+(c.ok?'✓ ':'× ')+c.valor+' '+(c.unidad||'')+'</b></div>').join('')+
+    '<div class="validation-row pendiente"><span>'+pick('Acceso, cargas y comportamiento biológico','Access, loads and biological performance')+'</span><b>'+pick('Por ensayar','Untested')+'</b></div></div>';
+  $('f-dl').innerHTML='';
+  $('f-fte').textContent=pick('Las cotas se contrastan con los parámetros vigentes. Los FPS describen este equipo, tamaño de ventana y vista. No acreditan desempeño físico ni el equipo del evento.','Dimensions are checked against current parameters. FPS describes this device, viewport and view. It does not verify physical performance or the event equipment.');
+  $('f-accion').innerHTML='<button class="btn on" id="validar-ejecutar">'+pick('Medir fluidez · 5 s','Measure smoothness · 5 s')+'</button><button class="btn" id="validar-exportar" disabled>'+pick('Guardar informe','Save report')+'</button><div id="validar-resultado" class="validation-result" role="status">'+pick('La prueba comienza cuando tú la activas.','The test begins when you start it.')+'</div>';
+  $('validar-exportar').onclick=()=>{if(!informeVisual)return;const url=URL.createObjectURL(new Blob([JSON.stringify(informeVisual,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='MILPA-360-verificacion-visual.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+  $('validar-ejecutar').onclick=()=>{
+    const button=$('validar-ejecutar'),out=$('validar-resultado'),save=$('validar-exportar'),token=++medicionVisual;
+    button.disabled=true;save.disabled=true;out.textContent=pick('Midiendo durante cinco segundos… Mantén esta pestaña visible.','Measuring for five seconds… Keep this tab visible.');
+    const start=performance.now(),times=[],vistaInicial=S.vista,calidad=$('calidad').value;let previous=start,raf=0,oculta=false;
+    const visibility=()=>{if(document.hidden)oculta=true;};document.addEventListener('visibilitychange',visibility);
+    const sample=now=>{if(token!==medicionVisual)return;times.push(now-previous);previous=now;raf=requestAnimationFrame(sample);};raf=requestAnimationFrame(sample);
+    setTimeout(()=>{
+      cancelAnimationFrame(raf);document.removeEventListener('visibilitychange',visibility);button.disabled=false;
+      if(token!==medicionVisual||!out.isConnected)return;
+      if(oculta||S.vista!==vistaInicial){out.textContent=pick('Medición interrumpida: cambió la vista o se ocultó la pestaña. Repite la prueba.','Measurement interrupted: the view changed or the tab was hidden. Run it again.');return;}
+      const duration=performance.now()-start,gl=renderer.getContext(),ext=gl.getExtension('WEBGL_debug_renderer_info');times.sort((a,b)=>a-b);
+      informeVisual={revision:'V6',fecha:new Date().toISOString(),comprobaciones:checks,rendimiento:{fps:times.length*1000/duration,p95Ms:times[Math.floor(times.length*.95)]||0,fotogramas:times.length,duracionMs:duration,llamadas:renderer.info.render.calls,triangulos:renderer.info.render.triangles,resolucion:[lienzo.width,lienzo.height],viewport:[innerWidth,innerHeight],pixelRatio:renderer.getPixelRatio(),calidad,vista:S.vista,estudio:S.estudio,procesoActivo:S.play,gpu:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):'no disponible'},limite:'Comprobación digital local. Acceso, estructuras, biología y equipo del evento pendientes de ensayo.'};
+      const r=informeVisual.rendimiento;
+      out.textContent=r.fps.toFixed(1)+' FPS · p95 '+r.p95Ms.toFixed(1)+' ms\n'+r.llamadas+' '+pick('llamadas de dibujo','draw calls')+'\n'+r.resolucion.join(' × ')+' px · '+pick('medición local','local measurement');save.disabled=false;
+    },5000);
+  };
+}
+$('ver-validacion').onclick=abrirValidacion;$('estado-concepto').onclick=abrirValidacion;
+MILPA_I18N.add({'Entorno marciano':'Martian setting','Validar modelo':'Validate model','Concepto en evaluación':'Concept under evaluation','cartuchos idénticos':'identical cartridges','m² de cultivo útil':'m² of usable growing area'});
+
 lienzo.addEventListener('keydown',e=>{const keys=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','=','-'];if(!keys.includes(e.key))return;e.preventDefault();if(e.key==='ArrowLeft')orbe.theta-=.12;if(e.key==='ArrowRight')orbe.theta+=.12;if(e.key==='ArrowUp')orbe.phi=Math.max(.16,orbe.phi-.1);if(e.key==='ArrowDown')orbe.phi=Math.min(1.5,orbe.phi+.1);if(e.key==='+'||e.key==='=')orbe.dist=Math.max(distanciaMinima(),orbe.dist*.9);if(e.key==='-')orbe.dist=Math.min(50,orbe.dist*1.1);});
 addEventListener('keydown',e=>{if(e.key==='Escape'){$('cerrar').click();if($('ayuda').open)$('ayuda').close();}});
 
@@ -2700,6 +2781,19 @@ function cambiarVista(v){
 $("v-planeta").onclick = () => cambiarVista("planeta");
 $("v-habitat").onclick = () => cambiarVista("habitat");
 
+function actualizarAmbiente(){
+  if(!refsHab)return;
+  const estudio=S.vista==='habitat'&&S.estudio&&!S.cerrado;
+  refsHab.ambiente.forEach(o=>o.visible=!estudio&&!limpio);
+  refsHab.sueloEstudio.visible=estudio&&!limpio;
+  cielo.visible=!estudio&&!limpio;
+  escena.fog=estudio?new T.Fog(0x17232c,18,65):null;renderer.setClearColor(estudio?0x17232c:0x07090C,1);
+  escena.environment=S.vista==='planeta'?null:estudio?entornoEstudio:entornoMarte;
+  $('ver-entorno').setAttribute('aria-pressed',String(!S.estudio));
+  $('ver-entorno').disabled=S.cerrado;
+  document.body.classList.toggle('estudio-activo',estudio);
+  renderer.shadowMap.needsUpdate=true;
+}
 function aplicarVista(v){
   renderer.shadowMap.needsUpdate=true;
   S.vista = v;document.body.classList.toggle('modo-habitat',v==='habitat');
@@ -2713,7 +2807,7 @@ function aplicarVista(v){
   const p = POSE[v];
   orbe.theta = qn("theta", p.theta); orbe.phi = qn("phi", p.phi); orbe.dist = qn("dist", p.dist);
   mira.copy(p.mira);
-  escena.environment = v === "planeta" ? null : entornoMarte;
+  actualizarAmbiente();
   if (v === "planeta") sol.position.set(12, 18, 42);   // rasante: da terminador
   else                 sol.position.set(26, 30, -34);    // ilumina el corte, alarga sombras
   $("pista").textContent = v === "planeta"
@@ -2738,29 +2832,33 @@ function apuntarA(clave){
    CÁMARA
    ═══════════════════════════════════════════════════════════════ */
 let arrastre = null;
-lienzo.addEventListener("pointerdown", e => {
+const punteros=new Map();let pinza=null;
+lienzo.addEventListener('pointerdown',e=>{
   S.presentacion=false;$('giro-camara').setAttribute('aria-pressed','false');
-  arrastre = { x: e.clientX, y: e.clientY, mov: 0 };
-  lienzo.setPointerCapture(e.pointerId);
+  punteros.set(e.pointerId,{x:e.clientX,y:e.clientY});lienzo.setPointerCapture(e.pointerId);
+  if(punteros.size===1)arrastre={x:e.clientX,y:e.clientY,mov:0};
+  else {const [a,b]=[...punteros.values()];pinza={dist:Math.hypot(a.x-b.x,a.y-b.y),zoom:orbe.dist};if(arrastre)arrastre.mov=10;}
 });
-lienzo.addEventListener("pointermove", e => {
-  if (!arrastre) return;
-  const dx = e.clientX - arrastre.x, dy = e.clientY - arrastre.y;
-  arrastre.mov += Math.abs(dx) + Math.abs(dy);
-  orbe.theta -= dx * 0.0055;
-  orbe.phi = Math.max(S.vista === "planeta" ? 0.16 : 0.22,
-             Math.min(S.vista === "planeta" ? 2.98 : 1.50, orbe.phi - dy * 0.0048));
-  arrastre.x = e.clientX; arrastre.y = e.clientY;
+lienzo.addEventListener('pointermove',e=>{
+  if(!punteros.has(e.pointerId))return;
+  punteros.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(punteros.size>1&&pinza){const [a,b]=[...punteros.values()],dist=Math.hypot(a.x-b.x,a.y-b.y);orbe.dist=Math.max(distanciaMinima(),Math.min(S.vista==='planeta'?60:34,pinza.zoom*pinza.dist/Math.max(1,dist)));return;}
+  if(!arrastre)return;
+  const dx=e.clientX-arrastre.x,dy=e.clientY-arrastre.y;
+  arrastre.mov+=Math.abs(dx)+Math.abs(dy);orbe.theta-=dx*.0055;
+  orbe.phi=Math.max(S.vista==='planeta'?.16:.22,Math.min(S.vista==='planeta'?2.98:1.50,orbe.phi-dy*.0048));
+  arrastre.x=e.clientX;arrastre.y=e.clientY;
 });
-lienzo.addEventListener("pointerup", e => {
-  if (arrastre && arrastre.mov < 6) picar(e);
-  arrastre = null;
-});
-lienzo.addEventListener("wheel", e => {
-  e.preventDefault();
-  const lim = [distanciaMinima(),S.vista==='planeta'?60:34];
-  orbe.dist = Math.max(lim[0], Math.min(lim[1], orbe.dist * (1 + Math.sign(e.deltaY) * 0.1)));
-}, { passive: false });
+function terminarPuntero(e){
+  if(e.type==='pointerup'&&punteros.size===1&&!pinza&&arrastre&&arrastre.mov<6)picar(e);
+  punteros.delete(e.pointerId);pinza=null;
+  const restante=[...punteros.values()][0];arrastre=restante?{...restante,mov:10}:null;
+}
+for(const event of ['pointerup','pointercancel','lostpointercapture'])lienzo.addEventListener(event,terminarPuntero);
+lienzo.addEventListener('wheel',e=>{
+  e.preventDefault();const delta=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?innerHeight:1);
+  orbe.dist=Math.max(distanciaMinima(),Math.min(S.vista==='planeta'?60:34,orbe.dist*Math.exp(Math.max(-.25,Math.min(.25,delta*.001)))));
+},{passive:false});
 
 const rayo = new T.Raycaster(), pnt = new T.Vector2();
 function picar(e){
@@ -2798,7 +2896,7 @@ addEventListener("resize", medir);
 /* ═══════════════════════════════════════════════════════════════
    ARRANQUE
    ═══════════════════════════════════════════════════════════════ */
-let refsHab, entornoMarte;
+let refsHab, entornoMarte, entornoEstudio;
 async function iniciar(){
   let tex;
   try{
@@ -2820,6 +2918,7 @@ async function iniciar(){
   for (const k in M) if (M[k].envMapIntensity !== undefined) M[k].envMapIntensity = 0.42;
   construirPlaneta(tex);
   refsHab = construirHabitat();
+  $('resumen-cartuchos').textContent=String(N_POS);$('resumen-area').textContent=GEOM.areas.cultivo.toFixed(3);
   if(S.explosion) S.play=false;
 
   /* iluminación por imagen: refleja el cielo marciano en metales y vidrios */
@@ -2828,6 +2927,9 @@ async function iniciar(){
   escCielo.add(cielo.clone());
   entornoMarte = pmrem.fromScene(escCielo, 0, 0.1, 1000).texture;
   pmrem.dispose();
+  entornoEstudio=MILPA_VISUAL.entorno(renderer);
+  const anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+  for(const tex of [texCasco,texCubierta,texRego,hojaCamote.mapa,hojaLegum.mapa,hojaRabano.mapa])tex.anisotropy=anisotropy;
 
   medir();
   aplicarVista(S.vista);
@@ -2841,14 +2943,16 @@ async function iniciar(){
 /* ═══════════════════════════════════════════════════════════════
    BUCLE
    ═══════════════════════════════════════════════════════════════ */
-const tmp = new T.Vector3();
+const tmp = new T.Vector3(), objetivoCamara = new T.Vector3();
 const CIELO_MARTE  = { cenit: new T.Color(0x3A3348), horiz: new T.Color(0xC79468), suelo: new T.Color(0x3A1E14) };
 const CIELO_TORM   = { cenit: new T.Color(0x2A1B12), horiz: new T.Color(0x7A4A26), suelo: new T.Color(0x241009) };
 const cAux = new T.Color(), cAuxB = new T.Color();
 const C_MARCHITO = new T.Color(0x8A7139);
 let anterior = performance.now(), ultimaSombra=0, firmaSombra='', tiempoVisual=0, ultimaUI=0, inicioCalidad=0, framesCalidad=0, ultimoCambioVegetal=0;
 
+document.addEventListener('visibilitychange',()=>{anterior=performance.now();inicioCalidad=anterior;framesCalidad=0;});
 function bucle(ahora){
+  if(document.hidden){anterior=ahora;inicioCalidad=ahora;framesCalidad=0;requestAnimationFrame(bucle);return;}
   const elapsed = Math.max(0, (ahora - anterior) / 1000);
   const dt = cine.state.activo&&!cine.state.reproduciendo?0:Math.min(0.05, elapsed);
   anterior = ahora;
@@ -2931,6 +3035,8 @@ function bucle(ahora){
       }
     }
 
+    carrusel.actualizarVegetacion();
+
     /* Sólo el agua y el gas tienen inventarios dinámicos; otras rutas no animan caudal. */
     for(const fl of flujos){
       const activa=fl.ficha==="f_biogas"||(fl.ficha==="f_riego"&&!estado.bomba);
@@ -2983,8 +3089,8 @@ function bucle(ahora){
     cieloUnif.horiz.value.lerp(dest.horiz, mezclaAmbiente);
     cieloUnif.suelo.value.lerp(dest.suelo, mezclaAmbiente);
     cieloUnif.mezclaEspacio.value += (0 - cieloUnif.mezclaEspacio.value) * 0.07;
-    sol.intensity += ((enTormenta ? 0.32 : 2.3) - sol.intensity) * mezclaAmbiente;
-    hemi.intensity += ((enTormenta ? 0.38 : 0.72) - hemi.intensity) * mezclaAmbiente;
+    sol.intensity += ((enTormenta ? 0.32 : S.estudio&&!S.cerrado?1.85:2.3) - sol.intensity) * mezclaAmbiente;
+    hemi.intensity += ((enTormenta ? 0.38 : S.estudio&&!S.cerrado?.85:.72) - hemi.intensity) * mezclaAmbiente;
     dispersion.intensity += (0 - dispersion.intensity) * 0.08;
     estrellas.material.uniforms.op.value += (0 - estrellas.material.uniforms.op.value) * 0.08;
 
@@ -3015,14 +3121,14 @@ function bucle(ahora){
 
   if(S.presentacion&&!S.reducido)orbe.theta+=dt*.08;
   /* ── cámara ── */
-  const objetivo = new T.Vector3(
+  const objetivo = objetivoCamara.set(
     mira.x + orbe.dist * Math.sin(orbe.phi) * Math.cos(orbe.theta),
     mira.y + orbe.dist * Math.cos(orbe.phi),
     mira.z + orbe.dist * Math.sin(orbe.phi) * Math.sin(orbe.theta)
   );
   if(S.proyeccion==='orbita') {const alpha=S.reducido?1:1-Math.exp(-dt*(cine.state.activo?1.8:S.transicion>0?6:12));camara.up.set(0,1,0);camara.position.lerp(objetivo,alpha);miraVisual.lerp(mira,alpha);camara.lookAt(miraVisual);}
   else {camara.up.set(0,S.proyeccion==='planta'?0:1,S.proyeccion==='planta'?-1:0);camara.position.set(S.proyeccion==='planta'?0:8,S.proyeccion==='planta'?10:1.4,0.001);camara.lookAt(0,S.proyeccion==='planta'?0:1.4,0);}
-  sol.target.position.copy(mira); sol.target.updateMatrixWorld();
+  sol.target.position.set(0,S.vista==='habitat'?.8:0,0); sol.target.updateMatrixWorld();
 
   /* ── etiquetas proyectadas ── */
   const w = innerWidth, h = innerHeight;
@@ -3079,7 +3185,7 @@ function bucle(ahora){
   }
   // Sombras de equipos casi estáticos: caché y refresco a 10 Hz durante movimiento.
   // La cámara sigue a la frecuencia completa; cambiar vista/despiece invalida la caché.
-  const nuevaFirma=[S.vista,S.explosion,S.sol,S.play,refsHab.cierre.toFixed(3),carrusel.grupo.rotation.y.toFixed(4)].join('|');
+  const nuevaFirma=[S.vista,S.explosion,Math.floor(tiempoVisual*5),Math.floor(S.sol*4),refsHab.cierre.toFixed(3),carrusel.grupo.rotation.y.toFixed(4)].join('|');
   if(nuevaFirma!==firmaSombra&&ahora-ultimaSombra>100){
     renderer.shadowMap.needsUpdate=true;ultimaSombra=ahora;firmaSombra=nuevaFirma;
   }
@@ -3125,7 +3231,7 @@ addEventListener('milpa-language',()=>{
   const fields=['lote-elegido','tipo-fallo','cmp-inicio','cmp-duracion','cmp-luz'];
   const values=Object.fromEntries(fields.filter(id=>$(id)).map(id=>[id,$(id).value]));
   const expanded=[...ficha.querySelectorAll('details')].map(el=>el.open);
-  if(fichaActual==='tecnica')abrirTecnica();else if(fichaActual==='comparacion')abrirComparacion();else if(fichaActual==='ciencia')abrirCiencia();else if(fichaActual)abrirFicha(fichaActual);
+  if(fichaActual==='tecnica')abrirTecnica();else if(fichaActual==='comparacion')abrirComparacion();else if(fichaActual==='ciencia')abrirCiencia();else if(fichaActual==='validacion')abrirValidacion();else if(fichaActual)abrirFicha(fichaActual);
   for(const [id,value] of Object.entries(values))if($(id))$(id).value=value;
   ficha.querySelectorAll('details').forEach((el,i)=>el.open=expanded[i]??el.open);
   if(fichaActual==='comparacion')$('cmp-calcular').click();

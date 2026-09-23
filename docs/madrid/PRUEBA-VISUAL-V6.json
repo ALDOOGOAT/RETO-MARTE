@@ -1,0 +1,106 @@
+{
+  "revision": "V6",
+  "fecha": "2026-09-23T17:36:47.854Z",
+  "hardware": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2, OpenGL 4.5.0)",
+  "modo": "ventana X11",
+  "medidas": [
+    {
+      "estudio": false,
+      "fps": 121.66137583725863,
+      "p95Ms": 12.200000000000728,
+      "drawCalls": 597,
+      "triangles": 470986,
+      "pixelRatio": 1,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "fotogramas": 732
+    },
+    {
+      "estudio": true,
+      "fps": 121.98780121987612,
+      "p95Ms": 12.200000000000728,
+      "drawCalls": 575,
+      "triangles": 388608,
+      "pixelRatio": 1,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "fotogramas": 732
+    }
+  ],
+  "validacion": {
+    "revision": "V6",
+    "fecha": "2026-09-23T17:36:19.467Z",
+    "comprobaciones": [
+      {
+        "id": "cartuchos",
+        "es": "Cartuchos en el anillo",
+        "en": "Cartridges in the ring",
+        "valor": 20,
+        "esperado": 20,
+        "ok": true
+      },
+      {
+        "id": "area",
+        "es": "Área útil calculada en la malla",
+        "en": "Usable area from mesh triangles",
+        "valor": 3.0857,
+        "esperado": 3.0858,
+        "unidad": "m²",
+        "ok": true
+      },
+      {
+        "id": "figura",
+        "es": "Altura erguida de la figura",
+        "en": "Standing figure height",
+        "valor": 1.75,
+        "esperado": 1.75,
+        "unidad": "m",
+        "ok": true
+      },
+      {
+        "id": "render",
+        "es": "Materiales sin transmisión extra",
+        "en": "Materials without an extra transmission pass",
+        "valor": 0,
+        "esperado": 0,
+        "ok": true
+      }
+    ],
+    "rendimiento": {
+      "fps": 121.80267965895023,
+      "p95Ms": 12.200000000000728,
+      "fotogramas": 610,
+      "duracionMs": 5008.100000000093,
+      "llamadas": 575,
+      "triangulos": 388608,
+      "resolucion": [
+        1920,
+        1080
+      ],
+      "viewport": [
+        1920,
+        1080
+      ],
+      "pixelRatio": 1,
+      "calidad": "auto",
+      "vista": "habitat",
+      "estudio": true,
+      "procesoActivo": false,
+      "gpu": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2, OpenGL 4.5.0)"
+    },
+    "limite": "Comprobación digital local. Acceso, estructuras, biología y equipo del evento pendientes de ensayo."
+  },
+  "instances": {
+    "error": 0,
+    "count": 400,
+    "maxError": 9.263333833331444e-8
+  },
+  "errores": [],
+  "solicitudesHTTP": 0,
+  "verificado": "Geometría real, instancias finitas, invariancia del modelo, estudio/Marte/exterior, inspección, ES/EN, teclado, pinza táctil, movimiento reducido, tres anchos, validación y proyección móvil, acceso y figura común",
+  "limite": "Validación digital local. No demuestra ensayos físicos ni FPS del equipo del evento."
+}

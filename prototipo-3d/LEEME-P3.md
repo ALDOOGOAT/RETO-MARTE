@@ -125,3 +125,16 @@ Markdown durante el recorrido. El audio del evento debe probarse con sus altavoc
 
 Prueba de proyección: `MILPA_VISUAL_V5=1 MILPA_FILE_ESTRICTO=1 node --experimental-websocket analysis/verificar_p3_navegador.mjs`.
 Para GPU NVIDIA en este equipo: añadir `__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia MILPA_VISIBLE=1 MILPA_GPU=1`.
+
+
+## Revisión V6 · estudio y validación visual
+
+El interior abre en **Estudio**; **Entorno marciano** recupera el paisaje. Conserva
+`milpa360-visual.js` junto con los demás archivos locales. Las plantas, persona,
+materiales y sombras tienen más detalle; la vegetación comparte geometrías mediante
+instancias. La consola se adapta al espacio y el modelo admite zoom con dos dedos.
+
+**Validar modelo** contrasta geometría y escala; **Medir fluidez** toma cinco segundos
+en este equipo y permite guardar un JSON. No equivale a ensayos físicos ni garantiza
+rendimiento del equipo del evento. `?ambiente=marte` abre directamente con terreno.
+Pruebas, límites y reproducción: `../docs/madrid/MEJORA-VISUAL-V6.md`.

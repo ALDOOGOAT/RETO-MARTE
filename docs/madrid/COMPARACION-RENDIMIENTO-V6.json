@@ -1,0 +1,83 @@
+{
+  "fecha": "2026-09-23T17:37:29.242Z",
+  "metodo": "V5/V6/V6/V5, mismo Chrome aislado y GPU, 1920x1080, DPR1, detalle alto, sombras activas, sol62, proceso pausado y órbita de cámara, entorno marciano en ambas; calentamiento2s y muestreo6s por pasada",
+  "resultados": [
+    {
+      "revision": "V5",
+      "fps": 104.42864042903854,
+      "p95Ms": 12.200000000000728,
+      "frames": 627,
+      "duracionMs": 6004.100000000093,
+      "drawCalls": 822,
+      "triangles": 415436,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "resolucion": [
+        1920,
+        1080
+      ],
+      "gpu": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2, OpenGL 4.5.0)",
+      "hidden": false
+    },
+    {
+      "revision": "V6",
+      "fps": 116.43596022187255,
+      "p95Ms": 12.200000000000728,
+      "frames": 699,
+      "duracionMs": 6003.300000000279,
+      "drawCalls": 597,
+      "triangles": 470986,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "resolucion": [
+        1920,
+        1080
+      ],
+      "gpu": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2, OpenGL 4.5.0)",
+      "hidden": false
+    },
+    {
+      "revision": "V6",
+      "fps": 120.26348181909285,
+      "p95Ms": 12.200000000000728,
+      "frames": 723,
+      "duracionMs": 6011.799999999814,
+      "drawCalls": 597,
+      "triangles": 470986,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "resolucion": [
+        1920,
+        1080
+      ],
+      "gpu": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2, OpenGL 4.5.0)",
+      "hidden": false
+    },
+    {
+      "revision": "V5",
+      "fps": 101.00505857294839,
+      "p95Ms": 12.200000000000728,
+      "frames": 607,
+      "duracionMs": 6009.600000000093,
+      "drawCalls": 822,
+      "triangles": 415436,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "resolucion": [
+        1920,
+        1080
+      ],
+      "gpu": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2, OpenGL 4.5.0)",
+      "hidden": false
+    }
+  ],
+  "limite": "Medición local bajo carga variable; no acredita el equipo del evento."
+}
