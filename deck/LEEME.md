@@ -41,6 +41,8 @@ con otra pose, abre el simulador con estos parámetros, toma captura y reescala 
 | `sol=<n>` | fija el sol de misión (0–729) |
 | `theta` | acimut en radianes · `phi` inclinación (0.05 cenital → 1.50 casi a ras) · `dist` distancia |
 | `storm=1` | tormenta de polvo activa · `play=0` pausado |
+| `ambiente=marte` | terreno marciano en lugar del estudio oscuro |
+| `post=0` | render directo, sin oclusión ni brillo (V8) — para comparar o en gráficos integrados |
 
 Dentro del hábitat, **tocar cualquier tubería abre su ficha**: qué recurso lleva, de qué
 estación a cuál y con qué cifras. También los tanques, el aviario, el larvario y las placas.

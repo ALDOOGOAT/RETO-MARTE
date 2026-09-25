@@ -1,0 +1,185 @@
+{
+  "revision": "V8",
+  "gpu": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2, OpenGL 4.5.0)",
+  "rendimiento": [
+    {
+      "quality": "alta",
+      "fps": 137.74311284435777,
+      "p95": 12.199999999998909,
+      "calls": 1,
+      "triangles": 1,
+      "resolution": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "quality": "maxima",
+      "fps": 94.73578963155082,
+      "p95": 12.200000000000728,
+      "calls": 1,
+      "triangles": 1,
+      "resolution": [
+        3840,
+        2160
+      ]
+    }
+  ],
+  "capitulos": [
+    {
+      "lang": "es",
+      "chapter": 0,
+      "time": 0,
+      "wall": 0.001
+    },
+    {
+      "lang": "es",
+      "chapter": 1,
+      "time": 5.200936,
+      "wall": 5.349
+    },
+    {
+      "lang": "es",
+      "chapter": 2,
+      "time": 11.185989,
+      "wall": 11.29
+    },
+    {
+      "lang": "es",
+      "chapter": 3,
+      "time": 15.823186,
+      "wall": 15.925
+    },
+    {
+      "lang": "es",
+      "chapter": 4,
+      "time": 21.057532,
+      "wall": 21.156
+    },
+    {
+      "lang": "es",
+      "chapter": 5,
+      "time": 26.352724,
+      "wall": 26.449
+    },
+    {
+      "lang": "es",
+      "chapter": 6,
+      "time": 31.985853,
+      "wall": 32.698
+    },
+    {
+      "lang": "es",
+      "chapter": 7,
+      "time": 37.583321,
+      "wall": 37.692
+    },
+    {
+      "lang": "es",
+      "fin": true,
+      "tiempo": 47.27437500000003,
+      "wall": 47.5
+    },
+    {
+      "lang": "en",
+      "chapter": 0,
+      "time": 0,
+      "wall": 0.003
+    },
+    {
+      "lang": "en",
+      "chapter": 1,
+      "time": 5.723266,
+      "wall": 5.812
+    },
+    {
+      "lang": "en",
+      "chapter": 2,
+      "time": 12.025335,
+      "wall": 12.117
+    },
+    {
+      "lang": "en",
+      "chapter": 3,
+      "time": 15.940692,
+      "wall": 16.033
+    },
+    {
+      "lang": "en",
+      "chapter": 4,
+      "time": 22.245732,
+      "wall": 22.342
+    },
+    {
+      "lang": "en",
+      "chapter": 5,
+      "time": 28.274955,
+      "wall": 28.367
+    },
+    {
+      "lang": "en",
+      "chapter": 6,
+      "time": 33.833662,
+      "wall": 33.918
+    },
+    {
+      "lang": "en",
+      "chapter": 7,
+      "time": 41.177847,
+      "wall": 41.269
+    },
+    {
+      "lang": "en",
+      "fin": true,
+      "tiempo": 51.947683000000005,
+      "wall": 52.046
+    }
+  ],
+  "errores": [],
+  "red": [],
+  "checks": [
+    {
+      "id": "cartuchos",
+      "es": "Cartuchos en el anillo",
+      "en": "Cartridges in the ring",
+      "valor": 20,
+      "esperado": 20,
+      "ok": true
+    },
+    {
+      "id": "area",
+      "es": "Área útil calculada en la malla",
+      "en": "Usable area from mesh triangles",
+      "valor": 3.0857,
+      "esperado": 3.0858,
+      "unidad": "m²",
+      "ok": true
+    },
+    {
+      "id": "figura",
+      "es": "Altura erguida de la figura",
+      "en": "Standing figure height",
+      "valor": 1.75,
+      "esperado": 1.75,
+      "unidad": "m",
+      "ok": true
+    },
+    {
+      "id": "render",
+      "es": "Materiales sin transmisión extra",
+      "en": "Materials without an extra transmission pass",
+      "valor": 0,
+      "esperado": 0,
+      "ok": true
+    }
+  ],
+  "pruebas": [
+    "ES/EN completos <58 s",
+    "pista continua sin recargas",
+    "pausa, salto, cambio de idioma y sin voz",
+    "restauración del modelo",
+    "file:// estricto sin red",
+    "móvil 390 × 844"
+  ],
+  "limite": "Simulación digital; acceso y procesos pendientes de prueba física."
+}

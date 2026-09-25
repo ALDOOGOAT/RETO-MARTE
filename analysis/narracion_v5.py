@@ -11,7 +11,7 @@ OUT=ROOT/'prototipo-3d/audio'
 script=(ROOT/'prototipo-3d/milpa360-guion.js').read_text()
 data=json.loads(script.split('window.MILPA_GUION = ',1)[1].rstrip().removesuffix(';'))
 existing=ROOT/'prototipo-3d/milpa360-audio.js'
-metadata=json.loads(existing.read_text().split('window.MILPA_AUDIO = ',1)[1].rstrip().removesuffix(';')) if len(sys.argv)>1 and existing.exists() else {}
+metadata=json.loads(existing.read_text().split('window.MILPA_AUDIO = ',1)[1].rstrip().removesuffix(';')) if existing.exists() else {}
 for lang,name in [('es','es_ES-davefx-medium'),('en','en_GB-alba-medium')]:
     voice=PiperVoice.load(str(CACHE/(name+'.onnx')))
     for chapter in data['modulo']+data['acceso']:
@@ -35,5 +35,5 @@ for lang,name in [('es','es_ES-davefx-medium'),('en','en_GB-alba-medium')]:
         metadata[ident]={'duracion':round(measured,3),'cues':cues,'voz':name,'sha256':hashlib.sha256(mp3.read_bytes()).hexdigest()}
         print(ident,round(measured,1),flush=True)
 (ROOT/'prototipo-3d/milpa360-audio.js').write_text('/* Audio sintético local; sincronización por oración. */\nwindow.MILPA_AUDIO = '+json.dumps(metadata,ensure_ascii=False,indent=2)+';\n')
-assert len(metadata)==30
+assert all(c['id']+'-'+lang in metadata for c in data['modulo']+data['acceso'] for lang in ['es','en'])
 print('30 audios ES/EN, duración y subtítulos comprobados.')

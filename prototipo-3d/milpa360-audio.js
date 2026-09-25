@@ -929,5 +929,205 @@ window.MILPA_AUDIO = {
     ],
     "voz": "en_GB-alba-medium",
     "sha256": "0a732d120b5152b5137f62f60baf9fe1474c9017be5b5012a581b9d54308aec6"
+  },
+  "pitch-es": {
+    "duracion": 47.064,
+    "cues": [
+      {
+        "inicio": 0.0,
+        "fin": 2.624,
+        "texto": "En Marte, no movemos el rebaño: movemos el suelo."
+      },
+      {
+        "inicio": 2.754,
+        "fin": 4.82,
+        "texto": "Esto es MILPA tres sesenta."
+      },
+      {
+        "inicio": 5.17,
+        "fin": 10.824,
+        "texto": "Veinte cartuchos recorren estaciones fijas de regeneración y cultivo, conservando su historial."
+      },
+      {
+        "inicio": 11.174,
+        "fin": 15.47,
+        "texto": "Codornices y larvas aportan alimento y transforman residuos."
+      },
+      {
+        "inicio": 15.82,
+        "fin": 20.696,
+        "texto": "La salmuera se trata por separado; el digestor recupera biogás y nutrientes."
+      },
+      {
+        "inicio": 21.046,
+        "fin": 25.969,
+        "texto": "El goteo acompaña al suelo y las siembras escalonadas distribuyen las cosechas."
+      },
+      {
+        "inicio": 26.319,
+        "fin": 31.613,
+        "texto": "Simulamos tormentas, fallos de bomba, aislamiento de lotes y comparamos resultados."
+      },
+      {
+        "inicio": 31.963,
+        "fin": 36.653,
+        "texto": "El acceso aparta dos cartuchos y conserva la salida incluso sin energía."
+      },
+      {
+        "inicio": 37.583,
+        "fin": 41.798,
+        "texto": "Es alimento complementario, con energía externa y ensayos pendientes."
+      },
+      {
+        "inicio": 41.928,
+        "fin": 46.711,
+        "texto": "En Chiapas: recuperar suelos, ahorrar agua y aprovechar residuos."
+      }
+    ],
+    "capitulos": [
+      {
+        "id": "exterior",
+        "inicio": 0.0,
+        "fin": 5.17
+      },
+      {
+        "id": "anillo",
+        "inicio": 5.17,
+        "fin": 11.174
+      },
+      {
+        "id": "animales",
+        "inicio": 11.174,
+        "fin": 15.82
+      },
+      {
+        "id": "tratamiento",
+        "inicio": 15.82,
+        "fin": 21.046
+      },
+      {
+        "id": "cultivo",
+        "inicio": 21.046,
+        "fin": 26.319
+      },
+      {
+        "id": "pruebas",
+        "inicio": 26.319,
+        "fin": 31.963
+      },
+      {
+        "id": "acceso",
+        "inicio": 31.963,
+        "fin": 37.583
+      },
+      {
+        "id": "chiapas",
+        "inicio": 37.583,
+        "fin": 47.264
+      }
+    ],
+    "voz": "es_ES-davefx-medium",
+    "velocidad": 1,
+    "sha256": "6b42f07ce7acfa04edf024a4ff419177ae631d201e6e2308ea23b7e7b947b491"
+  },
+  "pitch-en": {
+    "duracion": 51.744,
+    "cues": [
+      {
+        "inicio": 0.0,
+        "fin": 3.286,
+        "texto": "On Mars, we move the soil, not the herd."
+      },
+      {
+        "inicio": 3.416,
+        "fin": 5.308,
+        "texto": "This is MILPA three sixty."
+      },
+      {
+        "inicio": 5.658,
+        "fin": 11.614,
+        "texto": "Twenty cartridges pass through fixed regeneration and growing stations, each retaining its history."
+      },
+      {
+        "inicio": 11.964,
+        "fin": 15.586,
+        "texto": "Quail and larvae provide food and process waste."
+      },
+      {
+        "inicio": 15.936,
+        "fin": 21.892,
+        "texto": "Brine is treated separately; the digester recovers biogas and nutrients."
+      },
+      {
+        "inicio": 22.242,
+        "fin": 27.85,
+        "texto": "Drip irrigation travels with the soil, while staggered planting spreads harvests over time."
+      },
+      {
+        "inicio": 28.2,
+        "fin": 33.471,
+        "texto": "We simulate storms, pump failures and batch isolation, then compare results."
+      },
+      {
+        "inicio": 33.821,
+        "fin": 40.16,
+        "texto": "The access system moves two cartridges aside and keeps an exit available, even without power."
+      },
+      {
+        "inicio": 41.09,
+        "fin": 45.989,
+        "texto": "This is supplementary food, with external energy and testing still required."
+      },
+      {
+        "inicio": 46.119,
+        "fin": 51.378,
+        "texto": "Back in Chiapas: restore soil, save water and put waste to use."
+      }
+    ],
+    "capitulos": [
+      {
+        "id": "exterior",
+        "inicio": 0.0,
+        "fin": 5.658
+      },
+      {
+        "id": "anillo",
+        "inicio": 5.658,
+        "fin": 11.964
+      },
+      {
+        "id": "animales",
+        "inicio": 11.964,
+        "fin": 15.936
+      },
+      {
+        "id": "tratamiento",
+        "inicio": 15.936,
+        "fin": 22.242
+      },
+      {
+        "id": "cultivo",
+        "inicio": 22.242,
+        "fin": 28.2
+      },
+      {
+        "id": "pruebas",
+        "inicio": 28.2,
+        "fin": 33.821
+      },
+      {
+        "id": "acceso",
+        "inicio": 33.821,
+        "fin": 41.09
+      },
+      {
+        "id": "chiapas",
+        "inicio": 41.09,
+        "fin": 51.944
+      }
+    ],
+    "voz": "en_GB-alba-medium",
+    "velocidad": 1,
+    "sha256": "f5d2160f46ec15eac539810a3b0e3edb73660cff1061576844c5bbb3c5a62f8c"
   }
 };

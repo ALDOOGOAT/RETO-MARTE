@@ -54,8 +54,20 @@ en PDF y documentos de contexto/investigación.
     marchitar interpolando de verde a pajizo: multiplicar una textura verde por un tinte marrón
     da casi negro. Y `geoHoja()` **normaliza las UV** — `ShapeGeometry` las escribe con las
     coordenadas crudas del contorno y sin normalizar la hoja sale negra.
+  · **V8 (25 sep 2026), acabado visual:** render HDR con MSAA → GTAO → brillo → ACES → viñeta
+    (`MILPA_VISUAL.posproceso`, addons de three r160 empaquetados en `vendor/three-addons.js`
+    porque `file://` no carga módulos ES). **Todo recurso binario va en base64 dentro de un `.js`**
+    (`vendor/tripulacion.js`, `vendor/texturas-pbr.js`): Chrome no sube a WebGL imágenes de disco.
+    Personas = avatares Microsoft Rocketbox (MIT) con clips reales; API intacta
+    `MILPA_PERSONA(altura, tipo).userData.animar(dt, velocidad, tarea)`. Regenerar con
+    `analysis/preparar_tripulacion.py` y `analysis/preparar_texturas_pbr.py`, no a mano.
+    **No volver a añadir una sonda de reflejos horneada (`PMREM.fromScene`)**: con el terreno
+    escaneado Chrome deja de entregar `captureScreenshot`/screencast y se rompen pruebas y vídeo.
+    Con posprocesado, el color de limpieza y las nieblas pasan por ACES: usar
+    `MILPA_VISUAL.antesDeACES(hex, exposición)`. La cámara de ambos visores usa
+    `MILPA_VISUAL.camaraSuave()` (resorte sobre θ, φ, log d y mira); no volver al `lerp` lineal.
   Poses de captura y parámetros de URL (`ui`, `piso`, `casco`, `sol`, `theta`, `phi`, `dist`,
-  `storm`, `play`, `vista`): ver **`deck/LEEME.md`**.
+  `storm`, `play`, `vista`, `post=0` para render directo): ver **`deck/LEEME.md`**.
   Publicado en https://claude.ai/code/artifact/74ae65a1-055b-4443-869e-178c3a40d7e7
   (`milpa360_build.py` es el modelo Blender **anterior**; se conserva como registro de proceso.)
 - **`deck/`** — 9 diapositivas 16:9 del pitch de 5 min (`*.dc.html` + `canvas.json`). Las imágenes

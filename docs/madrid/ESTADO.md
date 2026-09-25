@@ -1,5 +1,15 @@
 # ESTADO · preparación para Madrid
 
+> **Actualización V8, 25 sep 2026:** [personas escaneadas, luz y cámara](MEJORA-VISUAL-V8.md).
+> Avatares Rocketbox con animación real, GTAO + brillo + ACES, terreno y rocas escaneados,
+> cámara con resorte. 137.7 FPS alto / 94.7 FPS máxima locales; MP4 en `outputs/pitch-v8/`.
+> Sólo representación: no cambia parámetros ni cierra ensayos físicos.
+
+> **Actualización V7, 23 sep 2026:** [pitch breve y acabado visual](MEJORA-VISUAL-V7.md).
+> Audio ES de 47.064 s y EN de 51.744 s; MP4 en `outputs/pitch-v7/`.
+> Rostro escaneado, materiales, hojas y movimiento refinados. No cierra ensayos físicos.
+
+
 > **Actualización visual V6, 23 sep 2026:** [cambios y pruebas](MEJORA-VISUAL-V6.md).
 > Visores del repositorio con estudio, persona y vegetación refinadas, UI adaptable
 > y comprobación digital exportable. No modifica parámetros ni cierra ensayos físicos.

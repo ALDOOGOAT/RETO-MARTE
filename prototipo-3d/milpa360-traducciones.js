@@ -11,7 +11,6 @@ MILPA_I18N.add({
   "Atlas": "Atlas",
   "Detalle alto": "High detail",
   "Más fluidez": "Smoother",
-  "Calidad gráfica": "Graphics quality",
   "Idioma": "Language",
   "Cómo explorar": "How to explore",
   "Pantalla completa": "Full screen",

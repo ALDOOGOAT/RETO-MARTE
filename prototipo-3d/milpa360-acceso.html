@@ -28,20 +28,21 @@
 <div class="leyenda"><b>Cobre: carga que se retira. Azul: ruta de paso.</b><br>Vista de corte · espacio presurizado conectado · secuencia por comprobar físicamente.</div>
 </section></main>
 <script src="vendor/three.min.js"></script><script src="milpa360-datos.js"></script><script src="milpa360-modelo.js"></script>
-<script src="milpa360-personas.js"></script><script src="milpa360-visual.js"></script><script src="milpa360-guion.js"></script><script src="milpa360-audio.js"></script><script src="milpa360-proyeccion.js"></script>
+<script src="vendor/three-addons.js"></script><script src="vendor/tripulacion.js"></script><script src="milpa360-visual.js"></script><script src="milpa360-personas.js"></script><script src="milpa360-guion.js"></script><script src="milpa360-audio.js"></script><script src="milpa360-proyeccion.js"></script>
 <script>
 'use strict';
 const datos=MILPA_DATOS, a=datos.acceso, g=datos.geometria, p=a.parametros, r=a.resultados;
 const estudio=new MILPA.AccesoServicio(datos), $=id=>document.getElementById(id), T=THREE;
 const embebido=new URLSearchParams(location.search).get('embebido')==='1';if(embebido)document.body.classList.add('embebido');
 const escena=new T.Scene(), renderer=new T.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.setClearColor(0,0);$('escena').prepend(renderer.domElement);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.25));renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.setClearColor(0,0);$('escena').prepend(renderer.domElement);
 escena.environment=MILPA_VISUAL.entorno(renderer);renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
 const camara=new T.PerspectiveCamera(40,1,.05,80), mira=new T.Vector3(1.1,.5,0),miraVisual=mira.clone();
 escena.add(new T.HemisphereLight(0xdbefff,0x334549,1.25));
-const luz=new T.DirectionalLight(0xffead5,3.2);luz.position.set(-1,7,4);luz.castShadow=true;luz.shadow.mapSize.set(1024,1024);Object.assign(luz.shadow.camera,{left:-7,right:7,top:7,bottom:-7});luz.shadow.normalBias=.025;escena.add(luz);const fill=new T.DirectionalLight(0x83badb,1.8);fill.position.set(4,4,-5);escena.add(fill);
+const luz=new T.DirectionalLight(0xffead5,3.2);luz.position.set(-1,7,4);luz.castShadow=true;luz.shadow.mapSize.set(2048,2048);Object.assign(luz.shadow.camera,{left:-7,right:7,top:7,bottom:-7});luz.shadow.normalBias=.025;escena.add(luz);const fill=new T.DirectionalLight(0x83badb,1.8);fill.position.set(4,4,-5);escena.add(fill);
 const material=(color,alpha=1)=>new T.MeshStandardMaterial({color,roughness:.4,metalness:.34,transparent:alpha<1,opacity:alpha,side:T.DoubleSide});
 const mat={casco:material(0x9fbdc7,.13),metal:material(0x9db2ba),suelo:material(0x5c4335),cart:material(0xc2d0c9),carga:material(0xd99d67),azul:material(0x68cddd,.12),ruta:material(0x398ba6),claro:material(0xd7e4df),oscuro:material(0x172932)};
+for(const m of [mat.metal,mat.cart,mat.carga]){m.bumpMap=MILPA_VISUAL.superficie('metal');m.bumpScale=.001;m.roughnessMap=m.bumpMap;}mat.suelo.bumpMap=MILPA_VISUAL.superficie('suelo');mat.suelo.bumpScale=.012;
 function box(nombre,x,y,z,w,h,d,m,parent=escena){const o=new T.Mesh(new T.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.name=nombre;o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;}
 function poly(nombre,points,top,depth,m,parent=escena){const s=new T.Shape(points.map(([x,z])=>new T.Vector2(x,z)));const geo=new T.ExtrudeGeometry(s,{depth,bevelEnabled:false});geo.rotateX(Math.PI/2);const o=new T.Mesh(geo,m);o.position.y=top;o.name=nombre;o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;}
 const etiquetasTextura=[];
@@ -134,8 +135,9 @@ for(const ang of [0,Math.PI/2,Math.PI,Math.PI*1.5]){
 }
 let theta=.65,phi=.82,dist=11,arrastre=null,animando=false,ultimo=0,puertaVisual=0,tiempoPersona=0;
 let caminando=false,destinoPersona=humano.position.x,salidaPendiente=false,pausaEmbebida=false,demoIndice=0;
-function cam(dt=1){const alpha=dt===1?1:1-Math.exp(-dt*3.5);const objetivo=new T.Vector3(mira.x+dist*Math.sin(phi)*Math.cos(theta),mira.y+dist*Math.cos(phi),mira.z+dist*Math.sin(phi)*Math.sin(theta));camara.position.lerp(objetivo,alpha);miraVisual.lerp(mira,alpha);camara.lookAt(miraVisual);}
-function resize(){const e=$('escena');renderer.setSize(e.clientWidth,e.clientHeight,false);camara.aspect=e.clientWidth/e.clientHeight;camara.fov=e.clientWidth<e.clientHeight?57:40;camara.updateProjectionMatrix();}
+const camaraSuave=MILPA_VISUAL.camaraSuave();
+function cam(dt=1){camaraSuave.paso(camara,theta,phi,dist,mira,dt===1?Infinity:3.5,dt);miraVisual.copy(camaraSuave.mira);}
+function resize(){const e=$('escena');renderer.setSize(e.clientWidth,e.clientHeight,false);camara.aspect=e.clientWidth/e.clientHeight;camara.fov=e.clientWidth<e.clientHeight?57:40;if(pitchEmbebido&&e.clientWidth>1000)camara.setViewOffset(e.clientWidth,e.clientHeight,-e.clientWidth*.08,0,e.clientWidth,e.clientHeight);camara.updateProjectionMatrix();}
 new ResizeObserver(resize).observe($('escena'));
 renderer.domElement.onpointerdown=e=>{if(cineAcceso.state.activo)cineAcceso.pause();arrastre=[e.clientX,e.clientY];renderer.domElement.setPointerCapture(e.pointerId);};
 renderer.domElement.onpointerup=()=>arrastre=null;
@@ -169,8 +171,9 @@ $('continuar').onclick=()=>{if(estudio.estado.energia&&estudio.estado.movimiento
 $('metricas').innerHTML=[[r.ancho_libre_m.toFixed(3)+' m','paso con herrajes supuestos'],[r.area_adicional_m2.toFixed(2)+' m²','huella adicional'],[r.carga_dos_cartuchos_kg.nominal.toFixed(1)+' kg','dos cartuchos; falta útil'],[r.area_cultivo_en_anillo_m2.toFixed(3)+' m²','cultivo que permanece dentro']].map(([v,k])=>'<div><strong>'+v+'</strong><span>'+k+'</span></div>').join('');
 function actualizar(){const s=estudio.estado;$('fase').textContent=MILPA_I18N.t(nombres[s.fase]+(s.movimiento?' · en traslado':''));$('explicacion').textContent=MILPA_I18N.t(textos[s.fase]);$('siguiente').textContent=MILPA_I18N.t(etiquetas[siguiente()]||'Paso preparado');$('siguiente').disabled=!siguiente()||s.ocupado||!!s.movimiento||caminando;$('anterior').textContent=MILPA_I18N.t(etiquetas[atras[s.fase]]||'Volver');$('anterior').disabled=s.fase===0||s.ocupado||!!s.movimiento||caminando;$('energia').textContent=MILPA_I18N.t(s.energia?'Cortar energía':'Restaurar energía');$('entrar').disabled=s.fase!==5||s.ocupado||!s.energia||caminando;$('salir').disabled=!s.ocupado||caminando;$('continuar').hidden=!s.movimiento||!s.energia||animando;[...$('pasos').children].forEach((li,i)=>li.classList.toggle('activo',s.fase===i+1));}
 function pose(fase){return [fase>=3?p.traslacion_radial:0,fase>=4?p.traslacion_lateral:0];}
-let ultimaSombraAcceso=0;
-function dibujar(t){if(document.hidden){ultimo=t;requestAnimationFrame(dibujar);return;}const dt=Math.min(.05,(t-ultimo)/1000||0);ultimo=t;const s=estudio.estado;
+let ultimaSombraAcceso=0,visibleEmbebido=!embebido;
+const pitchEmbebido=new URLSearchParams(location.search).get('pitch')==='1';
+function dibujar(t){if(document.hidden||!visibleEmbebido){ultimo=t;requestAnimationFrame(dibujar);return;}const dt=Math.min(.05,(t-ultimo)/1000||0);ultimo=t;const s=estudio.estado;
  cineAcceso.tick(dt);
  const pausado=(cineAcceso.state.activo&&!cineAcceso.state.reproduciendo)||(embebido&&pausaEmbebida);
  const delta=pausado?0:dt;tiempoPersona+=delta;
@@ -181,7 +184,7 @@ function dibujar(t){if(document.hidden){ultimo=t;requestAnimationFrame(dibujar);
  for(const q of puertas)q.hoja.position.z=q.s*T.MathUtils.lerp(q.w/4,q.w*.75,puertaVisual);
  pasador.material=s.pasador?mat.carga:mat.claro;
  const dxPersona=destinoPersona-humano.position.x,vel=caminando&&Math.abs(dxPersona)>.005?Math.sign(dxPersona)*.60:0;
- if(caminando){humano.position.x+=Math.sign(dxPersona)*Math.min(Math.abs(dxPersona),Math.abs(vel)*delta);humano.rotation.y=vel<0?-Math.PI/2:Math.PI/2;
+ if(caminando){humano.position.x+=Math.sign(dxPersona)*Math.min(Math.abs(dxPersona),Math.abs(vel)*delta);const destinoGiro=vel<0?-Math.PI/2:Math.PI/2;humano.rotation.y+=Math.atan2(Math.sin(destinoGiro-humano.rotation.y),Math.cos(destinoGiro-humano.rotation.y))*(1-Math.exp(-delta*9));
   if(Math.abs(destinoPersona-humano.position.x)<.006){humano.position.x=destinoPersona;caminando=false;if(salidaPendiente){estudio.actuar('salir');salidaPendiente=false;}actualizar();}
  }
  if(!pausado)humano.userData.animar(delta,vel,caminando?'caminar':s.ocupado?'inspeccion':'esperar',tiempoPersona);
@@ -211,14 +214,25 @@ $('acceso-cine-iniciar').onclick=()=>cineAcceso.start();
 $('acceso-full').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{});
 $('detalle-acceso').ontoggle=()=>reserva.visible=$('detalle-acceso').open;
 addEventListener('message',event=>{if(!embebido||event.source!==parent||!event.data||typeof event.data!=='object')return;
+ if(event.data.milpa==='reiniciar-pitch'&&pitchEmbebido)prepararPitch();
+ if(event.data.milpa==='ocultar')visibleEmbebido=false;
  if(event.data.milpa==='pausa')pausaEmbebida=event.data.valor===true;
  if(event.data.milpa==='demostracion'&&Number.isFinite(event.data.tiempo)){
-  pausaEmbebida=event.data.pausa===true;if(!pausaEmbebida)demostracion(Math.max(0,event.data.tiempo));
+  visibleEmbebido=true;pausaEmbebida=event.data.pausa===true;if(!pausaEmbebida){if(pitchEmbebido){if(estudio.estado.ocupado&&!caminando)accion('salir');}else demostracion(Math.max(0,event.data.tiempo));}
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches)theta=.65+Math.sin(event.data.tiempo*.035)*.12;
   const s=estudio.estado;parent.postMessage({milpa:'estado-acceso',estado:{fase:s.fase,ocupado:s.ocupado,energia:s.energia,caminando}},'*');
  }
 });
 document.fonts.ready.then(()=>etiquetasTextura.forEach(fn=>fn()));
-actualizar();resize();cam();requestAnimationFrame(dibujar);
+// El pitch muestra la salida del paso ya preparado; la maniobra completa sigue disponible.
+function prepararPitch(){
+ reiniciarDemo();
+ for(const k of ['bloquear','igualar','aislar','extraer','estacionar','abrir_paso','entrar','cortar_energia']){estudio.actuar(k);if(estudio.estado.movimiento)estudio.avanzarMovimiento(1);}
+ puertaVisual=1;humano.position.x=r.persona_x_interior_m;destinoPersona=humano.position.x;
+ humano.rotation.y=Math.PI/2;humano.userData.animar(0,0,'esperar',0);
+ theta=.84;phi=1.04;dist=9.3;
+}
+if(pitchEmbebido)prepararPitch();
+actualizar();resize();cam();renderer.compile(escena,camara);requestAnimationFrame(dibujar);
 globalThis.B19={estudio,carros,escena,renderer,camara,accion,datos,actualizar,humano,cine:cineAcceso,demostracion,reiniciarDemo,get caminando(){return caminando;}};
 </script></html>

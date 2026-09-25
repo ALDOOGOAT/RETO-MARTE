@@ -99,7 +99,7 @@ try {
   }else
   if(process.env.MILPA_VISUAL_V5==='1'){
     const base=process.env.MILPA_DEMO_DIR||path.join(raiz,'prototipo-3d');
-    const dir=process.env.MILPA_REGRESION_V6==='1'?path.join(os.tmpdir(),'milpa-regresion-v5'):path.join(raiz,'docs/madrid/capturas-v5');await mkdir(dir,{recursive:true});
+    const dir=(process.env.MILPA_REGRESION_V6==='1'||process.env.MILPA_REGRESION_V7==='1'||process.env.MILPA_REGRESION_V8==='1')?path.join(os.tmpdir(),'milpa-regresion-v5'):path.join(raiz,'docs/madrid/capturas-v5');await mkdir(dir,{recursive:true});
     const medirFPS=()=>evaluar('new Promise(resolve=>{let n=0,raf;const inicio=performance.now();function f(){n++;raf=requestAnimationFrame(f);}raf=requestAnimationFrame(f);setTimeout(()=>{cancelAnimationFrame(raf);const ms=performance.now()-inicio;resolve({fps:n*1000/ms,duracionMs:ms,llamadas:renderer.info.render.calls});},5000);})');
     const cap=async name=>{await new Promise(r=>setTimeout(r,2200));const im=await cdp('Page.captureScreenshot',{format:'png'});await writeFile(path.join(dir,name+'.png'),Buffer.from(im.data,'base64'));};
     await cdp('Page.navigate',{url:pathToFileURL(path.join(base,'milpa360-simulador.html')).href+'?vista=habitat&play=0&sol=62&lang=es'});
@@ -109,7 +109,7 @@ try {
     assert.ok(await evaluar('parseFloat(getComputedStyle(document.querySelector("#ficha .idea-publico")).fontSize)>=20'));
     assert.equal(await evaluar('[...document.querySelectorAll("#ficha a")].filter(a=>/\\.md(?:$|#)/.test(a.href)).length'),0);
     await evaluar('MILPA_I18N.set("en")');await cap('ficha-en');
-    await evaluar('MILPA_I18N.set("es");document.getElementById("cerrar").click();document.getElementById("intro-cine").click()');
+    await evaluar('MILPA_I18N.set("es");document.getElementById("cerrar").click();(document.getElementById("intro-completo")||document.getElementById("intro-cine")).click()');
     await esperar('cine.state.audioListo&&cine.audio.currentTime>.5');await cap('cine-marte-es');
     await evaluar('cine.pause()');const paused=await evaluar('cine.audio.currentTime'),cameraPaused=await evaluar('camara.position.toArray()');
     await new Promise(r=>setTimeout(r,600));assert.ok(Math.abs(await evaluar('cine.audio.currentTime')-paused)<.05);
@@ -126,8 +126,9 @@ try {
     const pared=await evaluar('gHabitat.getObjectByName("placa-exterior").visible');assert.equal(pared,true,'La placa exterior desaparece al abrir el corte');
     await evaluar('cine.go(3)');await cap('cine-aves');
     assert.equal(await evaluar('JSON.stringify(modeloExploracion.estado)'),initial,'El recorrido cambió los inventarios de exploración');
-    const humano=await evaluar('(()=>{const h=gHabitat.getObjectByName("referencia-humana"),b=new THREE.Box3().setFromObject(MILPA_PERSONA(1.75));return {mallas:h.getObjectsByProperty("isMesh",true).length,altura:h.userData.alturaDeclarada,alturaErguida:b.max.y-b.min.y,articulado:typeof h.userData.animar==="function"};})()');
-    assert.ok(humano.mallas>25&&humano.articulado);
+    const humano=await evaluar('(()=>{const h=gHabitat.getObjectByName("referencia-humana"),b=new THREE.Box3().setFromObject(MILPA_PERSONA(1.75));return {huesos:h.getObjectsByProperty("isBone",true).length,clips:Object.keys(h.userData.acciones||{}).length,altura:h.userData.alturaDeclarada,alturaErguida:b.max.y-b.min.y,articulado:typeof h.userData.animar==="function"};})()');
+    // V8: avatar con esqueleto Biped y clips reales (reposo, marcha, consulta).
+    assert.ok(humano.huesos>50&&humano.clips>=3&&humano.articulado);
     assert.ok(Math.abs(humano.alturaErguida-1.75)<1e-6,'Estatura erguida incorrecta');
     await evaluar('cine.go(4)');await cap('cine-tratamiento');
     await evaluar('cine.go(5)');await cap('cine-cultivo');
@@ -173,8 +174,8 @@ try {
     assert.equal(await evaluar('document.documentElement.scrollWidth<=innerWidth+1'),true);
     assert.deepEqual(errores,[]);assert.deepEqual(peticiones.filter(u=>/^https?:/.test(u)),[]);
     const gpuInfo=await evaluar('(()=>{const gl=renderer.getContext(),e=gl.getExtension("WEBGL_debug_renderer_info");return e?gl.getParameter(e.UNMASKED_RENDERER_WEBGL):"no disponible";})()');
-    const report={fecha:new Date().toISOString(),revision:process.env.MILPA_REGRESION_V6==='1'?'V6, regresión V5':'V5',carpetaProbada:base,navegador:await cdp('Browser.getVersion'),gpu:gpuInfo,resolucion:[1920,1080],humano,rendimiento:{modulo:rendimientoModulo,acceso:rendimientoAcceso},archivoLocalSinPermisoExtra:process.env.MILPA_FILE_ESTRICTO==='1',audio:'MP3 local ES/EN: reproducción, pausa, reactivar voz, cambio de idioma y avance comprobados',acceso:'Persona continua, retención de ocupación, parada de carga y salida sin energía',recorridoCompleto:process.env.MILPA_V5_SMOKE!=='1',alcanceRecorrido:'Nueve vistas visitadas; avance automático entre capítulos, fin y secuencia de acceso completa. No se reprodujo toda la narración de principio a fin.',errores,solicitudesHTTP:0,limite:'Prueba digital local, sin proyector ni ensayo físico. Audio del navegador silenciado durante automatización. FPS de cinco segundos: no garantizan mínimo sostenido.'};
-    await writeFile(path.join(raiz,process.env.MILPA_REGRESION_V6==='1'?'docs/madrid/PRUEBA-REGRESION-V5-V6.json':'docs/madrid/PRUEBA-PROYECCION-V5.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
+    const report={fecha:new Date().toISOString(),revision:process.env.MILPA_REGRESION_V8==='1'?'V8, regresión V5':process.env.MILPA_REGRESION_V7==='1'?'V7, regresión V5':process.env.MILPA_REGRESION_V6==='1'?'V6, regresión V5':'V5',carpetaProbada:base,navegador:await cdp('Browser.getVersion'),gpu:gpuInfo,resolucion:[1920,1080],humano,rendimiento:{modulo:rendimientoModulo,acceso:rendimientoAcceso},archivoLocalSinPermisoExtra:process.env.MILPA_FILE_ESTRICTO==='1',audio:'MP3 local ES/EN: reproducción, pausa, reactivar voz, cambio de idioma y avance comprobados',acceso:'Persona continua, retención de ocupación, parada de carga y salida sin energía',recorridoCompleto:process.env.MILPA_V5_SMOKE!=='1',alcanceRecorrido:'Nueve vistas visitadas; avance automático entre capítulos, fin y secuencia de acceso completa. No se reprodujo toda la narración de principio a fin.',errores,solicitudesHTTP:0,limite:'Prueba digital local, sin proyector ni ensayo físico. Audio del navegador silenciado durante automatización. FPS de cinco segundos: no garantizan mínimo sostenido.'};
+    await writeFile(path.join(raiz,process.env.MILPA_REGRESION_V8==='1'?'docs/madrid/PRUEBA-REGRESION-V5-V8.json':process.env.MILPA_REGRESION_V7==='1'?'docs/madrid/PRUEBA-REGRESION-V5-V7.json':process.env.MILPA_REGRESION_V6==='1'?'docs/madrid/PRUEBA-REGRESION-V5-V6.json':'docs/madrid/PRUEBA-PROYECCION-V5.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
   }else if(process.env.MILPA_VISUAL_V4==='1'){
     const base=process.env.MILPA_DEMO_DIR||path.join(raiz,'prototipo-3d');
     const dir=path.join(raiz,'docs/madrid/capturas-v4');await mkdir(dir,{recursive:true});

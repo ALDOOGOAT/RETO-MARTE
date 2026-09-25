@@ -10,6 +10,7 @@
 <script src="milpa360-idiomas.js"></script>
 <script src="milpa360-traducciones.js"></script>
 <script src="milpa360-contenido.js"></script>
+<script src="vendor/three-addons.js"></script><script src="vendor/tripulacion.js"></script><script src="vendor/texturas-pbr.js"></script>
 <script src="milpa360-personas.js"></script>
 <script src="milpa360-visual.js"></script>
 <script src="milpa360-guion.js"></script>
@@ -263,7 +264,6 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
     <a href="../visuales/atlas-marciano.html" data-preserve-language>Atlas</a>
   </div>
   <div class="tools">
-    <select id="calidad" aria-label="Calidad gráfica"><option value="auto">Automática</option><option value="alta">Detalle alto</option><option value="fluida">Más fluidez</option></select>
     <div class="lang-switch" role="group" aria-label="Idioma"><button data-language="es" aria-pressed="true">ES</button><button data-language="en" aria-pressed="false">EN</button></div>
     <button class="icon-button" id="ayuda-abrir" aria-label="Cómo explorar" title="Cómo explorar">?</button>
     <button class="icon-button" id="pantalla-completa" aria-label="Pantalla completa" title="Pantalla completa">⛶</button>
@@ -275,7 +275,7 @@ body.captura #ficha,body.captura #etiquetas,body.captura #pista{display:none}
   <p id="intro-description">Explora cómo conectar suelo, residuos y alimento en un entorno extremo.</p>
   <button class="primary-action" id="intro-action">Explorar el módulo <span aria-hidden="true">↗</span></button>
   <button class="intro-secondary" id="intro-datos">Conocer el planeta</button>
-  <button class="projection-start" id="intro-cine">Proyección con voz</button>
+  <div class="pitch-actions"><button class="projection-start" id="intro-cine">Pitch con voz · menos de 1 min</button><button id="intro-completo">Recorrido completo</button></div>
   <div id="resumen-modelo"><div><strong id="resumen-cartuchos"></strong><span>cartuchos idénticos</span></div><div><strong id="resumen-area"></strong><span>m² de cultivo útil</span></div><button class="estado-concepto" id="estado-concepto">Concepto en evaluación</button></div>
   <p class="intro-foot">Un concepto de BioMars Chiapas.<br>Ciencia, cálculo y preguntas abiertas.</p>
 </section>
@@ -772,20 +772,6 @@ function texturaCasco(){
 }
 
 /* Cubierta: chapa antiderrapante */
-function texturaCubierta(){
-  return lienzoTex(256, 256, (g, W, H) => {
-    g.fillStyle = "#414A54"; g.fillRect(0, 0, W, H);
-    g.strokeStyle = "rgba(24,29,34,.55)"; g.lineWidth = 2;
-    for (let i = 0; i < 8; i++){                          // lágrimas en damero
-      for (let j = 0; j < 8; j++){
-        const x = i * 32 + (j % 2) * 16, y = j * 32;
-        g.save(); g.translate(x + 16, y + 16); g.rotate((i + j) % 2 ? 0.7 : -0.7);
-        g.fillStyle = "rgba(146,159,172,.42)"; g.fillRect(-9, -2.6, 18, 5.2);
-        g.strokeRect(-9, -2.6, 18, 5.2); g.restore();
-      }
-    }
-  }, true);
-}
 
 /* Costra de musgo: la superficie sellada de la bandeja, no una alfombra lisa */
 function texturaMusgo(){
@@ -810,7 +796,7 @@ function texturaMusgo(){
 /* Hoja: limbo con degradado de base a ápice, nervadura de tres órdenes y borde más oscuro.
    Devuelve también un mapa de relieve para que los nervios se noten con la luz.        */
 function texturaHoja(op){
-  const W = 256, H = 512;
+  const W = 512, H = 1024;
   const pinta = (g, relieve) => {
     if (relieve){ g.fillStyle = "#8A8A8A"; g.fillRect(0, 0, W, H); }
     else {
@@ -851,7 +837,7 @@ function texturaHoja(op){
     }
   };
   const mapa = lienzoTex(W, H, (g) => pinta(g, false));
-  const rel = lienzoTex(W, H, (g) => pinta(g, true));
+  const rel = lienzoTex(W, H, (g) => pinta(g, true));rel.colorSpace=T.NoColorSpace;
   return { mapa, rel };
 }
 
@@ -917,7 +903,9 @@ function texturaSolar(){
    ═══════════════════════════════════════════════════════════════ */
 const lienzo = $("lienzo");
 const renderer = new T.WebGLRenderer({ canvas: lienzo, antialias: true, powerPreference:'high-performance' });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));   // 13 luces × 8 Mpx no cabe en el presupuesto
+/* Una sola calidad, sin selector ni ajuste automático: MSAA nativo, sombras suaves y render directo
+   con ACES. Por encima de 1.25 el coste de píxel crece más rápido que la nitidez que se nota. */
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.25));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.autoUpdate = false;
 renderer.shadowMap.type = T.PCFSoftShadowMap;
@@ -1164,7 +1152,7 @@ const ESTACIONES = [
 ];
 for (let i = 1; i <= 12; i++) ESTACIONES.push(["C" + i, "Cultivo", 0x7A5436]);
 
-let texRego, texAve, texCasco, texCubierta, texMusgo, texSolar, texHuevo;
+let texRego, texAve, texCasco, texMusgo, texSolar, texHuevo;
 let hojaCamote, hojaLegum, hojaRabano;
 const clicables = [];
 const anclas = [];                                    // etiquetas fijas del hábitat
@@ -1174,22 +1162,24 @@ const codornices = [], flujos = [], focosCultivo = [];
 
 const M = {};                                         // materiales compartidos
 function mats(){
+  const metal=MILPA_VISUAL.superficie('metal'),grano=MILPA_VISUAL.superficie('suelo');
   M.casco   = new T.MeshStandardMaterial({ map: texCasco, roughness: 0.46, metalness: 0.10,
                                            side: T.DoubleSide });
   M.cascoIn = new T.MeshStandardMaterial({ color: 0x778B92, roughness: 0.65, metalness: 0.15,
                                            side: T.DoubleSide });
-  M.costilla= new T.MeshStandardMaterial({ color: 0x9AA3AA, roughness: 0.34, metalness: 0.72 });
-  M.acero   = new T.MeshStandardMaterial({ color: 0xB6BEC5, roughness: 0.28, metalness: 0.88 });
+  M.costilla= new T.MeshStandardMaterial({ color: 0x9AA3AA, bumpMap:metal,bumpScale:.001,roughnessMap:metal, roughness: 0.42, metalness: 0.72 });
+  M.acero   = new T.MeshStandardMaterial({ color: 0xB6BEC5, bumpMap:metal,bumpScale:.001,roughnessMap:metal, roughness: 0.36, metalness: 0.88 });
   M.oscuro  = new T.MeshStandardMaterial({ color: 0x243948, roughness: 0.42, metalness: 0.48 });
-  M.cubierta= new T.MeshStandardMaterial({ map: texCubierta, roughness: 0.58, metalness: 0.42 });
+  // V8: chapa estriada escaneada (Poly Haven CC0), teñida en el material.
+  M.cubierta= new T.MeshStandardMaterial({ color:0x6a747c, ...MILPA_VISUAL.pbr('cubierta',6), roughness: 1, metalness: 0.55 });
   /* Sin `transmission`: ese modo obliga a three a renderizar la escena entera una segunda vez
      en un render target, y en gráficos integrados eso solo cuesta la mitad de los fotogramas.
      Un transparente con brillo especular da el mismo vidrio a ojo. */
   M.vidrio  = new T.MeshPhysicalMaterial({ color: 0xCFE0EC, roughness: 0.08, metalness: 0,
                 transparent: true, opacity: 0.30, clearcoat: 0.9, clearcoatRoughness: 0.06,
                 side: T.DoubleSide, depthWrite: false });
-  M.verde   = new T.MeshStandardMaterial({ color: 0x668675, roughness: 0.52, metalness: 0.30 });
-  M.verde2  = new T.MeshStandardMaterial({ color: 0x3D6252, roughness: 0.48, metalness: 0.32 });
+  M.verde   = new T.MeshStandardMaterial({ color: 0x668675,bumpMap:metal,bumpScale:.0006, roughness: 0.52, metalness: 0.30 });
+  M.verde2  = new T.MeshStandardMaterial({ color: 0x3D6252,bumpMap:metal,bumpScale:.0006, roughness: 0.48, metalness: 0.32 });
   M.azul    = new T.MeshStandardMaterial({ color: 0x5397A8, roughness: 0.28, metalness: 0.5 });
   M.cobre   = new T.MeshStandardMaterial({ color: 0xA56A3C, roughness: 0.34, metalness: 0.8 });
   M.ave     = new T.MeshStandardMaterial({ map: texAve, roughness: 0.86, metalness: 0 });
@@ -1200,7 +1190,7 @@ function mats(){
   M.ojoAve  = new T.MeshStandardMaterial({color:0x080a09,roughness:.18});
   M.huevo   = new T.MeshStandardMaterial({ map: texHuevo, roughness: 0.42, metalness: 0 });
   M.rego    = new T.MeshStandardMaterial({ map: texRego, roughness: 1.0, metalness: 0 });
-  M.sustrato= new T.MeshStandardMaterial({ color: 0x8A5334, map:texRego, bumpMap:texRego, bumpScale:.008, roughness: 1.0, metalness: 0 });
+  M.sustrato= new T.MeshStandardMaterial({ color: 0x8A5334, ...MILPA_VISUAL.pbr('sustrato',1.5), roughness: 1.0, metalness: 0 });
   const hojaMat = (h, col) => new T.MeshStandardMaterial({ color: col, map: h.mapa,
                 bumpMap: h.rel, bumpScale: 0.0025, roughness: 0.88, metalness: 0,
                 side: T.DoubleSide });
@@ -1209,7 +1199,7 @@ function mats(){
   M.hojaR   = hojaMat(hojaRabano, 0x7BA451);   // rábano, verde claro
   M.tallo   = new T.MeshStandardMaterial({ color: 0x4E6B33, roughness: 0.82 });
   M.musgo   = new T.MeshStandardMaterial({ color: 0x4C8438, roughness: 0.94 });
-  M.costra  = new T.MeshStandardMaterial({ map: texMusgo, roughness: 0.97, metalness: 0 });
+  M.costra  = new T.MeshStandardMaterial({ map: texMusgo,bumpMap:grano,bumpScale:.007, roughness: 0.97, metalness: 0 });
   M.solar   = new T.MeshStandardMaterial({ map: texSolar, roughness: 0.18, metalness: 0.62 });
   M.rabano  = new T.MeshStandardMaterial({ color: 0xC23E52, roughness: 0.42, metalness: 0 });
   M.flor    = new T.MeshStandardMaterial({ color: 0xE8DCF0, roughness: 0.7 });
@@ -1246,28 +1236,33 @@ function fusionar(grupo){
   const fuera = new T.Group();
   for (const [mat, lista] of porMat){
     const partes = [];
-    let n = 0;
+    let n = 0, ni = 0;
     for (const o of lista){
-      const g = (o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone());
+      const g = o.geometry.clone();
       g.applyMatrix4(o.matrixWorld);            // el grupo está en identidad al fusionar
-      partes.push(g); n += g.attributes.position.count;
+      partes.push(g); n += g.attributes.position.count; ni += g.index ? g.index.count : g.attributes.position.count;
     }
+    // Con índices: cada vértice se sombrea una vez, no una por triángulo que lo comparte (÷3–6).
     const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), uv = new Float32Array(n * 2);
-    let k = 0;
+    const idx = new (n > 65535 ? Uint32Array : Uint16Array)(ni);
+    let k = 0, q = 0;
     for (const g of partes){
-      const P = g.attributes.position, N = g.attributes.normal, U = g.attributes.uv;
+      const P = g.attributes.position, N = g.attributes.normal, U = g.attributes.uv, I = g.index;
       for (let i = 0; i < P.count; i++){
         const j = k + i;
         pos[j*3] = P.getX(i); pos[j*3+1] = P.getY(i); pos[j*3+2] = P.getZ(i);
         if (N){ nor[j*3] = N.getX(i); nor[j*3+1] = N.getY(i); nor[j*3+2] = N.getZ(i); }
         if (U){ uv[j*2] = U.getX(i); uv[j*2+1] = U.getY(i); }
       }
+      if (I) for (let i = 0; i < I.count; i++) idx[q++] = I.getX(i) + k;
+      else for (let i = 0; i < P.count; i++) idx[q++] = k + i;
       k += P.count; g.dispose();
     }
     const geo = new T.BufferGeometry();
     geo.setAttribute("position", new T.BufferAttribute(pos, 3));
     geo.setAttribute("normal", new T.BufferAttribute(nor, 3));
     geo.setAttribute("uv", new T.BufferAttribute(uv, 2));
+    geo.setIndex(new T.BufferAttribute(idx, 1));
     const m = new T.Mesh(geo, mat);
     m.receiveShadow = true;
     fuera.add(m);
@@ -1277,13 +1272,18 @@ function fusionar(grupo){
 
 /* ── hojas: silueta por especie, con UV normalizadas ── */
 function cerrarHoja(g){
+  // Una subdivisión compartida por especie permite curvar el interior del limbo.
+  const coords=Array.from(g.attributes.position.array),indices=g.index.array,newIndices=[],edges=new Map();
+  const mitad=(a,b)=>{const key=Math.min(a,b)+':'+Math.max(a,b);if(edges.has(key))return edges.get(key);const n=coords.length/3;for(let j=0;j<3;j++)coords.push((coords[a*3+j]+coords[b*3+j])/2);edges.set(key,n);return n;};
+  for(let i=0;i<indices.length;i+=3){const a=indices[i],b=indices[i+1],c=indices[i+2],ab=mitad(a,b),bc=mitad(b,c),ca=mitad(c,a);newIndices.push(a,ab,ca,ab,b,bc,ca,bc,c,ab,bc,ca);}
+  g.dispose();g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(coords,3));g.setAttribute('uv',new T.Float32BufferAttribute(new Float32Array(coords.length/3*2),2));g.setIndex(newIndices);
   /* ShapeGeometry escribe como UV las coordenadas CRUDAS del contorno: sin normalizar,
      la hoja muestrea una esquina diminuta de la textura y sale negra. */
   g.computeBoundingBox();
   const bb = g.boundingBox, uv = g.attributes.uv;
   const dx = bb.max.x - bb.min.x || 1, dy = bb.max.y - bb.min.y || 1;
   for (let i = 0; i < uv.count; i++)
-    uv.setXY(i, (uv.getX(i) - bb.min.x) / dx, (uv.getY(i) - bb.min.y) / dy);
+    uv.setXY(i, (g.attributes.position.getX(i) - bb.min.x) / dx, (g.attributes.position.getY(i) - bb.min.y) / dy);
   uv.needsUpdate = true;
   // Lámina curvada con nervadura central y borde ondulado; mismas UV normalizadas.
   const vertices=g.attributes.position;
@@ -1309,7 +1309,7 @@ function geoHoja(largo, ancho, corazon){
     s.bezierCurveTo( ancho * 0.72, largo * 0.22,  ancho * 0.52, largo * 0.80,  0, largo);
     s.bezierCurveTo(-ancho * 0.52, largo * 0.80, -ancho * 0.72, largo * 0.22,  0, 0);
   }
-  return cerrarHoja(new T.ShapeGeometry(s, 12));
+  return cerrarHoja(new T.ShapeGeometry(s, 6));   // la subdivisión de cerrarHoja ya redondea el borde
 }
 
 /* Hoja pinnatipartida del rábano: lóbulos crecientes hacia el ápice, como la real. */
@@ -1364,6 +1364,8 @@ function geometrias(){
   GEO.hojaLobulada = geoHojaLobulada(0.20, 0.13);
   GEO.tallo        = new T.CylinderGeometry(0.006, 0.009, 1, 5);
   GEO.mota         = new T.IcosahedronGeometry(0.028, 0);
+  GEO.ovalo        = new T.SphereGeometry(1, 16, 12);
+  GEO.ovaloChico   = new T.SphereGeometry(1, 8, 6);
   /* Un solo juego de geometrías: los 20 cartuchos son idénticos. Eso es la arquitectura B,
      no una economía de código — un lote avanza de posición sin cambiar de forma.           */
   const ang = TAU / N_POS * HOLGURA;
@@ -1465,8 +1467,9 @@ function mataMusgo(){
 function codorniz(){
   const g=new T.Group();g.name='codorniz-japonesa';
   const cuerpo=new T.Group(),cabeza=new T.Group();
+  // Un ave mide 15 cm en pantalla: 16×12 basta para el cuerpo y 8×6 para plumas, ojos y pico.
   const ovalo=(padre,mat,pos,esc,rz=0)=>{
-    const o=malla(new T.SphereGeometry(1,24,16),mat,pos,padre);
+    const o=malla(Math.max(...esc)>.03?GEO.ovalo:GEO.ovaloChico,mat,pos,padre);
     o.scale.set(...esc);o.rotation.z=rz;return o;
   };
   const hueso=(a,b,r,mat,padre)=>{
@@ -1528,12 +1531,13 @@ function construirHabitat(){
   }
   geoT.computeVertexNormals();
   const tintes=[];
-  for(let i=0;i<pT.count;i++){const c=new T.Color(0xb9a394).multiplyScalar(.72+.32*fbm(pT.getX(i)*.3+19,pT.getY(i)*.3+7,64,3));tintes.push(c.r,c.g,c.b);}
+  // Variación a escala de decenas de metros: rompe la repetición del escaneo sin otra textura.
+  const tinte=(x,y)=>{const n=fbm(x*.3+19,y*.3+7,64,3),m=fbm(x*.045+3,y*.045+11,64,3);return new T.Color(0xf2d2bd).lerp(new T.Color(0xc09a86),m).multiplyScalar(.74+.34*n);};
+  for(let i=0;i<pT.count;i++){const c=tinte(pT.getX(i),pT.getY(i));tintes.push(c.r,c.g,c.b);}
   geoT.setAttribute('color',new T.Float32BufferAttribute(tintes,3));
-  const texSuelo = texRego.clone(); texSuelo.needsUpdate = true;
-  texSuelo.repeat.set(64, 64);
+  // V8: suelo laterítico escaneado (Poly Haven CC0), ~3 m por repetición.
   const terreno = new T.Mesh(geoT, new T.MeshStandardMaterial({
-    map: texSuelo, roughness: 1, metalness: 0, vertexColors:true, bumpMap:texSuelo,bumpScale:.025,
+    ...MILPA_VISUAL.pbr('terreno',48), roughness: 1, metalness: 0, vertexColors:true, normalScale:new T.Vector2(1.3,1.3),
   }));
   texRego.repeat.set(3, 3);
   terreno.rotation.x = -Math.PI / 2;
@@ -1542,17 +1546,27 @@ function construirHabitat(){
   terreno.name = "terreno";
   gHabitat.add(terreno);
 
-  /* rocas dispersas */
-  const geoR = new T.IcosahedronGeometry(1, 1);
-  const matR = new T.MeshStandardMaterial({ color: 0x6E3D28, roughness: 0.96, flatShading: true });
-  const rocas=new T.InstancedMesh(geoR,matR,90),roca=new T.Object3D();
+  /* rocas dispersas: bloque erosionado (ruido sobre esfera subdividida) y guijarros */
+  const geoR = new T.IcosahedronGeometry(1, 3), pR = geoR.attributes.position, vR = new T.Vector3();
+  for (let i = 0; i < pR.count; i++){
+    vR.fromBufferAttribute(pR, i);
+    const n = fbm(vR.x*1.3+5, vR.y*1.3+vR.z*.7+9, 64, 4), aplan = vR.y < -.2 ? .55 : 1;
+    vR.multiplyScalar((.72 + n * .55) * (Math.abs(vR.x) > .6 ? .92 : 1));vR.y *= aplan;
+    pR.setXYZ(i, vR.x, vR.y, vR.z);
+  }
+  geoR.computeVertexNormals();
+  const matR = new T.MeshStandardMaterial({ color: 0xb4755a, ...MILPA_VISUAL.pbr('roca',1.2), roughness: 1 });
+  const rocas=new T.InstancedMesh(geoR,matR,150),roca=new T.Object3D();
   rocas.name='rocas-ilustrativas';rocas.visible=!limpio;rocas.castShadow=true;rocas.receiveShadow=true;gHabitat.add(rocas);
-  for (let i = 0; i < 90; i++){
-    const a = azar() * TAU, r = 5.8 + Math.pow(azar(), 0.55) * 40;
-    const s = 0.1 + Math.pow(azar(), 2.4) * 0.85;
+  // Los guijarros usan su propia serie: la de azar() sigue igual para el resto de la escena.
+  let semillaGuijarro = 77;const guijarro = () => (semillaGuijarro = (1664525 * semillaGuijarro + 1013904223) >>> 0) / 4294967296;
+  for (let i = 0; i < 150; i++){
+    const rnd = i < 90 ? azar : guijarro;
+    const a = rnd() * TAU, r = i < 90 ? 5.8 + Math.pow(rnd(), 0.55) * 40 : 3.4 + rnd() * 6;
+    const s = i < 90 ? 0.1 + Math.pow(rnd(), 2.4) * 0.85 : .03 + rnd() * .07;
     roca.position.set(Math.cos(a)*r,s*.34,Math.sin(a)*r);
-    roca.scale.set(s * (0.8 + azar() * 0.6), s * (0.5 + azar() * 0.5), s);
-    roca.rotation.set(azar(), azar() * TAU, azar());
+    roca.scale.set(s * (0.8 + rnd() * 0.6), s * (0.5 + rnd() * 0.5), s);
+    roca.rotation.set(rnd(), rnd() * TAU, rnd());
     roca.position.y=alturaTerreno(roca.position.x,-roca.position.z)+PISO-ESPESOR_PISO_VISUAL+s*.12;
     roca.updateMatrix();rocas.setMatrixAt(i,roca.matrix);
   }
@@ -1565,7 +1579,7 @@ function construirHabitat(){
   for(let i=0;i<pTalud.count;i++){
     const x=pTalud.getX(i),z=pTalud.getZ(i);
     uvTalud.setXY(i,(x+75)/150,(-z+75)/150);
-    const c=new T.Color(0xb9a394).multiplyScalar(.72+.32*fbm(x*.3+19,-z*.3+7,64,3));
+    const c=tinte(x,-z);
     colTalud.push(c.r,c.g,c.b);
   }
   geoTalud.setAttribute('color',new T.Float32BufferAttribute(colTalud,3));
@@ -1632,8 +1646,11 @@ function construirHabitat(){
   clicable(malla(new T.CylinderGeometry(0.09, 0.13, 1.5, 18), M.acero, [0, 0.75, 0]), "carrusel");
 
   malla(new T.CylinderGeometry(0.62,0.62,CUBIERTA-PISO,32),M.acero,[0,PISO+(CUBIERTA-PISO)/2,0]); // soporte fijo del núcleo, fuera del pasillo
-  const humano=MILPA_PERSONA(GEOM.casco.altura_figura);humano.name="referencia-humana";humano.position.set(1.08,PISO,-0.40);humano.rotation.y=-1.1;gHabitat.add(humano);
+  const humano=MILPA_PERSONA(GEOM.casco.altura_figura);humano.name="referencia-humana";humano.position.set(1.08,PISO,-0.40);humano.rotation.y=2.0;gHabitat.add(humano);
   marcarSubarbol(humano,"carrusel"); // referencia visual; altura calculada no valida la entrada.
+  // V8: segunda tripulante en el pasillo, frente al operador. Ilustrativa: no cambia ocupación ni cotas.
+  const cientifica=MILPA_PERSONA(1.68,'cientifica');cientifica.name='tripulante-cientifica';cientifica.position.set(.31,PISO,1.11);cientifica.rotation.y=2.45;gHabitat.add(cientifica);
+  marcarSubarbol(cientifica,"carrusel");
 
   /* Equipos esquemáticos separados. B17: volumen útil y mantenimiento pendientes. */
   const dig = new T.Group(); dig.position.set(-0.22, CUBIERTA, 0); gHabitat.add(dig);
@@ -2334,7 +2351,7 @@ function construirHabitat(){
     g.fillStyle='#657b85';for(const x of [20,1004])for(const y of [23,489]){g.beginPath();g.arc(x,y,4,0,TAU);g.fill();}
     g.fillStyle='rgba(218,169,112,.20)';for(let j=0;j<70;j++)g.fillRect(j*17%1024,480+(j*13%31),30,1);
   },true);acabadoExterior.repeat.set(10,1);
-  const piel=new T.MeshStandardMaterial({map:acabadoExterior,color:0xe9eeef,roughness:.47,metalness:.32,side:T.FrontSide});
+  const piel=new T.MeshStandardMaterial({map:acabadoExterior,bumpMap:acabadoExterior,bumpScale:.004,color:0xe9eeef,roughness:.47,metalness:.32,side:T.FrontSide});
   const juntaExterior=new T.MeshStandardMaterial({color:0x172c35,roughness:.72,metalness:.35});
   const paredCompleta=malla(new T.CylinderGeometry(R_CASCO,R_CASCO,H_CASCO-.08,128,1,true),piel,[0,(H_CASCO-.08)/2,0],exterior);
   paredCompleta.name='casco-360';paredCompleta.receiveShadow=false;
@@ -2397,7 +2414,7 @@ function construirHabitat(){
   const sueloEstudio=malla(new T.PlaneGeometry(200,200),new T.MeshStandardMaterial({color:0x0b141b,roughness:.96,envMapIntensity:.15}),[0,-.095,0],gHabitat,false);
   sueloEstudio.rotation.x=-Math.PI/2;sueloEstudio.receiveShadow=true;sueloEstudio.name='suelo-estudio';sueloEstudio.visible=false;
   if (limpio){ terreno.visible = false; cielo.visible = false; }
-  return { terreno, polvo, exterior, interiores, ambiente:[terreno,rocas,talud,solar,conexion,aviso], sueloEstudio, materialesExterior:[...matsExt.values()], cierre:0 };
+  return { terreno, polvo, exterior, interiores, gente:[humano,cientifica], ambiente:[terreno,rocas,talud,solar,conexion,aviso], sueloEstudio, materialesExterior:[...matsExt.values()], cierre:0 };
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2653,7 +2670,6 @@ $('intro-datos').onclick=alternarDatos;$('riel-toggle').onclick=alternarDatos;mo
 $('ayuda-abrir').onclick=()=>$('ayuda').showModal();$('ayuda-cerrar').onclick=()=>$('ayuda').close();
 $('ayuda-reducir').checked=S.reducido;$('ayuda-reducir').onchange=e=>{S.reducido=e.target.checked;if(S.reducido){S.play=false;S.presentacion=false;$('giro-camara').setAttribute('aria-pressed','false');}controles();};
 $('pantalla-completa').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{$('ayuda').showModal();}};
-$('calidad').onchange=e=>{const high=e.target.value!=='fluida';renderer.setPixelRatio(high?Math.min(devicePixelRatio,1.5):1);renderer.shadowMap.enabled=high;renderer.shadowMap.needsUpdate=true;medir();};
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>vistaTecnica(b.dataset.view));
 $('quick-explosion').onclick=()=>{if(S.cerrado)envolvente(false);S.explosion=!S.explosion;S.play=false;controles();};
 $('giro-camara').onclick=()=>{S.presentacion=!S.presentacion&&!S.reducido;$('giro-camara').setAttribute('aria-pressed',String(S.presentacion));};
@@ -2683,7 +2699,7 @@ function comprobarVisual(){
   const figura=MILPA_PERSONA(GEOM.casco.altura_figura),bounds=new T.Box3().setFromObject(figura),altura=bounds.max.y-bounds.min.y;
   const geos=new Set(),mats=new Set(),textures=new Set();
   figura.traverse(o=>{if(o.isMesh){geos.add(o.geometry);mats.add(o.material);}});
-  geos.forEach(g=>g.dispose());mats.forEach(m=>{if(m.map)textures.add(m.map);m.dispose();});textures.forEach(t=>t.dispose());
+  geos.forEach(g=>{if(!g.userData.compartido)g.dispose();});mats.forEach(m=>{if(m.userData.compartido)return;if(m.map)textures.add(m.map);m.dispose();});textures.forEach(t=>t.dispose());
   const materiales=new Set();gHabitat.traverse(o=>{if(o.isMesh)for(const m of Array.isArray(o.material)?o.material:[o.material])materiales.add(m);});
   return [
     {id:'cartuchos',es:'Cartuchos en el anillo',en:'Cartridges in the ring',valor:carrusel.bandejas.length,esperado:N_POS,ok:carrusel.bandejas.length===N_POS},
@@ -2707,7 +2723,7 @@ function abrirValidacion(){
   $('validar-ejecutar').onclick=()=>{
     const button=$('validar-ejecutar'),out=$('validar-resultado'),save=$('validar-exportar'),token=++medicionVisual;
     button.disabled=true;save.disabled=true;out.textContent=pick('Midiendo durante cinco segundos… Mantén esta pestaña visible.','Measuring for five seconds… Keep this tab visible.');
-    const start=performance.now(),times=[],vistaInicial=S.vista,calidad=$('calidad').value;let previous=start,raf=0,oculta=false;
+    const start=performance.now(),times=[],vistaInicial=S.vista;let previous=start,raf=0,oculta=false;
     const visibility=()=>{if(document.hidden)oculta=true;};document.addEventListener('visibilitychange',visibility);
     const sample=now=>{if(token!==medicionVisual)return;times.push(now-previous);previous=now;raf=requestAnimationFrame(sample);};raf=requestAnimationFrame(sample);
     setTimeout(()=>{
@@ -2715,7 +2731,7 @@ function abrirValidacion(){
       if(token!==medicionVisual||!out.isConnected)return;
       if(oculta||S.vista!==vistaInicial){out.textContent=pick('Medición interrumpida: cambió la vista o se ocultó la pestaña. Repite la prueba.','Measurement interrupted: the view changed or the tab was hidden. Run it again.');return;}
       const duration=performance.now()-start,gl=renderer.getContext(),ext=gl.getExtension('WEBGL_debug_renderer_info');times.sort((a,b)=>a-b);
-      informeVisual={revision:'V6',fecha:new Date().toISOString(),comprobaciones:checks,rendimiento:{fps:times.length*1000/duration,p95Ms:times[Math.floor(times.length*.95)]||0,fotogramas:times.length,duracionMs:duration,llamadas:renderer.info.render.calls,triangulos:renderer.info.render.triangles,resolucion:[lienzo.width,lienzo.height],viewport:[innerWidth,innerHeight],pixelRatio:renderer.getPixelRatio(),calidad,vista:S.vista,estudio:S.estudio,procesoActivo:S.play,gpu:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):'no disponible'},limite:'Comprobación digital local. Acceso, estructuras, biología y equipo del evento pendientes de ensayo.'};
+      informeVisual={revision:'V7',fecha:new Date().toISOString(),comprobaciones:checks,rendimiento:{fps:times.length*1000/duration,p95Ms:times[Math.floor(times.length*.95)]||0,fotogramas:times.length,duracionMs:duration,llamadas:renderer.info.render.calls,triangulos:renderer.info.render.triangles,resolucion:[lienzo.width,lienzo.height],viewport:[innerWidth,innerHeight],pixelRatio:renderer.getPixelRatio(),vista:S.vista,estudio:S.estudio,procesoActivo:S.play,gpu:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):'no disponible'},limite:'Comprobación digital local. Acceso, estructuras, biología y equipo del evento pendientes de ensayo.'};
       const r=informeVisual.rendimiento;
       out.textContent=r.fps.toFixed(1)+' FPS · p95 '+r.p95Ms.toFixed(1)+' ms\n'+r.llamadas+' '+pick('llamadas de dibujo','draw calls')+'\n'+r.resolucion.join(' × ')+' px · '+pick('medición local','local measurement');save.disabled=false;
     },5000);
@@ -2730,6 +2746,14 @@ addEventListener('keydown',e=>{if(e.key==='Escape'){$('cerrar').click();if($('ay
 /* Exposición: escenario propio, con el mismo modelo. Se conserva la exploración al salir. */
 let accesoCine=null,ultimoMensajeAcceso=0,estadoAccesoCine=null,modeloExploracion=null;
 addEventListener('message',e=>{if(e.source===accesoCine?.contentWindow&&e.data?.milpa==='estado-acceso')estadoAccesoCine=e.data.estado;});
+let cargaAcceso=null;
+function prepararAcceso(pitch){
+  const src='milpa360-acceso.html?embebido=1&lang='+MILPA_I18N.lang+(pitch?'&pitch=1':'');
+  if(accesoCine?.getAttribute('src')===src)return cargaAcceso;
+  if(!accesoCine){accesoCine=document.createElement('iframe');accesoCine.id='acceso-cine';accesoCine.title='Demostración del acceso';accesoCine.setAttribute('aria-hidden','true');document.body.appendChild(accesoCine);}
+  accesoCine.hidden=false;
+  cargaAcceso=new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error('Acceso: no arrancó')),15000);accesoCine.onload=()=>{clearTimeout(timer);resolve();};accesoCine.src=src;});return cargaAcceso;
+}
 const vistasCine={
  marte:{theta:.65,phi:1.25,dist:17.7,mira:[0,0,0]},
  exterior:{theta:-.72,phi:1.13,dist:11.8,mira:[0,.9,0]},
@@ -2737,26 +2761,34 @@ const vistasCine={
  animales:{theta:-.48,phi:1.10,dist:1.8,mira:null},
  tratamiento:{theta:-.82,phi:1.00,dist:5.9,mira:[0,1.02,0]},
  cultivo:{theta:-1.7,phi:.83,dist:7.5,mira:[0,.72,0]},
+ pruebas:{theta:-1.4,phi:.91,dist:7.3,mira:[0,.8,0]},
  energia:{theta:2.08,phi:1.05,dist:13,mira:[-1.4,.8,1]},
  chiapas:{theta:-.65,phi:1.03,dist:10.4,mira:[0,.8,0]}
 };
-const cine=MILPA_PROYECCION({tipo:'modulo',async entrar(id){
+const cine=MILPA_PROYECCION({tipo:'modulo',async entrar(id,index,{pitch}){
   if(!modeloExploracion){modeloExploracion=modelo;modelo=new MILPA.Modelo(MILPA_DATOS,{autorizacionesIlustrativas:true});modelo.avanzar(62);}
   S.play=false;S.presentacion=false;S.explosion=false;S.detalle=false;S.transicion=0;S.destino=null;$('cerrar').click();
-  const vigente=()=>cine.state.activo&&MILPA_GUION.modulo[cine.state.indice].id===id;
-  if(accesoCine&&id!=='acceso'){accesoCine.classList.remove('activo');accesoCine.hidden=true;accesoCine.src='about:blank';}
+  const vigente=()=>cine.state.activo&&(cine.state.pitch?MILPA_GUION.pitch:MILPA_GUION.modulo)[cine.state.indice].id===id;
+  if(pitch&&index===0){await prepararAcceso(true);accesoCine.contentWindow?.postMessage({milpa:'reiniciar-pitch'},'*');}
+  if(accesoCine&&id!=='acceso'){accesoCine.classList.remove('activo');accesoCine.contentWindow?.postMessage({milpa:'ocultar'},'*');}
   if(id==='acceso'){
-    if(!accesoCine){accesoCine=document.createElement('iframe');accesoCine.id='acceso-cine';accesoCine.title='Demostración del acceso';accesoCine.setAttribute('aria-hidden','true');document.body.appendChild(accesoCine);}
-    accesoCine.hidden=false;
-    await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error('Acceso: no arrancó')),15000);accesoCine.onload=()=>{clearTimeout(timer);resolve();};accesoCine.src='milpa360-acceso.html?embebido=1&lang='+MILPA_I18N.lang;});
-    if(!vigente())return;accesoCine.classList.add('activo');ultimoMensajeAcceso=0;return;
+    await prepararAcceso(pitch);if(!vigente())return;
+    accesoCine.hidden=false;accesoCine.classList.add('activo');ultimoMensajeAcceso=0;return;
   }
+  if(id==='pruebas'){modelo.fallar('tormenta');modelo.fallar('bomba');modelo.avanzar(3);}
+  else if(pitch){modelo.reparar('tormenta');modelo.reparar('bomba');}
   const vista=id==='marte'?'planeta':'habitat';
+  if(pitch&&S.vista!==vista)aplicarVista(vista);
   if(S.vista!==vista){cambiarVista(vista);await new Promise(resolve=>{const esperar=()=>S.transicion>0?setTimeout(esperar,30):resolve();esperar();});}
   if(!vigente())return;
   envolvente(id==='exterior');const p=vistasCine[id];Object.assign(orbe,{theta:p.theta,phi:p.phi,dist:p.dist});
   if(id==='animales'){aviario.updateWorldMatrix(true,false);mira.copy(aviario.localToWorld(new T.Vector3(0,.76,0)));}
-  else mira.set(...p.mira);
+  else if(pitch&&id==='cultivo'){
+    gHabitat.updateMatrixWorld(true);const candidatos=carrusel.bandejas.flatMap(b=>b.plantas.children).map(pl=>({pl,pos:pl.getWorldPosition(new T.Vector3())})).filter(v=>v.pos.z<-.5).sort((a,b)=>b.pl.scale.y-a.pl.scale.y);
+    mira.copy(candidatos[0].pos);mira.y+=.22;orbe.dist=3.8;orbe.phi=.95;
+  }else mira.set(...p.mira);
+  if(pitch&&id==='exterior')orbe.dist=10.5;
+  if(pitch&&id==='chiapas')orbe.dist=8.8;
   medir();
 },fotograma(id,progreso,dt,tiempo){
   if(id==='acceso'){if(performance.now()-ultimoMensajeAcceso>80){accesoCine?.contentWindow?.postMessage({milpa:'demostracion',tiempo,pausa:dt===0},'*');ultimoMensajeAcceso=performance.now();}return;}
@@ -2768,7 +2800,9 @@ const cine=MILPA_PROYECCION({tipo:'modulo',async entrar(id){
   S.transicion=0;S.destino=null;S.play=false;controles();medir();
   $('estado-vista').textContent=MILPA_I18N.pick('Exploración restaurada · escenario pausado','Exploration restored · scenario paused');
 }});
-$('intro-cine').onclick=()=>{cine.start();medir();};
+$('intro-cine').onclick=()=>{cine.start(true);medir();};
+$('intro-completo').onclick=()=>{cine.start();medir();};
+MILPA_I18N.add({'Pitch con voz · menos de 1 min':'Narrated pitch · under 1 min','Recorrido completo':'Full tour','Máxima · 2×':'Maximum · 2×'});
 lienzo.addEventListener('pointerdown',()=>{if(cine.state.activo)cine.pause();});
 
 /* cambio de vista, con fundido */
@@ -2787,7 +2821,8 @@ function actualizarAmbiente(){
   refsHab.ambiente.forEach(o=>o.visible=!estudio&&!limpio);
   refsHab.sueloEstudio.visible=estudio&&!limpio;
   cielo.visible=!estudio&&!limpio;
-  escena.fog=estudio?new T.Fog(0x17232c,18,65):null;renderer.setClearColor(estudio?0x17232c:0x07090C,1);
+  // Marte: neblina del color del horizonte; funde el borde del terreno y da perspectiva aérea.
+  escena.fog=estudio?new T.Fog(0x17232c,18,65):S.vista==='habitat'&&!limpio?nieblaMarte:null;renderer.setClearColor(estudio?0x17232c:0x07090C,1);
   escena.environment=S.vista==='planeta'?null:estudio?entornoEstudio:entornoMarte;
   $('ver-entorno').setAttribute('aria-pressed',String(!S.estudio));
   $('ver-entorno').disabled=S.cerrado;
@@ -2796,7 +2831,7 @@ function actualizarAmbiente(){
 }
 function aplicarVista(v){
   renderer.shadowMap.needsUpdate=true;
-  S.vista = v;document.body.classList.toggle('modo-habitat',v==='habitat');
+  S.vista = v;document.body.classList.toggle('modo-habitat',v==='habitat');camaraOrbital.saltar();
   actualizarIntroduccion();vistaTecnica("orbita");
   $("v-planeta").setAttribute("aria-selected", String(v === "planeta"));
   $("v-habitat").setAttribute("aria-selected", String(v === "habitat"));
@@ -2884,7 +2919,8 @@ function medir(){
   renderer.setSize(w, h, false);
   perspectiva.aspect = w / h;
   perspectiva.fov=w<h?Math.min(72,38*h/w):38;
-  if(document.body.classList.contains('captura')||document.body.classList.contains('proyectando'))perspectiva.clearViewOffset();
+  if(document.body.classList.contains('pitch-activo')&&w>1000)perspectiva.setViewOffset(w,h,-w*.13,0,w,h);
+  else if(document.body.classList.contains('captura')||document.body.classList.contains('proyectando'))perspectiva.clearViewOffset();
   else if(w>800)perspectiva.setViewOffset(w,h,document.body.classList.contains('inspector-open')?w*.12:S.vista==='planeta'?-w*.14:0,0,w,h);
   else perspectiva.setViewOffset(w,h,0,S.vista==='planeta'?h*.17:0,w,h);
   perspectiva.updateProjectionMatrix();
@@ -2897,17 +2933,18 @@ addEventListener("resize", medir);
    ARRANQUE
    ═══════════════════════════════════════════════════════════════ */
 let refsHab, entornoMarte, entornoEstudio;
+const nieblaMarte = new T.Fog(0xC79468, 20, 95);
 async function iniciar(){
+  await Promise.all([MILPA_PERSONA.listo,MILPA_VISUAL.pbrListo]);
   let tex;
   try{
     const im=new Image();im.src=window.MILPA_MARS_IMAGE;await im.decode();
     const albedo=new T.Texture(im);albedo.colorSpace=T.SRGBColorSpace;albedo.needsUpdate=true;
     tex={albedo,relieve:null,rugosidad:null};
   }catch(error){console.warn('Mapa Viking no disponible; ilustración procedural',error);tex=texturaMarte();}
-  texRego = texturaRegolito(512);
+  texRego = texturaRegolito(1024);
   texAve = texturaCodorniz();
   texCasco = texturaCasco();     texCasco.repeat.set(5, 1.6);
-  texCubierta = texturaCubierta(); texCubierta.repeat.set(9, 9);
   texMusgo = texturaMusgo();     texMusgo.repeat.set(1.4, 1.4);
   hojaCamote = texturaHoja({});
   hojaLegum  = texturaHoja({});
@@ -2925,11 +2962,11 @@ async function iniciar(){
   const pmrem = new T.PMREMGenerator(renderer);
   const escCielo = new T.Scene();
   escCielo.add(cielo.clone());
-  entornoMarte = pmrem.fromScene(escCielo, 0, 0.1, 1000).texture;
+  entornoMarte = MILPA_VISUAL.cieloMarte(renderer) || pmrem.fromScene(escCielo, 0, 0.1, 1000).texture;
   pmrem.dispose();
   entornoEstudio=MILPA_VISUAL.entorno(renderer);
   const anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
-  for(const tex of [texCasco,texCubierta,texRego,hojaCamote.mapa,hojaLegum.mapa,hojaRabano.mapa])tex.anisotropy=anisotropy;
+  for(const tex of [texCasco,texRego,hojaCamote.mapa,hojaLegum.mapa,hojaRabano.mapa])tex.anisotropy=anisotropy;
 
   medir();
   aplicarVista(S.vista);
@@ -2943,28 +2980,21 @@ async function iniciar(){
 /* ═══════════════════════════════════════════════════════════════
    BUCLE
    ═══════════════════════════════════════════════════════════════ */
-const tmp = new T.Vector3(), objetivoCamara = new T.Vector3();
+const tmp = new T.Vector3();
+const camaraOrbital = MILPA_VISUAL.camaraSuave();
 const CIELO_MARTE  = { cenit: new T.Color(0x3A3348), horiz: new T.Color(0xC79468), suelo: new T.Color(0x3A1E14) };
 const CIELO_TORM   = { cenit: new T.Color(0x2A1B12), horiz: new T.Color(0x7A4A26), suelo: new T.Color(0x241009) };
 const cAux = new T.Color(), cAuxB = new T.Color();
 const C_MARCHITO = new T.Color(0x8A7139);
-let anterior = performance.now(), ultimaSombra=0, firmaSombra='', tiempoVisual=0, ultimaUI=0, inicioCalidad=0, framesCalidad=0, ultimoCambioVegetal=0;
+let tiempoGente = 0;
+let anterior = performance.now(), ultimaSombra=0, firmaSombra='', tiempoVisual=0, ultimaUI=0, ultimoCambioVegetal=0;
 
-document.addEventListener('visibilitychange',()=>{anterior=performance.now();inicioCalidad=anterior;framesCalidad=0;});
+document.addEventListener('visibilitychange',()=>{anterior=performance.now();});
 function bucle(ahora){
-  if(document.hidden){anterior=ahora;inicioCalidad=ahora;framesCalidad=0;requestAnimationFrame(bucle);return;}
+  if(document.hidden){anterior=ahora;requestAnimationFrame(bucle);return;}
   const elapsed = Math.max(0, (ahora - anterior) / 1000);
   const dt = cine.state.activo&&!cine.state.reproduciendo?0:Math.min(0.05, elapsed);
   anterior = ahora;
-  if(!document.hidden&&S.transicion===0)framesCalidad++;
-  if(ahora-inicioCalidad>3000){
-    const fps=framesCalidad*1000/(ahora-inicioCalidad);framesCalidad=0;inicioCalidad=ahora;
-    if($('calidad').value==='auto'&&!document.hidden){
-      const actual=renderer.getPixelRatio(),max=Math.min(devicePixelRatio,1.25);
-      const siguiente=Math.max(.65,Math.min(max,actual+(fps<28?-.15:fps>52?.05:0)));
-      if(Math.abs(siguiente-actual)>.01){renderer.setPixelRatio(siguiente);renderer.shadowMap.enabled=siguiente>=.95;renderer.shadowMap.needsUpdate=true;medir();}
-    }
-  }
   cine.tick(elapsed);
   const dv=(S.play||(cine.state.activo&&cine.state.reproduciendo))&&!S.reducido?dt:0;
   tiempoVisual+=dv;const t=tiempoVisual;
@@ -3022,6 +3052,8 @@ function bucle(ahora){
         pl.userData.escVisual=T.MathUtils.lerp(pl.userData.escVisual,esc,S.reducido?1:1-Math.exp(-dt*2.8));
         const v=Math.max(.001,pl.userData.escVisual)*(pl.userData.base||1);maxPlanta=Math.max(maxPlanta,v);
         pl.scale.set(v,v*(1-(cultivo?.dano||0)*.65),v);
+        // Corriente de la ventilación: vaivén de pocos grados, en tiempo real como las personas.
+        pl.rotation.x=Math.sin(tiempoGente*1.3+i*1.7+j*2.9)*.03;pl.rotation.z=Math.cos(tiempoGente*1.05+i*.9+j*2.3)*.024;
       });
       b.plantas.visible=maxPlanta>.004;
       if(b.matVeg) for(const m of b.matVeg){cAux.copy(m.userData.vivo).lerp(C_MARCHITO,dano);m.color.lerp(cAux,suave);}
@@ -3043,7 +3075,10 @@ function bucle(ahora){
       if(S.play && activa && !fl.bloqueado) fl.tex.offset.x-=dv*fl.v;
     }
     gasometro.position.y = T.MathUtils.lerp(gasometro.position.y,gasometro.userData.y0 + S.gas * 0.26,suave);
-    gHabitat.getObjectByName('referencia-humana').userData.animar(dv,0,'inspeccion',t);
+    // Las personas respiran en tiempo real aunque el proceso esté en pausa; sólo el movimiento reducido las fija.
+    const dtGente=S.reducido?0:dt;tiempoGente+=dtGente;
+    refsHab.gente[0].userData.animar(dtGente,0,'inspeccion');
+    refsHab.gente[1].userData.animar(dtGente,0,Math.floor(tiempoGente/14)%2?'inspeccion':'explicar');
     if(actualizaUI){$('vida-vegetal').classList.toggle('activo',ahora-ultimoCambioVegetal<3000&&ultimoCambioVegetal>0);poner($('vida-vegetal'),'Cosecha o preparación del lote · transición visual en tiempo acelerado');}
 
     /* huevo recogido: la bandeja se llena a lo largo del sol y se vacía al recogerse */
@@ -3061,16 +3096,16 @@ function bucle(ahora){
       gt.gota.scale.setScalar(1 - u * 0.6);
     });
 
-    /* las larvas se mueven en el lecho de frass */
+    /* animales vivos aunque el proceso esté en pausa: las larvas se mueven en el lecho de frass */
     bandejaLarvas.forEach((l, i) => {
-      l.rotation.z = l.userData.f + Math.sin(t * 2.6 + i) * 0.4;
-      l.position.y = 0.652 + Math.abs(Math.sin(t * 3.1 + i * 1.7)) * 0.006;
+      l.rotation.z = l.userData.f + Math.sin(tiempoGente * 2.6 + i) * 0.4;
+      l.position.y = 0.652 + Math.abs(Math.sin(tiempoGente * 3.1 + i * 1.7)) * 0.006;
     });
 
     /* codornices: picoteo y giro */
     codornices.forEach((q, i) => {
-      q.rotation.y = q.userData.giro + Math.sin(t*.55+i)*.14;
-      q.userData.cuello.rotation.z = -.10-Math.max(0,Math.sin(t*1.45+i*2))*.62;
+      q.rotation.y = q.userData.giro + Math.sin(tiempoGente*.55+i)*.14;
+      q.userData.cuello.rotation.z = -.10-Math.max(0,Math.sin(tiempoGente*1.45+i*2))*.62;
     });
 
     /* luces de cultivo: se apagan sin sol */
@@ -3091,6 +3126,8 @@ function bucle(ahora){
     cieloUnif.mezclaEspacio.value += (0 - cieloUnif.mezclaEspacio.value) * 0.07;
     sol.intensity += ((enTormenta ? 0.32 : S.estudio&&!S.cerrado?1.85:2.3) - sol.intensity) * mezclaAmbiente;
     hemi.intensity += ((enTormenta ? 0.38 : S.estudio&&!S.cerrado?.85:.72) - hemi.intensity) * mezclaAmbiente;
+    nieblaMarte.color.copy(cieloUnif.horiz.value);
+    nieblaMarte.far += ((enTormenta ? 34 : 95) - nieblaMarte.far) * mezclaAmbiente;nieblaMarte.near = nieblaMarte.far * .21;
     dispersion.intensity += (0 - dispersion.intensity) * 0.08;
     estrellas.material.uniforms.op.value += (0 - estrellas.material.uniforms.op.value) * 0.08;
 
@@ -3121,12 +3158,12 @@ function bucle(ahora){
 
   if(S.presentacion&&!S.reducido)orbe.theta+=dt*.08;
   /* ── cámara ── */
-  const objetivo = objetivoCamara.set(
-    mira.x + orbe.dist * Math.sin(orbe.phi) * Math.cos(orbe.theta),
-    mira.y + orbe.dist * Math.cos(orbe.phi),
-    mira.z + orbe.dist * Math.sin(orbe.phi) * Math.sin(orbe.theta)
-  );
-  if(S.proyeccion==='orbita') {const alpha=S.reducido?1:1-Math.exp(-dt*(cine.state.activo?1.8:S.transicion>0?6:12));camara.up.set(0,1,0);camara.position.lerp(objetivo,alpha);miraVisual.lerp(mira,alpha);camara.lookAt(miraVisual);}
+  if(S.proyeccion==='orbita'){
+    // Arcos amortiguados (ver MILPA_VISUAL.camaraSuave): recorrido, clic y arrastre comparten el mismo movimiento.
+    camara.up.set(0,1,0);
+    camaraOrbital.paso(camara,orbe.theta,orbe.phi,orbe.dist,mira,S.reducido?Infinity:cine.state.activo?2.6:S.transicion>0?9:11,dt);
+    miraVisual.copy(camaraOrbital.mira);
+  }
   else {camara.up.set(0,S.proyeccion==='planta'?0:1,S.proyeccion==='planta'?-1:0);camara.position.set(S.proyeccion==='planta'?0:8,S.proyeccion==='planta'?10:1.4,0.001);camara.lookAt(0,S.proyeccion==='planta'?0:1.4,0);}
   sol.target.position.set(0,S.vista==='habitat'?.8:0,0); sol.target.updateMatrixWorld();
 
@@ -3183,10 +3220,10 @@ function bucle(ahora){
     poner($("datos-vivos"),`${tr('Agua')}: ${e.aguaL.toFixed(1)} L · ${pick('gas almacenado','stored gas')}: ${e.gasKWh.toFixed(3)} ${pick('kWh químicos','chemical kWh')} · ${pick('luz acumulada','cumulative lighting')}: ${e.electricidadKWh.toFixed(1)} kWh. ${pick('Cosecha vegetal','Crop harvest')}: ${e.cosechaKg.toFixed(2)} kg. ${pick('Cuarentena','Quarantine')}: ${e.cuarentena.length}; ${pick('repuestos','spares')}: ${e.repuestos.length}. `+(l?`${l.id}: ${ESTACIONES[l.pos][0]}, ${tr(l.calidad)}; ${pick('historial','history')}: ${l.historial.slice(-3).map(h=>tr(h.evento)+' (sol '+h.sol.toFixed(1)+')').join('; ')}`:pick('Lote retirado; abrir de nuevo la lista.','Batch removed; reopen the list.')));
 
   }
-  // Sombras de equipos casi estáticos: caché y refresco a 10 Hz durante movimiento.
+  // Sombras de equipos casi estáticos: caché y refresco máximo a 20 Hz durante movimiento.
   // La cámara sigue a la frecuencia completa; cambiar vista/despiece invalida la caché.
-  const nuevaFirma=[S.vista,S.explosion,Math.floor(tiempoVisual*5),Math.floor(S.sol*4),refsHab.cierre.toFixed(3),carrusel.grupo.rotation.y.toFixed(4)].join('|');
-  if(nuevaFirma!==firmaSombra&&ahora-ultimaSombra>100){
+  const nuevaFirma=[S.vista,S.explosion,Math.floor(tiempoVisual*5),Math.floor(tiempoGente*8),Math.floor(S.sol*4),refsHab.cierre.toFixed(3),carrusel.grupo.rotation.y.toFixed(4)].join('|');
+  if(nuevaFirma!==firmaSombra&&ahora-ultimaSombra>50){
     renderer.shadowMap.needsUpdate=true;ultimaSombra=ahora;firmaSombra=nuevaFirma;
   }
   if(!accesoCine?.classList.contains('activo'))renderer.render(escena, camara);
