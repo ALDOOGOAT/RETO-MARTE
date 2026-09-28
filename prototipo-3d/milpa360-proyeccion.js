@@ -57,7 +57,7 @@
       ready=true;if(!continuar)cargarAudio();
     }
     function pause(value=true){state.reproduciendo=!value&&!state.terminado;if(value)audio.pause();else playAudio();pausar?.(value);controls();}
-    function start(pitch=false){state.pitch=pitch&&tipo==='modulo';chapters=state.pitch?MILPA_GUION.pitch:MILPA_GUION[tipo];prevFocus=document.activeElement;state.activo=true;state.reproduciendo=true;state.terminado=false;panel.hidden=false;document.body.classList.add('proyectando');document.body.classList.toggle('pitch-activo',state.pitch);capitulo(0);$('cine-play').focus();}
+    function start(pitch=false){window.MILPA_ISLA?.callar();state.pitch=pitch&&tipo==='modulo';chapters=state.pitch?MILPA_GUION.pitch:MILPA_GUION[tipo];prevFocus=document.activeElement;state.activo=true;state.reproduciendo=true;state.terminado=false;panel.hidden=false;document.body.classList.add('proyectando');document.body.classList.toggle('pitch-activo',state.pitch);capitulo(0);$('cine-play').focus();}
     function stop(){++token;audio.pause();audio.removeAttribute('src');audio.load();state.activo=false;state.reproduciendo=false;panel.hidden=true;document.body.classList.remove('proyectando','pitch-activo');salir?.();prevFocus?.focus();}
     $('cine-close').onclick=stop;$('cine-prev').onclick=()=>capitulo(state.indice-1);$('cine-next').onclick=()=>capitulo(state.indice+1);
     $('cine-play').onclick=()=>state.terminado?(state.reproduciendo=true,capitulo(0)):pause(state.reproduciendo);

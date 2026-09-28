@@ -28,7 +28,7 @@
 <div class="leyenda"><b>Cobre: carga que se retira. Azul: ruta de paso.</b><br>Vista de corte · espacio presurizado conectado · secuencia por comprobar físicamente.</div>
 </section></main>
 <script src="vendor/three.min.js"></script><script src="milpa360-datos.js"></script><script src="milpa360-modelo.js"></script>
-<script src="vendor/three-addons.js"></script><script src="vendor/tripulacion.js"></script><script src="milpa360-visual.js"></script><script src="milpa360-personas.js"></script><script src="milpa360-guion.js"></script><script src="milpa360-audio.js"></script><script src="milpa360-proyeccion.js"></script>
+<script src="vendor/three-addons.js"></script><script src="vendor/tripulacion.js"></script><script src="milpa360-visual.js"></script><script src="milpa360-personas.js"></script><script src="milpa360-guion.js"></script><script src="milpa360-audio.js"></script><script src="milpa360-proyeccion.js"></script><script src="milpa360-voces.js"></script><script src="milpa360-isla.js"></script>
 <script>
 'use strict';
 const datos=MILPA_DATOS, a=datos.acceso, g=datos.geometria, p=a.parametros, r=a.resultados;
@@ -162,7 +162,11 @@ function accion(k){try{
  animando=!!estudio.estado.movimiento&&estudio.estado.energia&&['extraer','estacionar','centrar','insertar'].includes(k);
  $('mensaje').textContent=MILPA_I18N.t(k==='igualar'?'Presión compatible: condición ilustrativa, sin sensores reales.':k==='cortar_energia'?'Sin energía: la ruta de salida permanece abierta.':k==='entrar'?'La persona recorre el paso preparado.':k==='salir'?'Salida manual: se conserva la ocupación hasta llegar al vestíbulo.':'Maniobra preparada. Observa el movimiento.');
  if(matchMedia('(prefers-reduced-motion: reduce)').matches&&animando){estudio.avanzarMovimiento(1);animando=false;}
- actualizar();return true;
+ const faseAntes=accion.fase;accion.fase=estudio.estado.fase;
+ actualizar();
+ // Cada fase nueva se explica en voz alta; en el pitch incrustado o en la maniobra guiada habla la proyección.
+ if(!embebido&&!cineAcceso.state.activo&&estudio.estado.fase!==faseAntes)MILPA_ISLA.decir('acceso-'+estudio.estado.fase,$('fase').textContent);
+ return true;
 }catch(e){$('mensaje').textContent=MILPA_I18N.t(e.message);actualizar();return false;}}
 $('siguiente').onclick=()=>accion(siguiente());$('anterior').onclick=()=>accion(atras[estudio.estado.fase]);
 $('entrar').onclick=()=>accion('entrar');$('salir').onclick=()=>accion('salir');
@@ -233,6 +237,9 @@ function prepararPitch(){
  theta=.84;phi=1.04;dist=9.3;
 }
 if(pitchEmbebido)prepararPitch();
+escena.traverse(o=>{for(const m of [].concat(o.material||[]))m.dithering=true;});   // sin bandas en los degradados
+accion.fase=estudio.estado.fase;
+if(!embebido){MILPA_ISLA.montar();const pista=()=>MILPA_ISLA.pista(MILPA_I18N.pick('Pulsa un paso para escucharlo','Press a step to hear it'));pista();addEventListener('milpa-language',pista);}
 actualizar();resize();cam();renderer.compile(escena,camara);requestAnimationFrame(dibujar);
 globalThis.B19={estudio,carros,escena,renderer,camara,accion,datos,actualizar,humano,cine:cineAcceso,demostracion,reiniciarDemo,get caminando(){return caminando;}};
 </script></html>
