@@ -54,20 +54,81 @@ en PDF y documentos de contexto/investigación.
     marchitar interpolando de verde a pajizo: multiplicar una textura verde por un tinte marrón
     da casi negro. Y `geoHoja()` **normaliza las UV** — `ShapeGeometry` las escribe con las
     coordenadas crudas del contorno y sin normalizar la hoja sale negra.
-  · **V8 (25 sep 2026), acabado visual:** render HDR con MSAA → GTAO → brillo → ACES → viñeta
-    (`MILPA_VISUAL.posproceso`, addons de three r160 empaquetados en `vendor/three-addons.js`
-    porque `file://` no carga módulos ES). **Todo recurso binario va en base64 dentro de un `.js`**
-    (`vendor/tripulacion.js`, `vendor/texturas-pbr.js`): Chrome no sube a WebGL imágenes de disco.
+  · **V8 (25 sep 2026):** addons de three r160 empaquetados en `vendor/three-addons.js` porque
+    `file://` no carga módulos ES. **Todo recurso binario va en base64 dentro de un `.js`**
+    (`vendor/tripulacion.js`, `vendor/texturas-pbr.js`, `vendor/marte-usgs.js`): Chrome no sube a
+    WebGL imágenes de disco.
     Personas = avatares Microsoft Rocketbox (MIT) con clips reales; API intacta
     `MILPA_PERSONA(altura, tipo).userData.animar(dt, velocidad, tarea)`. Regenerar con
     `analysis/preparar_tripulacion.py` y `analysis/preparar_texturas_pbr.py`, no a mano.
     **No volver a añadir una sonda de reflejos horneada (`PMREM.fromScene`)**: con el terreno
     escaneado Chrome deja de entregar `captureScreenshot`/screencast y se rompen pruebas y vídeo.
-    Con posprocesado, el color de limpieza y las nieblas pasan por ACES: usar
-    `MILPA_VISUAL.antesDeACES(hex, exposición)`. La cámara de ambos visores usa
-    `MILPA_VISUAL.camaraSuave()` (resorte sobre θ, φ, log d y mira); no volver al `lerp` lineal.
+    La cámara de ambos visores usa `MILPA_VISUAL.camaraSuave()` (resorte sobre θ, φ, log d y mira);
+    no volver al `lerp` lineal.
+  · **V9 (26 sep 2026): UNA sola calidad, sin selector ni ajuste automático, y sin posprocesado.**
+    Medido con temporizadores de GPU en la Intel integrada a 1080p: render 11.6 ms, y GTAO + brillo +
+    MSAA en HDR sumaban ~44 ms (13–18 fps). Ahora: MSAA nativo, ACES del renderer, `pixelRatio`
+    ≤ 1.25, tramado (`dithering`) en los materiales y viñeta en CSS (`#vineta`); módulo 80–106 fps.
+    No reintroducir `EffectComposer`. El brillo que se pierde es mínimo (comparado en capturas).
+    Trucos que sí cuestan ~0: texturas 2K con mipmaps, anisotrópico máximo, encuadre de sombra por
+    vista (±4.5 m dentro del módulo, ±6.5 fuera). `fusionar()` **conserva índices** (antes
+    desindexaba: 3–6× vértices) y la vegetación instanciada saca del lote las bandejas vacías en vez
+    de escalarlas a cero. Codorniz con esferas compartidas `GEO.ovalo`/`GEO.ovaloChico`.
+  · **Isla de voz** (`milpa360-isla.js`, en simulador, acceso y atlas): cápsula que se abre en diálogo
+    y lee cada ficha. El texto completo aparece al empezar y se ilumina **por frase** con los tiempos
+    exactos de Piper; no volver al resaltado palabra a palabra (se estimaba, desfasaba y en inglés
+    parecía que el texto «cambiaba»). En el Atlas flota abajo y en reposo queda como orbe en la esquina. Voces locales Piper pregrabadas (`audio/fichas/`,
+    `milpa360-voces.js`), generadas con `~/.local/share/milpa-voz/bin/python analysis/narracion_fichas.py`
+    a partir de `analysis/textos_fichas.mjs` (título + resumen público de cada ficha, fases de acceso,
+    secciones del atlas). Si cambias un resumen, vuelve a ejecutar el script; no edites los MP3.
+    En el módulo, el equipo del que se habla late con un halo en el suelo (`resaltar()`); en los
+    tubos, el testigo corre y brilla.
+  · **Planeta V9:** mosaico Viking MDIM 2.1 a 4K y relieve MOLA (USGS, dominio público,
+    `analysis/preparar_marte.py`), Sol a ~65° de la cámara para que se vea el terminador y
+    atmósfera que sólo brilla del lado de día. El Atlas dibuja el mismo globo con un sombreador
+    WebGL2 propio (sin three.js) que se gira arrastrando.
+  · **Atlas interactivo:** Tierra frente a Marte en barras (Marte sale de las fichas; las referencias
+    terrestres están citadas al pie), aviso de Marte que viaja y vuelve sobre una línea de tiempo,
+    anillo legible al pasar con «Seguir un cartucho» (estaciones de `geometria.estaciones`) y retícula
+    de 100 celdas de calorías con huevo y cultivo por separado. Paleta validada con la skill `dataviz`.
+  · **V10 (27 sep 2026) · modo Gestos, opcional** (`milpa360-gestos.js/.css`, botón «Gestos» junto a
+    «Despiece»). MediaPipe HandLandmarker 1.0.1 viene de jsdelivr y el modelo de storage.googleapis,
+    **sólo al pulsar el botón**: la carga normal sigue en 0 HTTP, pero **la demo con gestos necesita
+    internet** y la librería envía telemetría a Google (la imagen de la cámara no sale del equipo).
+    Funciona con doble clic (`file://`, probado sin `--allow-file-access-from-files`). La inferencia va
+    en un **Worker creado desde `blob:`, con delegado CPU, a ~15 Hz**: `detectForVideo` es síncrono
+    (20–50 ms) y en el hilo principal se comería el presupuesto de 9–12 ms del render.
+    Gestos: mano abierta orbita · pinza hace zoom · puño desplaza · dos manos despiezan · índice + 0.6 s
+    abre ficha · palma quieta 1 s cierra. Los gestos son **un escritor más** de `orbe`/`mira`/
+    `S.explosionT` con los mismos límites que el ratón (`limitarPhi`, `limitarDist`); no tocar
+    `camaraSuave()`. Clic y gesto comparten un solo raycast (`objetoEn`/`picarEn`).
+    El despiece es continuo (`S.explosionT` ∈ [0,1], tabla `DESPIECE` de 9 grupos con nombre) y con
+    t=0 vuelve exacto al origen, cosa que comprueba P3. Sin etiquetas flotantes: la pieza apuntada lleva
+    halo más contorno y la información sale en la ficha y la isla. Las fichas muestran costos de
+    `milpa360-costos.js`, **generado** por `analysis/presupuesto_s4.mjs` («por cotizar» si no hay
+    precio; no editar a mano). Prueba: `node analysis/verificar_gestos.mjs`. Las perillas de
+    calibración están en `MILPA_GESTOS.ajustes`: se ajustan con la mano real, no se adivinan.
+    Medido en la Intel (`docs/madrid/PRUEBA-V10-GESTOS.json`): 60 fps con gestos activos frente a 63
+    apagados. La inferencia va a ~7 Hz (88 ms; el objetivo era 15) y el p95 sube a 40 ms sólo mientras
+    están activos: MediaPipe usa la misma GPU para preparar la imagen. Tras la primera descarga
+    funciona sin red desde la caché HTTP. **Activarlo una vez con internet en el equipo de la demo.**
+    En móvil, la isla de voz en reposo queda como orbe en la esquina (antes tapaba las vistas).
+  · **V11 · agarrar piezas.** La pinza sobre una pieza (7 estaciones y `cartucho-01`, con sus plantas)
+    la saca a un «escenario» delante de la cámara, con fondo atenuado y pedestal cian. Mano abierta o
+    pinza la giran, dos manos la escalan, deslizar cambia de pieza y la palma quieta la devuelve.
+    Al entrar se abre su ficha con «qué falta comprobar» desplegado. Doble clic hace lo mismo con el
+    ratón. API de pruebas: `window.MILPA_INSPECCION`. La devolución restaura padre, posición, cuaternión y
+    escala **bit a bit**: no romperlo. La captura está encadenada al resultado del worker, y
+    `MILPA_GESTOS.tick()` reparte el movimiento entre los fotogramas del render.
+  · **V12 · realismo sin coste.** `?vfx=` (0, 1 o lista: `gotas,lamparas,burbujas,polvo,hojas,leds`).
+    Gotas instanciadas, con impactos y mancha mojada, exageradas por legibilidad. Seis LED hortícolas
+    rosa-magenta con halo y haz aditivos. Su **luz se finge en el shader** de follaje y sustrato:
+    uniform con las 6 posiciones y caída de 0.72 m, **sin luces nuevas**. Medido en la Intel: 64 fps con
+    efectos frente a 63 sin ellos, y 541 draw calls frente a 550 (`docs/madrid/PRUEBA-V12-REALISMO.json`).
+    Delegado a Codex (`openai/codex-plugin-cc`), verificado aquí en Chrome real.
+    Scripts CDP con `new WebSocket` en Node 20: `node --experimental-websocket`.
   Poses de captura y parámetros de URL (`ui`, `piso`, `casco`, `sol`, `theta`, `phi`, `dist`,
-  `storm`, `play`, `vista`, `post=0` para render directo): ver **`deck/LEEME.md`**.
+  `storm`, `play`, `vista` — ya no hay posprocesado que desactivar, ver V9 arriba): ver **`deck/LEEME.md`**.
   Publicado en https://claude.ai/code/artifact/74ae65a1-055b-4443-869e-178c3a40d7e7
   (`milpa360_build.py` es el modelo Blender **anterior**; se conserva como registro de proceso.)
 - **`deck/`** — 9 diapositivas 16:9 del pitch de 5 min (`*.dc.html` + `canvas.json`). Las imágenes

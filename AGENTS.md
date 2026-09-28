@@ -54,8 +54,45 @@ en PDF y documentos de contexto/investigación.
     marchitar interpolando de verde a pajizo: multiplicar una textura verde por un tinte marrón
     da casi negro. Y `geoHoja()` **normaliza las UV** — `ShapeGeometry` las escribe con las
     coordenadas crudas del contorno y sin normalizar la hoja sale negra.
+  · **V8 (25 sep 2026):** addons de three r160 empaquetados en `vendor/three-addons.js` porque
+    `file://` no carga módulos ES. **Todo recurso binario va en base64 dentro de un `.js`**
+    (`vendor/tripulacion.js`, `vendor/texturas-pbr.js`, `vendor/marte-usgs.js`): Chrome no sube a
+    WebGL imágenes de disco.
+    Personas = avatares Microsoft Rocketbox (MIT) con clips reales; API intacta
+    `MILPA_PERSONA(altura, tipo).userData.animar(dt, velocidad, tarea)`. Regenerar con
+    `analysis/preparar_tripulacion.py` y `analysis/preparar_texturas_pbr.py`, no a mano.
+    **No volver a añadir una sonda de reflejos horneada (`PMREM.fromScene`)**: con el terreno
+    escaneado Chrome deja de entregar `captureScreenshot`/screencast y se rompen pruebas y vídeo.
+    La cámara de ambos visores usa `MILPA_VISUAL.camaraSuave()` (resorte sobre θ, φ, log d y mira);
+    no volver al `lerp` lineal.
+  · **V9 (26 sep 2026): UNA sola calidad, sin selector ni ajuste automático, y sin posprocesado.**
+    Medido con temporizadores de GPU en la Intel integrada a 1080p: render 11.6 ms, y GTAO + brillo +
+    MSAA en HDR sumaban ~44 ms (13–18 fps). Ahora: MSAA nativo, ACES del renderer, `pixelRatio`
+    ≤ 1.25, tramado (`dithering`) en los materiales y viñeta en CSS (`#vineta`); módulo 80–106 fps.
+    No reintroducir `EffectComposer`. El brillo que se pierde es mínimo (comparado en capturas).
+    Trucos que sí cuestan ~0: texturas 2K con mipmaps, anisotrópico máximo, encuadre de sombra por
+    vista (±4.5 m dentro del módulo, ±6.5 fuera). `fusionar()` **conserva índices** (antes
+    desindexaba: 3–6× vértices) y la vegetación instanciada saca del lote las bandejas vacías en vez
+    de escalarlas a cero. Codorniz con esferas compartidas `GEO.ovalo`/`GEO.ovaloChico`.
+  · **Isla de voz** (`milpa360-isla.js`, en simulador, acceso y atlas): cápsula que se abre en diálogo
+    y lee cada ficha. El texto completo aparece al empezar y se ilumina **por frase** con los tiempos
+    exactos de Piper; no volver al resaltado palabra a palabra (se estimaba, desfasaba y en inglés
+    parecía que el texto «cambiaba»). En el Atlas flota abajo y en reposo queda como orbe en la esquina. Voces locales Piper pregrabadas (`audio/fichas/`,
+    `milpa360-voces.js`), generadas con `~/.local/share/milpa-voz/bin/python analysis/narracion_fichas.py`
+    a partir de `analysis/textos_fichas.mjs` (título + resumen público de cada ficha, fases de acceso,
+    secciones del atlas). Si cambias un resumen, vuelve a ejecutar el script; no edites los MP3.
+    En el módulo, el equipo del que se habla late con un halo en el suelo (`resaltar()`); en los
+    tubos, el testigo corre y brilla.
+  · **Planeta V9:** mosaico Viking MDIM 2.1 a 4K y relieve MOLA (USGS, dominio público,
+    `analysis/preparar_marte.py`), Sol a ~65° de la cámara para que se vea el terminador y
+    atmósfera que sólo brilla del lado de día. El Atlas dibuja el mismo globo con un sombreador
+    WebGL2 propio (sin three.js) que se gira arrastrando.
+  · **Atlas interactivo:** Tierra frente a Marte en barras (Marte sale de las fichas; las referencias
+    terrestres están citadas al pie), aviso de Marte que viaja y vuelve sobre una línea de tiempo,
+    anillo legible al pasar con «Seguir un cartucho» (estaciones de `geometria.estaciones`) y retícula
+    de 100 celdas de calorías con huevo y cultivo por separado. Paleta validada con la skill `dataviz`.
   Poses de captura y parámetros de URL (`ui`, `piso`, `casco`, `sol`, `theta`, `phi`, `dist`,
-  `storm`, `play`, `vista`): ver **`deck/LEEME.md`**.
+  `storm`, `play`, `vista` — ya no hay posprocesado que desactivar, ver V9 arriba): ver **`deck/LEEME.md`**.
   Publicado en https://Codex.ai/code/artifact/74ae65a1-055b-4443-869e-178c3a40d7e7
   (`milpa360_build.py` es el modelo Blender **anterior**; se conserva como registro de proceso.)
 - **`deck/`** — 9 diapositivas 16:9 del pitch de 5 min (`*.dc.html` + `canvas.json`). Las imágenes
@@ -93,3 +130,25 @@ en PDF y documentos de contexto/investigación.
   Comprobación completa en §4.1 del plan maestro. No revertir la cifra ni volver a cajas.
 - **Los 20 kg de regolito por bandeja son la capa lavada de 2.5 cm, no la cubeta.** La cubeta
   tiene 22 cm (lo que pide el camote) ≈ 165 kg; el sistema mueve ~3.3 t de regolito in situ.
+
+## Preferencias de trabajo (sincronizadas desde Claude Code)
+
+- **Calidad visual máxima:** autorizado descargar recursos abiertos (Poly Haven, USGS, Rocketbox,
+  Piper, fuentes OFL) para subir el nivel del simulador/atlas/deck. Antes de dar algo por cerrado,
+  verificar en un navegador con GPU real (no headless/SwiftShader) — capturas y medición de fps.
+- **Una sola calidad, priorizando fluidez, medida en la GPU real del usuario (Intel integrada, no
+  la RTX dedicada):** nada de selector de calidad ni ajuste automático que degrade la resolución.
+  Antes de añadir cualquier efecto (posprocesado, sombras, partículas) medir su costo en la Intel
+  integrada con temporizadores de GPU (`EXT_disjoint_timer_query_webgl2`) o al menos con fps reales
+  en Chrome con `--use-gl=angle --use-angle=gl` — no basta con que "se vea bien" en el visor.
+  Preferir trucos de coste ~0 (texturas con mipmaps, filtrado anisotrópico, encuadre de sombra,
+  CSS) a pases de pantalla completa tipo `EffectComposer`.
+- **Toda información nueva que se le muestre a la persona debe poder oírse también.** El simulador,
+  el acceso y el atlas tienen una "isla de voz" (`prototipo-3d/milpa360-isla.js` +
+  `prototipo-3d/milpa360-voces.js`, audio en `prototipo-3d/audio/fichas/*.mp3`) con voz local Piper
+  (`~/.local/share/milpa-voz`, ver `analysis/narracion_fichas.py`), sin red y en ES/EN. Si agregas
+  una ficha, un paso o una sección nueva con texto, dale también su locución con ese mismo script;
+  no dejes contenido nuevo sólo en texto.
+- Antes de cerrar un cambio visual/interactivo, revisar el modo inglés completo (la traducción es
+  un diccionario en `prototipo-3d/milpa360-traducciones.js` + patrones regex): un texto sin
+  traducir se queda en español silenciosamente, no truena.

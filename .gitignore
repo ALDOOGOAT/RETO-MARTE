@@ -14,3 +14,6 @@ outputs/madrid-s5/*.log
 outputs/madrid-s5/FUNDAMENTOS-MILPA360.tex
 outputs/madrid-s5/valores.tex
 prototipo-3d/fotos-para-subir/anim/
+
+# Notas de traspaso entre sesiones de IA (llevan IDs de sesión, no son documentación del proyecto)
+docs/madrid/RETOMA-CLAUDE-*.md
