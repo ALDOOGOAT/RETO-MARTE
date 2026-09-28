@@ -5,6 +5,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
+import vm from 'node:vm';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const runtime = process.env.ARTIFACT_RUNTIME || '/home/aldo/.cache/codex-runtimes/codex-primary-runtime/dependencies/node';
@@ -25,6 +26,102 @@ for (const [name, b] of Object.entries(cfg.presupuestos)) {
   }
 }
 for (const p of cfg.precios) assert(Number.isFinite(p.precio) && p.precio >= 0 && p.url.startsWith('https://'));
+
+// ── Costos por ficha del simulador (modo despiece). file:// no permite fetch: se emite un .js.
+// Componente (última columna de cada partida; partes separadas por «;») → clave de MILPA_FICHAS.
+// Criterio: Madrid es la maqueta 1:10 del módulo; cada componente va a la ficha de lo que representa.
+// Ensayos según P4-MECANICA-ENSAYOS.md: E1 indexado → carrusel, E2 balance de agua → agua,
+// E3 lote rechazado aislado → mfc; S1 es la estación de lavado. Chiapas es el piloto terrestre y tiene
+// su propia ficha ('retorno'); ninguna partida suya es equipo del módulo marciano, así que van ahí.
+// null = no encaja (logística, entrega, recursos digitales, horas repartidas entre E1–E3, referencias a
+// láminas): no se fuerza, y si la partida no tiene otro componente va a sin_ficha. Un componente que no
+// aparezca en esta tabla detiene el script.
+const FICHA = {
+  Madrid: { 'cartucho/anillo': 'carrusel', anillo: 'carrusel', '22 cartuchos': 'carrusel', control: 'carrusel', 'S1–S8': 'carrusel', E1: 'carrusel',
+    'colector de riego': 'riego', riego: 'riego', S1: 'lavado', E2: 'agua', E3: 'mfc', 'casco/piso': 'envolvente',
+    'P02/P03': null, 'E1–E3': null, 'entrega Madrid': null, 'P3/P5': null, 'logística': null },
+  Chiapas: { 'logística': null, '*': 'retorno' },
+};
+// Traducciones indexadas por el texto español: si el JSON cambia, falta la clave y el script se detiene.
+const EN = {
+  [cfg.nota]: 'Public prices, not quotations. Proposed quantities, not purchases. Own, donated and loaned resources pending inventory. The three scopes are independent and are not added together.',
+  'Cartuchos y piezas impresas': 'Printed cartridges and parts', 'Control local': 'Local control', 'Accionamiento maqueta': 'Model drive',
+  'Control de motor': 'Motor driver', 'Agua limpia demostrativa': 'Clean-water demonstration', 'Medición de agua': 'Water measurement',
+  'Base, casco en corte y soporte': 'Base, cutaway hull and stand', 'Correa, reducción, apoyos y bloqueo': 'Belt, reduction, bearings and lock',
+  'Alimentación, cableado y protecciones': 'Power supply, wiring and protection', 'Tubos, recipientes y aislamiento': 'Tubing, containers and isolation',
+  'Fabricación e impresión': 'Fabrication and printing', 'Montaje, firmware y pruebas': 'Assembly, firmware and testing',
+  'Instrumentos y calibración': 'Instruments and calibration', 'Impresión gráfica y embalaje': 'Graphic printing and packaging',
+  'Recursos digitales y energía': 'Digital resources and energy', 'Envío Lionchip': 'Lionchip shipping', 'Envío 3DMarket': '3DMarket shipping',
+  'Envío Steren': 'Steren shipping', 'Envío de fabricación y embalaje': 'Fabrication and packaging shipping',
+  'Control y registro offline': 'Offline control and logging', 'Bombas de baja altura': 'Low-head pumps', 'Recogida de drenajes': 'Drainage collection',
+  'Pesaje de entradas y cosecha': 'Weighing inputs and harvest', 'Recipientes de cultivo': 'Growing containers',
+  'Depósitos de entrada y tuberías': 'Supply tanks and piping', 'Electrónica, fuentes y protección': 'Electronics, power supplies and protection',
+  'Instalación y firmware': 'Installation and firmware', 'Sustrato y semillas': 'Substrate and seeds', 'Agua de aporte': 'Make-up water',
+  'Electricidad': 'Electricity', 'Operación y mantenimiento': 'Operation and maintenance', 'Revisión agronómica y análisis': 'Agronomic review and analysis',
+  'Calibración y control de medida': 'Calibration and measurement control', 'Consumibles y reposición': 'Consumables and replacements',
+  'Espacio e infraestructura': 'Space and infrastructure', 'Envío Home Depot': 'Home Depot shipping', 'Fletes de insumos y montaje': 'Freight for supplies and assembly',
+};
+// unidad → [es singular, es plural, en singular, en plural]
+const UNIDAD = { kg: ['kg', 'kg', 'kg', 'kg'], h: ['h', 'h', 'h', 'h'], m3: ['m³', 'm³', 'm³', 'm³'], kWh: ['kWh', 'kWh', 'kWh', 'kWh'],
+  pieza: ['pieza', 'piezas', 'piece', 'pieces'], conjunto: ['conjunto', 'conjuntos', 'set', 'sets'], servicio: ['servicio', 'servicios', 'service', 'services'],
+  pedido: ['pedido', 'pedidos', 'order', 'orders'], lote: ['lote', 'lotes', 'batch', 'batches'], ciclo: ['ciclo', 'ciclos', 'cycle', 'cycles'] };
+// Se serializa tal cual dentro de milpa360-costos.js. Sin total: ESTADO.md no tiene uno cerrado.
+function html(clave) {
+  const C = globalThis.MILPA_COSTOS, filas = C.fichas[clave] || [];
+  if (!filas.length) return '';
+  const t = (es, en) => globalThis.MILPA_I18N?.pick?.(es, en) ?? es;
+  const esc = s => String(s).replace(/[&<>"']/g, c => '&#' + c.charCodeAt(0) + ';');
+  const mxn = n => n.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fila = p => {
+    const cant = p.cantidad_txt ? t(...p.cantidad_txt) : t('cantidad por definir', 'quantity to be defined');
+    const unit = p.precio_unit === null ? '' : ' × ' + mxn(p.precio_unit) + ' ' + t('c/IVA', 'incl. VAT');
+    const fuente = /^https:\/\//.test(p.url_fuente || '') ? ' · <a class="costo-fuente" href="' + esc(p.url_fuente) + '" target="_blank" rel="noopener">' + esc(t('fuente', 'source')) + '</a>' : '';
+    const importe = p.importe !== null ? mxn(p.importe) + ' ' + C.moneda : p.iva === 'Por confirmar' ? t('IVA por confirmar', 'VAT to be confirmed') : t('por cotizar', 'to be quoted');
+    const alcance = p.presupuesto === 'Madrid' ? t('Maqueta 1:10', '1:10 model') : t('Piloto Chiapas', 'Chiapas pilot');
+    return '<li class="costo-fila costo-' + (p.estado === 'con precio' ? 'con-precio' : 'por-cotizar') + '">'
+      + '<span class="costo-concepto">' + esc(t(p.concepto, p.concepto_en)) + '</span>'
+      + '<span class="costo-detalle">' + esc(p.id + ' · ' + alcance + ' · ' + cant + unit) + fuente + '</span>'
+      + '<span class="costo-importe">' + esc(importe) + '</span></li>';
+  };
+  return '<section class="costo"><h3 class="costo-titulo">' + esc(t('Costo del prototipo (maqueta 1:10 / piloto Chiapas)', 'Prototype cost (1:10 model / Chiapas pilot)')) + '</h3>'
+    + '<ul class="costo-lista">' + filas.map(fila).join('') + '</ul>'
+    + '<p class="costo-nota">' + esc(t(...C.nota) + ' ' + t('Precios consultados el', 'Prices checked on') + ' ' + C.fecha_consulta + '.') + '</p></section>';
+}
+const claves = new Set([...(await fs.readFile(`${root}/prototipo-3d/milpa360-contenido.js`, 'utf8')).matchAll(/add\('(\w+)'/g)].map(m => m[1]));
+const r2 = x => Math.round(x * 100) / 100;
+const costos = { revision: cfg.revision, moneda: cfg.moneda, fecha_consulta: cfg.fecha_consulta, nota: [cfg.nota, EN[cfg.nota]], fichas: {}, sin_ficha: [] };
+const todas = [];
+for (const [presupuesto, b] of Object.entries(cfg.presupuestos)) for (const [id, concepto, pid, cantidad, unidad, , , componente] of b.partidas) {
+  const pr = cfg.precios.find(c => c.id === pid), u = UNIDAD[unidad];
+  // Misma regla que Precios!J: IVA excluido usa la tasa general; «Por confirmar» deja el precio final pendiente.
+  const precio_unit = !pr ? null : pr.iva === 'Incluido' ? pr.precio : pr.iva === 'Excluido' ? r2(pr.precio * (1 + cfg.iva_general)) : null;
+  const importe = cantidad === null || precio_unit === null ? null : r2(cantidad * precio_unit);
+  assert(EN[concepto] && u, `${id}: falta traducción del concepto o de la unidad`);
+  const fila = { id, presupuesto, concepto, concepto_en: EN[concepto], cantidad, unidad,
+    cantidad_txt: cantidad === null ? null : [`${cantidad} ${u[cantidad === 1 ? 0 : 1]}`, `${cantidad} ${u[cantidad === 1 ? 2 : 3]}`],
+    precio_unit, importe, iva: pr?.iva ?? null, estado: importe === null ? 'por cotizar' : 'con precio', url_fuente: pr?.url ?? null };
+  const tabla = FICHA[presupuesto];
+  const fichas = new Set(componente.split(';').map(s => s.trim()).map(c => {
+    const k = Object.hasOwn(tabla, c) ? tabla[c] : tabla['*'];
+    assert(k !== undefined, `${id}: el componente «${c}» no está en la tabla FICHA`);
+    assert(k === null || claves.has(k), `${id}: la ficha «${k}» no existe en milpa360-contenido.js`);
+    return k;
+  }).filter(Boolean));
+  todas.push(fila);
+  if (!fichas.size) costos.sin_ficha.push(fila);
+  for (const k of fichas) (costos.fichas[k] ??= []).push(fila);
+}
+// Cruce con la hoja: la base conocida de Madrid es la misma que Resumen!B14 (no es un total del proyecto).
+assert.equal(r2(todas.filter(f => f.presupuesto === 'Madrid').reduce((s, f) => s + (f.importe ?? 0), 0)), 1050.96);
+const costosJs = '// Generado por analysis/presupuesto_s4.mjs desde config/milpa360.presupuesto.json; no editar a mano.\n'
+  + `globalThis.MILPA_COSTOS = ${JSON.stringify(costos, null, 1)};\nglobalThis.MILPA_COSTOS.html = ${html};\n`;
+const sandbox = vm.createContext({});
+vm.runInContext(costosJs, sandbox);
+assert(sandbox.MILPA_COSTOS.html('carrusel').includes('693.68 MXN') && sandbox.MILPA_COSTOS.html('atmosfera') === '');
+sandbox.MILPA_COSTOS.fichas.prueba = [{ ...todas[0], concepto: '<img src=x onerror=alert(1)>' }];
+assert(!sandbox.MILPA_COSTOS.html('prueba').includes('<img'), 'html() no escapa el texto');
+await fs.writeFile(`${root}/prototipo-3d/milpa360-costos.js`, costosJs);
+console.log(`Costos: ${todas.filter(f => f.importe !== null).length} con precio, ${todas.filter(f => f.importe === null).length} por cotizar, ${costos.sin_ficha.length} sin ficha → prototipo-3d/milpa360-costos.js`);
 
 const wb = Workbook.create();
 const sheets = Object.fromEntries(['Resumen', 'Madrid', 'Chiapas', 'Marte', 'Precios'].map(n => [n, wb.worksheets.add(n)]));
