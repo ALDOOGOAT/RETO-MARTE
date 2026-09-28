@@ -1,0 +1,174 @@
+{
+  "revision": "V9",
+  "gpu": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL 4.6)",
+  "rendimiento": [
+    {
+      "quality": "unica",
+      "fps": 62.89779108949131,
+      "p95": 21.100000000000364,
+      "calls": 551,
+      "triangles": 268704,
+      "resolution": [
+        1920,
+        1080
+      ]
+    }
+  ],
+  "capitulos": [
+    {
+      "lang": "es",
+      "chapter": 0,
+      "time": 0,
+      "wall": 0.004
+    },
+    {
+      "lang": "es",
+      "chapter": 1,
+      "time": 5.277797,
+      "wall": 5.395
+    },
+    {
+      "lang": "es",
+      "chapter": 2,
+      "time": 11.260336,
+      "wall": 11.381
+    },
+    {
+      "lang": "es",
+      "chapter": 3,
+      "time": 15.835458,
+      "wall": 15.947
+    },
+    {
+      "lang": "es",
+      "chapter": 4,
+      "time": 21.104597,
+      "wall": 21.217
+    },
+    {
+      "lang": "es",
+      "chapter": 5,
+      "time": 26.355925,
+      "wall": 26.465
+    },
+    {
+      "lang": "es",
+      "chapter": 6,
+      "time": 32.001517,
+      "wall": 32.096
+    },
+    {
+      "lang": "es",
+      "chapter": 7,
+      "time": 37.663399,
+      "wall": 37.758
+    },
+    {
+      "lang": "es",
+      "fin": true,
+      "tiempo": 47.280053,
+      "wall": 47.448
+    },
+    {
+      "lang": "en",
+      "chapter": 0,
+      "time": 0,
+      "wall": 0.004
+    },
+    {
+      "lang": "en",
+      "chapter": 1,
+      "time": 5.699507,
+      "wall": 5.824
+    },
+    {
+      "lang": "en",
+      "chapter": 2,
+      "time": 11.977592,
+      "wall": 12.082
+    },
+    {
+      "lang": "en",
+      "chapter": 3,
+      "time": 15.94194,
+      "wall": 16.053
+    },
+    {
+      "lang": "en",
+      "chapter": 4,
+      "time": 22.341022,
+      "wall": 22.43
+    },
+    {
+      "lang": "en",
+      "chapter": 5,
+      "time": 28.23776,
+      "wall": 28.328
+    },
+    {
+      "lang": "en",
+      "chapter": 6,
+      "time": 33.866787,
+      "wall": 34.196
+    },
+    {
+      "lang": "en",
+      "chapter": 7,
+      "time": 41.148869,
+      "wall": 41.146
+    },
+    {
+      "lang": "en",
+      "fin": true,
+      "tiempo": 51.966112000000024,
+      "wall": 51.841
+    }
+  ],
+  "errores": [],
+  "red": [],
+  "checks": [
+    {
+      "id": "cartuchos",
+      "es": "Cartuchos en el anillo",
+      "en": "Cartridges in the ring",
+      "valor": 20,
+      "esperado": 20,
+      "ok": true
+    },
+    {
+      "id": "area",
+      "es": "Área útil calculada en la malla",
+      "en": "Usable area from mesh triangles",
+      "valor": 3.0857,
+      "esperado": 3.0858,
+      "unidad": "m²",
+      "ok": true
+    },
+    {
+      "id": "figura",
+      "es": "Altura erguida de la figura",
+      "en": "Standing figure height",
+      "valor": 1.75,
+      "esperado": 1.75,
+      "unidad": "m",
+      "ok": true
+    },
+    {
+      "id": "render",
+      "es": "Materiales sin transmisión extra",
+      "en": "Materials without an extra transmission pass",
+      "valor": 0,
+      "esperado": 0,
+      "ok": true
+    }
+  ],
+  "pruebas": [
+    "ES/EN completos <58 s",
+    "pista continua sin recargas",
+    "pausa, salto, cambio de idioma y sin voz",
+    "restauración del modelo",
+    "file:// estricto sin red",
+    "móvil 390 × 844"
+  ],
+  "limite": "Simulación digital; acceso y procesos pendientes de prueba física."
+}

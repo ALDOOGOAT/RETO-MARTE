@@ -1,0 +1,63 @@
+{
+  "fecha": "2026-09-28T15:03:41.448Z",
+  "prueba": "V13 despiece fino · Chrome ventana X11, file://, sin red",
+  "hardware": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL 4.6)",
+  "piezas": 218,
+  "agarrables": 208,
+  "familias": {
+    "equipos": 23,
+    "casco": 16,
+    "cartuchos": 20,
+    "riego": 44,
+    "estacion-S1": 3,
+    "estacion-S3": 6,
+    "estacion-S4": 3,
+    "estacion-S5": 3,
+    "estacion-S7": 3,
+    "aviario": 29,
+    "filtracion-pared": 11,
+    "control-vfx": 2,
+    "hepa-vfx": 2,
+    "digestor-b": 14,
+    "digestor-a": 14,
+    "gasometro": 3,
+    "tuberias": 8,
+    "lamparas": 6,
+    "rotulos": 8
+  },
+  "movidas": 216,
+  "aMitad": 218,
+  "agarre": {
+    "id": "casco/13",
+    "ficha": "envolvente",
+    "estado": "AGARRADA"
+  },
+  "voz": {
+    "clave": "envolvente",
+    "hablando": true,
+    "segundo": 1.54003,
+    "titulo": "Una envolvente, dos formas de explorar",
+    "frases": 2
+  },
+  "vozEn": {
+    "titulo": "One envelope, two ways to explore"
+  },
+  "rendimiento": {
+    "armado": {
+      "fps": 41,
+      "p95ms": 46,
+      "llamadas": 563
+    },
+    "despiezado": {
+      "fps": 45.9,
+      "p95ms": 30.1,
+      "llamadas": 554
+    }
+  },
+  "capturas": [
+    "docs/madrid/capturas-v13/despiece-total.png",
+    "docs/madrid/capturas-v13/pieza-agarrada.png"
+  ],
+  "verificado": "estallar escalonado, >30 piezas, gasómetro sin reescribir origen, agarre por raycast, voz Piper ES/EN, vuelta al hueco actual, armar y botón bit a bit",
+  "limite": "Automatización local; audio silenciado por --mute-audio (se comprueba reproducción, no se escucha). Gestos reales con cámara no probados aquí."
+}

@@ -1,0 +1,312 @@
+{
+  "fecha": "2026-09-28T15:16:50.122Z",
+  "hardware": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL 4.6)",
+  "camara": "landmarks sintéticos a intervalos de 140ms; sin acceso a webcam",
+  "autoplay": "sin flag de excepción ni userGesture en Runtime.evaluate; clic real previo en Módulo",
+  "seleccion": {
+    "id": "cartucho-01",
+    "clave": "carrusel",
+    "activacion": true
+  },
+  "vozEn": {
+    "titulo": "The cartridge keeps its identity",
+    "ficha": "The cartridge keeps its identity",
+    "hablando": true
+  },
+  "eventos": [
+    {
+      "n": "estallar",
+      "d": {
+        "manos": 1
+      }
+    },
+    {
+      "n": "pinza_inicio",
+      "d": {
+        "x": 0.3616634115406042,
+        "y": 0.6353944494129052
+      }
+    },
+    {
+      "n": "cerrar"
+    },
+    {
+      "n": "armar",
+      "d": {}
+    }
+  ],
+  "restauracion": "218 transformaciones exactas",
+  "cine": "inspección recupera control, anima y habla; inventarios de exploración conservados",
+  "errores": [],
+  "http": [],
+  "ingles": {
+    "fichas": [
+      {
+        "k": "envolvente",
+        "titulo": "One envelope, two ways to explore",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "atmosfera",
+        "titulo": "An atmosphere that needs processing",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "gravedad",
+        "titulo": "Less weight, the same mass",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "radiacion",
+        "titulo": "Protection that needs analysis",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "regolito",
+        "titulo": "Track the entire substrate mass",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "polvo",
+        "titulo": "From dust to reduced light",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "agua",
+        "titulo": "Recover water and check its quality",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "comms",
+        "titulo": "Make decisions locally",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "valles",
+        "titulo": "One planet, a different scale",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "sitio",
+        "titulo": "A supplementary agricultural module",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "aviario",
+        "titulo": "Animals within the cycle",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "larvario",
+        "titulo": "Recover part of the waste",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "digestor",
+        "titulo": "Two processes, separate reactors",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "musgo",
+        "titulo": "A cover, not a certificate",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "cultivo",
+        "titulo": "Three crops with their own cycles",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "lavado",
+        "titulo": "Treat all the substrate first",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "mfc",
+        "titulo": "Without analysis, the batch waits",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "carrusel",
+        "titulo": "The cartridge keeps its identity",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "panel",
+        "titulo": "External electricity accounted for",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "f_salmuera",
+        "titulo": "Isolated brine",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "f_frass",
+        "titulo": "Waste allocated to the digester",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "f_inoculo",
+        "titulo": "Digestate on hold",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "riego",
+        "titulo": "Drip irrigation travels with the cartridge",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "f_riego",
+        "titulo": "Conditioned irrigation water",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "f_biogas",
+        "titulo": "Contained gas, external energy recovery",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "f_proteina",
+        "titulo": "Biomass needs sanitary control",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "f_estiercol",
+        "titulo": "Controlled deposition",
+        "viz": true,
+        "audio": true
+      },
+      {
+        "k": "retorno",
+        "titulo": "A measurable pilot in Chiapas",
+        "viz": true,
+        "audio": true
+      }
+    ],
+    "vocesPiezas": [
+      {
+        "k": "envolvente",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "carrusel",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "riego",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "lavado",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "larvario",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "mfc",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "musgo",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "aviario",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "digestor",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "f_salmuera",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "f_riego",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "f_frass",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "f_inoculo",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "f_biogas",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "f_proteina",
+        "ficha": true,
+        "es": true,
+        "en": true
+      },
+      {
+        "k": "cultivo",
+        "ficha": true,
+        "es": true,
+        "en": true
+      }
+    ]
+  }
+}

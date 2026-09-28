@@ -1,0 +1,159 @@
+{
+ "revision": "V11-V12",
+ "fecha": "2026-09-27",
+ "prueba": "Chrome visible X11, file://, Intel UHD (ANGLE Mesa RPL-P), 1920×1080, vsync",
+ "fps_vsync": {
+  "vfx0": [
+   62.4,
+   63.5,
+   63.0
+  ],
+  "vfx1": [
+   64.3,
+   64.6,
+   64.3
+  ],
+  "p95_ms_vfx1": 21.0
+ },
+ "draw_calls": {
+  "vfx0": 550,
+  "vfx1": 541,
+  "nota": "las gotas instanciadas sustituyen 40 mallas sueltas"
+ },
+ "efectos": [
+  "gotas",
+  "lamparas",
+  "burbujas",
+  "polvo",
+  "hojas",
+  "leds"
+ ],
+ "inspeccion": {
+  "piezas_exactas": "8/8",
+  "detalle": [
+   {
+    "n": "aviario",
+    "estado": "INSPECCION",
+    "pieza": "aviario",
+    "ficha": "aviario",
+    "detalles": true,
+    "aviso": "Inspección · pieza fuera de su sitio (ilustrativo)",
+    "volvio": true,
+    "exacta": true
+   },
+   {
+    "n": "estacion-S3",
+    "estado": "INSPECCION",
+    "pieza": "estacion-S3",
+    "ficha": "larvario",
+    "detalles": true,
+    "aviso": "Inspección · pieza fuera de su sitio (ilustrativo)",
+    "volvio": true,
+    "exacta": true
+   },
+   {
+    "n": "estacion-S5",
+    "estado": "INSPECCION",
+    "pieza": "estacion-S5",
+    "ficha": "musgo",
+    "detalles": true,
+    "aviso": "Inspección · pieza fuera de su sitio (ilustrativo)",
+    "volvio": true,
+    "exacta": true
+   },
+   {
+    "n": "filtracion-pared",
+    "estado": "INSPECCION",
+    "pieza": "filtracion-pared",
+    "ficha": "lavado",
+    "detalles": true,
+    "aviso": "Inspección · pieza fuera de su sitio (ilustrativo)",
+    "volvio": true,
+    "exacta": true
+   },
+   {
+    "n": "digestor-b",
+    "estado": "INSPECCION",
+    "pieza": "digestor-b",
+    "ficha": "digestor",
+    "detalles": true,
+    "aviso": "Inspección · pieza fuera de su sitio (ilustrativo)",
+    "volvio": true,
+    "exacta": true
+   },
+   {
+    "n": "digestor-a",
+    "estado": "INSPECCION",
+    "pieza": "digestor-a",
+    "ficha": "f_salmuera",
+    "detalles": true,
+    "aviso": "Inspección · pieza fuera de su sitio (ilustrativo)",
+    "volvio": true,
+    "exacta": true
+   },
+   {
+    "n": "gasometro",
+    "estado": "INSPECCION",
+    "pieza": "gasometro",
+    "ficha": "digestor",
+    "detalles": true,
+    "aviso": "Inspección · pieza fuera de su sitio (ilustrativo)",
+    "volvio": true,
+    "exacta": true
+   },
+   {
+    "n": "cartucho-01",
+    "estado": "INSPECCION",
+    "pieza": "cartucho-01",
+    "ficha": "carrusel",
+    "detalles": true,
+    "aviso": "Inspección · pieza fuera de su sitio (ilustrativo)",
+    "volvio": true,
+    "exacta": true
+   }
+  ],
+  "pinza_sintetica": {
+   "objetivo": {
+    "n": "filtracion-pared",
+    "sx": 0.31727790238339865,
+    "sy": 0.3452696153316255
+   },
+   "tras_pinzar": {
+    "estado": "AGARRADA",
+    "pieza": "filtracion-pared"
+   },
+   "giro": {
+    "yaw_antes": 0,
+    "yaw_despues": -0.2900141365856195
+   },
+   "tras_soltar": {
+    "estado": "INSPECCION",
+    "ficha": "lavado"
+   },
+   "tras_palma": true
+  },
+  "cambio_vista": {
+   "estado": "LIBRE",
+   "exacta": true
+  }
+ },
+ "ingles": {
+  "textos": [
+   "GESTURES × Hand detected · Explode / scale Open hand Orbit · rotate part Pinch in empty space ↕ Zoom Pinch on a part Grab and rotate Swipe ← → Another part Fist Pan Two hands ↔ Explode · scale Index 0.6 s Details Still palm 1 s Return / close",
+   "Inspection · part out of place (illustrative)",
+   ""
+  ],
+  "espanol": [
+   "",
+   "",
+   ""
+  ]
+ },
+ "errores": [],
+ "p3": {
+  "errores": [],
+  "solicitudesHTTP": 0,
+  "fps": 57.4
+ },
+ "limite": "Gotas exageradas por legibilidad (caudal real ~2 L/h). Mano real no probada en esta pasada: gestos verificados con manos sintéticas y vídeo de manos."
+}

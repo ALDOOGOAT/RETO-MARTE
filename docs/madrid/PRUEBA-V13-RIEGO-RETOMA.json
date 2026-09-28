@@ -1,0 +1,89 @@
+{
+  "fecha": "2026-09-28T15:18:52.464Z",
+  "hardware": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL 4.6)",
+  "pantalla": [
+    1920,
+    1080
+  ],
+  "perfilEnergia": "performance",
+  "procedimiento": "Misma ventana Chrome X11, antes y después, sol 0, poses idénticas; FPS sin perfilador y tiempo GPU separado mediante EXT_disjoint_timer_query_webgl2.",
+  "medidas": [
+    {
+      "estado": "antes",
+      "normal": {
+        "fps": 35.5,
+        "p95ms": 42.5,
+        "calls": 563,
+        "triangles": 280080,
+        "pixelRatio": 1,
+        "gpuMs": 24.8,
+        "gpuP95ms": 39.23,
+        "muestrasGpu": 152,
+        "fpsConPerfil": 34.7
+      },
+      "detalle": {
+        "fps": 25.8,
+        "p95ms": 53.9,
+        "calls": 140,
+        "triangles": 177140,
+        "pixelRatio": 1,
+        "gpuMs": 32.55,
+        "gpuP95ms": 51.53,
+        "muestrasGpu": 115,
+        "fpsConPerfil": 26.4
+      },
+      "inspeccion": {
+        "gotas": 66,
+        "impactos": 22,
+        "haces": 6,
+        "pools": 12,
+        "halos": 6,
+        "burbujas": 24,
+        "polvo": 180,
+        "leds": 3,
+        "gotasInspeccion": 0,
+        "impactosInspeccion": 0
+      }
+    },
+    {
+      "estado": "despues",
+      "normal": {
+        "fps": 36.8,
+        "p95ms": 41.9,
+        "calls": 563,
+        "triangles": 280080,
+        "pixelRatio": 1,
+        "gpuMs": 22.48,
+        "gpuP95ms": 36.54,
+        "muestrasGpu": 164,
+        "fpsConPerfil": 37.3
+      },
+      "detalle": {
+        "fps": 25.5,
+        "p95ms": 62.2,
+        "calls": 140,
+        "triangles": 177140,
+        "pixelRatio": 1,
+        "gpuMs": 32.99,
+        "gpuP95ms": 50.04,
+        "muestrasGpu": 113,
+        "fpsConPerfil": 26
+      },
+      "inspeccion": {
+        "gotas": 66,
+        "impactos": 22,
+        "haces": 6,
+        "pools": 12,
+        "halos": 6,
+        "burbujas": 24,
+        "polvo": 180,
+        "leds": 3,
+        "gotasInspeccion": 6,
+        "impactosInspeccion": 2
+      }
+    }
+  ],
+  "errores": [],
+  "http": [],
+  "limite": "FPS actuales inferiores a 55 en estas poses; las capturas estáticas no prueban gestos de una mano real."
+}
