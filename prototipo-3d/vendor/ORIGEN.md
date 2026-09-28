@@ -30,3 +30,13 @@ V8, 25 sep 2026 (ver `docs/madrid/MEJORA-VISUAL-V8.md`):
   red_laterite_soil_stones (terreno), rock_boulder_dry (rocas), brown_mud_dry (sustrato),
   metal_plate (cubierta) y el HDRI goegap (sólo reflejos, virado a cielo marciano).
   `python3 analysis/preparar_texturas_pbr.py`. No representan suelo ni roca medidos en Marte.
+
+V9, 26 sep 2026 (ver `docs/madrid/MEJORA-VISUAL-V9.md`):
+
+- three-addons.js vuelve a empaquetarse sólo con GLTFLoader y SkeletonUtils: el posprocesado se retiró.
+- texturas-pbr.js: color y normal a 2048 en terreno, sustrato y cubierta (rugosidad y roca siguen a 1024).
+- marte-usgs.js: mosaico Viking MDIM 2.1 y relieve sombreado MOLA del WMS de USGS Astrogeology
+  (dominio público), a 4096 × 2048 y 2048 × 1024. `python3 analysis/preparar_marte.py`.
+  Ver [CREDITOS-MARTE.md](CREDITOS-MARTE.md).
+- audio/fichas/*.mp3 y milpa360-voces.js: voz local Piper (es_ES-davefx, en_GB-alba), la misma del
+  pitch. `~/.local/share/milpa-voz/bin/python analysis/narracion_fichas.py`.
