@@ -41,7 +41,6 @@ try {
   const gpuName=await evaluar(`(()=>{const gl=renderer.getContext();return gl.getParameter(gl.getExtension('WEBGL_debug_renderer_info').UNMASKED_RENDERER_WEBGL)})()`);
   if(gpu)assert.ok(!/SwiftShader|llvmpipe/i.test(gpuName));
   assert.ok(await evaluar('comprobarVisual().every(c=>c.ok)'));
-  await evaluar('document.getElementById("calidad").value="alta";document.getElementById("calidad").dispatchEvent(new Event("change"));');
   await snap('01-interior');
   await evaluar('window.personaRevision=MILPA_PERSONA(1.75);escena.add(personaRevision);gHabitat.visible=false;Object.assign(orbe,{theta:1.35,phi:1.36,dist:3.1});mira.set(0,.94,0);personaRevision.userData.animar(0,0,"inspeccion",0);document.body.classList.add("captura");medir();');
   await new Promise(r=>setTimeout(r,1000));await snap('02-persona');
@@ -49,8 +48,7 @@ try {
   assert.ok(await evaluar(`(()=>{const h=gHabitat.getObjectByName('rostro-escaneado');let disposed=false;const mark=()=>disposed=true;h.geometry.addEventListener('dispose',mark);h.material.addEventListener('dispose',mark);comprobarVisual();h.geometry.removeEventListener('dispose',mark);h.material.removeEventListener('dispose',mark);return !disposed})()`),'Validación liberó recursos compartidos del rostro');
   const baseline=await evaluar('JSON.stringify(modelo.estado)');
   const perf=[];
-  for(const quality of ['alta','maxima']){
-    await evaluar(`document.getElementById('calidad').value='${quality}';document.getElementById('calidad').dispatchEvent(new Event('change'));`);
+  for(const quality of ['unica']){
     await new Promise(r=>setTimeout(r,900));
     perf.push(await evaluar(`new Promise(resolve=>{const t0=performance.now(),frames=[];let last=t0;function frame(t){frames.push(t-last);last=t;if(t-t0<4000)requestAnimationFrame(frame);else{frames.sort((a,b)=>a-b);resolve({quality:'${quality}',fps:frames.length*1000/(t-t0),p95:frames[Math.floor(frames.length*.95)],calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,resolution:[lienzo.width,lienzo.height]})}}requestAnimationFrame(frame)})`));
   }

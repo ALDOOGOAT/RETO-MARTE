@@ -67,7 +67,7 @@ try {
     await evaluar('vistaTecnica("orbita");Object.assign(orbe,{theta:-.62,phi:1,dist:11.4});mira.set(0,1,0);');
     const medidas=[];
     for(const estudio of [false,true]){
-      await evaluar(`S.estudio=${estudio};actualizarAmbiente();document.getElementById('calidad').value='alta';document.getElementById('calidad').dispatchEvent(new Event('change'));S.presentacion=true;`);
+      await evaluar(`S.estudio=${estudio};actualizarAmbiente();S.presentacion=true;`);
       await evaluar('new Promise(r=>setTimeout(r,1200))');
       const measure=await evaluar(`new Promise(resolve=>{let times=[],prev=performance.now(),begin=prev,raf;function f(now){times.push(now-prev);prev=now;raf=requestAnimationFrame(f);}raf=requestAnimationFrame(f);setTimeout(()=>{cancelAnimationFrame(raf);times.sort((a,b)=>a-b);resolve({fps:times.length*1000/(performance.now()-begin),p95Ms:times[Math.floor(times.length*.95)],drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,pixelRatio:renderer.getPixelRatio(),viewport:[innerWidth,innerHeight],fotogramas:times.length});},6000);})`);
       medidas.push({estudio,...measure});
@@ -182,7 +182,6 @@ try {
     await cdp('Page.navigate',{url:pathToFileURL(path.join(base,'milpa360-simulador.html')).href+'?vista=habitat&play=0&sol=62'});
     await esperar('typeof refsHab!=="undefined"&&refsHab&&!document.getElementById("carga")');
     const cap=async n=>{await evaluar('new Promise(r=>setTimeout(r,900))');const im=await cdp('Page.captureScreenshot',{format:'png'});await writeFile(path.join(dir,n+'.png'),Buffer.from(im.data,'base64'));};
-    await evaluar('document.getElementById("calidad").value="alta";document.getElementById("calidad").dispatchEvent(new Event("change"))');
     const state=await evaluar('JSON.stringify(modelo.estado)');
     await cap('interior-es');
     await evaluar('document.getElementById("ver-exterior").click()');await esperar('refsHab.cierre===1');
@@ -191,11 +190,11 @@ try {
     assert.ok(Math.abs(cerrado.arco-2*Math.PI)<1e-10);assert.ok(Math.abs(cerrado.techo-2.2)<1e-5);assert.equal(cerrado.interioresVisibles,0);assert.ok(Math.abs(cerrado.juntaPared-cerrado.juntaTecho)<1e-5,'Pared y faldón se solapan o separan');await cap('exterior-es');
     await evaluar(`(()=>{const p=new THREE.Vector3(Math.cos(-.62)*2.28,1.35,Math.sin(-.62)*2.28).project(camara);picar({clientX:(p.x*.5+.5)*innerWidth,clientY:(-.5*p.y+.5)*innerHeight});})()`);
     assert.equal(await evaluar('fichaActual'),'envolvente','Seleccionó una pieza oculta tras el casco');
-    await evaluar('document.getElementById("cerrar").click();document.getElementById("calidad").value="auto";renderer.setPixelRatio(1);framesCalidad=0;inicioCalidad=performance.now()-4000;');
-    await esperar('renderer.getPixelRatio()<1');assert.ok(await evaluar('renderer.getPixelRatio()')>=.65);
-    assert.equal(await evaluar('Math.abs(lienzo.getBoundingClientRect().width-innerWidth)<1&&Math.abs(lienzo.getBoundingClientRect().height-innerHeight)<1'),true,'La calidad cambió el tamaño CSS del lienzo');
+    // Una sola calidad: sin selector y sin ajuste automático que baje la resolución.
+    await evaluar('document.getElementById("cerrar").click();new Promise(r=>setTimeout(r,3500))');
+    assert.equal(await evaluar('!document.getElementById("calidad")&&renderer.getPixelRatio()===Math.min(devicePixelRatio,1.25)&&renderer.shadowMap.enabled'),true,'La calidad dejó de ser fija');
+    assert.equal(await evaluar('Math.abs(lienzo.getBoundingClientRect().width-innerWidth)<1&&Math.abs(lienzo.getBoundingClientRect().height-innerHeight)<1'),true,'El lienzo no ocupa la ventana');
     assert.equal(await evaluar('JSON.stringify(modelo.estado)'),state);
-    await evaluar('document.getElementById("calidad").value="alta";document.getElementById("calidad").dispatchEvent(new Event("change"))');
     await evaluar('document.getElementById("giro-camara").click()');const thetaInicio=await evaluar('orbe.theta');
     await evaluar('new Promise(r=>setTimeout(r,300))');assert.ok(await evaluar('orbe.theta')>thetaInicio);
     assert.equal(await evaluar('JSON.stringify(modelo.estado)'),state,'Giro de cámara alteró el proceso');
@@ -263,8 +262,8 @@ try {
     }
     await evaluar('document.getElementById("cerrar").click();vistaTecnica("orbita");Object.assign(orbe,{theta:-.62,phi:1.02,dist:8.4});mira.set(0,1,0);');
     const mediciones=[];
-    for(const calidad of ['alta','fluida']){
-      await evaluar(`document.getElementById('calidad').value='${calidad}';document.getElementById('calidad').dispatchEvent(new Event('change'));S.play=true;S.vel=1;`);
+    for(const calidad of ['unica']){
+      await evaluar('S.play=true;S.vel=1;');
       await evaluar('new Promise(r=>setTimeout(r,1500))');
       const medida=await evaluar('new Promise(resolve=>{let n=0,raf;const inicio=performance.now();function contar(){n++;raf=requestAnimationFrame(contar);}raf=requestAnimationFrame(contar);setTimeout(()=>{cancelAnimationFrame(raf);const ms=performance.now()-inicio;resolve({fotogramas:n,duracionMs:ms,fps:n*1000/ms,llamadas:renderer.info.render.calls,triangulos:renderer.info.render.triangles});},8000);})');
       mediciones.push({calidad,...medida});
@@ -467,7 +466,6 @@ try {
   for(const [nombre,q] of Object.entries(process.env.MILPA_SIN_CAPTURAS==='1'?{}:poses)){
     await cdp('Page.navigate',{url:url+'?'+q});await esperar('typeof refsHab!=="undefined"&&refsHab&&!document.getElementById("carga")');
     await evaluar('camara.position.copy(new THREE.Vector3(mira.x+orbe.dist*Math.sin(orbe.phi)*Math.cos(orbe.theta),mira.y+orbe.dist*Math.cos(orbe.phi),mira.z+orbe.dist*Math.sin(orbe.phi)*Math.sin(orbe.theta)))');
-    await evaluar('document.getElementById("calidad").value="alta";document.getElementById("calidad").dispatchEvent(new Event("change"))');
     if(nombre==='tecnica')await evaluar('abrirTecnica()');
     await evaluar('new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))');
     console.log('Captura: '+nombre);

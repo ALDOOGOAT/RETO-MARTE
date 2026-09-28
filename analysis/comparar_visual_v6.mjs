@@ -37,7 +37,7 @@ try {
   for(const [revision,base] of [['V5',path.resolve(anterior)],['V6',path.join(raiz,'prototipo-3d')],['V6',path.join(raiz,'prototipo-3d')],['V5',path.resolve(anterior)]]){
     await cdp('Page.navigate',{url:pathToFileURL(path.join(base,'milpa360-simulador.html')).href+'?vista=habitat&play=0&sol=62&ambiente=marte&lang=es'});
     await esperar('typeof refsHab!=="undefined"&&refsHab&&!document.getElementById("carga")');
-    await evaluar('document.getElementById("calidad").value="alta";document.getElementById("calidad").dispatchEvent(new Event("change"));Object.assign(orbe,{theta:-.62,phi:1,dist:11.4});mira.set(0,1,0);S.reducido=false;S.play=false;S.presentacion=true;');
+    await evaluar('Object.assign(orbe,{theta:-.62,phi:1,dist:11.4});mira.set(0,1,0);S.reducido=false;S.play=false;S.presentacion=true;');
     await evaluar('new Promise(r=>setTimeout(r,2000))');
     const datos=await evaluar(`new Promise(resolve=>{let times=[],previous=performance.now(),begin=previous,raf;function f(now){times.push(now-previous);previous=now;raf=requestAnimationFrame(f);}raf=requestAnimationFrame(f);setTimeout(()=>{cancelAnimationFrame(raf);const duration=performance.now()-begin,gl=renderer.getContext(),ext=gl.getExtension('WEBGL_debug_renderer_info');times.sort((a,b)=>a-b);resolve({fps:times.length*1000/duration,p95Ms:times[Math.floor(times.length*.95)],frames:times.length,duracionMs:duration,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,viewport:[innerWidth,innerHeight],resolucion:[lienzo.width,lienzo.height],gpu:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):'desconocido',hidden:document.hidden});},6000);})`);
     assert.equal(datos.hidden,false);if(gpu)assert.ok(!/SwiftShader|llvmpipe/.test(datos.gpu));

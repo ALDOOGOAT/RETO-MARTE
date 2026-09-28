@@ -7,14 +7,14 @@
   const binario=b64=>{const s=atob(b64),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u.buffer;};
   const cargador=new T.TextureLoader();
   async function textura(uri,color){
-    const t=await cargador.loadAsync(uri);t.flipY=false;t.anisotropy=8;if(color)t.colorSpace=T.SRGBColorSpace;return t;
+    const t=await cargador.loadAsync(uri);t.flipY=false;t.anisotropy=16;if(color)t.colorSpace=T.SRGBColorSpace;return t;
   }
   async function cargar(tipo){
     const datos=MILPA_TRIPULACION[tipo],gltf=await new A.GLTFLoader().parseAsync(binario(datos.glb),'');
     const materiales={};
     await Promise.all(Object.entries(datos.materiales).map(async([nombre,d])=>{
       const [map,normalMap,roughnessMap]=await Promise.all([textura(d.map,true),d.normalMap&&textura(d.normalMap),d.roughnessMap&&textura(d.roughnessMap)]);
-      const m=new T.MeshStandardMaterial({map,roughness:1,metalness:0});
+      const m=new T.MeshStandardMaterial({map,roughness:1,metalness:0,dithering:true});
       if(normalMap){m.normalMap=normalMap;m.normalScale.set(.9,.9);}
       if(roughnessMap)m.roughnessMap=roughnessMap;
       // Pelo y pestañas en tarjetas: recorte con cobertura alfa, sin ordenar transparencias.

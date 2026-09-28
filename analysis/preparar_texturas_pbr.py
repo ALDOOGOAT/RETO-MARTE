@@ -3,7 +3,8 @@
 python3 analysis/preparar_texturas_pbr.py
 
 Cada material lleva color (con la oclusión ya multiplicada), normal OpenGL y rugosidad, en WebP
-1024 y base64 (file:// no deja subir imágenes de disco a WebGL). `sustrato` y `cubierta` se
+y base64. Color y normal van a 2048 donde la cámara se acerca (terreno, sustrato, cubierta); la
+rugosidad, de baja frecuencia, se queda en 1024. Con mipmaps la resolución no cuesta fps, sólo memoria (file:// no deja subir imágenes de disco a WebGL). `sustrato` y `cubierta` se
 guardan en gris de media 0.8: el visor los tiñe con el color de cada estación, como antes.
 El HDRI de Goegap se reduce a 512 × 256 en RGBE: sólo alimenta reflejos, nunca se ve de fondo.
 """
@@ -13,8 +14,8 @@ from PIL import Image
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 CACHE = pathlib.Path(os.environ.get('MILPA_CACHE', pathlib.Path.home() / '.cache/milpa-v8')) / 'ph'
-MATERIALES = {'terreno': ('red_laterite_soil_stones', False), 'roca': ('rock_boulder_dry', False),
-              'sustrato': ('brown_mud_dry', True), 'cubierta': ('metal_plate', True)}
+MATERIALES = {'terreno': ('red_laterite_soil_stones', False, 2048), 'roca': ('rock_boulder_dry', False, 1024),
+              'sustrato': ('brown_mud_dry', True, 2048), 'cubierta': ('metal_plate', True, 2048)}
 MAPAS = {'diff': 'Diffuse', 'nor': 'nor_gl', 'rough': 'Rough', 'ao': 'AO'}
 
 
@@ -22,12 +23,12 @@ def api(ruta):
     return json.loads(subprocess.check_output(['curl', '-sfL', 'https://api.polyhaven.com/' + ruta]))
 
 
-def bajar(ident, mapa):
+def bajar(ident, mapa, lado=1024):
     f = CACHE / f'{ident}_{mapa}_2k.jpg'
     if not f.exists():
         CACHE.mkdir(parents=True, exist_ok=True)
         subprocess.check_call(['curl', '-sfL', '-o', str(f), api('files/' + ident)[MAPAS[mapa]]['2k']['jpg']['url']])
-    return Image.open(f).convert('RGB').resize((1024, 1024), Image.LANCZOS)
+    return Image.open(f).convert('RGB').resize((lado, lado), Image.LANCZOS)
 
 
 def webp(im, q=86):
@@ -36,15 +37,15 @@ def webp(im, q=86):
     return 'data:image/webp;base64,' + base64.b64encode(b.getvalue()).decode()
 
 
-def material(ident, gris):
-    color = np.asarray(bajar(ident, 'diff')).astype(np.float32) / 255
-    ao = np.asarray(bajar(ident, 'ao').convert('L')).astype(np.float32)[..., None] / 255
+def material(ident, gris, lado):
+    color = np.asarray(bajar(ident, 'diff', lado)).astype(np.float32) / 255
+    ao = np.asarray(bajar(ident, 'ao', lado).convert('L')).astype(np.float32)[..., None] / 255
     color *= 0.25 + 0.75 * ao
     if gris:
         lum = color @ np.array([0.2126, 0.7152, 0.0722])
         color = np.repeat((lum / lum.mean() * 0.8)[..., None], 3, -1)
     return {'map': webp(Image.fromarray((np.clip(color, 0, 1) * 255).astype(np.uint8))),
-            'normalMap': webp(bajar(ident, 'nor'), 90), 'roughnessMap': webp(bajar(ident, 'rough'), 80)}
+            'normalMap': webp(bajar(ident, 'nor', lado), 90), 'roughnessMap': webp(bajar(ident, 'rough'), 80)}
 
 
 def leer_hdr(ruta):
