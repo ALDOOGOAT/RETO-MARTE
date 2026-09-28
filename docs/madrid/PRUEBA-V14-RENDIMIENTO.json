@@ -1,0 +1,60 @@
+{
+  "fecha": "2026-09-28T14:41:06-06:00",
+  "objetivo": "Recuperar aproximadamente 55 FPS en Intel UHD con despiece fino y goteo visibles",
+  "resultado": "La mejora de FPS en Intel no se pudo medir ni dar por alcanzada en este entorno.",
+  "fpsIntel": {
+    "antes": null,
+    "despues": null,
+    "motivo": "El sandbox no expone /dev/dri; glxinfo no abre DISPLAY=:0 ni :1. Chrome headless termina con crashpad setsockopt: Operation not permitted antes de abrir CDP. La interfaz de navegador tampoco ofrece una sesión disponible."
+  },
+  "rendererInfo": {
+    "drawCallsAntes": null,
+    "drawCallsDespues": null,
+    "triangulosAntes": null,
+    "triangulosDespues": null,
+    "motivo": "No hubo contexto WebGL ejecutable en esta sesión; no se sustituyeron estos contadores por estimaciones."
+  },
+  "metodoProxy": "Node 20 ejecutó en vm los bloques reales de despiece y VFX, con Three.js local. Cada cifra es la mediana de 9 lotes de 20000 actualizaciones sobre el mismo fixture, antes y después de cada cambio. Son tiempos aislados de JavaScript, no tiempos de fotograma ni FPS.",
+  "medidasProxy": [
+    {
+      "ruta": "moverDespiece",
+      "fixture": "218 Object3D, gasómetro estable, sin inspección, delta de 1/60 s",
+      "armadoMsAntes": 0.012183,
+      "armadoMsDespues": 0.000156,
+      "despieceMsAntes": 0.012247,
+      "despieceMsDespues": 0.000202,
+      "retornoExactoT0": true
+    },
+    {
+      "ruta": "efectosV12.actualizar",
+      "fixture": "20 bandejas; cartucho 9 inspeccionado durante despiece; 6 gotas y 2 impactos",
+      "msAntes": 0.001029,
+      "msDespues": 0.000234,
+      "buffersMarcadosPorActualizacionEstableAntes": 4,
+      "buffersMarcadosPorActualizacionEstableDespues": 0,
+      "versionesPorBufferEn180000ActualizacionesAntes": 180000,
+      "versionesPorBufferEn180000ActualizacionesDespues": 0,
+      "llamadasVfxEstructuralesAntes": 2,
+      "llamadasVfxEstructuralesDespues": 2,
+      "nota": "El uniforme de tiempo sigue avanzando; al mover la pieza, las matrices se vuelven a cargar. Las llamadas VFX estructurales no son renderer.info.render.calls."
+    }
+  ],
+  "cambios": [
+    "milpa360-simulador.html: no recorrer las 218 piezas cuando ni el despiece ni el gasómetro cambiaron; invalidar al devolver una pieza.",
+    "milpa360-visual.js: reenviar matrices y fases del goteo inspeccionado sólo al cambiar la transformación de la pieza o el cartucho extraído.",
+    "verificar_vfx_v12.mjs: comprobar que una pieza inmóvil no reenvía la matriz y que una pieza desplazada sí la reenvía."
+  ],
+  "pruebas": {
+    "verificar_despiece_fino": "PASS --sintetico: 9 comprobaciones, incluido retorno exacto en t=0 y t=1. CDP completo intentado con MILPA_VISIBLE=1 MILPA_GPU=1: FAIL ambiental antes de navegar, Chrome terminó null en la línea 186.",
+    "verificar_vfx_v12": "PASS: 20 cartuchos en inspección/despiece, 6 gotas y 2 impactos en pieza extraída, shaders y caché de matrices.",
+    "verificar_gestos": "PASS: clasificación, votos, golpes, tick y ciclo de carga con landmarks sintéticos.",
+    "git_diff_check": "PASS"
+  },
+  "repeticionIntel": "Fuera de este sandbox: MILPA_GPU=1 MILPA_VISIBLE=1 node --experimental-websocket analysis/medir_rendimiento_v14.mjs /tmp/milpa-v14-intel.json. El arnés mide cuatro poses a 1920x1080 con DPR 1, sol 0, VFX activo; guarda FPS, tiempo JS, renderer.info.render.calls y triangles. Para comparar antes/después se requiere ejecutarlo sobre ambas versiones en la misma Intel.",
+  "pendienteVisual": [
+    "Vista general armada y despiece completo con gotas visibles en el cartucho inspeccionado.",
+    "Cartucho de cultivo 9 durante inspección y movimiento: las gotas siguen la pieza sin saltos.",
+    "Rearmado a t=0 y devolución tras pinza/puño: piezas, tuberías y volúmenes de selección en su origen.",
+    "Detalle cercano del cartucho, luz LED y sombras, en español e inglés."
+  ]
+}
