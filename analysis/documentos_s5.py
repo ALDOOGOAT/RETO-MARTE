@@ -1,7 +1,7 @@
 """Exporta memoria S5, flujos vigentes y PDF de respaldo del deck (si hay PNG).
 Usa ReportLab instalado en el runtime de Codex; no modifica los planos históricos.
 """
-import html, json, re, subprocess, sys, tempfile
+import html, json, posixpath, re, subprocess, sys, tempfile
 from urllib.parse import urlparse
 from pathlib import Path
 from reportlab.lib import colors
@@ -34,7 +34,7 @@ styles.add(ParagraphStyle('Cell',fontName='Deja',fontSize=8,leading=11))
 def markup(s):
     s=html.escape(s)
     # Conservar URL externas: prefijarlas rompía las fuentes del PDF.
-    s=re.sub(r'\[([^\]]+)\]\(([^)]+)\)',lambda m:f'<a href="{m[2] if urlparse(m[2]).scheme or m[2].startswith("#") else "../../docs/madrid/"+m[2]}" color="#26667c">{m[1]}</a>',s)
+    s=re.sub(r'\[([^\]]+)\]\(([^)]+)\)',lambda m:f'<a href="{m[2] if urlparse(m[2]).scheme or m[2].startswith("#") else "../../"+posixpath.normpath("docs/madrid/"+m[2])}" color="#26667c">{m[1]}</a>',s)
     return re.sub(r'\*\*(.+?)\*\*',r'<b>\1</b>',s)
 story=[];lines=source.splitlines();i=0
 while i<len(lines):

@@ -18,7 +18,8 @@ for p in ['config/*.json','analysis/*.py','analysis/*.cjs','analysis/*.mjs',
           'outputs/madrid-s5/planos/*.png','outputs/madrid-s5/*.pdf','outputs/madrid-s5/*.pptx',
           'outputs/madrid-s5/*.blend','outputs/madrid-s5/*.glb','outputs/madrid-s5/*.mp4',
           'outputs/madrid-s5/VERIFICACION-*.json','outputs/madrid-s5/LEEME.md','outputs/madrid-s5/blender-S5.png','outputs/madrid-s5/blender-exterior-V4.png','README.md',
-          'MISION-MADRID-MILPA360.md','CONTEXTO-RETO-MARTE.md','INVESTIGACION-MARTE.md']:
+          'MISION-MADRID-MILPA360.md','CONTEXTO-RETO-MARTE.md','INVESTIGACION-MARTE.md',
+          'IDEA-DESCARTADA-MURO-CAPILAR.md']:
     add(p)
 add('docs/madrid/PRUEBA-P3-NAVEGADOR.json')
 add('docs/madrid/PRUEBA-B19-NAVEGADOR.json')

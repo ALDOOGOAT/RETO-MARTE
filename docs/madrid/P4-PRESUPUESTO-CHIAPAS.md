@@ -235,7 +235,7 @@ pedido. No cerrar la lista hasta completar también montaje, validación, energ�
 | Planos y laminado de maqueta, mecanismos y embalaje | Equipo técnico | Tras cierre geométrico S5, cotizar fabricación y material sin duplicación |
 | IVA de PR06–08, destino, stock y plazo de todos los pedidos | Equipo/compras | Confirmar antes de comprar; no se contactó a proveedores |
 | Segundo proveedor equivalente de accionamiento, fabricación e instrumentos | Equipo/compras | Cerrar equivalencia técnica antes de comparar importes |
-| Sitio/operador/variedad y línea base de Tuxtla | Equipo + agrónomo por designar | Aprobar alcance exploratorio y registrar datos reales |
+| Sitio/operador/variedad y línea base de Tuxtla | Equipo + agrónomo por designar | Contactar candidatos de P5 §6 (IGNITE UNACH, UNICACH, ITTG, Secretaría del Campo); aprobar alcance exploratorio y registrar datos reales |
 | B7, B10, B15–B19 y mediciones mecánicas | Equipo/mentores | Mantener hipótesis visibles; no declarar estructura/acceso aprobados |
 | Reglas de exposición y fecha/formato finales B1–B4 | Organizador vía equipo | Ajustar embalaje, maqueta y entregables |
 

@@ -206,6 +206,19 @@ Sitio, operador y variedad están por confirmar. Indicadores: agua nueva/kg de
 cosecha utilizable, tiempo/kg, energía y supervivencia. Sin cosecha no se calcula
 L/kg. El diseño es exploratorio, no una demostración del sistema completo.
 
+Candidatos identificados en fuentes públicas, **por contactar; ninguno confirmado**:
+incubación y mentoría en IGNITE UNACH, coorganizadora del Reto Marte
+([UNACH, 7 jul 2026](https://dcs.unach.mx/component/k2/item/8282-anuncian-el-reto-marte-unach-2026));
+mentoría académica de la Dra. Adriana Caballero Roque (UNICACH), que dirigió la tesis
+[«Huertos urbanos como estrategia hacia la soberanía alimentaria en Tuxtla Gutiérrez»](https://hdl.handle.net/20.500.12753/5286)
+(2024); microbiología del sustrato con el grupo de biofertilizantes del
+[Tecnológico de Tuxtla](https://tuxtla.tecnm.mx/investigadores-del-ittg-impulsan-innovacion-cientifica-para-fortalecer-el-campo-mexicano/);
+y la Dirección de Agricultura Protegida de la
+[Secretaría del Campo de Chiapas](https://chiapas.gob.mx/funcionarios/estatal/ejecutivo/secretaria-campo).
+Posible sitio: huertos «Muil Itaj» de la [UVM Tuxtla](https://saladeprensa.uvm.mx/huertos-ecologicos/)
+(nota de 2014; vigencia sin confirmar). No hay línea base pública de agua en huertos de
+Tuxtla: se mide en el propio piloto.
+
 S4 separa presupuesto Madrid, piloto Chiapas y recursos del concepto marciano.
 Hay 19 partidas Madrid y 20 Chiapas. Las sumas conocidas con fiscalidad resuelta
 son 1,050.96 y 139.20 MXN respectivamente: **subtotales incompletos, no costes de
@@ -240,6 +253,27 @@ atribuye cambios a comentarios del jurado que aún no se han recibido documental
 | S3 | Piso y cama separados; área útil con reborde | La geometría redujo alimento estimado y dejó visible la entrada pendiente |
 | S4 | Presupuesto trazable y piloto limitado | Precio parcial no es presupuesto cerrado; render no es experimento |
 | S5 | Defensa y modelo visual sincronizados | Mostrar mecanismos y brechas en la misma revisión |
+
+### Qué cambiamos y por qué
+
+1. **Un solo diámetro.** P0 encontró cinco diámetros del casco circulando a la vez: 3.5,
+   4.56, 4.76, 5.40 y 6.00 m ([AUDITORIA §3.1](AUDITORIA.md)); el de 4.76 m venía de
+   bandejas cuadradas. Quedó Ø 4.56 m con bandejas en sector anular, que cubren el anillo sin
+   esquinas sobrantes, generado desde config/milpa360.parameters.json e inyectado en
+   simulador y láminas ([P2 §5](P2-GEOMETRIA.md)).
+
+2. **Un anillo en vez de dos.** Con dos anillos contrarrotantes, pasar un lote de
+   regeneración a cultivo exigía palear sustrato entre bandejas de forma distinta. La
+   arquitectura B usa 20 cartuchos idénticos: el mismo cartucho avanza de S8 a C1. Cuesta
+   −36 % de área de cultivo en el corte P2 ([P2 §0 y §2](P2-GEOMETRIA.md)).
+
+3. **Descanso de 56 a 152 soles.** En el anillo interior de ocho bandejas, cada una pasaba
+   56 soles fuera del aviario en un ciclo de 64. En el anillo único pasa 152 soles fuera, en un
+   ciclo de 160 ([P2 §2 y §6](P2-GEOMETRIA.md)). Ese intervalo no acredita regeneración biológica.
+
+4. **Muro capilar descartado.** La primera idea no tenía animales, ni biogás, ni rotación
+   del sustrato, y prometía blindaje y cero mantenimiento sin respaldo. Conservamos el
+   nombre MILPA y su estado del arte ([idea descartada](../../IDEA-DESCARTADA-MURO-CAPILAR.md)).
 
 La hipótesis diferencial es vincular historia del lote, tratamiento y autorización,
 con aislamiento para limitar contaminación cruzada. Debe compararse contra sistemas

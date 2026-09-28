@@ -1,5 +1,45 @@
 # ESTADO · preparación para Madrid
 
+> **Cifras de agua, 28 sep 2026:** «700 mil sin agua» sale del análisis. Viene de We Are Water
+> (2024) y el INEGI no la publica. En su lugar: 24 % o menos de la población de Chiapas con agua
+> diaria dentro de la vivienda frente al 53.4 % nacional (INEGI 12/26, 2024) y 8.05 % de las
+> viviendas sin agua entubada (DOF, PNV 2026-2030, ENIGH 2024). P5 §6 lista candidatos para el
+> piloto de Tuxtla, por contactar. Sólo texto y fuentes: no cambia parámetros ni cierra
+> ensayos.
+
+> **V11–V12 · agarrar piezas y realismo, 27 sep 2026:** con la pinza se saca una pieza del módulo
+> (7 estaciones y un cartucho con sus plantas) para girarla, escalarla y leer su ficha, y vuelve
+> exacta a su sitio. Riego con gotas visibles, luz LED hortícola fingida en el shader (sin luces
+> nuevas), burbujas del biogás, polvo en los haces, hojas con ventilación y LEDs de estado. En la
+> Intel: 64 fps con efectos frente a 63 sin ellos; P3 en verde ([evidencia](PRUEBA-V12-REALISMO.json)).
+> Las gotas están exageradas por legibilidad. Sólo representación: no cambia parámetros ni cierra
+> ensayos físicos.
+
+> **V10 · gestos, 27 sep 2026:** modo opcional para controlar el módulo con la mano por webcam
+> (MediaPipe desde CDN, sólo al pulsar «Gestos»): orbitar, zoom, desplazar, despiece continuo con
+> dos manos (9 subsistemas) y fichas con costo por partida de `config/milpa360.presupuesto.json`
+> («por cotizar» donde no hay precio). En la Intel: 60 fps con gestos frente a 63 sin ellos,
+> inferencia a ~7 Hz, 0 HTTP al cargar y fallo limpio sin red
+> ([evidencia](PRUEBA-V10-GESTOS.json)). Requiere internet la primera vez. Sólo interacción y
+> presentación: no cambia parámetros ni cierra ensayos físicos.
+
+> **Sustento, 26 sep 2026:** [qué cambiamos y por qué](P5-DEFENSA.md), §7 de la memoria.
+> Deck 02: «7.4–10.9 t en 730 soles» pasa a 10.5 t en 730 días (2.39 kg/persona/día con
+> empaque, BVAD; el 2.5 kg no tenía fuente) y el perclorato a ≈0.5 % (Phoenix: 0.4–0.6 %).
+> Deck 08 deja de prometer retorno: conserva la transferencia subsistema por subsistema como
+> hipótesis y añade el protocolo del piloto de Tuxtla (L/kg, min/kg, kWh/kg, partidas
+> C01–C16), con INEGI en lugar de cifras de prensa (A45, A46, A48, A49). Sitio, operador,
+> mentor y línea base siguen pendientes. «700 mil sin agua» queda sin fuente verificada;
+> INEGI 2020 da ≈140 mil viviendas sin agua entubada. Deck histórico sin re-sembrar ni
+> republicar (el PPTX S5 vigente no tenía estas cifras). Móvil: la isla de voz tapaba la
+> fila de vistas (V9); en reposo queda como orbe en la esquina. Sólo texto, fuentes y
+> maquetación: no cambia parámetros ni cierra ensayos físicos.
+
+> **Actualización V9, 26 sep 2026:** [una calidad, fluida, con voz](MEJORA-VISUAL-V9.md).
+> Sin selector de calidad ni posprocesado (costaba ~44 ms en la Intel integrada): módulo 80–106 FPS,
+> planeta y acceso 165. Texturas 2K, planeta Viking 4K con relieve MOLA, isla de voz ES/EN.
+> Sólo representación: no cambia parámetros ni cierra ensayos físicos.
+
 > **Actualización V8, 25 sep 2026:** [personas escaneadas, luz y cámara](MEJORA-VISUAL-V8.md).
 > Avatares Rocketbox con animación real, GTAO + brillo + ACES, terreno y rocas escaneados,
 > cámara con resorte. 137.7 FPS alto / 94.7 FPS máxima locales; MP4 en `outputs/pitch-v8/`.
