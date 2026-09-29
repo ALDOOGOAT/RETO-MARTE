@@ -25,7 +25,7 @@
     // La proximidad también se limita a una falange media del índice (1/3 de su cadena): Z puede
     // inflar la palma. La cadena evita depender de una sola falange que se acorta al filtrar poses.
     recto:.85,curvo:.7,pinza:0.35,pinzaDedo:1/3,pinzaFuera:1.2,pinzaRectoMax:.93,quietud:0.25,quietaMs:1000,
-    // A ~7 Hz: cambia de gesto con votosMin de los últimos `votos` cuadros y ≥ histeresisMs; un
+    // Cambia de gesto con votosMin de los últimos `votos` cuadros y ≥ histeresisMs; un
     // 'ninguno' breve con la mano aún en cámara se aguanta toleranciaMs sin soltar el gesto.
     histeresisMs:100,votos:3,votosMin:2,toleranciaMs:250,
     sepMin:1.5,sepMax:5,margen:0.1,esperaMs:600,radioEspera:0.035,
@@ -35,7 +35,7 @@
     rectPuno:.45,rectAbierta:.92,estallarBaja:.35,estallarAlta:.8,estallarMs:350,estallarEnfriaMs:800,
     golpeSilencioMs:700,despieceRetomar:.1,
     // MediaPipe: confianzas mínimas (0.5 por defecto) y ancho del cuadro que recibe el worker.
-    confDeteccion:.35,confPresencia:.35,confSeguimiento:.35,anchoCuadro:384,calidadCuadro:'medium',
+    confDeteccion:.35,confPresencia:.35,confSeguimiento:.35,anchoCuadro:640,calidadCuadro:'medium',
     intervaloMinMs:33,suavizadoMs:45,delegado:typeof location!=='undefined'&&new URLSearchParams(location.search).get('gestos')==='gpu'?'GPU':'CPU',
     manosAdaptativas:false,deslizarVel:3.5,deslizarMin:.9};
   const pick=(es,en)=>window.MILPA_I18N?MILPA_I18N.pick(es,en):es;
@@ -122,7 +122,7 @@
   function emitir(evento,datos){for(const fn of oyentes.get(evento)||[])try{fn(datos);}catch(e){console.error(e);}}
 
   /* ---------- Motor: pistas → filtro → golpes → clasificación → votos → eventos ---------- */
-  let pistas=[],pistaActiva=null,previo=null,activo='ninguno',votos=[],vistoActivo=-Infinity;
+  let pistas=[],pistaActiva=null,previo=null,activo='ninguno',votos=[],candidato='',candidatoDesde=0,vistoActivo=-Infinity;
   let ultimoGolpe=-Infinity,enfriaGolpe=-Infinity,esperaDos=false,baseDespiece=null,golpeHud=null;
   let anterior=null,ancla=null,anclaT=0,disparado=false,cursorVisible=false,ultimoDespiece=-1,aspecto=4/3,ultimoDeltaT=0;
   const pendientes={orbitar:{dx:0,dy:0},desplazar:{dx:0,dy:0},pinza_mover:{dx:0,dy:0}};
@@ -148,18 +148,21 @@
   }
   const aPantalla=p=>({x:p.x/aspecto,y:p.y});
   const mapear=p=>{const m=AJUSTES.margen,q=aPantalla(p);return {x:limitar((q.x-m)/(1-2*m)),y:limitar((q.y-m)/(1-2*m))};};
-  function reiniciarMotor(){pistas=[];pistaActiva=null;votos=[];previo=null;activo='ninguno';vistoActivo=ultimoGolpe=enfriaGolpe=-Infinity;esperaDos=false;baseDespiece=golpeHud=null;
+  function reiniciarMotor(){pistas=[];pistaActiva=null;votos=[];candidato='';candidatoDesde=0;previo=null;activo='ninguno';vistoActivo=ultimoGolpe=enfriaGolpe=-Infinity;esperaDos=false;baseDespiece=golpeHud=null;
     anterior=ancla=barrido=null;disparado=false;ultimoDespiece=-1;ultimoDato=-Infinity;ultimoTick=ultimoDeltaT=0;ultimoDesliz=-Infinity;limpiarPendientes();ocultarCursor();}
   function ocultarCursor(){if(cursorVisible){cursorVisible=cursor.visible=false;emitir('cursor',{x:0,y:0,progreso:0,visible:false});hudCursor(null);}}
   // Cada mano conserva su pista (filtro One Euro + apertura reciente) emparejándola con la muñeca más
   // cercana del cuadro anterior: que entre o salga la otra mano ya no reinicia el filtro (ni da saltos).
   // ponytail: emparejado voraz por distancia, suficiente para 2 manos; Hungarian si algún día son más.
-  function emparejar(manos,t){
+  function emparejar(manos,t,anteriorDato){
     pistas=pistas.filter(p=>t-p.t<=500);
     const pares=[],suyas=[];
     manos.forEach((m,i)=>pistas.forEach(p=>{const d=dist2(m[0],p.muneca);if(d<AJUSTES.emparejar)pares.push([d,i,p]);}));
     for(const [,i,p] of pares.sort((a,b)=>a[0]-b[0]))if(!suyas[i]&&!suyas.includes(p))suyas[i]=p;
-    return manos.map((m,i)=>{let p=suyas[i];if(!p)pistas.push(p={filtro:unEuro(),historia:[],apertura:0,rectitud:[]});p.muneca=m[0];p.t=t;return p;});
+    return manos.map((m,i)=>{let p=suyas[i];if(!p)pistas.push(p={filtro:unEuro(),historia:[],apertura:0,rectitud:[]});
+      // Mantener identidad tras una oclusión no significa interpolar posiciones/gestos invisibles.
+      else if(p.t!==anteriorDato){p.filtro=unEuro();p.historia=[];}
+      p.muneca=m[0];p.t=t;return p;});
   }
   // Golpe: la apertura cruza de puño a abierta (estallar) o al revés (armar) en ≤ estallarMs. Se mide
   // sobre las manos crudas porque el One Euro retrasa justo ese flanco. El extremo cerrado ha de ser un
@@ -188,23 +191,33 @@
     ultimoGolpe=t;enfriaGolpe=t+AJUSTES.estallarEnfriaMs;golpeHud={tipo,t};emitir(tipo,datos);
   }
   function alimentar(manos,t){
-    ultimoDato=t;
+    const anteriorDato=ultimoDato;ultimoDato=t;
     // Orden estable (de izquierda a derecha); el filtro de cada mano lo decide emparejar().
     manos=[...manos].sort((a,b)=>a[0].x-b[0].x);
-    const suyas=emparejar(manos,t);
+    const suyas=emparejar(manos,t,anteriorDato);
+    // Una oclusión corta conserva el gesto, pero no una trayectoria que ya no vemos, incluso
+    // si otra mano permanece en cámara mientras se pierde la que controla el movimiento.
+    if(!manos.length||pistaActiva&&!suyas.includes(pistaActiva)){
+      limpiarPendientes();previo=anterior=ancla=barrido=null;disparado=false;ultimoDeltaT=0;ocultarCursor();}
+    if(!manos.length)esperaDos=false;
     const suaves=manos.map((m,k)=>{const v=suyas[k].filtro(m.flatMap(p=>[p.x,p.y,p.z||0]),t);return m.map((_,i)=>({x:v[i*3],y:v[i*3+1],z:v[i*3+2]}));});
     golpes(manos,suyas,t);
     const c=clasificar(suaves,previo,t);
     // La palma que se queda quieta justo después de un golpe es la cola del golpe: no cierra.
     if(c.gesto==='palma_quieta'&&c.quietaDesde<=ultimoGolpe+AJUSTES.golpeSilencioMs)c.gesto='abierta';
-    votos=votos.filter(v=>t-v.t<=500);votos.push({g:c.gesto,t});if(votos.length>AJUSTES.votos)votos.shift();
+    votos=votos.filter(v=>t-v.t<=500);if(!votos.length)candidato='';
+    votos.push({g:c.gesto,t});if(votos.length>AJUSTES.votos)votos.shift();
+    if(candidato&&votos.filter(v=>v.g===candidato).length<AJUSTES.votosMin)candidato='';
+    const mios=votos.filter(v=>v.g===c.gesto);
+    // El tiempo del candidato no depende del tamaño de la ventana: tres cuadros a 30 Hz sólo
+    // cubren 67 ms y antes nunca alcanzaban los 100 ms necesarios para reconocer ningún gesto.
+    if(mios.length>=AJUSTES.votosMin&&candidato!==c.gesto){candidato=c.gesto;candidatoDesde=mios[0].t;}
     // Tolerancia: con la mano aún en cámara, un 'ninguno' breve (cuadro borroso, dedo a medio camino),
     // o una de las dos manos que se pierde un instante, no suelta el gesto: ni eventos ni limpieza.
     const aguanta=activo!=='ninguno'&&c.manos>0&&t-vistoActivo<AJUSTES.toleranciaMs&&
       (c.gesto==='ninguno'||activo==='dos_manos'&&c.manos>=2&&c.pose==='abierta');
     if(c.gesto!==activo&&!aguanta){
-      const mios=votos.filter(v=>v.g===c.gesto);
-      if(mios.length>=AJUSTES.votosMin&&t-mios[0].t>=AJUSTES.histeresisMs){
+      if(candidato===c.gesto&&mios.length>=AJUSTES.votosMin&&t-candidatoDesde>=AJUSTES.histeresisMs){
         if(activo==='pinza')emitir('pinza_fin');
         if(activo==='apuntar'||activo==='pinza')ocultarCursor();
         limpiarPendientes();
@@ -259,8 +272,8 @@
 
   /* ---------- Cámara, worker y ciclo de vida ---------- */
   let estado='apagado',mensaje=()=>'',detalle='',sesion=0,promesa=null;
-  let flujo=null,video=null,worker=null,cancelarCarga=null,cancelarActivacion=null,temporizador=0,ocupado=false,hiloCuadro=0;
-  const muestras={hilo:[],inferencia:[],opciones:[],tiempos:[]};
+  let flujo=null,video=null,worker=null,cancelarCarga=null,cancelarActivacion=null,temporizador=0,ocupado=false,hiloCuadro=0,inicioCuadro=0;
+  const muestras={hilo:[],inferencia:[],opciones:[],latencia:[],tiempos:[]};
   function cambiarEstado(e,textoEs,textoEn,det=''){
     estado=e;mensaje=()=>pick(textoEs,textoEn);detalle=det;
     if(det)console.warn('[gestos]',det);
@@ -316,8 +329,8 @@
   }
   async function abrirCamara(mia){
     if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw Object.assign(new Error('getUserMedia no disponible'),{name:'NotSupported'});
-    // 640×480 nativos: el cuadro se reduce a anchoCuadro en createImageBitmap (pedir 320 dejaba sin
-    // detalle la mano que MediaPipe recorta y amplía a 224 px).
+    // Conservar 640×480 nativos: reducir antes de que MediaPipe recorte la mano pierde detalle
+    // de dedos pequeños. No ampliar cámaras cuya resolución nativa sea menor.
     const s=await navigator.mediaDevices.getUserMedia({audio:false,video:{width:{ideal:640},height:{ideal:480},frameRate:{ideal:30},facingMode:'user'}});
     if(mia!==sesion){s.getTracks().forEach(p=>p.stop());throw new Error('carga cancelada');}
     const v=document.createElement('video');v.muted=true;v.playsInline=true;v.srcObject=s;
@@ -375,8 +388,8 @@
   function capturar(){
     if(ocupado||!worker)return;
     if(document.hidden||!video||video.readyState<2||!video.videoWidth){programarCaptura(100);return;}
-    ocupado=true;const t0=performance.now(),mia=sesion,w=worker;
-    const ancho=AJUSTES.anchoCuadro,alto=Math.round(ancho*video.videoHeight/video.videoWidth);
+    ocupado=true;const t0=performance.now(),mia=sesion,w=worker;inicioCuadro=t0;
+    const ancho=Math.min(AJUSTES.anchoCuadro,video.videoWidth),alto=Math.round(ancho*video.videoHeight/video.videoWidth);
     createImageBitmap(video,{resizeWidth:ancho,resizeHeight:alto,resizeQuality:AJUSTES.calidadCuadro}).then(cuadro=>{
       if(mia!==sesion||worker!==w){cuadro.close();return;}
       const t1=performance.now();ultimaCaptura=t1;
@@ -395,7 +408,7 @@
     for(let k=0;k<data.n;k++){const m=[];for(let i=0;i<21;i++){const j=k*63+i*3;m.push({x:data.puntos[j],y:data.puntos[j+1],z:data.puntos[j+2]});}manos.push(m);}
     alimentar(manos,data.ts);
     necesitaDos=activo==='abierta'||activo==='dos_manos'||activo==='escalar';
-    anotar(muestras.inferencia,data.ms);anotar(muestras.hilo,hiloCuadro+performance.now()-t0);
+    anotar(muestras.inferencia,data.ms);anotar(muestras.hilo,hiloCuadro+performance.now()-t0);anotar(muestras.latencia,t0-inicioCuadro);
     if(data.opcionesMs)anotar(muestras.opciones,data.opcionesMs);
     muestras.tiempos.push(t0);while(muestras.tiempos[0]<t0-3000)muestras.tiempos.shift();
   }
@@ -420,7 +433,7 @@
     // apertura/rectitud por mano del último cuadro (sin filtrar): con ellas se calibran recto, curvo,
     // rectPuno, rectAbierta y los umbrales de estallar con la mano real.
     const vivas=pistas.filter(p=>p.t===ultimoDato),r2=v=>+v.toFixed(2);
-    return {hilo_ms:resumen(muestras.hilo),inferencia_ms:resumen(muestras.inferencia),opciones_ms:resumen(muestras.opciones),
+    return {hilo_ms:resumen(muestras.hilo),inferencia_ms:resumen(muestras.inferencia),opciones_ms:resumen(muestras.opciones),captura_resultado_ms:resumen(muestras.latencia),
       hz:ts.length>1?+(1000*(ts.length-1)/(ts.at(-1)-ts[0])).toFixed(1):0,
       apertura:vivas.map(p=>r2(p.apertura)),rectitud:vivas.map(p=>p.rectitud.map(r2))};
   }

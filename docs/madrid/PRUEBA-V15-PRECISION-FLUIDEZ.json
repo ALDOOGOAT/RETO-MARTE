@@ -1,0 +1,506 @@
+{
+  "version": "V15 · precisión de gestos, continuidad y materiales",
+  "fecha": "2026-09-28T23:39:02.136Z",
+  "base_git": "871d2290910afe84d97472b965cc9e620feba911",
+  "estado": "Cambios locales comprobados en Chrome visible con Intel integrada; sin commit ni publicación de esta versión.",
+  "cambios": [
+    "Confirmación temporal del gesto independiente de la ventana de votos: corrige gestos que nunca se confirmaban a 24–60 Hz.",
+    "Pérdida de mano cancela deltas y reinicia referencias al reaparecer, incluida la pérdida de la mano activa mientras sigue visible otra. Cancela también la espera de dos manos y la quietud acumulada.",
+    "Captura hasta 640 píxeles de ancho, limitada al ancho nativo: conserva más detalle sin ampliar una cámara menor. Un solo fotograma en vuelo y detección en worker CPU.",
+    "Reagarrar una pieza conserva orientación y escala. Resorte analítico para despiece sin inestabilidad a baja frecuencia; cámara y pieza responden más rápido durante el gesto.",
+    "Gotas actualizadas después de la transformación de inspección, eliminando un fotograma de retraso.",
+    "Albedo PBR con oclusión en espacio lineal y compresión suave de luminancia; recubrimientos pintados menos metálicos. Sin mapas, luces ni pases adicionales."
+  ],
+  "render_intel": {
+    "gpu": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL 4.6)",
+    "visible": true,
+    "headless": false,
+    "swiftshader": false,
+    "metodo": "Chrome 1920x1080 DPR1, sol0, play=0, ES, VFX por defecto; precalentamiento de las cuatro poses 3.5 s cada una, 2.5 s estabilización y 6 s muestreo por pose. Tiempo JS: callback bucle completo, incluida llamada renderer.render. rAF p95: intervalos entre fotogramas del bucle. renderer.info.render del último fotograma.",
+    "comparacion": [
+      {
+        "pose": "general",
+        "antes": {
+          "pose": "general",
+          "frames": 360,
+          "duracionMs": 6007.8,
+          "fpsIntel": 59.9,
+          "jsMedianaMs": 7.7,
+          "jsP95Ms": 11.5,
+          "rafP95Ms": 21.7,
+          "drawCalls": 565,
+          "triangulos": 280094,
+          "pixelRatio": 1,
+          "gotas": 72,
+          "gotasInspeccion": 0,
+          "piezas": 218,
+          "despieceT": 0
+        },
+        "despues": {
+          "pose": "general",
+          "frames": 361,
+          "duracionMs": 6008.9,
+          "fpsIntel": 60.1,
+          "jsMedianaMs": 7.3,
+          "jsP95Ms": 10.7,
+          "rafP95Ms": 21,
+          "drawCalls": 565,
+          "triangulos": 280094,
+          "pixelRatio": 1,
+          "gotas": 72,
+          "gotasInspeccion": 0,
+          "piezas": 218,
+          "despieceT": 0
+        },
+        "delta_fps_porcentaje": 0.33
+      },
+      {
+        "pose": "despiece",
+        "antes": {
+          "pose": "despiece",
+          "frames": 363,
+          "duracionMs": 6006.9,
+          "fpsIntel": 60.4,
+          "jsMedianaMs": 7.4,
+          "jsP95Ms": 10.6,
+          "rafP95Ms": 21.4,
+          "drawCalls": 554,
+          "triangulos": 268740,
+          "pixelRatio": 1,
+          "gotas": 72,
+          "gotasInspeccion": 0,
+          "piezas": 218,
+          "despieceT": 1
+        },
+        "despues": {
+          "pose": "despiece",
+          "frames": 358,
+          "duracionMs": 6013.3,
+          "fpsIntel": 59.5,
+          "jsMedianaMs": 7.4,
+          "jsP95Ms": 10.6,
+          "rafP95Ms": 21.4,
+          "drawCalls": 554,
+          "triangulos": 268740,
+          "pixelRatio": 1,
+          "gotas": 72,
+          "gotasInspeccion": 0,
+          "piezas": 218,
+          "despieceT": 1
+        },
+        "delta_fps_porcentaje": -1.49
+      },
+      {
+        "pose": "detalle",
+        "antes": {
+          "pose": "detalle",
+          "frames": 301,
+          "duracionMs": 6010.7,
+          "fpsIntel": 50.1,
+          "jsMedianaMs": 6,
+          "jsP95Ms": 8.5,
+          "rafP95Ms": 24.7,
+          "drawCalls": 244,
+          "triangulos": 236934,
+          "pixelRatio": 1,
+          "gotas": 72,
+          "gotasInspeccion": 0,
+          "piezas": 218,
+          "despieceT": 0
+        },
+        "despues": {
+          "pose": "detalle",
+          "frames": 295,
+          "duracionMs": 6007.6,
+          "fpsIntel": 49.1,
+          "jsMedianaMs": 5.9,
+          "jsP95Ms": 8.7,
+          "rafP95Ms": 25.5,
+          "drawCalls": 245,
+          "triangulos": 237124,
+          "pixelRatio": 1,
+          "gotas": 72,
+          "gotasInspeccion": 0,
+          "piezas": 218,
+          "despieceT": 0
+        },
+        "delta_fps_porcentaje": -2.0
+      },
+      {
+        "pose": "inspeccion_despiece",
+        "antes": {
+          "pose": "inspeccion_despiece",
+          "frames": 320,
+          "duracionMs": 6008.9,
+          "fpsIntel": 53.3,
+          "jsMedianaMs": 7.8,
+          "jsP95Ms": 13,
+          "rafP95Ms": 26.3,
+          "drawCalls": 607,
+          "triangulos": 269858,
+          "pixelRatio": 1,
+          "gotas": 66,
+          "gotasInspeccion": 6,
+          "piezas": 218,
+          "despieceT": 1
+        },
+        "despues": {
+          "pose": "inspeccion_despiece",
+          "frames": 332,
+          "duracionMs": 6008.6,
+          "fpsIntel": 55.3,
+          "jsMedianaMs": 7.7,
+          "jsP95Ms": 11.5,
+          "rafP95Ms": 25.6,
+          "drawCalls": 607,
+          "triangulos": 269858,
+          "pixelRatio": 1,
+          "gotas": 66,
+          "gotasInspeccion": 6,
+          "piezas": 218,
+          "despieceT": 1
+        },
+        "delta_fps_porcentaje": 3.75
+      }
+    ],
+    "interpretacion": "Rendimiento similar en esta comparación: variaciones entre -2.0 % y +3.8 %. General/despiece rondan 60 FPS; el acercamiento queda en 49.1 FPS. No se promete 60 FPS en todas las vistas.",
+    "limites": "Una pareja de mediciones de 6 s por pose tras precalentamiento, sin intervalo estadístico. El contador GPU es renderer.info.render real; los tiempos JS incluyen la llamada a render y no son temporizadores de ejecución GPU. Personas animadas pueden cambiar ligeramente los conteos por frustum. Captura a DPR1.",
+    "errores": [],
+    "reproducir": "MILPA_GPU=1 MILPA_VISIBLE=1 MILPA_CAPTURAS=/tmp/milpa-v15-capturas node --experimental-websocket analysis/medir_rendimiento_v14.mjs /tmp/milpa-v15-intel.json",
+    "baseline": "Usar MILPA_DEMO_DIR con prototipo-3d del commit base y el mismo script de medición para repetir el antes."
+  },
+  "gestos_sinteticos": {
+    "comparacion": {
+      "antes": {
+        "activacion_pinza_ms": {
+          "7": 142.85714285714286,
+          "15": 133.33333333333334,
+          "24": null,
+          "30": null,
+          "60": null
+        },
+        "movimiento_sin_mano": 0.0013960906710539487,
+        "movimiento_por_oclusion": 0.13997832396272605,
+        "motor_ms": {
+          "mediana": 0.0377030000000218,
+          "p95": 0.07164000000000215
+        }
+      },
+      "despues": {
+        "activacion_pinza_ms": {
+          "7": 142.85714285714286,
+          "15": 133.33333333333334,
+          "24": 125,
+          "30": 100,
+          "60": 100
+        },
+        "movimiento_sin_mano": 0,
+        "movimiento_por_oclusion": 0,
+        "motor_ms": {
+          "mediana": 0.03607699999997749,
+          "p95": 0.06398199999995313
+        }
+      }
+    },
+    "nota": "Coordenadas sintéticas prueban histéresis y continuidad, no precisión del modelo ni latencia real de captura. Los casos 24–60 Hz cubren dispositivos más rápidos que la webcam probada.",
+    "regresiones": [
+      "7/15/24/30/60 Hz",
+      "cambio de candidato",
+      "desaparición total y parcial",
+      "sin arrastre tras oclusión",
+      "sin despiece fantasma al perder dos manos",
+      "sin cierre por tiempo invisible",
+      "captura nativa 640 y cámara pequeña 320",
+      "cancelación durante permisos/carga",
+      "reagarre sin salto",
+      "resorte de despiece a 20/60/120 Hz",
+      "conservación de transformaciones"
+    ]
+  },
+  "camara_real": {
+    "medicion_final": {
+      "estado": "activo",
+      "mensaje": "Show your hand to the camera",
+      "ajustes": [
+        {
+          "width": 640,
+          "height": 480,
+          "frameRate": 30
+        }
+      ],
+      "diagnostico": {
+        "hilo_ms": {
+          "n": 90,
+          "mediana": 0.6,
+          "p95": 1.3
+        },
+        "inferencia_ms": {
+          "n": 90,
+          "mediana": 86,
+          "p95": 107
+        },
+        "opciones_ms": null,
+        "captura_resultado_ms": {
+          "n": 90,
+          "mediana": 89,
+          "p95": 115
+        },
+        "hz": 10.9,
+        "apertura": [
+          0.24
+        ],
+        "rectitud": [
+          [
+            1,
+            0.45,
+            0.36,
+            0.45
+          ]
+        ]
+      },
+      "gesto": "puno",
+      "tracksTrasApagar": [
+        "ended"
+      ]
+    },
+    "sondeo_resoluciones": {
+      "estado": "activo",
+      "mensaje": "Muestra la mano a la cámara",
+      "ajustes": [
+        {
+          "width": 640,
+          "height": 480,
+          "frameRate": 30
+        }
+      ],
+      "pruebas": [
+        {
+          "ancho": 384,
+          "fps": 52.42922055225771,
+          "cuadros": 91,
+          "manos": 0,
+          "medianaMs": 60.89999999944121,
+          "p95Ms": 75
+        },
+        {
+          "ancho": 512,
+          "fps": 52.10067248152664,
+          "cuadros": 86,
+          "manos": 0,
+          "medianaMs": 62.90000000037253,
+          "p95Ms": 79
+        },
+        {
+          "ancho": 640,
+          "fps": 53.16400846623675,
+          "cuadros": 91,
+          "manos": 0,
+          "medianaMs": 61.40000000037253,
+          "p95Ms": 78.40000000037253
+        }
+      ],
+      "tracksTrasApagar": [
+        "ended"
+      ]
+    },
+    "interpretacion": "La webcam real abre a 640×480 / 30 FPS. En el sondeo sin manos, 384/512/640 conservaron un coste similar; por eso se mantienen 640 píxeles. En la última comprobación se detectó una mano, sin un protocolo de gestos etiquetados.",
+    "limites": "No hay medición comparativa de precisión sobre manos del usuario, distancias, iluminación y oclusiones reales. La inferencia observada varía con la escena y carga del equipo; el muestreo final fue 10.9 Hz y captura a resultado p95 115 ms.",
+    "privacidad_evidencia": "No se guardan fotogramas de la webcam ni identificadores de dispositivo en esta evidencia."
+  },
+  "detector_secuencia": {
+    "tipo": "Foto oficial de dos manos, repetida como cámara de prueba; inferencia real MediaPipe en worker.",
+    "fuente": "https://storage.googleapis.com/mediapipe-tasks/hand_landmarker/woman_hands.jpg",
+    "resultados": [
+      {
+        "ancho": 384,
+        "fps": 51.13002348317198,
+        "cuadros": 64,
+        "manos": 64,
+        "dosManos": 64,
+        "gesto": "dos_manos",
+        "medianaMs": 90.5,
+        "p95Ms": 108.19999999925494
+      },
+      {
+        "ancho": 640,
+        "fps": 65.9967001649938,
+        "cuadros": 71,
+        "manos": 71,
+        "dosManos": 71,
+        "gesto": "dos_manos",
+        "medianaMs": 81.79999999981374,
+        "p95Ms": 92.6000000005588
+      },
+      {
+        "ancho": 384,
+        "fps": 38.83268612190038,
+        "cuadros": 55,
+        "manos": 55,
+        "dosManos": 55,
+        "gesto": "dos_manos",
+        "medianaMs": 95.29999999981374,
+        "p95Ms": 146.20000000018626
+      }
+    ],
+    "interpretacion": "Se reconocieron ambas manos en 190/190 resultados de la secuencia estática y el gesto dos_manos se confirmó en las tres pasadas. Esto no mide variedad de gestos reales. Las tasas FPS de esta secuencia no son una comparación controlada de rendimiento."
+  },
+  "texturas": {
+    "fuentes": "Mismas texturas CC0 de Poly Haven y caché existente del exportador.",
+    "generador": "analysis/preparar_texturas_pbr.py",
+    "bytes_js_antes": 14786375,
+    "bytes_js_despues": 13298151,
+    "reduccion_porcentaje": 10.06,
+    "pixeles_albedo_casi_blancos_porcentaje": {
+      "sustrato": {
+        "antes": 24.779,
+        "despues": 0
+      },
+      "suelo": {
+        "antes": 14.928,
+        "despues": 0
+      }
+    },
+    "comprobacion": "Normal maps, roughness maps y HDRI idénticos en bytes; mismas dimensiones y número de mapas. Revisión visual de suelo, sustrato, pintura y detalle antes/después.",
+    "sha256": "77acc988d0f8225970dba73413bb862c1c5acb99cc336e84f360d912a8bb3131"
+  },
+  "idiomas": {
+    "es": {
+      "fichas": 28,
+      "titulos_diagramas_texto": true,
+      "controles_gestos": true
+    },
+    "en": {
+      "fichas": 28,
+      "titulos_diagramas_texto": true,
+      "controles_gestos": true
+    },
+    "voz": "La isla de voz permanece; no se agregan textos de producto ni cambian los resúmenes narrados.",
+    "nota": "La referencia bibliográfica preexistente «tablas / tables 6–8» es bilingüe. Reagarre conserva pose en ambos idiomas.",
+    "errores_runtime": []
+  },
+  "verificaciones": [
+    {
+      "comando": "node analysis/verificar_gestos.mjs",
+      "resultado": "PASS"
+    },
+    {
+      "comando": "node analysis/verificar_despiece_fino.mjs --sintetico",
+      "resultado": "PASS · 12/12"
+    },
+    {
+      "comando": "node analysis/verificar_vfx_v12.mjs",
+      "resultado": "PASS"
+    },
+    {
+      "comando": "node analysis/verificar_inspeccion_v12.mjs",
+      "resultado": "PASS"
+    },
+    {
+      "comando": "node analysis/verificar_p3.cjs",
+      "resultado": "PASS"
+    },
+    {
+      "comando": "node analysis/verificar_acceso.cjs",
+      "resultado": "PASS"
+    },
+    {
+      "comando": "node --check analysis/medir_rendimiento_v14.mjs",
+      "resultado": "PASS"
+    },
+    {
+      "comando": "node --check prototipo-3d/milpa360-gestos.js",
+      "resultado": "PASS"
+    },
+    {
+      "comando": "python3 analysis/preparar_texturas_pbr.py",
+      "resultado": "PASS · exportación y comprobación de albedo"
+    },
+    {
+      "comando": "git diff --check",
+      "resultado": "PASS"
+    },
+    {
+      "comando": "python3 analysis/abrir_simulador.py --comprobar",
+      "resultado": "PASS"
+    }
+  ],
+  "capturas": [
+    "capturas-v15/detalle-antes.png",
+    "capturas-v15/detalle-despues.png",
+    "capturas-v15/general.png",
+    "capturas-v15/inspeccion-en.png"
+  ],
+  "limites": [
+    "Revisión digital y visual; no valida procesos físicos ni biológicos del hábitat.",
+    "La precisión general del reconocimiento necesita una secuencia etiquetada con manos reales del usuario."
+  ],
+  "permiso_camara": {
+    "estado": "Instalado y verificado en dos aperturas del perfil persistente.",
+    "lanzador": "analysis/abrir_simulador.py",
+    "accesos_instalados": [
+      "/home/aldo/Escritorio/MILPA-360.desktop",
+      "/home/aldo/.local/share/applications/milpa360.desktop"
+    ],
+    "perfil": "/home/aldo/.local/share/milpa360/chrome",
+    "origen": "http://127.0.0.1:8765",
+    "permiso": "Excepción nativa de cámara para ese único origen; el micrófono y el origen de control siguen prompt.",
+    "prueba_integracion": {
+      "fecha": "2026-09-28T23:54:42.738Z",
+      "metodo": "Dos aperturas del lanzador real con perfil persistente. Único argumento de test añadido a Chrome: remote-debugging-port=0. Sin fake-ui, Browser.grantPermissions ni cámara falsa.",
+      "sesiones": [
+        {
+          "apertura": 1,
+          "url": "http://127.0.0.1:8765/prototipo-3d/milpa360-simulador.html",
+          "gpu": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL ES 3.2)",
+          "permisos": {
+            "camera": "granted",
+            "microphone": "prompt"
+          },
+          "ajustes": [
+            {
+              "width": 640,
+              "height": 480,
+              "frameRate": 30
+            }
+          ],
+          "tracksActivos": [
+            "live"
+          ],
+          "tracksAlApagar": [
+            "ended"
+          ],
+          "camaraOtroOrigen": "prompt",
+          "errores": []
+        },
+        {
+          "apertura": 2,
+          "url": "http://127.0.0.1:8765/prototipo-3d/milpa360-simulador.html",
+          "gpu": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL ES 3.2)",
+          "permisos": {
+            "camera": "granted",
+            "microphone": "prompt"
+          },
+          "ajustes": [
+            {
+              "width": 640,
+              "height": 480,
+              "frameRate": 30
+            }
+          ],
+          "tracksActivos": [
+            "live"
+          ],
+          "tracksAlApagar": [
+            "ended"
+          ],
+          "camaraOtroOrigen": "prompt",
+          "errores": []
+        }
+      ]
+    },
+    "self_check": "python3 analysis/abrir_simulador.py --comprobar · PASS: rutas públicas, sin escape de directorio, permiso específico, perfil abierto no modificado y lock local obsoleto tolerado.",
+    "intento_previo": "Un intento inicial de integración terminó con estado del detector error, sin registrar detalle; el permiso ya era granted. Se mejoró el diagnóstico del arnés y las dos aperturas completas posteriores pasaron. No se deduce precisión o disponibilidad garantizada del modelo desde este permiso.",
+    "limite": "Se conserva al abrir este acceso en este perfil; borrar sus datos o utilizar otro navegador/origen requiere su propia configuración. La cámara se enciende al activar Gestos. La carga inicial del modelo requiere red.",
+    "referencia_permiso_nativo": "https://support.google.com/chrome/answer/2693767?hl=es"
+  }
+}

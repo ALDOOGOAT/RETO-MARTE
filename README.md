@@ -21,6 +21,13 @@ en Chrome. La página de archivos de GitHub no ejecuta la demo. **Exterior cerra
 muestra la envolvente completa; **Interior** abre el corte de inspección. **Giro 360°**
 mueve la cámara; **Reanudar** mueve la simulación. No son el mismo reloj.
 
+**Gestos con permiso de cámara guardado (Linux + Chrome):** ejecutar
+`python3 analysis/abrir_simulador.py`. Abre el simulador en `http://127.0.0.1:8765`
+con un perfil local dedicado y permiso de cámara para esa dirección. La cámara se
+enciende al pulsar **Gestos** y se apaga al desactivarlo; el servidor termina al cerrar
+la ventana. El perfil se conserva en `~/.local/share/milpa360/chrome`. MediaPipe necesita
+Internet para su carga inicial. `--comprobar` verifica rutas y configuración sin abrir Chrome.
+
 **Proyección con voz** inicia nueve capítulos con subtítulos y audio local. Permite
 pausar, cambiar ES/EN, avanzar, repetir y usar pantalla completa. Al salir se recupera
 el escenario de exploración. En Acceso, **Ver maniobra con voz** explica seis pasos.

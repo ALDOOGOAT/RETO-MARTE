@@ -4,8 +4,10 @@ python3 analysis/preparar_texturas_pbr.py
 
 Cada material lleva color (con la oclusión ya multiplicada), normal OpenGL y rugosidad, en WebP
 y base64. Color y normal van a 2048 donde la cámara se acerca (terreno, sustrato, cubierta); la
-rugosidad, de baja frecuencia, se queda en 1024. Con mipmaps la resolución no cuesta fps, sólo memoria (file:// no deja subir imágenes de disco a WebGL). `sustrato` y `cubierta` se
-guardan en gris de media 0.8: el visor los tiñe con el color de cada estación, como antes.
+rugosidad, de baja frecuencia, se queda en 1024. Se conservan esas dimensiones y los mipmaps
+(file:// no deja subir imágenes de disco a WebGL). `sustrato` y `cubierta` se guardan en gris,
+con el tono medio de entrada en 0.8 y altas luces comprimidas: el visor los tiñe con el color
+de cada estación sin perder relieve al recortar los píxeles claros a blanco.
 El HDRI de Goegap se reduce a 512 × 256 en RGBE: sólo alimenta reflejos, nunca se ve de fondo.
 """
 import base64, io, json, os, pathlib, subprocess
@@ -40,10 +42,16 @@ def webp(im, q=86):
 def material(ident, gris, lado):
     color = np.asarray(bajar(ident, 'diff', lado)).astype(np.float32) / 255
     ao = np.asarray(bajar(ident, 'ao', lado).convert('L')).astype(np.float32)[..., None] / 255
+    # La oclusión reduce luz lineal; multiplicar sRGB hundía demasiado las cavidades.
+    color = np.where(color <= 0.04045, color / 12.92, ((color + 0.055) / 1.055) ** 2.4)
     color *= 0.25 + 0.75 * ao
     if gris:
         lum = color @ np.array([0.2126, 0.7152, 0.0722])
-        color = np.repeat((lum / lum.mean() * 0.8)[..., None], 3, -1)
+        medio_lineal = ((0.8 + 0.055) / 1.055) ** 2.4
+        # Compresión suave: el antiguo reescalado recortaba ~25 % del sustrato a blanco.
+        lum = lum / (lum + max(float(lum.mean()), 1e-6) * (1 / medio_lineal - 1))
+        color = np.repeat(lum[..., None], 3, -1)
+    color = np.where(color <= 0.0031308, color * 12.92, 1.055 * color ** (1 / 2.4) - 0.055)
     return {'map': webp(Image.fromarray((np.clip(color, 0, 1) * 255).astype(np.uint8))),
             'normalMap': webp(bajar(ident, 'nor', lado), 90), 'roughnessMap': webp(bajar(ident, 'rough'), 80)}
 
@@ -80,6 +88,13 @@ def rgbe(f):
 
 if __name__ == '__main__':
     datos = {k: material(*v) for k, v in MATERIALES.items()}
+    # Regresión sobre el WebP final: detalle recuperable y tono comparable al material previo.
+    for nombre in ('sustrato', 'cubierta'):
+        pix = np.asarray(Image.open(io.BytesIO(base64.b64decode(datos[nombre]['map'].split(',', 1)[1]))))
+        blancos = float((pix >= 253).all(-1).mean())
+        assert blancos < 0.005, f'{nombre}: detalle recortado a blanco ({blancos:.2%})'
+        assert 0.65 < pix.mean() / 255 < 0.85, f'{nombre}: luminancia fuera del rango de acabado'
+        print(f'{nombre}: blanco {blancos:.3%}, media {pix.mean() / 255:.3f}, {pix.shape[1]}×{pix.shape[0]}')
     hdr = CACHE / 'goegap_1k.hdr'
     if not hdr.exists():
         subprocess.check_call(['curl', '-sfL', '-o', str(hdr), api('files/goegap')['hdri']['1k']['hdr']['url']])

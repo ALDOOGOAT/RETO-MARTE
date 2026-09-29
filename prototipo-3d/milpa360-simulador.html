@@ -1178,7 +1178,7 @@ function mats(){
                                            side: T.DoubleSide });
   M.costilla= new T.MeshStandardMaterial({ color: 0x9AA3AA, bumpMap:metal,bumpScale:.001,roughnessMap:metal, roughness: 0.42, metalness: 0.72 });
   M.acero   = new T.MeshStandardMaterial({ color: 0xB6BEC5, bumpMap:metal,bumpScale:.001,roughnessMap:metal, roughness: 0.36, metalness: 0.88 });
-  M.oscuro  = new T.MeshStandardMaterial({ color: 0x243948, roughness: 0.42, metalness: 0.48 });
+  M.oscuro  = new T.MeshStandardMaterial({ color: 0x243948, roughness: 0.5, metalness: 0.05 });
   // V8: chapa estriada escaneada (Poly Haven CC0), teñida en el material.
   M.cubierta= new T.MeshStandardMaterial({ color:0x6a747c, ...MILPA_VISUAL.pbr('cubierta',6), roughness: 1, metalness: 0.55 });
   /* Sin `transmission`: ese modo obliga a three a renderizar la escena entera una segunda vez
@@ -1187,9 +1187,10 @@ function mats(){
   M.vidrio  = new T.MeshPhysicalMaterial({ color: 0xCFE0EC, roughness: 0.08, metalness: 0,
                 transparent: true, opacity: 0.30, clearcoat: 0.9, clearcoatRoughness: 0.06,
                 side: T.DoubleSide, depthWrite: false });
-  M.verde   = new T.MeshStandardMaterial({ color: 0x668675,bumpMap:metal,bumpScale:.0006, roughness: 0.52, metalness: 0.30 });
-  M.verde2  = new T.MeshStandardMaterial({ color: 0x3D6252,bumpMap:metal,bumpScale:.0006, roughness: 0.48, metalness: 0.32 });
-  M.azul    = new T.MeshStandardMaterial({ color: 0x5397A8, roughness: 0.28, metalness: 0.5 });
+  // Pintura satinada sobre depósitos y tubos: el reflejo pertenece al recubrimiento dieléctrico.
+  M.verde   = new T.MeshStandardMaterial({ color: 0x668675,bumpMap:metal,bumpScale:.0006, roughness: 0.48, metalness: 0.03 });
+  M.verde2  = new T.MeshStandardMaterial({ color: 0x3D6252,bumpMap:metal,bumpScale:.0006, roughness: 0.5, metalness: 0.03 });
+  M.azul    = new T.MeshStandardMaterial({ color: 0x5397A8, roughness: 0.4, metalness: 0.03 });
   M.cobre   = new T.MeshStandardMaterial({ color: 0xA56A3C, roughness: 0.34, metalness: 0.8 });
   M.ave     = new T.MeshStandardMaterial({ map: texAve, roughness: 0.86, metalness: 0 });
   M.pecho   = new T.MeshStandardMaterial({map:texturaCodorniz('pecho'),roughness:.95});
@@ -2644,7 +2645,16 @@ function moverDespiece(dt){
   if (S.reducido){ despieceVisual = objetivo; velDespiece = 0; }
   else if (despieceVisual !== objetivo || velDespiece !== 0){
     const w = despieceRapido ? 16 : 6.2, z = despieceRapido ? 1 : .74;
-    velDespiece += (w * w * (objetivo - despieceVisual) - 2 * z * w * velDespiece) * dt; despieceVisual += velDespiece * dt;
+    // Resorte exacto: conserva la respuesta a 20/60/120 Hz sin oscilar al seguir las manos.
+    const d = despieceVisual - objetivo, v = velDespiece, a = w * z, e = Math.exp(-a * dt);
+    if (z === 1){
+      const q = (v + w * d) * dt;
+      despieceVisual = objetivo + (d + q) * e; velDespiece = (v - w * q) * e;
+    } else {
+      const b = w * Math.sqrt(1 - z * z), c = Math.cos(b * dt), s = Math.sin(b * dt) / b;
+      despieceVisual = objetivo + e * (d * (c + a * s) + v * s);
+      velDespiece = e * (v * (c - a * s) - w * w * d * s);
+    }
     if (Math.abs(objetivo - despieceVisual) < 1e-4 && Math.abs(velDespiece) < 1e-3){ despieceVisual = objetivo; velDespiece = 0; }
   }
   const gasY = gasometro.userData.gasY;
@@ -2735,6 +2745,10 @@ function devolverPieza(inmediato=false){
 function entrarPieza(n,agarrada=false){
   const p=typeof n==='object'?n:DESPIECE.find(x=>(x.id===n||x.o.name===n)&&x.agarrable!==false);
   if(!p||p.agarrable===false||S.vista!=='habitat'||S.cerrado)return false;
+  if(p===inspeccion.p&&(inspeccion.estado==='INSPECCION'||inspeccion.estado==='AGARRADA')){
+    if(agarrada)inspeccion.estado='AGARRADA';
+    inspeccion.ultimoGiro=performance.now();return true;
+  }
   if(typeof cine!=='undefined'&&cine.state.activo)cine.stop(); // restaura exploración, libera dt y permite la voz de la ficha
   if(inspeccion.estado!=='LIBRE')devolverPieza(true);
   vistaTecnica('orbita');p.o.updateWorldMatrix(true,true);inspeccion.caja.setFromObject(p.o);
@@ -2776,7 +2790,8 @@ function actualizarInspeccion(dt,ahora){
   else for(const eje of EJES_INSPECCION){const delta=x[eje]-inspeccion.destino[eje],v=inspeccion.vel[eje],s=(v+omega*delta)*dt;
     x[eje]=inspeccion.destino[eje]+(delta+s)*expo;inspeccion.vel[eje]=(v-omega*s)*expo;}
   giroInspeccion.set(volviendo?0:inspeccion.pitch,volviendo?0:inspeccion.yaw,0,'YXZ');
-  pivoteInspeccion.quaternion.slerp(quatInspeccion.setFromEuler(giroInspeccion),S.reducido?1:1-Math.exp(-dt*10));
+  const giroDirecto=!volviendo&&ahora-inspeccion.ultimoGiro<250;
+  pivoteInspeccion.quaternion.slerp(quatInspeccion.setFromEuler(giroInspeccion),S.reducido?1:1-Math.exp(-dt*(giroDirecto?18:10)));
   if(!volviendo){
     // La caja reutilizada sigue el pitch y los hijos animados sin suponer que el origen sea el centro.
     pivoteInspeccion.updateWorldMatrix(true,false);
@@ -2985,9 +3000,10 @@ $('quick-explosion').onclick=()=>{if(S.explosion)armar();else estallar();};
 $('giro-camara').onclick=()=>{S.presentacion=!S.presentacion&&!S.reducido;$('giro-camara').setAttribute('aria-pressed',String(S.presentacion));};
 /* Control por gestos (milpa360-gestos.js): un escritor más de orbe, mira y S. La cámara la sigue
    suavizando camaraSuave(); los límites son los del puntero y la rueda. */
+let ultimoMovimientoGestos=-Infinity;
 if(!window.MILPA_GESTOS)$('quick-gestos').hidden=true;else{
   const G=window.MILPA_GESTOS,b=$('quick-gestos'),der=new T.Vector3(),arr=new T.Vector3();let ultimo=null;
-  const tomar=()=>{S.presentacion=false;$('giro-camara').setAttribute('aria-pressed','false');if(cine.state.activo)cine.stop();};
+  const tomar=()=>{ultimoMovimientoGestos=performance.now();S.presentacion=false;$('giro-camara').setAttribute('aria-pressed','false');if(cine.state.activo)cine.stop();};
   b.onclick=()=>{if(G.estado==='activo'||G.estado==='cargando'){devolverPieza(true);G.desactivar();}else G.activar();};
   G.on('estado',({estado,mensaje})=>{
     b.setAttribute('aria-pressed',String(estado==='activo'||estado==='cargando'));b.dataset.estado=estado;
@@ -3494,7 +3510,6 @@ function bucle(ahora){
       if (o.isPointLight) o.intensity = 1.5 * estado.luz;
       else o.material.emissiveIntensity = (VFX_ACTIVOS.includes('lamparas')?5.2:3.4) * estado.luz;
     });
-    vfx.actualizar(dt,estado,carrusel.bandejas.findIndex(b=>b.g===inspeccion.p?.o),S.cerrado,despieceVisual,S.reducido,S.gas);
 
     /* atmósfera de tormenta */
     const mezclaAmbiente=S.play&&!S.reducido?1-Math.exp(-dt*8):1;
@@ -3544,11 +3559,13 @@ function bucle(ahora){
   if(S.proyeccion==='orbita'){
     // Arcos amortiguados (ver MILPA_VISUAL.camaraSuave): recorrido, clic y arrastre comparten el mismo movimiento.
     camara.up.set(0,1,0);
-    camaraOrbital.paso(camara,orbe.theta,orbe.phi,orbe.dist,mira,S.reducido?Infinity:cine.state.activo?2.6:S.transicion>0?9:11,dt);
+    camaraOrbital.paso(camara,orbe.theta,orbe.phi,orbe.dist,mira,S.reducido?Infinity:cine.state.activo?2.6:S.transicion>0?9:ahora-ultimoMovimientoGestos<250?20:11,dt);
     miraVisual.copy(camaraOrbital.mira);
   }
   else {camara.up.set(0,S.proyeccion==='planta'?0:1,S.proyeccion==='planta'?-1:0);camara.position.set(S.proyeccion==='planta'?0:8,S.proyeccion==='planta'?10:1.4,0.001);camara.lookAt(0,S.proyeccion==='planta'?0:1.4,0);}
   actualizarInspeccion(dt,ahora);
+  // El goteo sigue la transformación de este fotograma, también al girar una pieza agarrada.
+  if(S.vista==='habitat')vfx.actualizar(dt,estado,carrusel.bandejas.findIndex(b=>b.g===inspeccion.p?.o),S.cerrado,despieceVisual,S.reducido,S.gas);
   sol.target.position.set(0,S.vista==='habitat'?.8:0,0); sol.target.updateMatrixWorld();
 
   /* ── etiquetas proyectadas ── */

@@ -163,6 +163,70 @@ correr(1500,()=>[mano()]);
 assert.equal(cuenta('cerrar').length,1,'palma quieta 1 s cierra una vez');
 assert.equal(G.estado,'apagado','nada de esto arranca la cámara');
 
+// La histéresis mide tiempo continuo del candidato, no la antigüedad de tres cuadros:
+// a 24/30/60 Hz la ventana anterior nunca llegaba a 100 ms y no reconocía ningún gesto.
+for(const hz of [7,15,24,30,60])for(const [pose,esperado] of [[ABIERTA,'abierta'],[PINZA,'pinza'],[PUNO,'puno'],[APUNTAR,'apuntar']]){
+  G._reiniciar();ev.length=0;
+  let confirmado=null;
+  for(let i=0;i<Math.ceil(hz*.4);i++){
+    const dt=i*1000/hz;G._alimentar([mano(pose)],t+dt);G.tick(t+dt);
+    if(confirmado===null&&G.gesto===esperado)confirmado=dt;
+  }
+  assert.equal(G.gesto,esperado,`${esperado} reconocido a ${hz} Hz`);
+  assert.ok(confirmado>=G.ajustes.histeresisMs-1e-6&&confirmado<=G.ajustes.histeresisMs+2000/hz,
+    `${esperado} a ${hz} Hz conserva la espera mínima sin bloquearse: ${confirmado} ms`);
+  t+=500;
+}
+
+// Un candidato pierde su reloj cuando deja de tener quorum: poses distintas sin mayoría no
+// pueden dejar una pinza pendiente un segundo y activarla con sólo 34 ms al reaparecer.
+G._reiniciar();ev.length=0;
+const corteAnterior=G.ajustes.euroCorte;G.ajustes.euroCorte=1e9; // aislar votos de la interpolación de poses
+G._alimentar([mano(PINZA)],t);G._alimentar([mano(PINZA)],t+34);
+for(let i=2;i<32;i++)G._alimentar([mano([PUNO,APUNTAR,VICTORIA][(i-2)%3])],t+i*34);
+t+=32*34;
+for(let i=0;i<3;i++){G._alimentar([mano(PINZA)],t+i*34);assert.equal(G.gesto,'ninguno','el candidato antiguo no evita 100 ms de histéresis');}
+G._alimentar([mano(PINZA)],t+102);assert.equal(G.gesto,'pinza');t+=200;
+G.ajustes.euroCorte=corteAnterior;
+
+// Una oclusión de un cuadro no suelta la pinza, pero sí corta movimiento y espera de selección,
+// tanto con la imagen vacía como cuando otra mano en puño sigue visible.
+for(const otras of [[],[mano({...PUNO,cx:.85,s:.08})]]){
+  const conPinza=cx=>[mano({...PINZA,cx,s:.14}),...otras];
+  G._reiniciar();ev.length=0;
+  correr(400,()=>conPinza(.3));
+  G._alimentar(conPinza(.32),t);G.tick(t);t+=paso;
+  assert.ok(G._pendientes.pinza_mover.dx>0);
+  ev.length=0;G._alimentar(otras,t);G.tick(t);t+=paso;
+  assert.equal(G.gesto,'pinza');assert.equal(cuenta('pinza_mover').length,0,'sin movimiento durante la pérdida de la mano activa');
+  assert.equal(cuenta('cursor').at(-1)[1].visible,false);
+  G._alimentar(conPinza(.5),t);G.tick(t);t+=paso;
+  assert.equal(cuenta('pinza_mover').length,0,'recuperar la mano no salta entre posiciones separadas por la oclusión');
+  assert.equal(cuenta('pinza_inicio').length+cuenta('pinza_fin').length,0,'recuperación breve conserva el agarre');
+  correr(200,()=>conPinza(.5));
+  assert.equal(cuenta('pinza_mover').length,0,'el filtro no arrastra movimiento invisible tras recuperar la mano quieta');
+  G._alimentar(conPinza(.515),t);G.tick(t);t+=paso;
+  assert.ok(cuenta('pinza_mover').length>0,'el movimiento se reanuda con posiciones visibles consecutivas');
+  correr(400,()=>[]);assert.equal(G.gesto,'ninguno');assert.equal(cuenta('pinza_fin').length,1,'la pérdida sostenida libera la pinza');
+}
+// La quietud tampoco acumula tiempo invisible cuando queda otra mano sin gesto en cámara.
+G._reiniciar();ev.length=0;
+const otraVisible=mano({...VICTORIA,cx:.85,s:.08}),abiertaVisible=mano({cx:.3,s:.14});
+correr(800,()=>[abiertaVisible,otraVisible]);
+correr(134,()=>[otraVisible]);
+correr(900,()=>[abiertaVisible,otraVisible]);
+assert.equal(cuenta('cerrar').length,0,'recuperar la palma reinicia la espera de 1 s');
+correr(400,()=>[abiertaVisible,otraVisible]);
+assert.equal(cuenta('cerrar').length,1,'la palma quieta vuelve a cerrar tras una espera visible completa');
+
+// Un golpe aplazado para comprobar si abre también la segunda mano caduca al perder ambas.
+G._reiniciar();ev.length=0;
+G._alimentar([mano({...PUNO,cx:.3}),mano({...PUNO,cx:.7})],t);t+=100;
+G._alimentar([mano({cx:.3}),mano({...PUNO,cx:.7})],t);t+=33;
+assert.equal(cuenta('estallar').length,0,'la apertura de una mano espera un cuadro a la segunda');
+G._alimentar([],t);t+=paso;
+assert.equal(cuenta('estallar').length,0,'cero manos no completa un golpe pendiente');
+
 // 6. Barrido rápido: una sola dirección, enfriamiento y órbita bloqueada durante el barrido.
 G._reiniciar();ev.length=0;
 G.ajustes.deslizarVel=2;G.ajustes.deslizarMin=.5;
@@ -301,6 +365,7 @@ await new Promise(r=>setTimeout(r,430));G.desactivar();
 assert.equal(maxVuelo,1,'nunca más de un cuadro en vuelo');
 assert.ok(capturas>=4,`captura encadenada: ${capturas} en 430 ms`);
 assert.ok(inicios.slice(1).every((v,i)=>v-inicios[i]<125),'el resultado programa la captura siguiente');
+assert.ok(G.diagnostico().captura_resultado_ms.mediana>=80,'diagnóstico incluye la espera real captura → resultado');
 
 // 10. Permiso pendiente y denegación: ambos terminan el worker sin esperar el modelo.
 const nodo=()=>({dataset:{},classList:{toggle(){}},atributos:{},hijos:new Map(),
@@ -398,11 +463,16 @@ const wActivo=workers.at(-1);
 wActivo.onmessage({data:{listo:true}});await cargaActiva;
 await new Promise(r=>setTimeout(r,10));
 assert.equal(G.estado,'activo');
-assert.equal(peticionBitmap.resizeWidth,384);assert.equal(peticionBitmap.resizeHeight,288);
+assert.equal(peticionBitmap.resizeWidth,640);assert.equal(peticionBitmap.resizeHeight,480);
 assert.equal(peticionBitmap.resizeQuality,G.ajustes.calidadCuadro);
 wActivo.onerror({preventDefault(){},message:'worker activo caído'});
 assert.equal(G.estado,'error');assert.ok(wActivo.terminado);assert.equal(paradasActivo,1);
 assert.equal(videoListo.srcObject,null);G.desactivar();
+// Una cámara pequeña conserva sus píxeles nativos; ampliarla no aporta detalle al detector.
+G._probarCaptura({postMessage(){},terminate(){}},{...videoListo,videoWidth:320,videoHeight:240});
+await Promise.resolve();
+assert.equal(peticionBitmap.resizeWidth,320);assert.equal(peticionBitmap.resizeHeight,240);
+G.desactivar();
 // Fallar al transferir el cuadro termina el motor sin rechazos asíncronos sin manejar.
 let bitmapLiberado=0;
 ctx.createImageBitmap=async()=>({close(){bitmapLiberado++;}});

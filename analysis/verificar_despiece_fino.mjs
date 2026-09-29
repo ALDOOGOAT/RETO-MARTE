@@ -82,6 +82,57 @@ if(process.argv.includes('--sintetico')){
     assert.deepEqual(p.o.position.toArray(),p.origen.toArray());assert.deepEqual(p.o.quaternion.toArray(),p.q0.toArray());
     e.entrarPieza(p);e.tick();e.devolverPieza(true);assert.deepEqual(p.o.quaternion.toArray(),p.q0.toArray());
   });
+  comprobar('reagarrar la misma pieza conserva pose, escala y voz',()=>{
+    const e=entorno(),p=e.piezas.find(p=>p.id==='cartucho-01');e.hit(p);
+    e.eventos.pinza_inicio({x:.5,y:.5});e.tick(40);e.eventos.pinza_fin();
+    e.eventos.orbitar({dx:.8,dy:.2});e.eventos.escalar({t:.6});e.tick(40);
+    const antes={yaw:e.inspeccion.yaw,pitch:e.inspeccion.pitch,escala:e.inspeccion.escala,lecturas:e.lecturas,
+      padre:p.o.parent,pos:e.pivoteInspeccion.position.toArray(),quat:e.pivoteInspeccion.quaternion.toArray(),
+      esc:e.pivoteInspeccion.scale.toArray()};
+    e.eventos.pinza_inicio({x:.5,y:.5});
+    assert.equal(e.inspeccion.estado,'AGARRADA');assert.equal(e.inspeccion.p,p);
+    assert.deepEqual({yaw:e.inspeccion.yaw,pitch:e.inspeccion.pitch,escala:e.inspeccion.escala,lecturas:e.lecturas,
+      padre:p.o.parent,pos:e.pivoteInspeccion.position.toArray(),quat:e.pivoteInspeccion.quaternion.toArray(),
+      esc:e.pivoteInspeccion.scale.toArray()},antes,'reagarrar no devuelve ni reinicia la pieza');
+    assert.equal(e.voz,'carrusel');
+  });
+  comprobar('resorte de despiece coincide a 20/30/60/120 Hz y dos manos no retrocede',()=>{
+    for(const rapido of [false,true]){
+      let referencia;
+      for(const hz of [20,30,60,120]){
+        const e=entorno(),muestras=[];
+        if(rapido)e.eventos.despiece({t:1});else e.estallar();
+        let anterior=0;
+        for(let i=1;i<=hz/2;i++){
+          e.moverDespiece(1/hz);
+          if(rapido)assert(e.t>=anterior&&e.t<=1,`dos manos retrocede o rebasa el destino a ${hz} Hz: ${anterior} → ${e.t}`);
+          anterior=e.t;if(i%(hz/10)===0)muestras.push(e.t);
+        }
+        if(!referencia)referencia=muestras;
+        else muestras.forEach((t,i)=>assert(Math.abs(t-referencia[i])<1e-10,`trayectoria ${rapido?'rápida':'normal'} depende de ${hz} Hz en ${(i+1)/10} s`));
+        e.armar();for(let i=0;i<hz*4;i++)e.moverDespiece(1/hz);
+        assert.equal(e.t,0,'el resorte conserva el retorno exacto');
+      }
+    }
+  });
+  comprobar('cámara de mano reduce retraso continuo sin saltar ni rebasar el objetivo',()=>{
+    const crear=entorno().ctx.window.MILPA_VISUAL.camaraSuave,mira=new T.Vector3(0,1,0);
+    for(const hz of [20,60,120]){
+      const retrasos=[11,20].map(w=>{
+        const c=new T.PerspectiveCamera(),suave=crear();let anterior=0,retraso=0;
+        suave.paso(c,0,1.2,8,mira,w,1/hz);
+        for(let i=1;i<=hz*1.5;i++){
+          const objetivo=Math.min(.6,i/hz);suave.paso(c,objetivo,1.2,8,mira,w,1/hz);
+          const theta=Math.atan2(c.position.z,c.position.x);
+          assert(theta>=anterior-1e-12&&theta<=objetivo+1e-12,'sin retroceso ni sobrepaso');
+          assert(theta-anterior<=1/hz+1e-12,'sin salto mayor que el movimiento de la mano');
+          anterior=theta;if(i===hz/2)retraso=objetivo-theta;
+        }
+        assert(Math.abs(anterior-.6)<.001,'la cámara llega al destino al detener la mano');return retraso;
+      });
+      assert(retrasos[1]<retrasos[0]*.65,`el seguimiento de mano reduce el retraso a ${hz} Hz`);
+    }
+  });
   comprobar('20 cartuchos: pinza, voz continua, palma y restauración exacta en t=0 y t=1',()=>{
     const e=entorno();
     for(const explota of [false,true]){

@@ -1,5 +1,16 @@
 # ESTADO · preparación para Madrid
 
+> **V15 · gestos, animación y materiales, 28 sep 2026:** corregida la confirmación de gestos
+> a frecuencias altas, el movimiento residual al perder la mano y el salto al reagarrar una pieza.
+> Captura hasta 640 px, despiece estable y texturas con más detalle tonal. En Chrome visible con
+> Intel integrada, a 1080p/DPR1: general 60.1 FPS, despiece 59.5, detalle 49.1 e inspección con
+> despiece 55.3; rendimiento similar al antes. Webcam real y 28 fichas ES/EN comprobadas.
+> La precisión con gestos reales del usuario aún requiere una secuencia etiquetada
+> ([medidas, límites y capturas](PRUEBA-V15-PRECISION-FLUIDEZ.json)). Cambios locales sin publicar.
+> El acceso local **MILPA-360** usa un perfil dedicado en Chrome con permiso de cámara guardado:
+> dos aperturas verificadas sin diálogo, cámara apagada al salir de Gestos. Lanzador reproducible:
+> `python3 analysis/abrir_simulador.py`.
+
 > **Cifras de agua, 28 sep 2026:** «700 mil sin agua» sale del análisis. Viene de We Are Water
 > (2024) y el INEGI no la publica. En su lugar: 24 % o menos de la población de Chiapas con agua
 > diaria dentro de la vivienda frente al 53.4 % nacional (INEGI 12/26, 2024) y 8.05 % de las
